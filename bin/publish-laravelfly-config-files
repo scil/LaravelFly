@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+$force = isset($argv[1]) && $argv[1] === 'force';
+
+$files = [
+    'laravelfly.example.php' => '/config/laravelfly.php',
+    'laravelfly.server.example.php' => '/laravelfly.server.php',
+];
+
+$project_root_dir = realpath(__DIR__ . '/../../../..');
+
+foreach ($files as $src => $des) {
+    $src = __DIR__ . '/../config/' . $src;
+    $des = $project_root_dir . $des;
+
+    if ($force || !is_file($des)) {
+        copy($src, $des);
+        echo "\n[[ $des ]]\n created, please edit it to fit your need", PHP_EOL;
+    }
+
+}

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# It will be hacked because swoole does not suport php upload file functions.
+upload_file=`pwd`/vendor/symfony/http-foundation/File/UploadedFile.php
+
+function upload(){
+    file=$upload_file
+    echo  start hack $file
+
+    #sed -n '/!@move_uploaded_file/p' "$file"
+    sed -i '/!@move_uploaded_file/c\/\/ swoole\nif (!@rename(\$this->getPathname(), \$target)) {' "$file"
+
+    #sed -n '/\$isOk = \$this->error === UPLOAD_ERR_OK;/p' "$file"
+    sed -i '/\$isOk = \$this->error === UPLOAD_ERR_OK;/i\/\/ swoole\nreturn \$this->error === UPLOAD_ERR_OK;' "$file"
+
+    #grep -1 swoole $file
+    checkUpload
+
+}
+
+function checkUpload(){
+    file=$upload_file
+    if [ -f "$file" ]; then
+
+        found=`grep -c swoole $file`
+
+        if [ $found -eq 0 ]; then
+            upload
+        elif [ $found -eq 2 ]; then
+            echo hacked SUCCESSFULLY !
+        else
+            echo [ERROR] $found line containing swoole was found.
+        fi
+    else
+        echo [ERROR] file not found.
+        echo please run me at project root dir after \`composer update/install\`.
+    fi
+
+}
+
+echo [[ hack upload file ]]
+checkUpload

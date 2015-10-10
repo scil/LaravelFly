@@ -1,0 +1,35 @@
+{
+  "name": "scil/laravel-fly",
+  "description": "make laravel faster by using swoole extension, which only runs on Linux.",
+  "type": "library",
+  "keywords": [
+    "swoole",
+    "laravel"
+  ],
+  "homepage": "http://www.github.com/scil/laravel_fly",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "scil"
+    }
+  ],
+  "require": {
+    "laravel/framework": "~5.1",
+    "ext-swoole": ">=1.7.19"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "classmap": [
+      "src/LaravelFlyServer.php"
+    ],
+    "psr-4": {
+      "LaravelFly\\": "src/LaravelFly/"
+    }
+  },
+  "bin": [
+    "bin/start-laravelfly-server",
+    "bin/publish-laravelfly-config-files",
+    "bin/hack-laravel-for-laravelfly"
+  ]
+}
