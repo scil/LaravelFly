@@ -1,12 +1,16 @@
 
-== How
-Swoole is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot.A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
-LaravelFly loads resources as more as possible before any request. For example , \Illuminate\Foundation\Application instantiates when  a swoole worker start , before any request.
-The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, `app('view')` has a protected property "shared", which is not appropriate to share this property across different requests.
-So the key is to backup some objects before any request, and restore them after each request handling has finished.`\LaravelFly\Application` extends 
-`\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
+## How
 
-== Normal Mode and Greedy Mode
+[Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot.A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
+
+LaravelFly loads resources as more as possible before any request. For example , \Illuminate\Foundation\Application instantiates when  a swoole worker start , before any request.
+
+The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, `app('view')` has a protected property "shared", which is not appropriate to share this property across different requests.
+
+So the key is to backup some objects before any request, and restore them after each request handling has finished.`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
+
+## Normal Mode and Greedy Mode
+
 First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
     protected $bootstrappers = [
@@ -29,7 +33,7 @@ And In Greedy Mode, you can define which singleton services to made before any r
 
 You can choose Mode in <project_root_dir>/laravelfly.server.php after you publish config files..
 
-== Install
+## Install
 
 1. Install php extension swoole
 2. Open terminal and execute "composer require barryvdh/laravel-ide-helper"
@@ -37,36 +41,37 @@ You can choose Mode in <project_root_dir>/laravelfly.server.php after you publis
     1. Add "vendor/bin/hack-laravel-for-laravelfly" to 'post-install-cmd' and 'post-update-cmd'
     2. If necessary, manually execute "vendor/bin/hack-laravel-for-laravelfly" .
 
-== Config
+## Config
 
 1. Open terminal and execute "vendor/bin/publish-laravelfly-config-files"  .you can add argument "force" to overwrite old config files."vendor/bin/publish-laravelfly-config-files force"
 2. Edit <project_root_dir>/laravelfly.server.php.
 3. Edit <project_root_dir>/config/laravelfly.php. Note: about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
-4. Optional: if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it)
+4. Optional: put LaravelFly files to <project_root_dir>/config/compile.php.
+You can get file list by executing `find vendor/scil/laravel-fly/src/LaravelFly -name "*.php" | sed -n "s/.*/realpath(__DIR__.'\/..\/&'),/p"` at project root dir.
+5. Optional: if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it)
 ```
         'options'   => [
             PDO::ATTR_PERSISTENT => true,
         ],
 ```
-5. Optional: put LaravelFly files to <project_root_dir>/config/compile.php.
-You can get file list by executing `find vendor/scil/laravel-fly/src/LaravelFly -name "*.php" | sed -n "s/.*/realpath(__DIR__.'\/..\/&'),/p"` at project root dir.
 
 
-== Run
+
+## Run
 
 1. Execute "vendor/bin/start-laravelfly-server <absolute_path_of_server_config_file>"
    Argument <absolute_path_of_server_config_file> is optional, default is <project_root_dir>/laravelfly.server.php.
 2. Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at "vendor/scil/laravel-fly/config/nginx+swoole.conf".
 
 
-== Stop
+## Stop
 
 Two ways:
 * send SIGTERM to swoole server main process: " kill -15 `ps a | grep start-laravelfly-server| awk 'NR==1 {print $1}'`"
 * in php , `$server->shutdown();` 
 
 
-== Restart All Workers Gracefully: swoole server reloading
+## Restart All Workers Gracefully: swoole server reloading
 
 Swoole server has a main process, a manager process and one or more worker processes.If you set `'worker_num' => 4`, there are 6 processes.The first the main process, the second is the manager process, and the last four are all worker processes.
 
@@ -84,7 +89,7 @@ Details:
 3. Every worker first finish it's work, then call OnWorkerStop callback, then kill itself.
 4. manager process creates new worker processes.
 
-== Hot Reload On Code Change
+## Hot Reload On Code Change
 
 By using swoole server reloading, it's possible to hot reload on code change, because any files required or included in 'WorkerStart' callback will be requied or included again when a new worker starts.
 
@@ -103,7 +108,7 @@ If you use APC/OpCache, you could use one of these measures
   }
 ```
 
-== Memory
+## Memory
 
 Memory usage may grow slowly. You can set 'max_request' to a small number.
 
