@@ -96,7 +96,7 @@ Swoole server reloading has no matter with the main process or the manager proce
 Gracefully is that: worker willl finish its work before die.
 
 Two ways to reload
-* in php , `$server->reload();` 
+* in php , you can make your own swoole server by extending 'LaravelFlyServer', and use `$server->reload();` under some conditions like some files changed.
 * open terminal and execute "kill -USR1 `ps a | grep start-laravelfly-server| awk 'NR==2 {print $1}'`"
 
 Details:
