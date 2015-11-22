@@ -8,9 +8,10 @@ class LaravelFlyServer
     protected $compiledPath;
     public $http;
     protected $app;
+    protected $kernelClass;
     protected $kernel;
 
-    public function __construct($laravelDir, $options)
+    public function __construct($laravelDir, $options, $kernelClass='\App\Http\Kernel')
     {
 
         $this->laravelDir = realpath($laravelDir);
@@ -21,6 +22,8 @@ class LaravelFlyServer
         }
 
         $this->http = $http = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+
+        $this->kernelClass=$kernelClass;
 
         $http->set($options);
 
@@ -56,7 +59,7 @@ class LaravelFlyServer
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            LARAVELFLY_GREEDY ? \LaravelFly\Greedy\Kernel::class : \LaravelFly\Kernel::class
+            LARAVELFLY_KERNEL
         );
         $app->singleton(
             \Illuminate\Contracts\Console\Kernel::class,

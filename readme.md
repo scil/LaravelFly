@@ -48,7 +48,23 @@ You can choose Mode in <project_root_dir>/laravelfly.server.php after you publis
 3. Edit <project_root_dir>/config/laravelfly.php. Note: about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
 4. Optional: put LaravelFly files to <project_root_dir>/config/compile.php.
 You can get file list by executing `find vendor/scil/laravel-fly/src/LaravelFly -name "*.php" | sed -n "s/.*/realpath(__DIR__.'\/..\/&'),/p"` at project root dir.
-5. Optional: if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it)
+5. Edit <project_root_dir>/app/Http/Kernel.php, change `class Kernel extends HttpKernel {` to
+```
+if (defined('LARAVELFLY_GREEDY')) {
+    if (LARAVELFLY_GREEDY) {
+        class WhichKernel extends \LaravelFly\Greedy\Kernel { }
+    } else {
+        class WhichKernel extends \LaravelFly\Kernel { }
+    }
+} else {
+    class WhichKernel extends HttpKernel { }
+}
+
+class Kernel extends WhichKernel
+```
+
+## Optional Config
+if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
 ```
         'options'   => [
             PDO::ATTR_PERSISTENT => true,

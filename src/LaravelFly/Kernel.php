@@ -13,8 +13,9 @@ use Exception;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
-class Kernel extends \App\Http\Kernel
+class Kernel extends HttpKernel
 {
 
     protected $bootstrappers = [
