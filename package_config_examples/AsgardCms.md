@@ -10,7 +10,7 @@ add the ServiceProvider to the providers array
 Modules\Core\Providers\AsgardServiceProvider::class,
 ```
 
-2 in the `services_to_make_in_worker` array ,make sure `paths` and `views` under `view.__obj__.finder` are uncomment.
+2 in the `services_to_make_in_worker` array ,make sure `paths` and `views` under `view.__obj__.finder` are uncommented.
 ```
 'view' => [
     '__obj__' => [
@@ -21,6 +21,7 @@ Modules\Core\Providers\AsgardServiceProvider::class,
     ],
 ],
 ```
+By default, Asgard frontend and backend use different Themes. It's necessary to backup them.
 
 ## asgard/app/Providers/AppServiceProvider.php 
 comment this line:
