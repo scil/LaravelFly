@@ -71,7 +71,8 @@ if you want to use mysql persistent, add following to config/database.php ( do n
         ],
 ```
 
-
+## Config examples
+[package_config_examples](package_config_examples/)
 
 ## Run
 

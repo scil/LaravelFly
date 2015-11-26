@@ -338,15 +338,15 @@ return [
 
     ], /* end services_to_make_in_worker */
 
-    /* Before any request ,files of these view names will be found.
+    /* Before any request , specified view files will be found.
      * They must keep same on every quest. 
-     * It's not neccesary when 'config('laravelfly.services_to_make_in_worker.view.__obj__.finder.views')' is not set to make backup
+     * This config is not neccesary when 'config('laravelfly.services_to_make_in_worker.view.__obj__.finder.views')' keep commented.
      *
-     * Any of there views is not found, laravelfly would die.
+     * If one of these view names is not found, it and its subsequent names would be ignored and log to console or log file. .
      *
      * Only for Greedy mode
     */
-    'views' => [
+    'views_to_find_in_worker' => [
         // 'home','posts.create','layout.master',
     ]
 

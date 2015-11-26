@@ -14,7 +14,7 @@ class FindViewFiles
      */
     public function bootstrap(Application $app)
     {
-        if ($views = $app->make('config')->get('laravelfly.views')) {
+        if ($views = $app->make('config')->get('laravelfly.views_to_find_in_worker')) {
             $finder = $app->make('view')->getFinder();
 
             try {
@@ -22,7 +22,7 @@ class FindViewFiles
                     $finder->find($view);
                 }
             } catch (\Exception $e) {
-                exit(" view $view not found, please check your config 'laravelfly.views'");
+                exit(" view $view not found, please check your config 'laravelfly.views_to_find_in_worker'");
             }
         }
 
