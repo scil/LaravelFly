@@ -5,13 +5,14 @@ Barryvdh\Debugbar\ServiceProvider::class,
 ```
 
 ## config/laravelfly.php
-1. add config 'debugbar.enabled' to the `config_need_backup` array
+1 add config 'debugbar.enabled' to the `config_need_backup` array
 ```
 'debugbar.enabled',
 ```
 Debugbar is disabled after booting, so it's necessary to restore this config after each request.
 
-2. if your Debugbar version <=v2.0.5, add its ServiceProvider name to the `providers_in_request` array
+
+2 If your Debugbar version <=v2.0.5, add its ServiceProvider name to the `providers_in_request` array
 ```
 Barryvdh\Debugbar\ServiceProvider::class,
 ```
