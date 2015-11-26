@@ -5,12 +5,12 @@ add the ServiceProvider to the providers array
 ```
 
 ## config/laravelfly.php
-1. add its ServiceProvider name to the `providers_in_request` array
+1 add its ServiceProvider name to the `providers_in_request` array
 ```
 Modules\Core\Providers\AsgardServiceProvider::class,
 ```
 
-2. in the `services_to_make_in_worker` array ,make sure `paths` and `views` under `view.__obj__.finder` are uncomment.
+2 in the `services_to_make_in_worker` array ,make sure `paths` and `views` under `view.__obj__.finder` are uncomment.
 ```
 'view' => [
     '__obj__' => [
