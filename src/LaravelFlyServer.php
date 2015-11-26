@@ -6,7 +6,7 @@ class LaravelFlyServer
     protected static $instance;
     protected $laravelDir;
     protected $compiledPath;
-    public $http;
+    public $swoole_http_server;
     protected $app;
     protected $kernelClass;
     protected $kernel;
@@ -21,17 +21,21 @@ class LaravelFlyServer
             $this->loadCompiledAndInitSth();
         }
 
-        $this->http = $http = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+        $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
         $this->kernelClass=$kernelClass;
 
-        $http->set($options);
+        $server->set($options);
 
-        $http->on('WorkerStart', array($this, 'onWorkerStart'));
+        $server->on('WorkerStart', array($this, 'onWorkerStart'));
 
-        $http->on('request', array($this, 'onRequest'));
+        $server->on('request', array($this, 'onRequest'));
 
-        $http->start();
+        return $this;
+    }
+    public function start()
+    {
+        $this->swoole_http_server->start();
     }
 
     protected function loadCompiledAndInitSth()
@@ -118,8 +122,8 @@ class LaravelFlyServer
         $laravel_response = $this->kernel->handle($laravel_request);
 
 
-        //  sometimes there are errers saying 'http_onReceive: connection[...] is closed' and this type of error make worker restart
-        if (!$this->http->exist($response->fd)) {
+        //  sometimes there are errors saying 'http_onReceive: connection[...] is closed' and this type of error make worker restart
+        if (!$this->swoole_http_server->exist($response->fd)) {
             return;
         }
 
@@ -135,11 +139,12 @@ class LaravelFlyServer
 
         // I think " $l_response->send()" is enough
         // $response->status($l_response->getStatusCode());
+
         // gzip use nginx
         // $response->gzip(1);
 
         ob_start();
-        // send() contains setting header and cookie ,and $response->header and $response->cookie do same jobs.
+        // $laravel_response->send() contains setting header and cookie ,and $response->header and $response->cookie do same jobs.
         // They are all necessary , according by my test
         $laravel_response->send();
         $response->end(ob_get_clean());

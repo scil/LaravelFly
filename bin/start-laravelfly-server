@@ -5,7 +5,10 @@ $project_root_dir = realpath(__DIR__ . '/../../../..');
 
 require $project_root_dir . '/vendor/autoload.php';
 
-LaravelFlyServer::getInstance($project_root_dir,
-    require isset($argv[1]) && is_file($argv[1]) ? $argv[1] : $project_root_dir . '/laravelfly.server.php' );
+LaravelFlyServer::getInstance(
+    $project_root_dir,
+    require isset($argv[1]) && is_file($argv[1]) ? $argv[1] : $project_root_dir . '/laravelfly.server.php'
+)
+    ->start();
 
 

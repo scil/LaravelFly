@@ -84,7 +84,7 @@ if you want to use mysql persistent, add following to config/database.php ( do n
 
 Two ways:
 * send SIGTERM to swoole server main process: " kill -15 `ps a | grep start-laravelfly-server| awk 'NR==1 {print $1}'`"
-* in php , `$server->shutdown();` 
+* in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` under some conditions.
 
 
 ## Restart All Workers Gracefully: swoole server reloading
@@ -96,7 +96,7 @@ Swoole server reloading has no matter with the main process or the manager proce
 Gracefully is that: worker willl finish its work before die.
 
 Two ways to reload
-* in php , you can make your own swoole server by extending 'LaravelFlyServer', and use `$server->reload();` under some conditions like some files changed.
+* in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
 * open terminal and execute "kill -USR1 `ps a | grep start-laravelfly-server| awk 'NR==2 {print $1}'`"
 
 Details:
