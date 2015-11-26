@@ -230,7 +230,7 @@ class Application extends \Illuminate\Foundation\Application
     public function runningInConsole()
     {
         if (defined('FAKE_NOT_IN_CONSOLE')) {
-            return FAKE_NOT_IN_CONSOLE;
+            return !FAKE_NOT_IN_CONSOLE;
         } else {
             return parent::runningInConsole();
         }
