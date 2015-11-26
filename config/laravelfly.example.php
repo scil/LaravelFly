@@ -4,8 +4,6 @@
 return [
     'config_need_backup' => [
         /* depends */
-        /* If you use debugbar, uncomment it.
-         * Debugbar is disabled after booting, so it's necessary to restore this config after each request */
         // 'debugbar.enabled',
     ],
 
@@ -15,8 +13,6 @@ return [
     'providers_in_request' => [
         /*todo need test */
         Illuminate\Pagination\PaginationServiceProvider::class,
-        /* debugbar <=v2.0.5 is registered using share,not singleson , so it's necessary to put debugbar register in request */
-        Barryvdh\Debugbar\ServiceProvider::class,
     ],
 
     /* Which properties of base services need to backup and restore.

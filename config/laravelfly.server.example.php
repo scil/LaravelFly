@@ -10,7 +10,7 @@ const LARAVELFLY_GREEDY = true;
  */
 const LOAD_COMPILED_BEFORE_WORKER = false;
 
-// debugbar will not be enalbed when in cli mode, if you want to use debugbar, set it to true
+// when true, Application::runningInConsole() return false.
 const FAKE_NOT_IN_CONSOLE = false;
 
 // this array is used for swoole server, see more option list at swoole doc.
