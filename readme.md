@@ -1,5 +1,9 @@
 
-## How
+LaravelFly uses LaravelFlyServer(swoole http server) to run Laravel faster. 
+
+It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project. So, it's easy to try LaravelFly.
+
+## How to work
 
 [Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot.A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
 
@@ -72,7 +76,9 @@ if you want to use mysql persistent, add following to config/database.php ( do n
 ```
 
 ## Config examples
-[package_config_examples](package_config_examples/)
+* [Debugbar](package_config_examples/Debugbar.md)
+* [AsgardCms](package_config_examples/AsgardCms.md)
+
 
 ## Run
 
