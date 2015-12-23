@@ -76,7 +76,6 @@ return [
     /* for Greedy mode */
     /* providers not found in config('app.providers') would be ignored */
     'providers_in_worker' => [
-        Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -127,11 +126,6 @@ return [
      *
      */
     'services_to_make_in_worker' => [
-        /* Illuminate\Foundation\Providers\ArtisanServiceProvider::class : */
-        /* depends */
-        /* It's rare that there artisan services  are used for your user. */
-        // 'command.app.name' => [], 'command.clear-compiled' =>[],  ...
-
 
         /* Illuminate\Auth\AuthServiceProvider::class : NO */
 
