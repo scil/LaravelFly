@@ -6,7 +6,7 @@ It's a composer package and can be installed on your existing projects without a
 
 ## Test
 
-There is a test: https://www.reddit.com/r/laravel/comments/3ttcmw/laravelfly_run_laravel_10x_faster_on_linux/cx9b3xu
+There is a test: [reddit](https://www.reddit.com/r/laravel/comments/3ttcmw/laravelfly_run_laravel_10x_faster_on_linux/)
 
 
 ## How to work
