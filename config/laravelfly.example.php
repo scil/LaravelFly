@@ -81,7 +81,9 @@ return [
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        Illuminate\Routing\ControllerServiceProvider::class,
+        /* depends */
+        /* This provider is missing in Laravel5.2, you can uncomment it in L5.1  */
+        // Illuminate\Routing\ControllerServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
@@ -152,9 +154,10 @@ return [
         /* It's rare that there console services  are used for your user. */
         // 'command.auth.resets.clear' => [],'migrator' => [],...
 
-
+        /* depends */
+        /* This provider is missing in Laravel5.2, you can uncomment it in L5.1  */
         /* Illuminate\Routing\ControllerServiceProvider::class :*/
-        'illuminate.route.dispatcher' => [],
+        // 'illuminate.route.dispatcher' => [],
 
 
         /* Illuminate\Cookie\CookieServiceProvider::class :*/
