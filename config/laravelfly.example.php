@@ -34,8 +34,9 @@ return [
             // 'currentRequest',
 
             /* depends */
-            /* Uncomment it if it's not same on each requests. Its value changed by Route::middleware */
-            // 'middleware',
+            /* Uncomment them if it's not same on each requests. Its value changed by Route::middleware */
+            // 'middleware', 
+            // 'middlewareGroups',  // only for laravel5.2+
 
             '__obj__' => [
                 'routes' => [

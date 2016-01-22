@@ -11,11 +11,20 @@
 namespace LaravelFly\Greedy\Routing;
 
 use Illuminate\Routing\Route as BaseRoute;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Container\Container;
 
 class Router extends \Illuminate\Routing\Router
 {
 
     protected $beforeAppBooted = true;
+    protected $version;
+
+    public function __construct(Dispatcher $events, Container $container = null)
+    {
+        parent::__construct($events, $container);
+        $this->version = substr($container::VERSION, 0, 3);
+    }
 
     public function appBooted()
     {
@@ -29,10 +38,25 @@ class Router extends \Illuminate\Routing\Router
     {
         if ($this->beforeAppBooted) {
             // before any request, routes are compiled auto.
-            return (new Route($methods, $uri, $action))->setContainer($this->container);
+
+            if ($this->version == '5.1') {
+                return (new Route($methods, $uri, $action))->setContainer($this->container);
+            } elseif ($this->version == '5.2') {
+                return (new Route($methods, $uri, $action))
+                    ->setRouter($this)
+                    ->setContainer($this->container);
+            }
         } else {
             // routes creaed during request are not compiled auto. They are compiled when match
-            return (new BaseRoute($methods, $uri, $action))->setContainer($this->container);
+
+            if ($this->version == '5.1') {
+                return (new BaseRoute($methods, $uri, $action))->setContainer($this->container);
+            } elseif ($this->version == '5.2') {
+                return (new BaseRoute($methods, $uri, $action))
+                    ->setRouter($this)
+                    ->setContainer($this->container);
+
+            }
         }
     }
 }
