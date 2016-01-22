@@ -1,8 +1,8 @@
-## config/app.php
-add the ServiceProvider to the providers array
-```
-'Modules\Core\Providers\AsgardServiceProvider',
-```
+
+AsgardCms is a modular multilingual CMS built with Laravel 5
+
+## install AsgardCms
+https://asgardcms.com/install
 
 ## config/laravelfly.php
 1 add its ServiceProvider name to the `providers_in_request` array
@@ -33,5 +33,6 @@ comment this line:
 If you'd like to use Debugbar, please follow the steps in [Debugbar.md](Debugbar.md)
 
 ## Final
-All of AsgardCms services are hard to registered or booted when swoole worker is starting. So AsgardCms can't use LaravelFly power. I use AsgardCms to test Laravel services.
+All of AsgardCms services are hard to registered or booted when swoole worker is starting.All of them are registered and booted in each request. So AsgardCms can't use LaravelFly power. I use AsgardCms to make sure Laravel works fine on LaravelFly.
+
 
