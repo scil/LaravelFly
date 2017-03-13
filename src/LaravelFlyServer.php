@@ -109,6 +109,30 @@ class LaravelFlyServer
 
     public function onRequest($request, $response)
     {
+        // static files
+        try{
+            $try_file = $this->laravelDir.'/public'.$request->server['request_uri'];
+            if(file_exists($try_file)){
+                $mtime = filemtime($try_file);
+
+                if($request->header['if-none-match']??-1 == $mtime){
+                    $response->status(304);
+                    $response->header('ETag', $mtime);
+                    $response->end();
+                    return $this->app->restoreAfterRequest();
+                }
+                $response->status(200);
+                $response->header('ETag', $mtime);
+                $response->header('Cache-Control', 'max-age=600');
+                $response->header('Content-Type', explode(',', $request->header['accept']??'application/x-javascript,')[0]);
+                $response->end(file_get_contents($try_file));
+                return $this->app->restoreAfterRequest();
+            }
+        }catch(\Exception $e){
+            $response->end();
+            return $this->app->restoreAfterRequest();
+        }
+
 
         // global vars used by: Symfony\Component\HttpFoundation\Request::createFromGlobals()
         // this static method is alse used by Illuminate\Auth\Guard
