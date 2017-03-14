@@ -115,7 +115,7 @@ class LaravelFlyServer
             $bad_file = "/(^(\.(git|ht))|\.(php|php4|php5|php7|sql|bak|mdb|key|pem|HEAD|git)$)/";
             $file     = array_reverse(explode('/', $try_file))[0];
 
-            if (file_exists($try_file) && !preg_match($bad_file, $file))
+            if (file_exists($try_file) && !is_dir($try_file) && !preg_match($bad_file, $file))
             {
                 $mtime = filemtime($try_file);
 
