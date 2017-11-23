@@ -28,7 +28,6 @@ class Route extends \Illuminate\Routing\Route
      */
     public function matches(\Illuminate\Http\Request $request, $includingMethod = true)
     {
-        // laravelfly
         // $this->compileRoute();
 
         foreach ($this->getValidators() as $validator) {

@@ -31,15 +31,13 @@ class Application extends \LaravelFly\Application
 
     public function registerConfiguredProvidersBootInWorker()
     {
-        $manifestPath = $this->getCachedServicesPathBootInWorker();
-
-        (new ProviderRepository($this, new Filesystem, $manifestPath))
+        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootInWorker()))
             ->load($this->providers_to_boot_in_worker);
     }
 
     public function getCachedServicesPathBootInWorker()
     {
-        return $this->basePath() . '/bootstrap/cache/laravelfly_services_in_worker.json';
+        return $this->bootstrapPath(). '/cache/laravelfly_services_in_worker.json';
     }
 
     public function resetServiceProviders()
@@ -62,8 +60,7 @@ class Application extends \LaravelFly\Application
                 var_dump($providers);
             }
 
-            $manifestPath = $this->getCachedServicesPathAcross();
-            (new ProviderRepository($this, new Filesystem, $manifestPath))
+            (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))
                 ->load($providers);
 
         }
@@ -71,7 +68,7 @@ class Application extends \LaravelFly\Application
 
     public function getCachedServicesPathAcross()
     {
-        return $this->basePath() . '/bootstrap/cache/laravelfly_services_across.json';
+        return $this->bootstrapPath().'/cache/laravelfly_services_across.json';
     }
 
     public function bootOnWorker()
@@ -88,6 +85,7 @@ class Application extends \LaravelFly\Application
 
         $this->bootedOnWorker = true;
 
+        //todo it should be changed
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
@@ -99,6 +97,8 @@ class Application extends \LaravelFly\Application
     protected function registerBaseServiceProviders()
     {
         $this->register(new EventServiceProvider($this));
+
+        $this->register(new LogServiceProvider($this));
 
         $this->register(new RoutingServiceProvider($this));
     }

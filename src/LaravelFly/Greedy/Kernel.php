@@ -13,21 +13,20 @@ class Kernel extends \LaravelFly\Kernel
 {
 
     protected $bootstrappers = [
-        'Illuminate\Foundation\Bootstrap\DetectEnvironment',
-        'Illuminate\Foundation\Bootstrap\LoadConfiguration',
-        'Illuminate\Foundation\Bootstrap\ConfigureLogging',
-        'Illuminate\Foundation\Bootstrap\HandleExceptions',
-        'Illuminate\Foundation\Bootstrap\RegisterFacades',
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+
+        'LaravelFly\Bootstrap\SetProvidersInRequest',
+
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
 
 //        'Illuminate\Foundation\Bootstrap\RegisterProviders',
 //        'Illuminate\Foundation\Bootstrap\BootProviders',
 
-        'LaravelFly\Bootstrap\SetProvidersInRequest',
 
         'LaravelFly\Greedy\Bootstrap\RegisterAndBootProvidersInWork',
-
         'LaravelFly\Greedy\Bootstrap\FindViewFiles',
-
         'LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker',
 
         /**
