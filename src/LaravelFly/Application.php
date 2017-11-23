@@ -45,7 +45,8 @@ class Application extends \Illuminate\Foundation\Application
     public function prepareIfProvidersInRequest($ps)
     {
         $this->providersInRequest = $ps;
-        $this->needBackUpAppAttributes = array_merge($this->needBackUpAppAttributes, ['serviceProviders', 'loadedProviders', 'deferredServices',]);
+        $this->needBackUpAppAttributes = array_merge($this->needBackUpAppAttributes,
+            ['serviceProviders', 'loadedProviders', 'deferredServices',]);
     }
 
     public function registerConfiguredProvidersInRequest()
@@ -95,6 +96,7 @@ class Application extends \Illuminate\Foundation\Application
 
         $this->bootedInRequest = true;
 
+        //todo it should be changed
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
 

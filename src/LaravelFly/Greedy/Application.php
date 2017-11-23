@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ivy
- * Date: 2015/7/29
- * Time: 22:10
- */
 
 namespace LaravelFly\Greedy;
 
@@ -37,7 +31,7 @@ class Application extends \LaravelFly\Application
 
     public function getCachedServicesPathBootInWorker()
     {
-        return $this->bootstrapPath(). '/cache/laravelfly_services_in_worker.json';
+        return $this->bootstrapPath() . '/cache/laravelfly_services_in_worker.json';
     }
 
     public function resetServiceProviders()
@@ -45,11 +39,11 @@ class Application extends \LaravelFly\Application
         $this->serviceProviders = [];
     }
 
-    public function registerConfiguredProvidersAcross()
+    public function registerProvidersAcross()
     {
-        $config=$this->make('config');
+        $config = $this->make('config');
         $providers = array_diff(
-            // providers in request have remove from 'app.providers'
+        // providers in request have remove from 'app.providers'
             $config->get('app.providers'),
             $this->providers_to_boot_in_worker
         );
@@ -68,7 +62,7 @@ class Application extends \LaravelFly\Application
 
     public function getCachedServicesPathAcross()
     {
-        return $this->bootstrapPath().'/cache/laravelfly_services_across.json';
+        return $this->bootstrapPath() . '/cache/laravelfly_services_across.json';
     }
 
     public function bootOnWorker()

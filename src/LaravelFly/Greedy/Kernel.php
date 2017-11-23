@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ivy
- * Date: 2015/7/29
- * Time: 21:59
- */
 
 namespace LaravelFly\Greedy;
 
@@ -30,6 +24,9 @@ class Kernel extends \LaravelFly\Kernel
         'LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker',
 
         /**
+         * prevent providers to run twice,see :$this->>bootProvidersInRequest
+         *      `array_walk($this->serviceProviders,`
+         *
          * this item must be after the one above
          * because 'app()->make' would change 'app()->serviceProviders'
          */

@@ -1,10 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: ivy
- * Date: 2015/9/9
- * Time: 1:33
- *
  * only for compiling all routes made before any request
  */
 

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ivy
- * Date: 2015/7/30
- * Time: 10:58
- */
 
 namespace LaravelFly\Bootstrap;
 

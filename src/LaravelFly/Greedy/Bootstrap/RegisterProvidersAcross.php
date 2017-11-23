@@ -8,6 +8,6 @@ class RegisterProvidersAcross
 {
     public function bootstrap(Application $app)
     {
-        $app->registerConfiguredProvidersAcross();
+        $app->registerProvidersAcross();
     }
 }
