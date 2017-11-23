@@ -28,8 +28,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
         \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
 
-        // move sp boot to `$this->app->bootProvidersInRequest();`
-//        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        // replaced by `$this->app->bootProvidersInRequest();`
+        // \Illuminate\Foundation\Bootstrap\BootProviders::class,
 
         'LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker',
         'LaravelFly\Bootstrap\BackupConfigs',
