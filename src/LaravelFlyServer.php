@@ -11,19 +11,20 @@ class LaravelFlyServer
     protected $kernelClass;
     protected $kernel;
 
-    public function __construct($laravelDir, $options, $kernelClass='\App\Http\Kernel')
+    public function __construct($laravelDir, $options, $kernelClass = '\App\Http\Kernel')
     {
 
         $this->laravelDir = realpath($laravelDir);
-        $this->compiledPath = $this->laravelDir . 'bootstrap/cache/compiled.php';
+        $this->compiledPath = is_null(LOAD_COMPILED_BEFORE_WORKER) ? null :
+            $this->laravelDir . 'bootstrap/cache/compiled.php';
 
         if (LOAD_COMPILED_BEFORE_WORKER) {
-            $this->loadCompiledAndInitSth();
+            $this->loadCompiled();
         }
 
         $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
-        $this->kernelClass=$kernelClass;
+        $this->kernelClass = $kernelClass;
 
         $server->set($options);
 
@@ -33,28 +34,32 @@ class LaravelFlyServer
 
         return $this;
     }
+
     public function start()
     {
         $this->swoole_http_server->start();
+
+        $this->initSthWhenServerStart();
     }
 
-    protected function loadCompiledAndInitSth()
+    protected function initSthWhenServerStart()
     {
+        // removed from Illuminate\Foundation\Http\Kernel::handle
+        \Illuminate\Http\Request::enableHttpMethodParameterOverride();
+    }
 
+    protected function loadCompiled()
+    {
         if (file_exists($this->compiledPath)) {
             require $this->compiledPath;
         }
-
-        // removed from Illuminate\Foundation\Http\Kernel::handle
-        \Illuminate\Http\Request::enableHttpMethodParameterOverride();
-
     }
 
     public function onWorkerStart()
     {
 
-        if (!LOAD_COMPILED_BEFORE_WORKER) {
-            $this->loadCompiledAndInitSth();
+        if (LOAD_COMPILED_BEFORE_WORKER === false) {
+            $this->loadCompiled();
         }
 
         $this->app = $app = LARAVELFLY_GREEDY ?
@@ -65,6 +70,7 @@ class LaravelFlyServer
             \Illuminate\Contracts\Http\Kernel::class,
             LARAVELFLY_KERNEL
         );
+        //todo is it needed
         $app->singleton(
             \Illuminate\Contracts\Console\Kernel::class,
             \App\Console\Kernel::class
@@ -76,13 +82,12 @@ class LaravelFlyServer
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
-        $this->bootstrap();
+        $this->bootstrapOnWorkerStart();
 
     }
 
-    protected function bootstrap()
+    protected function bootstrapOnWorkerStart()
     {
-
 
         // App\Providers\RouteServiceProvider.boot app['url'] which need app['request']
         // app['url']->request will update when app['request'] changes, becuase
@@ -115,7 +120,6 @@ class LaravelFlyServer
         $this->setGlobal($request);
 
         // according to : Illuminate\Http\Request::capture
-        // static::enableHttpMethodParameterOverride(); // this line moved to $this->bootstrap() :
         $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
 
         // see: Illuminate\Foundation\Http\Kernel::handle($request)
@@ -137,8 +141,8 @@ class LaravelFlyServer
             $response->cookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
         }
 
-        // I think " $l_response->send()" is enough
-        // $response->status($l_response->getStatusCode());
+        // I think " $laravel_response->send()" is enough
+        // $response->status($laravel_response->getStatusCode());
 
         // gzip use nginx
         // $response->gzip(1);

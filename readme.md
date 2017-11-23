@@ -45,7 +45,7 @@ You can choose Mode in <project_root_dir>/laravelfly.server.php after you publis
 
 ## Install
 
-1. Install php extension swoole
+1. Install php extension [swoole](https://github.com/swoole/swoole-src).A simple way is `pecl install swoole`
 2. Open terminal and execute `composer require "scil/laravel-fly":"dev-master"`
 3. If the users of your website would upload files to your server, edit composer.json
     1. Add "vendor/bin/hack-laravel-for-laravelfly" to 'post-install-cmd' and 'post-update-cmd'

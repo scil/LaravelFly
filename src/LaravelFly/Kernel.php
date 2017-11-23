@@ -19,19 +19,19 @@ class Kernel extends HttpKernel
 {
 
     protected $bootstrappers = [
-        'Illuminate\Foundation\Bootstrap\DetectEnvironment',
-        'Illuminate\Foundation\Bootstrap\LoadConfiguration',
-        'Illuminate\Foundation\Bootstrap\ConfigureLogging',
-        'Illuminate\Foundation\Bootstrap\HandleExceptions',
-        'Illuminate\Foundation\Bootstrap\RegisterFacades',
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+
         'LaravelFly\Bootstrap\SetProvidersInRequest',
-        'Illuminate\Foundation\Bootstrap\RegisterProviders',
+
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
 
         // move sp boot to `$this->app->bootProvidersInRequest();`
-        // 'Illuminate\Foundation\Bootstrap\BootProviders',
+//        \Illuminate\Foundation\Bootstrap\BootProviders::class,
 
         'LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker',
-
         'LaravelFly\Bootstrap\BackupConfigs',
         'LaravelFly\Bootstrap\BackupAttributes',
     ];
@@ -39,43 +39,51 @@ class Kernel extends HttpKernel
     /**
      * Override
      */
+    protected function sendRequestThroughRouter($request)
+    {
+        $this->app->instance('request', $request);
+
+        // moved to Application::restoreAfterRequest
+        // Facade::clearResolvedInstance('request');
+
+        // replace $this->bootstrap();
+        $this->app->registerConfiguredProvidersInRequest();
+        $this->app->bootProvidersInRequest();
+
+        return (new Pipeline($this->app))
+            ->send($request)
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->then($this->dispatchToRouter());
+
+    }
+    /**
+     * Override
+     */
     public function handle($request)
     {
         try {
+            // moved to LaravelFlyServer::initSthWhenServerStart
+            // $reuest::enableHttpMethodParameterOverride();
 
-            $this->app->instance('request', $request);
-
-            // moved to Application::restoreAfterRequest
-            // Facade::clearResolvedInstance('request');
-
-            $this->app->registerConfiguredProvidersInRequest();
-            $this->app->bootProvidersInRequest();
-
-            $shouldSkipMiddleware = $this->app->bound('middleware.disable') &&
-                $this->app->make('middleware.disable') === true;
-
-            $response =
-                (new Pipeline($this->app))
-                ->send($request)
-                ->through($shouldSkipMiddleware ? [] : $this->middleware)
-                ->then($this->dispatchToRouter());
+            $response = $this->sendRequestThroughRouter($request);
 
         } catch (Exception $e) {
             $this->reportException($e);
 
             $response = $this->renderException($request, $e);
         } catch (Throwable $e) {
-            $e = new FatalThrowableError($e);
 
-            $this->reportException($e);
+            $this->reportException($e = new FatalThrowableError($e));
 
             $response = $this->renderException($request, $e);
         }
 
-
-        $this->app->make('events')->fire('kernel.handled', [$request, $response]);
+        $this->app['events']->dispatch(
+            new Events\RequestHandled($request, $response)
+        );
 
         return $response;
     }
+
 
 }

@@ -187,7 +187,9 @@ class Application extends \Illuminate\Foundation\Application
     public function restoreAfterRequest()
     {
 
-        $this->make('config')->set($this->needBackupConfigs);
+        if ($this->needBackupConfigs) {
+            $this->make('config')->set($this->needBackupConfigs);
+        }
 
         // clear all, not just request
         Facade::clearResolvedInstances();
@@ -220,7 +222,7 @@ class Application extends \Illuminate\Foundation\Application
     protected function registerBaseServiceProviders()
     {
         $this->register(new EventServiceProvider($this));
-
+        $this->register(new LogServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
     }
 
@@ -229,20 +231,11 @@ class Application extends \Illuminate\Foundation\Application
      */
     public function runningInConsole()
     {
-        if (defined('FAKE_NOT_IN_CONSOLE')) {
-            return !FAKE_NOT_IN_CONSOLE;
+        if (defined('HONEST_IN_CONSOLE')) {
+            return HONEST_IN_CONSOLE;
         } else {
             return parent::runningInConsole();
         }
     }
-
-    /**
-     * Override
-     */
-    protected function getKernel()
-    {
-        return $this->make('Illuminate\Contracts\Http\Kernel');
-    }
-
 
 }
