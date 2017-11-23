@@ -1,6 +1,6 @@
 {
   "name": "scil/laravel-fly",
-  "description": "make laravel faster by using swoole extension, which only runs on Linux.",
+  "description": "make laravel faster by using swoole extension, which runs on Linux and OS X.",
   "type": "library",
   "keywords": [
     "swoole",
@@ -14,8 +14,8 @@
     }
   ],
   "require": {
-    "laravel/framework": "~5.1",
-    "ext-swoole": ">=1.7.19"
+    "laravel/framework": "~5.5",
+    "ext-swoole": "^1.9.23 || >=2.0.9"
   },
   "require-dev": {
   },

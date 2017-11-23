@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# It will be hacked because swoole does not suport php upload file functions.
+# This file should be hacked if the users of your web server need to upload files,
+# because swoole does not suport php upload file functions.
 upload_file=`pwd`/vendor/symfony/http-foundation/File/UploadedFile.php
 
 function upload(){
