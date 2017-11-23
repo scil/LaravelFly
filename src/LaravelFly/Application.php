@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ivy
- * Date: 2015/7/28
- * Time: 21:56
- */
 
 namespace LaravelFly;
 
@@ -38,6 +32,49 @@ class Application extends \Illuminate\Foundation\Application
     protected $beforeSecondRequest = true;
     protected $providerRepInRequest;
 
+    public function setNeedBackupConfigs($need)
+    {
+        $this->needBackupConfigs = $need;
+    }
+
+    public function setNeedBackupServiceAttributes($need)
+    {
+        $this->needBackupServiceAttributes = $need;
+    }
+
+    public function prepareIfProvidersInRequest($ps)
+    {
+        $this->providersInRequest = $ps;
+        $this->needBackUpAppAttributes = array_merge($this->needBackUpAppAttributes, ['serviceProviders', 'loadedProviders', 'deferredServices',]);
+    }
+
+    public function registerConfiguredProvidersInRequest()
+    {
+        if ($providers = $this->providersInRequest) {
+            if ($this->beforeSecondRequest) {
+
+                $manifestPath = $this->getCachedServicesPathInRequest();
+                $this->providerRepInRequest = new ProviderRepositoryInRequest($this, new Filesystem, $manifestPath);
+                $this->providerRepInRequest->makeManifest($providers);
+                $this->beforeSecondRequest = false;
+
+//                 echo 'first request ', PHP_EOL;
+            }
+
+            $this->providerRepInRequest->load([]);
+
+
+        }
+    }
+
+    public function getCachedServicesPathInRequest()
+    {
+        return $this->bootstrapPath().'/cache/laravelfly_services_in_request.json';
+    }
+
+    /**
+     * replace \Illuminate\Foundation\Bootstrap\BootProviders::class,
+     */
     public function bootProvidersInRequest()
     {
         if ($this->bootedInRequest) {
@@ -61,37 +98,6 @@ class Application extends \Illuminate\Foundation\Application
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
-
-    public function registerConfiguredProvidersInRequest()
-    {
-        if ($providers = $this->providersInRequest) {
-            if ($this->beforeSecondRequest) {
-
-                $manifestPath = $this->getCachedServicesPathInRequest();
-                $this->providerRepInRequest = new ProviderRepositoryInRequest($this, new Filesystem, $manifestPath);
-                $this->providerRepInRequest->makeManifest($providers);
-                $this->beforeSecondRequest = false;
-
-//                 echo 'first request ', PHP_EOL;
-            }
-
-            $this->providerRepInRequest->load([]);
-
-
-        }
-    }
-
-    public function getCachedServicesPathInRequest()
-    {
-        return $this->basePath() . '/bootstrap/cache/laravelfly_services_in_request.json';
-    }
-
-    public function prepareIfProvidersInRequest($ps)
-    {
-        $this->providersInRequest = $ps;
-        $this->needBackUpAppAttributes = array_merge($this->needBackUpAppAttributes, ['serviceProviders', 'loadedProviders', 'deferredServices',]);
-    }
-
     public function addDeferredServices(array $services)
     {
         $this->deferredServices = array_merge($this->deferredServices, $services);
@@ -108,9 +114,7 @@ class Application extends \Illuminate\Foundation\Application
         }
 
         foreach ($this->needBackupServiceAttributes as $name => $attris) {
-            // shared sevices ,like `router`, are not include in $this->instances
-            // $o = $this->instances[$name];
-            $o = $this->make($name);
+            $o = $this->instances[$name] ?? $this->make($name);
             $backuper = $this->backupToolMaker($attris);
             $backuper = $backuper->bindTo($o, get_class($o));
             $backuper();
@@ -118,11 +122,6 @@ class Application extends \Illuminate\Foundation\Application
             $this->restoreTool[$name] = $this->restoreToolMaker()->bindTo($o, get_class($o));
         }
 
-    }
-
-    public function setNeedBackupServiceAttributes($need)
-    {
-        $this->needBackupServiceAttributes = $need;
     }
 
     // Accessing private PHP class members without reflection
@@ -207,11 +206,6 @@ class Application extends \Illuminate\Foundation\Application
         }
 
         $this->bootedInRequest = false;
-    }
-
-    public function setNeedBackupConfigs($need)
-    {
-        $this->needBackupConfigs = $need;
     }
 
     /**

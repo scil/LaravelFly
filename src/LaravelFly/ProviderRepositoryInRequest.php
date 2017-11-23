@@ -23,6 +23,7 @@ class ProviderRepositoryInRequest extends \Illuminate\Foundation\ProviderReposit
 
     /**
      * Override
+     * @param  array  [] it's useless, there should be an argument when overridde
      */
     public function load(array $providers)
     {

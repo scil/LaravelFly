@@ -23,6 +23,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
+        // must placed before RegisterProviders, because it change config('app.providers')
         'LaravelFly\Bootstrap\SetProvidersInRequest',
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
