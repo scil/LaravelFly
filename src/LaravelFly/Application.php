@@ -216,18 +216,6 @@ class Application extends \Illuminate\Foundation\Application
 
     /**
      * Override
-     * only for changing 'share redirect' to 'singleton redirect',
-     * because it references $app['url'], which not fit non-Greedy mode..
-     */
-    protected function registerBaseServiceProviders()
-    {
-        $this->register(new EventServiceProvider($this));
-        $this->register(new LogServiceProvider($this));
-        $this->register(new RoutingServiceProvider($this));
-    }
-
-    /**
-     * Override
      */
     public function runningInConsole()
     {
