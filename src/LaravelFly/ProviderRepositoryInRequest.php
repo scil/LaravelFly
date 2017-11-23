@@ -37,13 +37,10 @@ class ProviderRepositoryInRequest extends \Illuminate\Foundation\ProviderReposit
 
         if (isset($manifest['eager'])) {
             foreach ($manifest['eager'] as $provider) {
-                $this->app->register($this->createProvider($provider));
+                $this->app->register($provider);
             }
         }
 
-        // laravelfly
-        // this function sould run more than one time
-        // $this->app->setDeferredServices($manifest['deferred']);
         if ($manifest['deferred']) {
             $this->app->addDeferredServices($manifest['deferred']);
         }

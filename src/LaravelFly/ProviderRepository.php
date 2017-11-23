@@ -16,6 +16,7 @@ class ProviderRepository extends \Illuminate\Foundation\ProviderRepository
             $manifest = $this->compileManifest($providers);
         }
 
+        // if is necessary
         if (isset($manifest['when'])) {
             foreach ($manifest['when'] as $provider => $events) {
                 $this->registerLoadEvents($provider, $events);
@@ -23,12 +24,10 @@ class ProviderRepository extends \Illuminate\Foundation\ProviderRepository
         }
 
         foreach ($manifest['eager'] as $provider) {
-            $this->app->register($this->createProvider($provider));
+            $this->app->register($provider);
         }
 
-        // laravelfly
-        // this function sould run more than one time
-        // $this->app->setDeferredServices($manifest['deferred']);
+        // if is necessary
         if ($manifest['deferred']) {
             $this->app->addDeferredServices($manifest['deferred']);
         }
