@@ -5,14 +5,6 @@ const LARAVELFLY_KERNEL= '\App\Http\Kernel';
 // Normal Mode or Greedy Mode
 const LARAVELFLY_GREEDY = true;
 
-/**
- * When to load 'compiled.php'. Only for <= laravel 5.4
- * If true, compiled.php is loaded before any swoole worker. No matter how many workers, there's only one copy in memory. The merit is saving some memory . The demerit is , memory does not update when you restart all workers.
- * If false, compiled.php is loaed on each worker start.Each worker has compiled codes in memory. The merit is , if compiled.php changes, you can restart all workers to use new codes.
- * For Laravel 5.5+, set null
- */
-const LOAD_COMPILED_BEFORE_WORKER = null;
-
 // when false, Application::runningInConsole() return false.
 const HONEST_IN_CONSOLE = true;
 

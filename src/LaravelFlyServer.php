@@ -5,7 +5,6 @@ class LaravelFlyServer
 {
     protected static $instance;
     protected $laravelDir;
-    protected $compiledPath;
     public $swoole_http_server;
     protected $app;
     protected $kernelClass;
@@ -15,12 +14,6 @@ class LaravelFlyServer
     {
 
         $this->laravelDir = realpath($laravelDir);
-        $this->compiledPath = is_null(LOAD_COMPILED_BEFORE_WORKER) ? null :
-            $this->laravelDir . 'bootstrap/cache/compiled.php';
-
-        if (LOAD_COMPILED_BEFORE_WORKER) {
-            $this->loadCompiled();
-        }
 
         $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
@@ -48,20 +41,8 @@ class LaravelFlyServer
         \Illuminate\Http\Request::enableHttpMethodParameterOverride();
     }
 
-    protected function loadCompiled()
-    {
-        if (file_exists($this->compiledPath)) {
-            require $this->compiledPath;
-        }
-    }
-
     public function onWorkerStart()
     {
-
-        if (LOAD_COMPILED_BEFORE_WORKER === false) {
-            $this->loadCompiled();
-        }
-
         $this->app = $app = LARAVELFLY_GREEDY ?
             new \LaravelFly\Greedy\Application($this->laravelDir) :
             new \LaravelFly\Application($this->laravelDir);

@@ -56,9 +56,7 @@ You can choose Mode in <project_root_dir>/laravelfly.server.php after you publis
 1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .you can add argument "force" to overwrite old config files.`vendor/bin/publish-laravelfly-config-files force`
 2. Edit `<project_root_dir>/laravelfly.server.php`.
 3. Edit `<project_root_dir>/config/laravelfly.php`. Note: about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
-4. Optional: put LaravelFly files to <project_root_dir>/config/compile.php.
-You can get a list of LaravelFly files by executing `find vendor/scil/laravel-fly/src/LaravelFly -name "*.php" | sed -n "s/.*/realpath(__DIR__.'\/..\/&'),/p"` at project root dir.
-5. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
+4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_GREEDY')) {
     if (LARAVELFLY_GREEDY) {
