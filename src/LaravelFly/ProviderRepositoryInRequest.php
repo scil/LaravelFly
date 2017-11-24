@@ -28,7 +28,7 @@ class ProviderRepositoryInRequest extends \Illuminate\Foundation\ProviderReposit
     public function load(array $providers)
     {
 
-        $manifest = $this->manifest;
+        if(!($manifest = $this->manifest)) return;
 
         if (isset($manifest['when'])) {
             foreach ($manifest['when'] as $provider => $events) {

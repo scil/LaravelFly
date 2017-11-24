@@ -11,8 +11,6 @@ class Application extends \Illuminate\Foundation\Application
 {
     protected $bootedInRequest = false;
 
-    protected $providersInRequest = [];
-
     protected $needBackUpAppAttributes = [
         'bindings', 'resolved', 'instances', 'aliases', 'extenders', 'tags', 'contextual',
         // 'buildStack ',
@@ -28,8 +26,6 @@ class Application extends \Illuminate\Foundation\Application
 
     protected $needBackupConfigs = [];
 
-
-    protected $beforeSecondRequest = true;
     protected $providerRepInRequest;
 
     public function setNeedBackupConfigs($need)
@@ -42,30 +38,23 @@ class Application extends \Illuminate\Foundation\Application
         $this->needBackupServiceAttributes = $need;
     }
 
-    public function prepareIfProvidersInRequest($ps)
+    public function prepareForProvidersInRequest($ps)
     {
-        $this->providersInRequest = $ps;
+        $this->makeManifestForProvidersInRequest($ps);
         $this->needBackUpAppAttributes = array_merge($this->needBackUpAppAttributes,
             ['serviceProviders', 'loadedProviders', 'deferredServices',]);
     }
+    public function makeManifestForProvidersInRequest($providers)
+    {
+        $manifestPath = $this->getCachedServicesPathInRequest();
+        $this->providerRepInRequest = new ProviderRepositoryInRequest($this, new Filesystem, $manifestPath);
+        $this->providerRepInRequest->makeManifest($providers);
+    }
+
 
     public function registerConfiguredProvidersInRequest()
     {
-        if ($providers = $this->providersInRequest) {
-            if ($this->beforeSecondRequest) {
-
-                $manifestPath = $this->getCachedServicesPathInRequest();
-                $this->providerRepInRequest = new ProviderRepositoryInRequest($this, new Filesystem, $manifestPath);
-                $this->providerRepInRequest->makeManifest($providers);
-                $this->beforeSecondRequest = false;
-
-//                 echo 'first request ', PHP_EOL;
-            }
-
-            $this->providerRepInRequest->load([]);
-
-
-        }
+        $this->providerRepInRequest->load([]);
     }
 
     public function getCachedServicesPathInRequest()

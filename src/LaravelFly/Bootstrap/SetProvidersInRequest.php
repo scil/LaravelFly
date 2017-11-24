@@ -18,7 +18,7 @@ class SetProvidersInRequest
 
             if ($ps) {
 
-                $app->prepareIfProvidersInRequest($ps);
+                $app->prepareForProvidersInRequest($ps);
 
                 $appConfig['app.providers'] = array_diff($appConfig['app.providers'], $ps);
 
