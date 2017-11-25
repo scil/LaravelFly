@@ -74,12 +74,15 @@ class LaravelFlyServer
     protected function bootstrapOnWorkerStart()
     {
 
-        // App\Providers\RouteServiceProvider.boot app['url'] which need app['request']
-        // app['url']->request will update when app['request'] changes, becuase
-        // there is "$app->rebinding( 'request',...)" at Illuminate\Routing\RoutingServiceProvider
-        if (LARAVELFLY_GREEDY) {
+        /**
+         * Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator
+         * new UrlGenerator need app['request']
+         *
+         * no worry about it's fake, because
+         * app['url']->request will update when app['request'] changes, as
+         * there is "$app->rebinding( 'request',...)"
+         */
         $this->app->instance('request', $this->getFakeRequest());
-        }
 
         $this->kernel->bootstrap();
 
