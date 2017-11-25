@@ -22,8 +22,7 @@ class Router extends \Illuminate\Routing\Router
 
         } else {
             // before any request, routes are compiled auto.
-            return parent::newRoute($methods, $uri, $action)
-
+            return parent::newRoute($methods, $uri, $action);
         }
     }
 }

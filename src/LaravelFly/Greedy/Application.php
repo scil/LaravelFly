@@ -3,8 +3,10 @@
 namespace LaravelFly\Greedy;
 
 use Illuminate\Events\EventServiceProvider;
-use LaravelFly\Greedy\Routing\RoutingServiceProvider;
+use Illuminate\Log\LogServiceProvider;
 use Illuminate\Filesystem\Filesystem;
+
+use LaravelFly\Greedy\Routing\RoutingServiceProvider;
 use LaravelFly\ProviderRepository;
 
 class Application extends \LaravelFly\Application
