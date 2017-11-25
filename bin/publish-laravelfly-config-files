@@ -16,7 +16,7 @@ foreach ($files as $src => $des) {
 
     if ($force || !is_file($des)) {
         copy($src, $des);
-        echo "\n[[ $des ]]\n created, please edit it to fit your need", PHP_EOL;
+        echo "\ncreated [$des]\n, please edit it to fit your need", PHP_EOL;
     }
 
 }
