@@ -190,9 +190,9 @@ class Application extends \Illuminate\Foundation\Application
         Facade::clearResolvedInstances();
 
         foreach ($this->__oldValues as $attri => $v) {
-            echo "\n $attri\n";
-            if (is_array($this->$attri))
-                echo 'dif:', count($this->$attri) - count($this->__oldValues[$attri]);
+//            echo "\n $attri\n";
+//            if (is_array($this->$attri))
+//                echo 'dif:', count($this->$attri) - count($this->__oldValues[$attri]);
             $this->$attri = $v;
         }
 

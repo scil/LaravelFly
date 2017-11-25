@@ -127,9 +127,15 @@ class LaravelFlyServer
         $this->setGlobal($request);
 
         // according to : Illuminate\Http\Request::capture
+        /**
+         * @var Illuminate\Http\Request
+         */
         $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
 
         // see: Illuminate\Foundation\Http\Kernel::handle($request)
+        /**
+         * @var Illuminate\Http\Response
+         */
         $laravel_response = $this->kernel->handle($laravel_request);
 
 
@@ -148,17 +154,12 @@ class LaravelFlyServer
             $response->cookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
         }
 
-        // I think " $laravel_response->send()" is enough
-        // $response->status($laravel_response->getStatusCode());
+         $response->status($laravel_response->getStatusCode());
 
         // gzip use nginx
         // $response->gzip(1);
 
-        ob_start();
-        // $laravel_response->send() contains setting header and cookie ,and $response->header and $response->cookie do same jobs.
-        // They are all necessary , according by my test
-        $laravel_response->send();
-        $response->end(ob_get_clean());
+        $response->end($laravel_response->getContent());
 
 
         $this->kernel->terminate($laravel_request, $laravel_response);
