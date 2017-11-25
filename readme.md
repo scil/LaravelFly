@@ -107,10 +107,17 @@ Two methods:
 ```
 vendor/bin/laravelfly-server stop $pid_file
 ```
-Argument `$pid_file` is optional, default is `vendor/bin/laravelfly.pid`. which is created by LaravelFlyServer if you not set 'pid_file' for it.
+`$pid_file` is optional, default is `vendor/bin/laravelfly.pid`.which is created by LaravelFlyServer if you not set 'pid_file' for it.
 
 * in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
 
+
+### Restart
+
+```
+vendor/bin/laravelfly-server restart $pid_file
+```
+`$pid_file` is optional like above.
 
 ## Reload All Workers Gracefully: swoole server reloading
 
