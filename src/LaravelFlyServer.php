@@ -3,11 +3,30 @@
 
 class LaravelFlyServer
 {
+    /**
+     * @var LaravelFlyServer
+     */
     protected static $instance;
+
     protected $laravelDir;
+
+    /**
+     * @var swoole_http_server
+     */
     public $swoole_http_server;
+
+    /**
+     * @var \LaravelFly\Application
+     */
     protected $app;
+    /**
+     * @var string
+     */
     protected $kernelClass;
+
+    /**
+     * @var \LaravelFly\Kernel
+     */
     protected $kernel;
 
     public function __construct($laravelDir, $options, $kernelClass = '\App\Http\Kernel')

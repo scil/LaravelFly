@@ -1,6 +1,6 @@
 <?php
 
-const LARAVELFLY_KERNEL= '\App\Http\Kernel';
+const LARAVELFLY_KERNEL= \App\Http\Kernel::class;
 
 // Normal Mode or Greedy Mode
 const LARAVELFLY_GREEDY = true;
