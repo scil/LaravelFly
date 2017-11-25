@@ -12,6 +12,7 @@ namespace LaravelFly;
 use Exception;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Foundation\Http\Events;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -24,7 +25,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
         // must placed before RegisterProviders, because it change config('app.providers')
-        'LaravelFly\Bootstrap\SetProvidersInRequest',
+        \LaravelFly\Bootstrap\SetProvidersInRequest::class,
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
         \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
@@ -32,9 +33,9 @@ class Kernel extends HttpKernel
         // replaced by `$this->app->bootProvidersInRequest();`
         // \Illuminate\Foundation\Bootstrap\BootProviders::class,
 
-        'LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker',
-        'LaravelFly\Bootstrap\BackupConfigs',
-        'LaravelFly\Bootstrap\BackupAttributes',
+        \LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker::class,
+        \LaravelFly\Bootstrap\BackupConfigs::class,
+        \LaravelFly\Bootstrap\BackupAttributes::class,
     ];
 
     /**

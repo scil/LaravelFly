@@ -22,8 +22,7 @@ return [
 
         /* Illuminate\Events\EventServiceProvider::class : */
         'events' => [
-            'listeners', 'wildcards', 'sorted', 'queueResolver',
-            // 'firing' ,
+            'listeners', 'wildcards',  'queueResolver',
         ],
 
         /* Illuminate\Routing\RoutingServiceProvider::class : */

@@ -44,6 +44,7 @@ class Application extends \Illuminate\Foundation\Application
         $this->needBackUpAppAttributes = array_merge($this->needBackUpAppAttributes,
             ['serviceProviders', 'loadedProviders', 'deferredServices',]);
     }
+
     public function makeManifestForProvidersInRequest($providers)
     {
         $manifestPath = $this->getCachedServicesPathInRequest();
@@ -59,7 +60,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function getCachedServicesPathInRequest()
     {
-        return $this->bootstrapPath().'/cache/laravelfly_services_in_request.json';
+        return $this->bootstrapPath() . '/cache/laravelfly_services_in_request.json';
     }
 
     /**
@@ -148,7 +149,11 @@ class Application extends \Illuminate\Foundation\Application
             }
 
             foreach ($attriList as $attri) {
-                $this->__old[$attri] = $this->$attri;
+                if (property_exists($this, $attri))
+                    $this->__old[$attri] = $this->$attri;
+                else {
+                    echo "[WARN] property '$attri' not exists for ", get_class($this);
+                }
             }
         };
     }
@@ -184,11 +189,11 @@ class Application extends \Illuminate\Foundation\Application
         // clear all, not just request
         Facade::clearResolvedInstances();
 
-        foreach ($this->needBackUpAppAttributes as $attri) {
-            //           echo "\n $attri\n";
-            //if(is_array($this->$attri))
-            //echo count($this->__oldValues[$attri]) - count($this->$attri);
-            $this->$attri = $this->__oldValues[$attri];
+        foreach ($this->__oldValues as $attri => $v) {
+            echo "\n $attri\n";
+            if (is_array($this->$attri))
+                echo 'dif:', count($this->$attri) - count($this->__oldValues[$attri]);
+            $this->$attri = $v;
         }
 
 
