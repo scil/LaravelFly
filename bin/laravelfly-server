@@ -1,0 +1,64 @@
+#!/usr/bin/env php
+<?php
+
+$project_root_dir = realpath(__DIR__ . '/../../../..');
+
+function start()
+{
+    global $project_root_dir;
+    include $project_root_dir . '/vendor/autoload.php';
+
+    LaravelFlyServer::getInstance(
+        $project_root_dir,
+        require isset($argv[1]) && is_file($argv[1]) ? $argv[1] : $project_root_dir . '/laravelfly.server.php'
+    )
+        ->start();
+
+}
+
+function get_pid()
+{
+    global $project_root_dir;
+
+    $pid_file = isset($argv[2]) && is_file($argv[2]) ? $argv[2] :$project_root_dir . '/vendor/bin/laravelfly.pid';
+
+    try {
+        $pid = (int)file_get_contents($pid_file);
+    } catch (Exception $e) {
+        die("pid can not be read from $pid_file");
+    }
+
+    return $pid;
+
+}
+
+function stop($pid)
+{
+    if (class_exists('swoole_process')) {
+        if (swoole_process::kill($pid, 0)) {
+            swoole_process::kill($pid);
+        }
+    } else {
+        passthru("kill -15 $pid");
+    }
+}
+function reload($pid)
+{
+    passthru("kill -USR1 $pid");
+}
+
+if ($argc == 1) {
+    die('supply start|stop|reload');
+}
+
+switch ($argv[1]) {
+    case 'start':
+        start();
+        break;
+    case 'stop':
+        stop(get_pid());
+        break;
+    case 'reload':
+        reload(get_pid());
+        break;
+}

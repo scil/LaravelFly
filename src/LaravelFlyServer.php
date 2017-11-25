@@ -19,6 +19,10 @@ class LaravelFlyServer
 
         $this->kernelClass = $kernelClass;
 
+        if (!isset($options['pid_file'])) {
+            $options['pid_file'] = $this->laravelDir . '/vendor/bin/laravelfly.pid';
+        }
+
         $server->set($options);
 
         $server->on('WorkerStart', array($this, 'onWorkerStart'));
@@ -74,7 +78,7 @@ class LaravelFlyServer
         // app['url']->request will update when app['request'] changes, becuase
         // there is "$app->rebinding( 'request',...)" at Illuminate\Routing\RoutingServiceProvider
         if (LARAVELFLY_GREEDY) {
-            $this->app->instance('request', $this->getFakeRequest());
+        $this->app->instance('request', $this->getFakeRequest());
         }
 
         $this->kernel->bootstrap();

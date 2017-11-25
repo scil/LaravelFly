@@ -71,8 +71,15 @@ if (defined('LARAVELFLY_GREEDY')) {
 class Kernel extends WhichKernel
 ```
 
+
 ## Optional Config
-if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
+
+
+* Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
+
+
+
+* if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
 ```
         'options'   => [
             PDO::ATTR_PERSISTENT => true,
@@ -86,19 +93,26 @@ if you want to use mysql persistent, add following to config/database.php ( do n
 
 ## Run
 
-1. Execute `vendor/bin/start-laravelfly-server $absolute_path_of_server_config_file`
-   Argument `$absolute_path_of_server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.php`.
-2. Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
-
+Execute 
+```
+vendor/bin/laravelfly-server start $absolute_path_of_server_config_file
+```
+Argument `$absolute_path_of_server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.php`.
 
 ## Stop
 
-Two ways:
-* send SIGTERM to swoole server main process: " kill -15 `ps a | grep start-laravelfly-server| awk 'NR==1 {print $1}'`"
-* in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
+Two methods:
+
+* Execute 
+```
+vendor/bin/laravelfly-server stop $pid_file
+```
+Argument `$pid_file` is optional, default is `vendor/bin/laravelfly.pid`. which is created by LaravelFlyServer if you not set 'pid_file' for it.
+
+* in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
 
 
-## Restart All Workers Gracefully: swoole server reloading
+## Reload All Workers Gracefully: swoole server reloading
 
 Swoole server has a main process, a manager process and one or more worker processes.If you set `'worker_num' => 4`, there are 6 processes.The first the main process, the second is the manager process, and the last four are all worker processes.
 
@@ -106,11 +120,18 @@ Swoole server reloading has no matter with the main process or the manager proce
 
 Gracefully is that: worker willl finish its work before die.
 
-Two ways to reload
-* open terminal and execute "kill -USR1 `ps a | grep start-laravelfly-server| awk 'NR==2 {print $1}'`"
+### Two methods to reload
+* Execute 
+```
+vendor/bin/laravelfly-server reload $pid_file
+```
+Argument `$pid_file` is optional, default is `vendor/bin/laravelfly.pid`. which is created by LaravelFlyServer if you not set 'pid_file' for it.
+
+The work of this script is to send siginal USR1 to swoole manager process. You can run `kill -USR1 PID` in a bash script yourself.
+
 * in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
 
-Details:
+### Details:
 1. Send USR1 to swoole manager process
 2. swoole manager process send TERM to all worker processes
 3. Every worker first finish it's work, then call OnWorkerStop callback, then kill itself.
@@ -124,7 +145,7 @@ Note, files required or included before 'WorkerStart' will keep in memory, even 
 
 So it's better to include/require files which change rarely before 'WorkerStart' to save memory, to include/require files which change often in 'WorkerStart' callback to hot reload.
 
-You could moniter some files and execute "kill -USR1 `ps a | grep start-laravelfly-server| awk 'NR==2 {print $1}'`" to hot reload , just make sure there files are required/included in 'WorkerStart' callback.
+You could moniter some files and reload server(two methods above) , just make sure there files are required/included in 'WorkerStart' callback.
 
 If you use APC/OpCache, you could use one of these measures
 * edit php.ini and make APC/OpCache to hot reload opcode

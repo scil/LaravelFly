@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "laravel/framework": "~5.5",
+    "laravel/framework": "5.5.*",
     "ext-swoole": "^1.9.23 || >=2.0.9"
   },
   "require-dev": {
@@ -28,7 +28,7 @@
     }
   },
   "bin": [
-    "bin/start-laravelfly-server",
+    "bin/laravelfly-server",
     "bin/publish-laravelfly-config-files",
     "bin/hack-laravel-for-laravelfly"
   ]
