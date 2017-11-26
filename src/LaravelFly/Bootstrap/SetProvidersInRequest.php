@@ -23,9 +23,8 @@ class SetProvidersInRequest
                 $appConfig['app.providers'] = array_diff($appConfig['app.providers'], $ps);
 
                 if ($appConfig['app.debug']) {
-                    echo PHP_EOL, 'Providers in request ( they are removed from config["app.providers"] )';
-                    var_dump($ps);
-                    echo 'from:',PHP_EOL,__CLASS__, PHP_EOL ;
+                    echo  '[NOTICE] Providers in request ( they are removed from config["app.providers"] )',
+                    implode(', ',$ps),'.From:',__CLASS__, PHP_EOL;
                 }
             }
 

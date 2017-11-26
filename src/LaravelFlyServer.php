@@ -34,7 +34,11 @@ class LaravelFlyServer
 
         $this->laravelDir = realpath($laravelDir);
 
-        $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+        try {
+            $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+        } catch (\Throwable $e) {
+            die('[FAILED] '.$e->getMessage().PHP_EOL);
+        }
 
         $this->kernelClass = $kernelClass;
 
@@ -55,7 +59,7 @@ class LaravelFlyServer
     {
         $this->swoole_http_server->start();
 
-        echo '[INFO] server start',PHP_EOL;
+        echo '[INFO] server start', PHP_EOL;
 
         $this->initSthWhenServerStart();
     }
@@ -104,7 +108,7 @@ class LaravelFlyServer
          * app['url']->request will update when app['request'] changes, as
          * there is "$app->rebinding( 'request',...)"
          */
-        $this->app->instance('request',\Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
+        $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
 
         try {
             $this->kernel->bootstrap();
@@ -138,7 +142,7 @@ class LaravelFlyServer
         //  once there were errors saying 'http_onReceive: connection[...] is closed' which make worker restart
         // now they are useless
         // if (!$this->swoole_http_server->exist($response->fd)) {
-            // return;
+        // return;
         // }
 
         foreach ($laravel_response->headers->allPreserveCase() as $name => $values) {
