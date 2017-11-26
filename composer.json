@@ -1,6 +1,6 @@
 {
   "name": "scil/laravel-fly",
-  "description": "make laravel faster by using swoole extension, which runs on Linux and OS X.",
+  "description": "make laravel faster by using swoole extension.",
   "type": "library",
   "keywords": [
     "swoole",

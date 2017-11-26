@@ -94,32 +94,26 @@ class LaravelFlyServer
     {
 
         /**
-         * Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator
+         * instance a fake request
          * new UrlGenerator need app['request']
+         * see: Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator
          *
          * no worry about it's fake, because
          * app['url']->request will update when app['request'] changes, as
          * there is "$app->rebinding( 'request',...)"
          */
-        $this->app->instance('request', $this->getFakeRequest());
+        $this->app->instance('request',\Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
 
-        $this->kernel->bootstrap();
-
-
-    }
-
-    protected function getFakeRequest()
-    {
-        static $request = null;
-        if (is_null($request)) {
-            $request = \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request());
+        try {
+            $this->kernel->bootstrap();
+        } catch (\Throwable $e) {
+            echo $e;
+            $this->swoole_http_server->shutdown();
         }
-        return $request;
 
     }
 
-
-    public function onRequest($request, $response)
+    public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
         // global vars used by: Symfony\Component\HttpFoundation\Request::createFromGlobals()
@@ -139,10 +133,11 @@ class LaravelFlyServer
         $laravel_response = $this->kernel->handle($laravel_request);
 
 
-        //  sometimes there are errors saying 'http_onReceive: connection[...] is closed' and this type of error make worker restart
-        if (!$this->swoole_http_server->exist($response->fd)) {
-            return;
-        }
+        //  once there were errors saying 'http_onReceive: connection[...] is closed' which make worker restart
+        // now they are useless
+        // if (!$this->swoole_http_server->exist($response->fd)) {
+            // return;
+        // }
 
         foreach ($laravel_response->headers->allPreserveCase() as $name => $values) {
             foreach ($values as $value) {
@@ -154,7 +149,7 @@ class LaravelFlyServer
             $response->cookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
         }
 
-         $response->status($laravel_response->getStatusCode());
+        $response->status($laravel_response->getStatusCode());
 
         // gzip use nginx
         // $response->gzip(1);
@@ -170,8 +165,8 @@ class LaravelFlyServer
     }
 
     // copied from Swoole Framework
-    // https://github.com/swoole/framework/blob/master/libs/Swoole/Http/ExtServer.php
-    // Swoole Framework is a web framework like Laravel
+    // https://github.com/matyhtf/framework/libs/Swoole/Request.php
+    // https://github.com/swoole/framework/libs/Swoole/Http/ExtServer.php
     protected function setGlobal($request)
     {
         if (isset($request->get)) {

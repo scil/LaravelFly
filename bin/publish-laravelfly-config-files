@@ -1,11 +1,11 @@
 #!/usr/bin/env php
 <?php
 
-$force = isset($argv[1]) && $argv[1] === 'force';
+$force = isset($argv[1]) && $argv[1] === '--force';
 
 $files = [
-    'laravelfly.example.php' => '/config/laravelfly.php',
-    'laravelfly.server.example.php' => '/laravelfly.server.php',
+    'laravelfly-app-config.example.php' => '/config/laravelfly.php',
+    'laravelfly-server-config.example.php' => '/laravelfly.server.php',
 ];
 
 $project_root_dir = realpath(__DIR__ . '/../../../..');
@@ -16,7 +16,9 @@ foreach ($files as $src => $des) {
 
     if ($force || !is_file($des)) {
         copy($src, $des);
-        echo "\ncreated [$des]\n, please edit it to fit your need", PHP_EOL;
+        echo "File '$des' created \n";
+    }else{
+        echo "File '$des' already exists , try to add --force\n";
     }
 
 }

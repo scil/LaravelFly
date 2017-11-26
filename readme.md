@@ -24,13 +24,12 @@ So the key is to backup some objects before any request, and restore them after 
 First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
     protected $bootstrappers = [
-        'Illuminate\Foundation\Bootstrap\DetectEnvironment',
-        'Illuminate\Foundation\Bootstrap\LoadConfiguration',
-        'Illuminate\Foundation\Bootstrap\ConfigureLogging',
-        'Illuminate\Foundation\Bootstrap\HandleExceptions',
-        'Illuminate\Foundation\Bootstrap\RegisterFacades',
-        'Illuminate\Foundation\Bootstrap\RegisterProviders',
-        'Illuminate\Foundation\Bootstrap\BootProviders',
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
 ```
 The "$bootstrappers" is what Laravel do before handling a request, LaravelFly execute them before any request, except the last two items "RegisterProviders" and "BootProviders"
@@ -53,7 +52,7 @@ You can choose Mode in <project_root_dir>/laravelfly.server.php after you publis
 
 ## Config
 
-1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .you can add argument "force" to overwrite old config files.`vendor/bin/publish-laravelfly-config-files force`
+1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .you can add "--force" to overwrite old config files.`vendor/bin/publish-laravelfly-config-files --force`
 2. Edit `<project_root_dir>/laravelfly.server.php`.
 3. Edit `<project_root_dir>/config/laravelfly.php`. Note: about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to

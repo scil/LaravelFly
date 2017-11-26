@@ -3,7 +3,7 @@
 namespace LaravelFly;
 
 use Illuminate\Events\EventServiceProvider;
-use LaravelFly\Routing\RoutingServiceProvider;
+//use LaravelFly\Routing\RoutingServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
 
@@ -149,10 +149,12 @@ class Application extends \Illuminate\Foundation\Application
             }
 
             foreach ($attriList as $attri) {
+
                 if (property_exists($this, $attri))
                     $this->__old[$attri] = $this->$attri;
                 else {
                     echo "[WARN] property '$attri' not exists for ", get_class($this);
+
                 }
             }
         };
