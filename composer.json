@@ -18,6 +18,7 @@
     "ext-swoole": "^1.9.23 || >=2.0.9"
   },
   "require-dev": {
+      "eaglewu/swoole-ide-helper": "dev-master"
   },
   "autoload": {
     "classmap": [
