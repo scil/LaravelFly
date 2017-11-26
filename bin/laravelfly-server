@@ -2,6 +2,7 @@
 <?php
 
 $project_root_dir = realpath(__DIR__ . '/../../../..');
+$default_config_file= $project_root_dir . '/laravelfly.server.config.php';
 
 function start($config_file)
 {
@@ -20,12 +21,16 @@ function get_pid()
 {
     global $project_root_dir;
 
-    $pid_file = isset($argv[2]) && is_file($argv[2]) ? $argv[2] : $project_root_dir . '/vendor/bin/laravelfly.pid';
+    $pid_file = isset($argv[2]) ? $argv[2] : $project_root_dir . '/vendor/bin/laravelfly.pid';
+
+    if (!is_file($pid_file)) {
+        die("pidfile $pid_file no exists\n");
+    }
 
     try {
         $pid = (int)file_get_contents($pid_file);
-    } catch (Exception $e) {
-        die("pid can not be read from $pid_file");
+    } catch (\Throwable $e) {
+        die("pid can not be read from $pid_file \n");
     }
 
     return $pid;
@@ -52,8 +57,8 @@ function restart($pid)
 {
     $server_config_file = system("ps -f -p $pid | awk 'END{print \$11}'");
     if (!$server_config_file) {
-        global $project_root_dir;
-        $server_config_file = $project_root_dir . '/laravelfly.server.php';
+        global $default_config_file;
+        $server_config_file = $default_config_file;
     }
     stop($pid);
     start($server_config_file);
@@ -62,12 +67,12 @@ function restart($pid)
 $options = ['start', 'stop', 'reload', 'restart'];
 
 if ($argc == 1) {
-    die('[ERROR] supply an option: ' . implode('|', $options) . PHP_EOL);
+    die('supply an opton' . implode('|', $options));
 }
 
 switch ($argv[1]) {
     case 'start':
-        start(isset($argv[1]) && is_file($argv[1]) ? $argv[1] : $project_root_dir . '/laravelfly.server.php');
+        start(isset($argv[1]) && is_file($argv[1]) ? $argv[1] : $default_config_file);
         break;
     default:
         if (in_array($argv[1], $options))

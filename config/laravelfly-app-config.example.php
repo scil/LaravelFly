@@ -240,15 +240,7 @@ return [
         /* Illuminate\Session\SessionServiceProvider::class :*/
         'session' => [],
         'session.store' => [
-            'attributes','name','bagData',
-            /* warn
-            todo if 'bags' is changed by some service providers before any requests, how to backup and restore?
-            it's members are like metaBag, object, not scale var
-            */
-            'bags',
-            '__obj__'=>[
-                'metaBag'=>['meta','lastUsed']
-            ]
+            'id','name','attributes',
         ],
         'Illuminate\Session\Middleware\StartSession' => [
             'sessionHandled',

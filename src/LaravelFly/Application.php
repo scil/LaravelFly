@@ -129,6 +129,10 @@ class Application extends \Illuminate\Foundation\Application
                     if (empty($attris)) {
                         continue;
                     }
+                    if (!property_exists($this, $obj)){
+                        echo "[WARN] check config\laravelfly.php, property '$obj' not exists for ", get_class($this);
+                        continue;
+                    }
                     $o = $this->$obj;
                     $info = ['obj' => $o, 'r_props' => [], 'values' => []];
                     $r = new \ReflectionObject($o);
@@ -153,7 +157,7 @@ class Application extends \Illuminate\Foundation\Application
                 if (property_exists($this, $attri))
                     $this->__old[$attri] = $this->$attri;
                 else {
-                    echo "[WARN] property '$attri' not exists for ", get_class($this);
+                    echo "[WARN]check config\laravelfly.php,property '$attri' not exists for ", get_class($this);
 
                 }
             }

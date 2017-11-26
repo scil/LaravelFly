@@ -55,6 +55,8 @@ class LaravelFlyServer
     {
         $this->swoole_http_server->start();
 
+        echo '[INFO] server start',PHP_EOL;
+
         $this->initSthWhenServerStart();
     }
 

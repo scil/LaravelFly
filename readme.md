@@ -53,7 +53,7 @@ You can choose Mode in <project_root_dir>/laravelfly.server.php after you publis
 ## Config
 
 1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .you can add "--force" to overwrite old config files.`vendor/bin/publish-laravelfly-config-files --force`
-2. Edit `<project_root_dir>/laravelfly.server.php`.
+2. Edit `<project_root_dir>/laravelfly.server.config.php`.
 3. Edit `<project_root_dir>/config/laravelfly.php`. Note: about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
@@ -96,7 +96,7 @@ Execute
 ```
 vendor/bin/laravelfly-server start $absolute_path_of_server_config_file
 ```
-Argument `$absolute_path_of_server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.php`.
+Argument `$absolute_path_of_server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.config.php`.
 
 ## Stop
 
