@@ -34,17 +34,13 @@ class LaravelFlyServer
 
         $this->laravelDir = realpath($laravelDir);
 
-        try {
-            $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
-        } catch (\Throwable $e) {
-            die('[FAILED] '.$e->getMessage().PHP_EOL);
-        }
-
         $this->kernelClass = $kernelClass;
 
         if (!isset($options['pid_file'])) {
             $options['pid_file'] = $this->laravelDir . '/vendor/bin/laravelfly.pid';
         }
+
+        $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
         $server->set($options);
 
@@ -53,17 +49,37 @@ class LaravelFlyServer
         $server->on('request', array($this, 'onRequest'));
 
         return $this;
+
+
+    }
+
+    public static function getInstance($laravelDir, $options)
+    {
+        if (!self::$instance) {
+            try {
+                self::$instance = new static($laravelDir, $options);
+            } catch (\Throwable $e) {
+                die('[FAILED] ' . $e->getMessage() . PHP_EOL);
+            }
+        }
+        return self::$instance;
     }
 
     public function start()
     {
-        $this->swoole_http_server->start();
-
-        echo '[INFO] server start', PHP_EOL;
+        try {
+            $this->swoole_http_server->start();
+            echo '[INFO] server start', PHP_EOL;
+        } catch (\Throwable $e) {
+            die('[FAILED] ' . $e->getMessage() . PHP_EOL);
+        }
 
         $this->initSthWhenServerStart();
     }
 
+    /**
+     * Do sth. that is done in all of the Laravel requests.
+     */
     protected function initSthWhenServerStart()
     {
         // removed from Illuminate\Foundation\Http\Kernel::handle
@@ -213,14 +229,6 @@ class LaravelFlyServer
             $_SERVER[$_key] = $value;
         }
         $_SERVER['REMOTE_ADDR'] = $request->server['remote_addr'];
-    }
-
-    public static function getInstance($laravelDir, $options)
-    {
-        if (!self::$instance) {
-            self::$instance = new static($laravelDir, $options);
-        }
-        return self::$instance;
     }
 }
 
