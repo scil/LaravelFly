@@ -20,7 +20,7 @@ return [
 
     'listen_port' => 9501,
 
-    // like pm.max_children in php-fpm, but there's no option like pm.start_servers
+    // like pm.start_servers in php-fpm, but there's no option like pm.max_children
     'worker_num' => 4,
 
     // set it to false when debug, otherwise true
