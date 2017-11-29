@@ -6,37 +6,40 @@ It's a composer package and can be installed on your existing projects without a
 
 ## Test
 
-A simple ab test on ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 800M  )
+### A simple ab test 
 
+env: 
+ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 800M  )
 php7.1+opcache for both fpm and laravelfly
 
-* Fly 5workers:   nginx laravelfly 5workers ( 'worker_num' => 5)  
+
+item  |  Fly 5 workers[1] | fpm 5 servers[2]  | fpm 5+ servers[3] | Fly 1 worker[4]
+------------ | ------------ | ------------- | ------------- | -------------
+Time taken for tests | 158.175  | 1630.447  | 3673.403 | 737.869
+Failed requests | 0 | 9  | 17 | 3
+Total transferred |  2594022  | 2036748  | 2020334 | 2591839 
+Requests per second |  12.64  | 1.23  | 0.56  |  2.71
+Time per request ( across) |  79.087  | 815.223  |  1836.702  | 368.935
+  50% |   103  | 5737 | 8157  | 380
+  80% |  177   | 11667 |   15261  |  1267
+  99% | 20763  | 44307  | 54928 |  28579
+ 100%  | 37331  | 59981  | 1574593  |   60137
+
+
+1. Fly 5 workers:   nginx laravelfly 5workers ( 'worker_num' => 5)  
 `ab -n 2000 -c 10 http://127.0.0.1:9502/`
-* fpm 5servers:  nginx fpm 5servers 
+2. fpm 5 servers:  nginx fpm 5servers ( pm=static  pm.max_children=5)
  `ab -n 2000 -c 10 http://127.0.0.1:9588/`
-* Fly 1worker:     nginx  laravelfly 1workers ( 'worker_num' => 1)   
+3. fpm 5+ servers:  nginx fpm 5+servers  ( pm = dynamic pm.start_servers = 5 pm.max_children = 50)
+ `ab -n 2000 -c 10 http://127.0.0.1:9588/`
+4. Fly 1 worker:     nginx  laravelfly 1workers ( 'worker_num' => 1)   
 `ab -n 2000 -c 10 http://127.0.0.1:9502/ `
 
-fpm config:
-* pm = dynamic
-* pm.start_servers = 5
-* pm.max_children = 50
+Test date : 2017/11
 
-item  |  Fly 5workers | fpm 5+servers | Fly 1worker
------------- | ------------ | ------------- | -------------
-Time taken for tests | 158.175  | 3581.356 | 737.869
-Failed requests | 0 | 34 | 3
-Total transferred |  2594022 | 2020334 | 2591839 
-Requests per second |  12.64 | 0.56  |  2.71
-Time per request ( across) |  79.087 |  1790.678  | 368.935
-  50% |   103 | 17466  | 380
-  80% |  177  |   22103  |  1267
-  99% | 20763 | 60003 |  28579
- 100%  | 37331 | 60038  |   60137
+### other tests
 
-Test date : 2017/11/29.
-
-There is an test years ago by reddit user: [reddit](https://www.reddit.com/r/laravel/comments/3ttcmw/laravelfly_run_laravel_10x_faster_on_linux/)
+an test years ago by reddit user: [reddit](https://www.reddit.com/r/laravel/comments/3ttcmw/laravelfly_run_laravel_10x_faster_on_linux/)
 
 ## How to work
 
