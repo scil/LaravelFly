@@ -41,14 +41,6 @@ Test date : 2017/11
 
 an test years ago by reddit user: [reddit](https://www.reddit.com/r/laravel/comments/3ttcmw/laravelfly_run_laravel_10x_faster_on_linux/)
 
-### Todo
-
-- [ ] `vendor/bin/hack-laravel-for-laravelfly` still be necessary?
-- [ ] add tests
-- [ ] improve backup and restore
-- [ ] send file
-- [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
-
 ## How to work
 
 [Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot.A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
@@ -95,9 +87,12 @@ Note, Greedy Mode is still experimental.
 
 ## Config
 
-1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .you can add "--force" to overwrite old config files.`vendor/bin/publish-laravelfly-config-files --force`
+1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .  
+you can add "--force" to overwrite old config files.  
+`vendor/bin/publish-laravelfly-config-files --force`
 2. Edit `<project_root_dir>/laravelfly.server.config.php`.
-3. Edit `<project_root_dir>/config/laravelfly.php`. Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
+3. Edit `<project_root_dir>/config/laravelfly.php`.   
+Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_GREEDY')) {
@@ -116,10 +111,7 @@ class Kernel extends WhichKernel
 
 ## Optional Config
 
-
 * Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
-
-
 
 * if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
 ```
@@ -211,4 +203,10 @@ Memory usage may grow slowly. You can set 'max_request' to a small number.
 
 A simple way to detect memory usage growth is use Apache ab.exe and linux command "free"
 
+### Todo
 
+- [ ] `vendor/bin/hack-laravel-for-laravelfly` still be necessary?
+- [ ] add tests
+- [ ] improve backup and restore
+- [ ] send file
+- [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
