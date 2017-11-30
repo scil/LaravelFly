@@ -26,13 +26,13 @@ Time per request ( across) |  79.087  | 815.223  |  1836.702  | 368.935
  100%  | 37331  | 59981  | 1574593  |   60137
 
 
-1. Fly 5 workers:   nginx laravelfly 5workers ( 'worker_num' => 5)  
+1. Fly 5 workers:   nginx laravelfly 5workers ( 'worker_num' => 5,  LARAVELFLY_GREEDY = false;)
 `ab -n 2000 -c 10 http://127.0.0.1:9502/`
 2. fpm 5 servers:  nginx fpm 5servers ( pm=static  pm.max_children=5)
  `ab -n 2000 -c 10 http://127.0.0.1:9588/`
 3. fpm 5+ servers:  nginx fpm 5+servers  ( pm = dynamic pm.start_servers = 5 pm.max_children = 50)
  `ab -n 2000 -c 10 http://127.0.0.1:9588/`
-4. Fly 1 worker:     nginx  laravelfly 1workers ( 'worker_num' => 1)   
+4. Fly 1 worker:     nginx  laravelfly 1workers ( 'worker_num' => 1, LARAVELFLY_GREEDY = false;)
 `ab -n 2000 -c 10 http://127.0.0.1:9502/ `
 
 Test date : 2017/11
@@ -40,6 +40,14 @@ Test date : 2017/11
 ### other tests
 
 an test years ago by reddit user: [reddit](https://www.reddit.com/r/laravel/comments/3ttcmw/laravelfly_run_laravel_10x_faster_on_linux/)
+
+### Todo
+
+- [ ] `vendor/bin/hack-laravel-for-laravelfly` still be necessary?
+- [ ] add tests
+- [ ] improve backup and restore
+- [ ] send file
+- [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
 
 ## How to work
 
@@ -72,7 +80,9 @@ In Greedy Mode, providers in "config('laravelfly.providers_in_worker')" are regi
 
 And In Greedy Mode, you can define which singleton services to made before any request in "config('laravelfly.services_to_make_in_worker')".If necessary, you should define which properties need to backup and restore. 
 
-You can choose Mode in <project_root_dir>/laravelfly.server.php after you publish config files..
+You can choose Mode in <project_root_dir>/laravelfly.server.php after you publish config files.
+
+Note, Greedy Mode is still experimental.
 
 ## Install
 
@@ -80,14 +90,14 @@ You can choose Mode in <project_root_dir>/laravelfly.server.php after you publis
 2. `composer require "scil/laravel-fly":"dev-master"`
 3. optional:`composer require --dev "eaglewu/swoole-ide-helper:dev-master"` , which is useful in IDE development.
 4. If the users of your website would upload files to your server, edit composer.json
-    1. Add "vendor/bin/hack-laravel-for-laravelfly" to 'post-install-cmd' and 'post-update-cmd'
+    1. Add `vendor/bin/hack-laravel-for-laravelfly` to 'post-install-cmd' and 'post-update-cmd'
     2. If necessary, manually execute "vendor/bin/hack-laravel-for-laravelfly" .
 
 ## Config
 
 1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .you can add "--force" to overwrite old config files.`vendor/bin/publish-laravelfly-config-files --force`
 2. Edit `<project_root_dir>/laravelfly.server.config.php`.
-3. Edit `<project_root_dir>/config/laravelfly.php`. Note: about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
+3. Edit `<project_root_dir>/config/laravelfly.php`. Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_GREEDY')) {
