@@ -83,9 +83,6 @@ A simple way is `pecl install swoole`.
 Make sure `extension=swoole.so` in php  config file for cli, not  fpm or apache.
 2. `composer require "scil/laravel-fly":"dev-master"`
 3. optional:`composer require --dev "eaglewu/swoole-ide-helper:dev-master"` , which is useful in IDE development.
-4. If the users of your website would upload files to your server, edit composer.json
-    1. Add `vendor/bin/hack-laravel-for-laravelfly` to 'post-install-cmd' and 'post-update-cmd'
-    2. If necessary, manually execute "vendor/bin/hack-laravel-for-laravelfly" .
 
 ## Config
 
@@ -207,8 +204,8 @@ A simple way to detect memory usage growth is use Apache ab.exe and linux comman
 
 ### Todo
 
-- [ ] `vendor/bin/hack-laravel-for-laravelfly` still be necessary?
 - [ ] add tests
 - [ ] improve backup and restore
+- [ ] Laravel5.5, like package auto-detection
 - [ ] send file
 - [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
