@@ -78,7 +78,9 @@ Note, Greedy Mode is still experimental.
 
 ## Install
 
-1. Install php extension [swoole](https://github.com/swoole/swoole-src).A simple way is `pecl install swoole`
+1. Install php extension [swoole](https://github.com/swoole/swoole-src).  
+A simple way is `pecl install swoole`.  
+Make sure `extension=swoole.so` in php  config file for cli, not  fpm or apache.
 2. `composer require "scil/laravel-fly":"dev-master"`
 3. optional:`composer require --dev "eaglewu/swoole-ide-helper:dev-master"` , which is useful in IDE development.
 4. If the users of your website would upload files to your server, edit composer.json
