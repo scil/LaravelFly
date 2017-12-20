@@ -9,17 +9,38 @@ use Illuminate\Support\Facades\Facade;
 
 class Application extends \Illuminate\Foundation\Application
 {
+
     protected $bootedInRequest = false;
 
     protected $needBackUpAppAttributes = [
-        'bindings', 'resolved', 'instances', 'aliases', 'extenders', 'tags', 'contextual',
-        // 'buildStack ',
-        'bootingCallbacks', 'bootedCallbacks', 'terminatingCallbacks', 'reboundCallbacks',
-        'globalResolvingCallbacks', 'globalAfterResolvingCallbacks',
-        'afterResolvingCallbacks', 'resolvingCallbacks',
+        'resolved',
+        'bindings',
+        'methodBindings',
+        'instances',
+        'aliases',
+        'abstractAliases',
+        'extenders',
+        'tags',
+        'buildStack',
+        'with',
+        'contextual',
+        'reboundCallbacks',
+        'globalResolvingCallbacks',
+        'globalAfterResolvingCallbacks',
+        'resolvingCallbacks',
+        'afterResolvingCallbacks',
 
+        'bootingCallbacks',
+        'bootedCallbacks',
+        'terminatingCallbacks',
+
+        'serviceProviders',
+        'loadedProviders',
+        'deferredServices',
+
+        'monologConfigurator'
     ];
-    protected $__oldValues = [];
+    protected $__valuesBeforeRequest = [];
 
     protected $needBackupServiceAttributes = [];
     protected $restoreTool = [];
@@ -41,8 +62,6 @@ class Application extends \Illuminate\Foundation\Application
     public function prepareForProvidersInRequest($ps)
     {
         $this->makeManifestForProvidersInRequest($ps);
-        $this->needBackUpAppAttributes = array_merge($this->needBackUpAppAttributes,
-            ['serviceProviders', 'loadedProviders', 'deferredServices',]);
     }
 
     public function makeManifestForProvidersInRequest($providers)
@@ -100,9 +119,7 @@ class Application extends \Illuminate\Foundation\Application
     public function backUpOnWorker()
     {
         foreach ($this->needBackUpAppAttributes as $attri) {
-
-            $this->__oldValues[$attri] = $this->$attri;
-
+            $this->__valuesBeforeRequest[$attri] = $this->$attri;
         }
 
         foreach ($this->needBackupServiceAttributes as $name => $attris) {
@@ -129,7 +146,7 @@ class Application extends \Illuminate\Foundation\Application
                     if (empty($attris)) {
                         continue;
                     }
-                    if (!property_exists($this, $obj)){
+                    if (!property_exists($this, $obj)) {
                         echo "[WARN] check config\laravelfly.php, property '$obj' not exists for ", get_class($this);
                         continue;
                     }
@@ -195,7 +212,7 @@ class Application extends \Illuminate\Foundation\Application
         // clear all, not just request
         Facade::clearResolvedInstances();
 
-        foreach ($this->__oldValues as $attri => $v) {
+        foreach ($this->__valuesBeforeRequest as $attri => $v) {
 //            echo "\n $attri\n";
 //            if (is_array($this->$attri))
 //                echo 'dif:', count($this->$attri) - count($this->__oldValues[$attri]);
