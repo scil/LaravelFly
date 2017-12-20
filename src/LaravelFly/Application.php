@@ -38,7 +38,9 @@ class Application extends \Illuminate\Foundation\Application
         'loadedProviders',
         'deferredServices',
 
+        /** not necessary
         'monologConfigurator'
+         */
     ];
     protected $__valuesBeforeRequest = [];
 
@@ -124,9 +126,7 @@ class Application extends \Illuminate\Foundation\Application
 
         foreach ($this->needBackupServiceAttributes as $name => $attris) {
             $o = $this->instances[$name] ?? $this->make($name);
-            $backuper = $this->backupToolMaker($attris);
-            $backuper = $backuper->bindTo($o, get_class($o));
-            $backuper();
+            $this->backupToolMaker($attris)->call($o);
 
             $this->restoreTool[$name] = $this->restoreToolMaker()->bindTo($o, get_class($o));
         }
@@ -138,6 +138,7 @@ class Application extends \Illuminate\Foundation\Application
     protected function backupToolMaker($attriList)
     {
         return function () use ($attriList) {
+            // $this is not Application, but the service object, like event,log....
             $this->__old = [];
             $this->__oldObj = [];
 
@@ -160,9 +161,6 @@ class Application extends \Illuminate\Foundation\Application
                         $info['values'][$attr] = $r_attr->getValue($o);
                     }
                     $this->__oldObj[] = $info;
-//                    $backuper = $app->backupToolMaker($attris);
-//                    $backuper = $backuper->bindTo($o, get_class($o));
-//                    $backuper();
 
                 }
 
