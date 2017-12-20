@@ -3,11 +3,13 @@
 
 return [
     'config_need_backup' => [
-        /* depends */
-        // 'debugbar.enabled',
+        /** depends
+         *
+         * 'debugbar.enabled',
+         */
     ],
 
-    /* Providers to reg and boot after each request
+    /** Providers to reg and boot after each request
      * Providers not found in config('app.providers') would be ignored
      */
     'providers_in_request' => [
@@ -22,55 +24,59 @@ return [
 
         /* Illuminate\Events\EventServiceProvider::class : */
         'events' => [
-            'listeners', 'wildcards',  'queueResolver',
+            'listeners', 'wildcards', 'queueResolver',
         ],
 
         /* Illuminate\Routing\RoutingServiceProvider::class : */
         'router' => [
-            /* not necessary to backup, it will be changed during next request */
-            // 'current',
-            /* not necessary to backup, the ref to app('request') will be released during next request */
-            // 'currentRequest',
+            /** not necessary to backup,
+             *
+             * it will be changed during next request
+             // 'current',
+             *
+             * the ref to app('request') will be released during next request
+             //'currentRequest',
+             */
 
-            /* depends */
-            /* Uncomment them if it's not same on each requests. Its value changed by Route::middleware */
-            // 'middleware', 
-            // 'middlewareGroups',  // only for laravel5.2+
+            /** depends
+             * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
+             */
+            // 'middleware','middlewareGroups','middlewarePriority',
 
             '__obj__' => [
                 'routes' => [
-                    /* depends */
-                    /* Comment them if all of your routes are created before any request.
-                       Besides, because values of these four properties are associate arrays,
-                       if routes created during request are always same , you can also comment them safety,
-                       but I think its usefulness is mere.*/
-                    'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
+                    /** depends
+                     *
+                     * Uncomment them if some of your routes are created during any request.
+                     * Besides, because values of these four properties are associate arrays,
+                     * if names of routes created during request are sometime different , please uncomment them ,
+                     */
+                    // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
                 ],
             ], /* end '__obj__' */
         ], /* end 'router' */
 
-        /* 'url' is made by Illuminate\Foundation\Support\Providers\RouteServiceProvider.php which is extended by app\Providers\RouteServiceProvider.php
-         * todo  /app/Providers/RouteServiceProvider.php   'url' is made when boot, is it necessary to change routes?
-         * no need set request for `url' on every request , because there is a $app->rebinding for request:
-             $app->rebinding( 'request', $this->requestRebinder() )
-         * Note:  in non-Greey mode, there's no 'url' obj before request
-        */
         'url' => [
-            /* not necessary to backup, the ref to app('request') will be released during next request; */
-            // 'request'
+            /** not necessary to backup,
+             *
+             * the ref to app('request') will be released during next request;
+             * and no need set request for `url' on every request , because there is a $app->rebinding for request:
+             *      $app->rebinding( 'request', $this->requestRebinder() )
+             //'request'
+             */
 
             /* depends */
             // 'forcedRoot', 'forceSchema',
-
-            /* depends */
             // 'cachedRoot', 'cachedSchema',
         ],
 
 
-        /* nothing need to backup */
-        'redirect' => false,
-        /* nothing need to backup */
-        'routes' => false,
+        /** nothing need to backup
+         *
+         // 'redirect' => false,
+         // 'routes' => false,
+         // 'log' => false,
+         */
     ],
 
     /* for Greedy mode */
@@ -81,9 +87,6 @@ return [
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        /* depends */
-        /* This provider is missing in Laravel5.2, you can uncomment it in L5.1  */
-        // Illuminate\Routing\ControllerServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
@@ -117,8 +120,6 @@ return [
      * only for Greedy mode
      *
      * only singleton services are useful and valid here.
-     * there are two forms of singleton services.
-     *     *   $this->app['router'] = $this->app->share(function ($app) { ... });
      *     *   $this->app->singleton('cache', function ($app) { ... });
      *
      * item format has three format:
@@ -154,16 +155,11 @@ return [
         /* It's rare that there console services  are used for your user. */
         // 'command.auth.resets.clear' => [],'migrator' => [],...
 
-        /* depends */
-        /* This provider is missing in Laravel5.2, you can uncomment it in L5.1  */
-        /* Illuminate\Routing\ControllerServiceProvider::class :*/
-        // 'illuminate.route.dispatcher' => [],
-
-
         /* Illuminate\Cookie\CookieServiceProvider::class :*/
         'cookie' => [
-            /* depends */
-            /* uncomment them if they are changed during request */
+            /** depends
+             * uncomment them if they are changed during request
+             */
             // 'path', 'domain',
 
             //todo necessary?
@@ -179,10 +175,10 @@ return [
         'encrypter' => [],
 
 
-        /* Illuminate\Filesystem\FilesystemServiceProvider::class :*/
-        /* depends */
+        // Illuminate\Filesystem\FilesystemServiceProvider::class :
+        /** depends
+         */
         //'filesystem.disk' => [],
-        /* depends */
         //'filesystem.cloud' => [],
 
 
@@ -191,7 +187,8 @@ return [
 
         /* Illuminate\Hashing\HashServiceProvider::class :*/
         'hash' => [
-            /* depends */
+            /** depends
+             */
             //'rounds',
         ],
 
@@ -200,21 +197,18 @@ return [
         /* depends */
         /* comment 'mailer' if your app do not use mail */
         'mailer' => [
-            /* depends */
+            'failedRecipients',
+
+            /** depends
+             */
             //'from' ,
-
-            /* depends */
             //'to' ,
-
-            /* depends */
             //'pretending' ,
 
-            //todo necessary?
-            'failedRecipients',
         ],
 
 
-        /* Illuminate\Pagination\PaginationServiceProvider::class : No  providers_in_request,*/
+        /* Illuminate\Pagination\PaginationServiceProvider::class : No, it's one of providers_in_request,*/
 
 
         /* Illuminate\Pipeline\PipelineServiceProvider::class :*/
@@ -222,15 +216,16 @@ return [
 
 
         /* Illuminate\Queue\QueueServiceProvider::class :*/
-        /* depends */
+        /** depends
+         */
         //'queue' => [],
-        /* depends */
         //'queue.connection' => [],
 
 
         /* Illuminate\Redis\RedisServiceProvider::class :*/
-        /* depends */
-        /* comment it if redis is not used */
+        /** depends
+         * comment it if redis is not used
+         */
         'redis' => [],
 
 
@@ -240,39 +235,36 @@ return [
         /* Illuminate\Session\SessionServiceProvider::class :*/
         'session' => [],
         'session.store' => [
-            'id','name','attributes',
+            'id', 'name', 'attributes',
         ],
         'Illuminate\Session\Middleware\StartSession' => [
             'sessionHandled',
         ],
 
-
         /* Illuminate\Translation\TranslationServiceProvider::class :*/
         'translator' => [],
 
-
-        /* todo not test
+        /* todo
           todo it's related to db, when db reconnet, how it ? */
         /* Illuminate\Validation\ValidationServiceProvider::class :*/
         // 'validator' => [],
         // 'validation.presence' => [],
 
-
         /* Illuminate\View\ViewServiceProvider::class :*/
-        /* depends */
-        /* comment it if you do not use blade */
+        /** depends
+         * comment it if you do not use blade
+         */
         'blade.compiler' => [],
+
         'view' => [
-            /* depends */
-            /* uncomment it if you use same alias for dif views during many requests  */
-            // 'aliases',
+            /** depends
+            * uncomment them if you use same alias for dif views during many requests
+             */
+            // 'aliases', 'names',
 
-            /* depends */
-            /* uncomment it if you use same name for dif views during many requests  */
-            // 'names',
-
-            /* depends */
-            /* uncomment it if you use dif extensions from  ['blade.php' => 'blade', 'php' => 'php'] */
+            /** depends
+             * uncomment it if you use dif extensions from  ['blade.php' => 'blade', 'php' => 'php']
+             */
             // 'extensions',
 
             'shared',
@@ -281,16 +273,17 @@ return [
             '__obj__' => [
                 'finder' => [
 
-                    /* depends */
-                    /* If when request is handled, 'ViewFinderInterface::addLocation' is executed, it's necessary to make backup for it
-                     * otherwise this attribute's value will increase infinitely
+                    /* depends
+                     * If 'ViewFinderInterface::addLocation' is executed during a request, uncomment ti
+                     * otherwise this attribute's value will increase infinitely until a swoole worker reach max_request
                     */
                     //'paths',
 
                     /* depends */
                     /* no need to make backup for 'view' WHEN views keep same on every request.
                      * But when different locations added during request, same view names may point to different view files.
-                     * for example. view 'home' may points to 'location1/home.blade.php' or to 'location2/home.blade.php'
+                     * for example:
+                     * view 'home' may points to 'location-1/home.blade.php' or to 'location-2/home.blade.php'
                     */
                     //'views',
 
@@ -327,11 +320,12 @@ return [
 
     ], /* end services_to_make_in_worker */
 
-    /* Before any request , specified view files will be found.
-     * They must keep same on every quest. 
-     * This config is not neccesary when 'config('laravelfly.services_to_make_in_worker.view.__obj__.finder.views')' keep commented.
+    /** load views as early as possible
      *
-     * If one of these view names is not found, it and its subsequent names would be ignored and log to console or log file. .
+     * Before any request , these view files will be found.
+     * They must keep same on every quest.
+     * If one of these view names is not found,
+     * it and its subsequent names would be ignored and print to console or log file. .
      *
      * Only for Greedy mode
     */
