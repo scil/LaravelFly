@@ -28,8 +28,12 @@ class Application extends \Illuminate\Foundation\Application
         'resolvingCallbacks',
         'afterResolvingCallbacks',
 
-        'bootingCallbacks',
-        'bootedCallbacks',
+        /** not necessary
+         * I don't think there're some situatins where a new callback would be inserted into them during any request,
+         * that's useless for a php app which would be freed in memory after a request
+         // 'bootingCallbacks',
+         // 'bootedCallbacks',
+         */
         'terminatingCallbacks',
 
         'serviceProviders',
