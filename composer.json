@@ -30,7 +30,6 @@
   },
   "bin": [
     "bin/laravelfly-server",
-    "bin/publish-laravelfly-config-files",
-    "bin/hack-laravel-for-laravelfly"
+    "bin/publish-laravelfly-config-files"
   ]
 }
