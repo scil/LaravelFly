@@ -71,15 +71,67 @@ First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
 The "$bootstrappers" is what Laravel do before handling a request, LaravelFly execute them before any request, except the last two items "RegisterProviders" and "BootProviders"
 
-In Normal Mode, "RegisterProviders" is placed on "WorkerStart", "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
+In Normal Mode, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
 
 In Greedy Mode, providers in "config('laravelfly.providers_in_worker')" are registered and booted before any request. Other providers follow Normal Mode rule. 
 
-And In Greedy Mode, you can define which singleton services to made before any request in "config('laravelfly.services_to_make_in_worker')".If necessary, you should define which properties need to backup and restore. 
+And In Greedy Mode, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".If necessary, you should define which properties need to backup. 
 
 You can choose Mode in <project_root_dir>/laravelfly.server.php after you publish config files.
 
+In Greedy Mode, this router would response 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
+```
+// routes/web.php
+$a=0;
+Route::get('/',function()use(&$a){
+    ++$a;
+    return "This worker has processed $a requests for homepage";
+});
+```
+
 Note, Greedy Mode is still experimental.
+
+## Flow
+
+### A Worker Flow in Normal Mode 
+
+* a new worker process
+  * create an app 
+    * registerBaseServiceProviders(event,log and routing)
+  * create a kernel
+  * kernel bootstrap
+    * LoadEnvironmentVariables LoadConfiguration HandleExceptions
+    * **SetProvidersInRequest** see:config/laravelfly 'providers_in_request'
+    * RegisterFacades and RegisterProviders
+    * **backup**
+  * ------ waiting for a request ------
+  * ------ when a request arrives ---
+  * kernel handle request 
+    * **registerConfiguredProvidersInRequest**
+    * app->boot
+      * fire bootingCallbacks
+      * app->booted=true
+      * fire bootedCallbacks
+    * middleware and router
+  * response to client
+  * kernel->terminate
+    * terminateMiddleware
+    * fire app->terminatingCallbacks 
+  * **restore**
+  * app->booted = false
+  * ------ waiting for the 2nd request ------
+  * .....(just same as the first request)
+  * ------ waiting for the 3ed request ------
+  * .....
+* the worker process killed when server config 'max_request' reached
+* a new worker process
+* ......(same as the first worker process).
+  
+
+
+### A Worker Flow in Greedy Mode 
+
+todo
 
 ## Install
 

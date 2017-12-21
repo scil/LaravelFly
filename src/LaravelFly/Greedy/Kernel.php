@@ -19,8 +19,6 @@ class Kernel extends \LaravelFly\Kernel
 //        'Illuminate\Foundation\Bootstrap\BootProviders',
 
 
-        \LaravelFly\Bootstrap\SetBackupForBaseServices::class,
-
         'LaravelFly\Greedy\Bootstrap\RegisterAndBootProvidersInWork',
         'LaravelFly\Greedy\Bootstrap\FindViewFiles',
 
@@ -34,6 +32,7 @@ class Kernel extends \LaravelFly\Kernel
         'LaravelFly\Greedy\Bootstrap\ResetServiceProviders',
         'LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross',
 
+        \LaravelFly\Bootstrap\SetBackupForBaseServices::class,
         \LaravelFly\Bootstrap\BackupConfigs::class,
         \LaravelFly\Bootstrap\BackupAttributes::class,
     ];

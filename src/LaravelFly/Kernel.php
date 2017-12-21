@@ -37,6 +37,12 @@ class Kernel extends HttpKernel
         \LaravelFly\Bootstrap\BackupConfigs::class,
         \LaravelFly\Bootstrap\BackupAttributes::class,
     ];
+    /**
+     * The application implementation.
+     *
+     * @var \LaravelFly\Application
+     */
+    protected $app;
 
     /**
      * Override
@@ -50,7 +56,7 @@ class Kernel extends HttpKernel
 
         // replace $this->bootstrap();
         $this->app->registerConfiguredProvidersInRequest();
-        $this->app->bootProvidersInRequest();
+        $this->app->boot();
 
         return (new Pipeline($this->app))
             ->send($request)
@@ -65,7 +71,7 @@ class Kernel extends HttpKernel
     {
         try {
             // moved to LaravelFlyServer::initSthWhenServerStart
-            // $reuest::enableHttpMethodParameterOverride();
+            // $request::enableHttpMethodParameterOverride();
 
             $response = $this->sendRequestThroughRouter($request);
 

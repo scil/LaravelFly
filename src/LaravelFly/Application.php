@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Facade;
 class Application extends \Illuminate\Foundation\Application
 {
 
-    protected $bootedInRequest = false;
-
     protected $needBackUpAppAttributes = [
         'resolved',
         'bindings',
@@ -86,15 +84,15 @@ class Application extends \Illuminate\Foundation\Application
 
     /**
      * replace \Illuminate\Foundation\Bootstrap\BootProviders::class,
+     * code from \Illuminate\Foundation\Application::boot
      */
-    public function bootProvidersInRequest()
+    public function boot()
     {
-        if ($this->bootedInRequest) {
+        if ($this->booted) {
             return;
         }
 
         $this->fireAppCallbacks($this->bootingCallbacks);
-
 
         /**  array_walk
          * If when a provider booting, it reg some other providers,
@@ -105,9 +103,8 @@ class Application extends \Illuminate\Foundation\Application
             $this->bootProvider($p);
         });
 
-        $this->bootedInRequest = true;
+        $this->booted = true;
 
-        //todo it should be changed
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
@@ -222,7 +219,7 @@ class Application extends \Illuminate\Foundation\Application
             $tool();
         }
 
-        $this->bootedInRequest = false;
+        $this->booted = false;
     }
 
     /**
