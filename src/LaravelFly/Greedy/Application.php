@@ -16,13 +16,9 @@ class Application extends \LaravelFly\Application
 
     protected $providers_to_boot_in_worker = [];
 
-    public function setProvidersToBootInWorker()
+    public function setProvidersToBootInWorker($ps)
     {
-        $appConfig = $this['config'];
-
-        $common = array_intersect($appConfig['app.providers'], $appConfig['laravelfly.providers_in_worker']);
-
-        $this->providers_to_boot_in_worker = $common;
+        $this->providers_to_boot_in_worker = $ps;
     }
 
     public function registerConfiguredProvidersBootInWorker()

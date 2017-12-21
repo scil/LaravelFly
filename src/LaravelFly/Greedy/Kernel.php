@@ -11,7 +11,7 @@ class Kernel extends \LaravelFly\Kernel
         \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
-        'LaravelFly\Bootstrap\SetProvidersInRequest',
+        \LaravelFly\Bootstrap\SetProvidersInRequest::class,
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
 
@@ -19,9 +19,10 @@ class Kernel extends \LaravelFly\Kernel
 //        'Illuminate\Foundation\Bootstrap\BootProviders',
 
 
+        \LaravelFly\Bootstrap\SetBackupForBaseServices::class,
+
         'LaravelFly\Greedy\Bootstrap\RegisterAndBootProvidersInWork',
         'LaravelFly\Greedy\Bootstrap\FindViewFiles',
-        'LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker',
 
         /**
          * prevent providers to run twice,see :$this->>bootProvidersInRequest
@@ -33,7 +34,7 @@ class Kernel extends \LaravelFly\Kernel
         'LaravelFly\Greedy\Bootstrap\ResetServiceProviders',
         'LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross',
 
-        'LaravelFly\Bootstrap\BackupConfigs',
-        'LaravelFly\Bootstrap\BackupAttributes',
+        \LaravelFly\Bootstrap\BackupConfigs::class,
+        \LaravelFly\Bootstrap\BackupAttributes::class,
     ];
 }

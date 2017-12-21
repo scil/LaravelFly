@@ -33,7 +33,7 @@ class Kernel extends HttpKernel
         // replaced by `$this->app->bootProvidersInRequest();`
         // \Illuminate\Foundation\Bootstrap\BootProviders::class,
 
-        \LaravelFly\Bootstrap\MakeAndSetBackupForServicesInWorker::class,
+        \LaravelFly\Bootstrap\SetBackupForBaseServices::class,
         \LaravelFly\Bootstrap\BackupConfigs::class,
         \LaravelFly\Bootstrap\BackupAttributes::class,
     ];

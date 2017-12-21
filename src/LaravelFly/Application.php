@@ -56,9 +56,9 @@ class Application extends \Illuminate\Foundation\Application
         $this->needBackupConfigs = $need;
     }
 
-    public function setNeedBackupServiceAttributes($need)
+    public function addNeedBackupServiceAttributes($need)
     {
-        $this->needBackupServiceAttributes = $need;
+        $this->needBackupServiceAttributes =array_merge($this->needBackupServiceAttributes,$need);
     }
 
     public function prepareForProvidersInRequest($ps)
