@@ -1,8 +1,9 @@
 
 LaravelFly uses LaravelFlyServer(swoole http server based) to run Laravel faster. 
 
-It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project. So, it's easy to try LaravelFly.
+It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project.
 
+There is a nginx conf `vendor/scil/laravel-fly/config/swoole_fallback_to_phpfpm.conf` which let you use LaravelFlyServer as the primary server, and the phpfpm as a backup tool which will be passed requests when the LaravelFlyServer is unavailable. .
 
 ## Test
 
@@ -39,22 +40,154 @@ Test date : 2017/11
 
 ## What
 
-[Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot.A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
+[Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
 
-LaravelFly loads resources as more as possible before any request. For example , \Illuminate\Foundation\Application instantiates when  a swoole worker start , before any request.
+LaravelFly loads resources as more as possible before any request.
 
-The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, `app('view')` has a protected property "shared", which is not appropriate to share this property across different requests.
+The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, `app('view')` has a protected property "shared", which sometime is not appropriate to share this property across different requests.
 
-So the key is to backup some objects before any request, and restore them after each request handling has finished.`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
+So the key is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
+
+## Install
+
+1. Install php extension [swoole](https://github.com/swoole/swoole-src).  
+A simple way is `pecl install swoole`.  
+Make sure `extension=swoole.so` in php cli config file, not  fpm or apache.
+2. composer require "scil/laravel-fly":"dev-master"`
+3. optional:`composer require --dev "eaglewu/swoole-ide-helper:dev-master"` , which is useful in IDE development.
+
+## Config
+
+1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .  
+you can add "--force" to overwrite old config files.  
+`vendor/bin/publish-laravelfly-config-files --force`
+2. Edit `<project_root_dir>/laravelfly.server.config.php`.
+3. Edit `<project_root_dir>/config/laravelfly.php`.   
+Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/** depends " need your consideration.
+4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
+```
+if (defined('LARAVELFLY_GREEDY')) {
+    if (LARAVELFLY_GREEDY) {
+        class WhichKernel extends \LaravelFly\Greedy\Kernel { }
+    } else {
+        class WhichKernel extends \LaravelFly\Kernel { }
+    }
+} else {
+    class WhichKernel extends HttpKernel { }
+}
+
+class Kernel extends WhichKernel
+```
+
+
+## Optional Config
+
+* Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
+
+* if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
+```
+        'options'   => [
+            PDO::ATTR_PERSISTENT => true,
+        ],
+```
+
+## Config examples for Third Party Serivce
+* [Debugbar](package_config_examples/Debugbar.md)
+* [AsgardCms](package_config_examples/AsgardCms.md)
+
+
+## Run
+
+Execute 
+```
+vendor/bin/laravelfly-server start $absolute_path_of_server_config_file
+```
+Argument `$absolute_path_of_server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.config.php`.
+
+## Stop
+
+Two methods:
+
+* Execute 
+```
+vendor/bin/laravelfly-server stop $pid_file
+```
+`$pid_file` is optional, default is `vendor/bin/laravelfly.pid`.which is created by LaravelFlyServer if you not set 'pid_file' for it.
+
+* in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
+
+
+## Restart
+
+```
+vendor/bin/laravelfly-server restart $pid_file
+```
+`$pid_file` is optional like above.
+
 
 ## Debug
 
-Swoole runs in cli mode, so LaravelFly debug is to debug a script 
+LaravelFlyServer runs in cli mode, so LaravelFly debug is to debug a script 
 ```
 vendor/scil/laravel-fly/bin/laravelfly-server <start|stop|restart>
 ```
 
 To debug LaravelFly on a remote host such as vagrant, read [Debugging remote CLI with phpstorm](http://www.adayinthelifeof.nl/2012/12/20/debugging-remote-cli-with-phpstorm/?utm_source=tuicool&utm_medium=referral)
+
+
+## Reload All Workers Gracefully: swoole server reloading
+
+Swoole server has a main process, a manager process and one or more worker processes.If you set `'worker_num' => 4`, there are 6 processes.The first the main process, the second is the manager process, and the last four are all worker processes.
+
+Swoole server reloading has no matter with the main process or the manager process. Swoole server reloading is killing worker processes gracefully and start new.
+
+Gracefully is that: worker willl finish its work before die.
+
+### Two methods to reload
+* Execute 
+```
+vendor/bin/laravelfly-server reload $pid_file
+```
+Argument `$pid_file` is optional, default is `vendor/bin/laravelfly.pid`. which is created by LaravelFlyServer if you not set 'pid_file' for it.
+
+The work of this script is to send siginal USR1 to swoole manager process. You can run `kill -USR1 PID` in a bash script yourself.
+
+* in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
+
+### Details:
+1. Send USR1 to swoole manager process
+2. swoole manager process send TERM to all worker processes
+3. Every worker first finish it's work, then call OnWorkerStop callback, then kill itself.
+4. manager process creates new worker processes.
+
+## Hot Reload On Code Change
+
+By using swoole server reloading, it's possible to hot reload on code change, because any files required or included in 'WorkerStart' callback will be requied or included again when a new worker starts.
+
+Note, files required or included before 'WorkerStart' will keep in memory, even swoole server reloads.
+
+So it's better to include/require files which change rarely before 'WorkerStart' to save memory, to include/require files which change often in 'WorkerStart' callback to hot reload.
+
+You could moniter some files and reload server(two methods above) , just make sure there files are required/included in 'WorkerStart' callback.
+
+If you use APC/OpCache, you could use one of these measures
+* edit php.ini and make APC/OpCache to hot reload opcode
+* edit swoole server code:
+```
+  function onWorkerStop($serv, $worker_id) {
+       opcache_reset(); // opcache reset function, use similar function if you use APC
+  }
+```
+
+### Todo
+
+- [ ] memmory and cpu test
+- [ ] add tests
+- [ ] improve backup and restore
+- [ ] Laravel5.5, like package auto-detection
+- [ ] send file
+- [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
+
 
 ## Normal Mode and Greedy Mode
 
@@ -131,133 +264,3 @@ Note, Greedy Mode is still experimental.
 ### A Worker Flow in Greedy Mode 
 
 todo
-
-## Install
-
-1. Install php extension [swoole](https://github.com/swoole/swoole-src).  
-A simple way is `pecl install swoole`.  
-Make sure `extension=swoole.so` in php  config file for cli, not  fpm or apache.
-2. `composer require "scil/laravel-fly":"dev-master"`
-3. optional:`composer require --dev "eaglewu/swoole-ide-helper:dev-master"` , which is useful in IDE development.
-
-## Config
-
-1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .  
-you can add "--force" to overwrite old config files.  
-`vendor/bin/publish-laravelfly-config-files --force`
-2. Edit `<project_root_dir>/laravelfly.server.config.php`.
-3. Edit `<project_root_dir>/config/laravelfly.php`.   
-Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/* depends */" need your consideration.
-4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
-```
-if (defined('LARAVELFLY_GREEDY')) {
-    if (LARAVELFLY_GREEDY) {
-        class WhichKernel extends \LaravelFly\Greedy\Kernel { }
-    } else {
-        class WhichKernel extends \LaravelFly\Kernel { }
-    }
-} else {
-    class WhichKernel extends HttpKernel { }
-}
-
-class Kernel extends WhichKernel
-```
-
-
-## Optional Config
-
-* Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
-
-* if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
-```
-        'options'   => [
-            PDO::ATTR_PERSISTENT => true,
-        ],
-```
-
-## Config examples
-* [Debugbar](package_config_examples/Debugbar.md)
-* [AsgardCms](package_config_examples/AsgardCms.md)
-
-
-## Run
-
-Execute 
-```
-vendor/bin/laravelfly-server start $absolute_path_of_server_config_file
-```
-Argument `$absolute_path_of_server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.config.php`.
-
-## Stop
-
-Two methods:
-
-* Execute 
-```
-vendor/bin/laravelfly-server stop $pid_file
-```
-`$pid_file` is optional, default is `vendor/bin/laravelfly.pid`.which is created by LaravelFlyServer if you not set 'pid_file' for it.
-
-* in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
-
-
-## Restart
-
-```
-vendor/bin/laravelfly-server restart $pid_file
-```
-`$pid_file` is optional like above.
-
-## Reload All Workers Gracefully: swoole server reloading
-
-Swoole server has a main process, a manager process and one or more worker processes.If you set `'worker_num' => 4`, there are 6 processes.The first the main process, the second is the manager process, and the last four are all worker processes.
-
-Swoole server reloading has no matter with the main process or the manager process. Swoole server reloading is killing worker processes gracefully and start new.
-
-Gracefully is that: worker willl finish its work before die.
-
-### Two methods to reload
-* Execute 
-```
-vendor/bin/laravelfly-server reload $pid_file
-```
-Argument `$pid_file` is optional, default is `vendor/bin/laravelfly.pid`. which is created by LaravelFlyServer if you not set 'pid_file' for it.
-
-The work of this script is to send siginal USR1 to swoole manager process. You can run `kill -USR1 PID` in a bash script yourself.
-
-* in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
-
-### Details:
-1. Send USR1 to swoole manager process
-2. swoole manager process send TERM to all worker processes
-3. Every worker first finish it's work, then call OnWorkerStop callback, then kill itself.
-4. manager process creates new worker processes.
-
-## Hot Reload On Code Change
-
-By using swoole server reloading, it's possible to hot reload on code change, because any files required or included in 'WorkerStart' callback will be requied or included again when a new worker starts.
-
-Note, files required or included before 'WorkerStart' will keep in memory, even swoole server reloads.
-
-So it's better to include/require files which change rarely before 'WorkerStart' to save memory, to include/require files which change often in 'WorkerStart' callback to hot reload.
-
-You could moniter some files and reload server(two methods above) , just make sure there files are required/included in 'WorkerStart' callback.
-
-If you use APC/OpCache, you could use one of these measures
-* edit php.ini and make APC/OpCache to hot reload opcode
-* edit swoole server code:
-```
-  function onWorkerStop($serv, $worker_id) {
-       opcache_reset(); // opcache reset function, use similar function if you use APC
-  }
-```
-
-
-### Todo
-
-- [ ] memmory and cpu test
-- [ ] add tests
-- [ ] improve backup and restore
-- [ ] Laravel5.5, like package auto-detection
-- [ ] send file
-- [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log

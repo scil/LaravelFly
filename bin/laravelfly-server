@@ -2,10 +2,11 @@
 <?php
 
 $project_root_dir = realpath(__DIR__ . '/../../../..');
-$default_config_file= $project_root_dir . '/laravelfly.server.config.php';
+$default_config_file = $project_root_dir . '/laravelfly.server.config.php';
 
 function start($config_file)
 {
+
     global $project_root_dir;
     include $project_root_dir . '/vendor/autoload.php';
 
@@ -72,7 +73,7 @@ if ($argc == 1) {
 
 switch ($argv[1]) {
     case 'start':
-        start(isset($argv[1]) && is_file($argv[1]) ? $argv[1] : $default_config_file);
+        start(isset($argv[2]) && is_file($argv[2]) ? $argv[2] : $default_config_file);
         break;
     default:
         if (in_array($argv[1], $options))
