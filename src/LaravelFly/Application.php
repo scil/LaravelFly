@@ -31,8 +31,8 @@ class Application extends \Illuminate\Foundation\Application
         /** not necessary
          * I don't think there're some situatins where a new callback would be inserted into them during any request,
          * that's useless for a php app which would be freed in memory after a request
-         // 'bootingCallbacks',
-         // 'bootedCallbacks',
+         * // 'bootingCallbacks',
+         * // 'bootedCallbacks',
          */
         'terminatingCallbacks',
 
@@ -41,7 +41,7 @@ class Application extends \Illuminate\Foundation\Application
         'deferredServices',
 
         /** not necessary
-        'monologConfigurator'
+         * 'monologConfigurator'
          */
     ];
     protected $__valuesBeforeRequest = [];
@@ -60,7 +60,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function addNeedBackupServiceAttributes($need)
     {
-        $this->needBackupServiceAttributes =array_merge($this->needBackupServiceAttributes,$need);
+        $this->needBackupServiceAttributes = array_merge($this->needBackupServiceAttributes, $need);
     }
 
     public function prepareForProvidersInRequest($ps)
@@ -127,10 +127,16 @@ class Application extends \Illuminate\Foundation\Application
 
         foreach ($this->needBackupServiceAttributes as $name => $attris) {
             $o = $this->instances[$name] ?? $this->make($name);
-            $this->backupToolMaker($attris)->call($o);
+            $changed = $this->backupToolMaker($attris)->call($o);
 
-            $this->restoreTool[$name] = $this->restoreToolMaker()->bindTo($o, get_class($o));
+            /** $changed would be false when
+             *    obj.xxx is empty array, such as 'router'=>[ 'obj.routes'=>[] ]
+             *    all attributes defind in config/laravelfly are not valid, such as 'url'=>['love','happy']
+             */
+            if ($changed)
+                $this->restoreTool[$name] = $this->restoreToolMaker()->bindTo($o, get_class($o));
         }
+//        var_dump($this->restoreTool);
 
     }
 
@@ -139,56 +145,56 @@ class Application extends \Illuminate\Foundation\Application
     protected function backupToolMaker($attriList)
     {
         return function () use ($attriList) {
-            // $this is not Application, but the service object, like event,log....
-            $this->__old = [];
-            $this->__oldObj = [];
 
-            if (isset($attriList['__obj__'])) {
-                foreach ($attriList['__obj__'] as $obj => $attris) {
-                    if (empty($attris)) {
+            $changed = false;
+            foreach ($attriList as $key => $attri) {
+
+                if (is_string($key) && substr($key, 0, 4) == 'obj.') {
+                    $oAttriName = substr($key, 4);
+                    if (!$attri) {
                         continue;
                     }
-                    if (!property_exists($this, $obj)) {
+                    if (!property_exists($this, $oAttriName)) {
                         echo "[WARN] check config\laravelfly.php, property '$obj' not exists for ", get_class($this);
                         continue;
                     }
-                    $o = $this->$obj;
+                    $o = $this->$oAttriName;
                     $info = ['obj' => $o, 'r_props' => [], 'values' => []];
+
                     $r = new \ReflectionObject($o);
-                    foreach ($attris as $attr) {
-                        $r_attr = $r->getProperty($attr);
+                    foreach ($attri as $o_attr) {
+                        $r_attr = $r->getProperty($o_attr);
                         $r_attr->setAccessible(true);
-                        $info['r_props'][$attr] = $r_attr;
-                        $info['values'][$attr] = $r_attr->getValue($o);
+                        $info['r_props'][$o_attr] = $r_attr;
+                        $info['values'][$o_attr] = $r_attr->getValue($o);
                     }
+                    // note:`$this` is not Application, but the service object, like event,log....
                     $this->__oldObj[] = $info;
+                    $changed = true;
 
-                }
-
-                unset($attriList['__obj__']);
-            }
-
-            foreach ($attriList as $attri) {
-
-                if (property_exists($this, $attri))
+                } elseif (property_exists($this, $attri)) {
+                    // note:`$this` is not Application, but the service object, like event,log....
                     $this->__old[$attri] = $this->$attri;
-                else {
+                    $changed = true;
+                } else {
                     echo "[WARN]check config\laravelfly.php,property '$attri' not exists for ", get_class($this);
 
                 }
             }
+            return $changed;
         };
     }
 
     protected function restoreToolMaker()
     {
         return function () {
-            foreach ($this->__old as $name => $v) {
-                $this->$name = $v;
+            if (property_exists($this, '__old')) {
+                foreach ($this->__old as $name => $v) {
+                    $this->$name = $v;
+                }
             }
 
-            if ($this->__oldObj) {
-//                return;
+            if (property_exists($this, '__oldObj')) {
                 foreach ($this->__oldObj as $info) {
 //                    var_dump(app('view')->finder->views);
                     foreach ($info['r_props'] as $s_attr => $r_attr) {
@@ -198,7 +204,7 @@ class Application extends \Illuminate\Foundation\Application
                 }
             }
         };
-    }
+       }
 
 
     public function restoreAfterRequest()

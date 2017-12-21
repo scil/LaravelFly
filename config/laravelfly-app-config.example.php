@@ -43,17 +43,15 @@ return [
              */
             // 'middleware','middlewareGroups','middlewarePriority',
 
-            '__obj__' => [
-                'routes' => [
-                    /** depends
-                     *
-                     * Uncomment them if some of your routes are created during any request.
-                     * Besides, because values of these four properties are associate arrays,
-                     * if names of routes created during request are sometime different , please uncomment them ,
-                     */
-                    // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
-                ],
-            ], /* end '__obj__' */
+            'obj.routes' => [
+                /** depends
+                 *
+                 * Uncomment them if some of your routes are created during any request.
+                 * Besides, because values of these four properties are associate arrays,
+                 * if names of routes created during request are sometime different , please uncomment them ,
+                 */
+                // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
+            ],
         ], /* end 'router' */
 
         'url' => [
@@ -96,11 +94,10 @@ return [
      * 2. 'singleton_service_name' => []   service is made before request, no property need to backup
      * 3. 'singleton_service_name' => ['property1','property2'] service is made before request , two properties to backup
      * 4. 'singleton_service_name' => [
-     *                  '__obj__'=>[
-     *                      'obj'=>['p1','p2']
-     *              ]]
+     *                      'obj.file'=>['p1','p2']
+     *              ]
      *              service is made before request ,and
-     *              it has an attribute which is an obj whoes attributes p1,p2 need to backup
+     *              it has an attribute `file` which is an obj whoes attributes p1,p2 need to backup
      */
     'providers_in_worker' => [
         Illuminate\Auth\AuthServiceProvider::class => [
@@ -231,31 +228,29 @@ return [
                 'shared',
                 'composers',
                 'sections', 'sectionStack', 'renderCount',
-                '__obj__' => [
-                    'finder' => [
+                'obj.finder' => [
 
-                        /* depends
-                         * If 'ViewFinderInterface::addLocation' is executed during a request, uncomment ti
-                         * otherwise this attribute's value will increase infinitely until a swoole worker reach max_request
-                        */
-                        //'paths',
+                    /* depends
+                     * If 'ViewFinderInterface::addLocation' is executed during a request, uncomment ti
+                     * otherwise this attribute's value will increase infinitely until a swoole worker reach max_request
+                    */
+                    //'paths',
 
-                        /* depends */
-                        /* no need to make backup for 'view' WHEN views keep same on every request.
-                         * But when different locations added during request, same view names may point to different view files.
-                         * for example:
-                         * view 'home' may points to 'location-1/home.blade.php' or to 'location-2/home.blade.php'
-                        */
-                        //'views',
+                    /* depends */
+                    /* no need to make backup for 'view' WHEN views keep same on every request.
+                     * But when different locations added during request, same view names may point to different view files.
+                     * for example:
+                     * view 'home' may points to 'location-1/home.blade.php' or to 'location-2/home.blade.php'
+                    */
+                    //'views',
 
-                        /* depends */
-                        //'hints',
+                    /* depends */
+                    //'hints',
 
-                        /* depends */
-                        //'extensions',
+                    /* depends */
+                    //'extensions',
 
-                    ], /* end finder */
-                ], /* end __obj__ */
+                ], /* end finder */
             ], /* end view */
 
         ],
