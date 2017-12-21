@@ -37,11 +37,7 @@ Time per request ( across) |  79.087  | 815.223  |  1836.702  | 368.935
 
 Test date : 2017/11
 
-### other tests
-
-an test years ago by reddit user: [reddit](https://www.reddit.com/r/laravel/comments/3ttcmw/laravelfly_run_laravel_10x_faster_on_linux/)
-
-## How to work
+## What
 
 [Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot.A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
 
@@ -50,6 +46,15 @@ LaravelFly loads resources as more as possible before any request. For example ,
 The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, `app('view')` has a protected property "shared", which is not appropriate to share this property across different requests.
 
 So the key is to backup some objects before any request, and restore them after each request handling has finished.`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
+
+## Debug
+
+Swoole runs in cli mode, so LaravelFly debug is to debug a script 
+```
+vendor/scil/laravel-fly/bin/laravelfly-server <start|stop|restart>
+```
+
+To debug LaravelFly on a remote host such as vagrant, read [Debugging remote CLI with phpstorm](http://www.adayinthelifeof.nl/2012/12/20/debugging-remote-cli-with-phpstorm/?utm_source=tuicool&utm_medium=referral)
 
 ## Normal Mode and Greedy Mode
 
