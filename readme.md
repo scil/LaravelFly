@@ -202,7 +202,7 @@ vendor/bin/laravelfly-server stop $pid_file
 * in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
 
 
-### Restart
+## Restart
 
 ```
 vendor/bin/laravelfly-server restart $pid_file
@@ -253,14 +253,10 @@ If you use APC/OpCache, you could use one of these measures
   }
 ```
 
-## Memory
-
-Memory usage may grow slowly. You can set 'max_request' to a small number.
-
-A simple way to detect memory usage growth is use Apache ab.exe and linux command "free"
 
 ### Todo
 
+- [ ] memmory and cpu test
 - [ ] add tests
 - [ ] improve backup and restore
 - [ ] Laravel5.5, like package auto-detection
