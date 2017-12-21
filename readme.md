@@ -79,13 +79,12 @@ And In Greedy Mode, you can define which singleton services to made before any r
 
 You can choose Mode in <project_root_dir>/laravelfly.server.php after you publish config files.
 
-In Greedy Mode, this router would response 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
+In Greedy Mode, response to homepage visit would be 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
 ```
 // routes/web.php
 $a=0;
 Route::get('/',function()use(&$a){
-    ++$a;
-    return "This worker has processed $a requests for homepage";
+    return ++$a;
 });
 ```
 
