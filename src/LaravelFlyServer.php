@@ -8,7 +8,10 @@ class LaravelFlyServer
      */
     protected static $instance;
 
-    protected $laravelDir;
+    /**
+     * @var string where laravel app located
+     */
+    protected $root;
 
     /**
      * @var swoole_http_server
@@ -29,18 +32,25 @@ class LaravelFlyServer
      */
     protected $kernel;
 
-    public function __construct($laravelDir, $options, $kernelClass = '\App\Http\Kernel')
+    public function __construct($options, $kernelClass = '\App\Http\Kernel')
     {
 
-        $this->laravelDir = realpath($laravelDir);
+        $this->root = realpath(__DIR__ . '/../../../..');
+        if(!(is_dir($this->root)&& is_file($this->root.'/bootstrap/app.php'))){
+            die("This doc root is not for a Laravel app: {$this->root} ");
+        }
 
         $this->kernelClass = $kernelClass;
 
         if (!isset($options['pid_file'])) {
-            $options['pid_file'] = $this->laravelDir . '/vendor/bin/laravelfly.pid';
+            $options['pid_file'] = $this->root . '/bootstrap/laravelfly.pid' . $options['listen_port'];
+        } else {
+            $options['pid_file'] .= $options['listen_port'];
         }
 
+        echo 2;
         $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+        echo 3;
 
         $server->set($options);
 
@@ -53,11 +63,11 @@ class LaravelFlyServer
 
     }
 
-    public static function getInstance($laravelDir, $options)
+    public static function getInstance($options)
     {
         if (!self::$instance) {
             try {
-                self::$instance = new static($laravelDir, $options);
+                self::$instance = new static($options);
             } catch (\Throwable $e) {
                 die('[FAILED] ' . $e->getMessage() . PHP_EOL);
             }
@@ -69,7 +79,6 @@ class LaravelFlyServer
     {
         try {
             $this->swoole_http_server->start();
-            echo '[INFO] server start', PHP_EOL;
         } catch (\Throwable $e) {
             die('[FAILED] ' . $e->getMessage() . PHP_EOL);
         }
@@ -88,9 +97,11 @@ class LaravelFlyServer
 
     public function onWorkerStart()
     {
+//        echo "[INFO] worker start/reload. master pid:{$this->swoole_http_server->master_pid}; manager pid:{$this->swoole_http_server->manager_pid}", PHP_EOL;
+
         $this->app = $app = LARAVELFLY_GREEDY ?
-            new \LaravelFly\Greedy\Application($this->laravelDir) :
-            new \LaravelFly\Application($this->laravelDir);
+            new \LaravelFly\Greedy\Application($this->root) :
+            new \LaravelFly\Application($this->root);
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,

@@ -1,81 +1,64 @@
 #!/usr/bin/env php
 <?php
 
-$project_root_dir = realpath(__DIR__ . '/../../../..');
-$default_config_file = $project_root_dir . '/laravelfly.server.config.php';
-
-function start($config_file)
-{
-
-    global $project_root_dir;
-    include $project_root_dir . '/vendor/autoload.php';
-
-    LaravelFlyServer::getInstance(
-        $project_root_dir,
-        require $config_file
-    )
-        ->start();
-
-}
-
-function get_pid()
-{
-    global $project_root_dir;
-
-    $pid_file = isset($argv[2]) ? $argv[2] : $project_root_dir . '/vendor/bin/laravelfly.pid';
-
-    if (!is_file($pid_file)) {
-        die("pidfile $pid_file no exists\n");
-    }
-
-    try {
-        $pid = (int)file_get_contents($pid_file);
-    } catch (\Throwable $e) {
-        die("pid can not be read from $pid_file \n");
-    }
-
-    return $pid;
-
-}
-
-function stop($pid)
-{
-    if (class_exists('swoole_process')) {
-        if (swoole_process::kill($pid, 0)) {
-            swoole_process::kill($pid);
-        }
-    } else {
-        system("kill -15 $pid");
-    }
-}
-
-function reload($pid)
-{
-    system("kill -USR1 $pid");
-}
-
-function restart($pid)
-{
-    $server_config_file = system("ps -f -p $pid | awk 'END{print \$11}'");
-    if (!$server_config_file) {
-        global $default_config_file;
-        $server_config_file = $default_config_file;
-    }
-    stop($pid);
-    start($server_config_file);
-}
-
-$options = ['start', 'stop', 'reload', 'restart'];
-
 if ($argc == 1) {
-    die('supply an opton' . implode('|', $options));
+    $msg = <<<U
+USAGE:  laravelfly-server [ACTION] [CONFIG_FILE]
+    ACTION: start|stop|reload|restart
+    CONFIG_FILE: optional, default is <project_root>/laravelfly.server.config.php. 
+    <project_root> is the root of the project which LaravelFly is installed.
+U;
+    die($msg);
+}
+
+$root = realpath(__DIR__ . '/../../../..');
+$config_file = $argc == 3 ? $argv[2] : $root . '/laravelfly.server.config.php';
+
+try {
+    $options = require $config_file;
+} catch (Exception $e) {
+    exit("config file not be loaded: $config_file");
+}
+
+if ($argv[1] == 'start') {
+    goto start;
+}
+
+if (!isset($options['pid_file'])) {
+    $pid_file = $root . '/bootstrap/laravelfly.pid' . $options['listen_port'];
+} else {
+    $pid_file = $options['pid_file'] .   $options['listen_port'];
+}
+
+$pid = 0;
+try {
+    if(is_file($pid_file))
+        $pid = (int)file_get_contents($pid_file);
+} catch (Throwable $e) {
+    print("pid can not be read from $pid_file \n");
+}
+
+if (!$pid && $argv[1] != 'stop') {
+    goto start;
 }
 
 switch ($argv[1]) {
-    case 'start':
-        start(isset($argv[2]) && is_file($argv[2]) ? $argv[2] : $default_config_file);
+    case 'stop':
+        posix_kill($pid, SIGTERM);
         break;
-    default:
-        if (in_array($argv[1], $options))
-            $argv[1](get_pid());
+    case 'reload':
+        posix_kill($pid, SIGUSR1);
+        break;
+    case 'restart':
+        posix_kill($pid, SIGTERM);
+        goto start;
+        break;
 }
+
+
+exit();
+
+start:
+include $root . '/vendor/autoload.php';
+unset($root, $config_file, $pid_file, $pid);
+LaravelFlyServer::getInstance($options)->start();

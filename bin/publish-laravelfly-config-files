@@ -8,11 +8,11 @@ $files = [
     'laravelfly-server-config.example.php' => '/laravelfly.server.config.php',
 ];
 
-$project_root_dir = realpath(__DIR__ . '/../../../..');
+$root = realpath(__DIR__ . '/../../../..');
 
 foreach ($files as $src => $des) {
     $src = __DIR__ . '/../config/' . $src;
-    $des = $project_root_dir . $des;
+    $des = $root . $des;
 
     if ($force || !is_file($des)) {
         copy($src, $des);

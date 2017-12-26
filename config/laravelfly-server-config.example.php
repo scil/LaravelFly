@@ -29,11 +29,21 @@ return [
     // like pm.max_requests in php-fpm
     'max_request' => 1000,
 
+    //'group' => 'www-data',
+
     //'log_file' => '/data/log/swoole.log',
 
-    // Set the output buffer size in the memory.
-    // The default value is 2M. The data to send can't be larger than buffer_output_size every times.
+    /** Set the output buffer size in the memory.
+      * The default value is 2M. The data to send can't be larger than buffer_output_size every times.
+     */
     //'buffer_output_size' => 32 * 1024 *1024, // byte in unit
 
-    //'group' => 'www-data',
+
+    /**
+     * make sure the pid_file can be writeable/readable by vendor/bin/laravelfly-server
+     * otherwise use `sudo vendor/bin/laravelfly-server` or `chmod -R 777 <pid_dir>`
+     *
+     * default is under <project_root>/bootstrap/
+     */
+    //'pid_file' => '/run/laravelfly/pid',
 ];

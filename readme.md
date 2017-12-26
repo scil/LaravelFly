@@ -100,9 +100,11 @@ class Kernel extends WhichKernel
 
 Execute 
 ```
-vendor/bin/laravelfly-server start $absolute_path_of_server_config_file
+vendor/bin/laravelfly-server start [$server_config_file]
 ```
-Argument `$absolute_path_of_server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.config.php`.
+Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.config.php`.
+
+You can make multiple config files which have different listen_port, and you can run multiple server.
 
 ## Stop
 
@@ -110,9 +112,8 @@ Two methods:
 
 * Execute 
 ```
-vendor/bin/laravelfly-server stop $pid_file
+vendor/bin/laravelfly-server stop [$server_config_file]
 ```
-`$pid_file` is optional, default is `vendor/bin/laravelfly.pid`.which is created by LaravelFlyServer if you not set 'pid_file' for it.
 
 * in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
 
@@ -120,9 +121,8 @@ vendor/bin/laravelfly-server stop $pid_file
 ## Restart
 
 ```
-vendor/bin/laravelfly-server restart $pid_file
+vendor/bin/laravelfly-server restart [$server_config_file]
 ```
-`$pid_file` is optional like above.
 
 
 ## Debug
@@ -146,11 +146,8 @@ Gracefully is that: worker willl finish its work before die.
 ### Two methods to reload
 * Execute 
 ```
-vendor/bin/laravelfly-server reload $pid_file
+vendor/bin/laravelfly-server reload [$server_config_file]
 ```
-Argument `$pid_file` is optional, default is `vendor/bin/laravelfly.pid`. which is created by LaravelFlyServer if you not set 'pid_file' for it.
-
-The work of this script is to send siginal USR1 to swoole manager process. You can run `kill -USR1 PID` in a bash script yourself.
 
 * in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
 
