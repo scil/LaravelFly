@@ -48,9 +48,7 @@ class LaravelFlyServer
             $options['pid_file'] .= $options['listen_port'];
         }
 
-        echo 2;
         $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
-        echo 3;
 
         $server->set($options);
 
