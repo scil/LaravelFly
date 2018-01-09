@@ -3,16 +3,15 @@ LaravelFly uses LaravelFlyServer(swoole http server based) to run Laravel faster
 
 It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project.
 
-There is a nginx conf [swoole_fallback_to_phpfpm.conf](https://github.com/scil/LaravelFly/blob/master/config/swoole_fallback_to_phpfpm.conf) which let you use LaravelFlyServer as the primary server, and the phpfpm as a backup tool which will be passed requests when the LaravelFlyServer is unavailable. .
+There is a nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm.conf) which let you use LaravelFlyServer as the primary server, and the phpfpm as a backup tool which will be passed requests when the LaravelFlyServer is unavailable. .
 
 ## Test
 
 ### A simple ab test 
 
-env: 
-ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 800M  )
+env:   
+ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 800M  )  
 php7.1+opcache for both fpm and laravelfly
-
 
 item  |  Fly 5 workers[1] | fpm 5 servers[2]  | fpm 5+ servers[3] | Fly 1 worker[4]
 ------------ | ------------ | ------------- | ------------- | -------------
@@ -40,7 +39,7 @@ Test date : 2017/11
 
 ## What
 
-[Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would die and a new worker will be created.
+[Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would first finish its work then die, and a new worker will be created.
 
 LaravelFly loads resources as more as possible before any request.
 
@@ -50,7 +49,7 @@ So the key is to backup some objects before any request, and restore them after 
 
 ## Similar projects
 
-* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: Laravel app loaded before any request like LaravelFly ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but there's no 'backup & restore' system, so please do not use any service which may change during a request, do not write any code that may change Laravel app during a request, such as event registering.
+* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but there's no 'backup & restore' system, so please do not use any service which may change during a request, do not write any code that may change Laravel app during a request, such as event registering.
 
 ## Install
 
