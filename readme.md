@@ -44,7 +44,7 @@ Test date : 2017/11
 
 LaravelFly loads resources as more as possible before any request.
 
-The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, `app('view')` has a protected property "shared", which sometime is not appropriate to share this property across different requests.
+The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, a event registered in a request will persist in subsequent requests. Second example, `app('view')` has a protected property "shared", which sometime is not appropriate to share this property across different requests.
 
 So the key is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
 
