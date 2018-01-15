@@ -2,9 +2,10 @@
 
 const LARAVELFLY_KERNEL= \App\Http\Kernel::class;
 
-// Normal
-// Greedy
-// Coroutine
+/**
+ * Normal, Coroutine or Greedy
+ * Greedy only for study
+ */
 const LARAVELFLY_MODE = 'Normal';
 
 // when false, Application::runningInConsole() return false.

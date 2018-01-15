@@ -45,7 +45,11 @@ LaravelFly loads resources as more as possible before any request.
 
 The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, a event registered in a request will persist in subsequent requests. Second example, `app('view')` has a protected property "shared", which sometime is not appropriate to share this property across different requests.
 
-So the key is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
+There are two ways.
+
+The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.
+
+The second is to clone a new application for each request. This method uses swoole coroutine.
 
 ## Similar projects
 
@@ -67,16 +71,16 @@ you can add "--force" to overwrite old config files.
 you can also add an argument `app` or `server` to publish only app config or server config.
 2. Edit server config file `<project_root_dir>/laravelfly.server.config.php`.
 3. Edit app config file `<project_root_dir>/config/laravelfly.php`.   
-Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/** depends " need your consideration.
+Note: items prefixed with "/** depends " need your consideration.
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_MODE')) {
-    if (LARAVELFLY_MODE == 'Greedy') {
-        class WhichKernel extends \LaravelFly\Greedy\Kernel { }
+    if (LARAVELFLY_MODE == 'Normal') {
+        class WhichKernel extends \LaravelFly\Normal\Kernel { }
     }else if (LARAVELFLY_MODE == 'Coroutine') {
         class WhichKernel extends \LaravelFly\Coroutine\Kernel { }
     } else {
-        class WhichKernel extends \LaravelFly\Normal\Kernel { }
+        class WhichKernel extends \LaravelFly\Greedy\Kernel { }
     }
 } else {
     class WhichKernel extends HttpKernel { }
@@ -248,8 +252,7 @@ Route::get('/',function()use(&$a){
     return ++$a;
 });
 ```
-
-Note, Greedy Mode is still experimental.
+Note, Greedy Mode is still experimental and only for study.
 
 ## Flow
 
@@ -289,6 +292,6 @@ Note, Greedy Mode is still experimental.
   
 
 
-### A Worker Flow in Greedy Mode 
+### A Worker Flow in Coroutine Mode 
 
 todo
