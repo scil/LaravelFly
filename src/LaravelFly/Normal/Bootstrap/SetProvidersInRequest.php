@@ -16,7 +16,11 @@ class SetProvidersInRequest
 
             $app->makeManifestForProvidersInRequest($ps);
 
-            $appConfig['app.providers'] = array_diff($appConfig['app.providers'], $ps);
+            $appConfig['app.providers'] = array_diff(
+                $appConfig['app.providers'],
+                $ps,
+                $appConfig->get('laravelfly.providers_ignore')
+                );
 
             if ($appConfig['app.debug']) {
                 echo '[NOTICE] Providers in request ( they are removed from config["app.providers"] )',

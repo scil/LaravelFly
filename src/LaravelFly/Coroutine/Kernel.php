@@ -78,7 +78,8 @@ class Kernel extends HttpKernel
         // todo
         Facade::clearResolvedInstance('request');
 
-//        $this->bootstrap();
+        // replace $this->bootstrap();
+        $this->app->bootInRequest();
 
         return (new Pipeline(
 //        $this->app

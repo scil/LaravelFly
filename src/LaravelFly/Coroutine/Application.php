@@ -2,11 +2,11 @@
 
 namespace LaravelFly\Coroutine;
 
-use Illuminate\Events\EventServiceProvider;
+use LaravelFly\Coroutine\Illuminate\EventServiceProvider;
+use LaravelFly\Coroutine\Illuminate\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
-use Illuminate\Filesystem\Filesystem;
 
-use LaravelFly\Greedy\Routing\RoutingServiceProvider;
+use Illuminate\Filesystem\Filesystem;
 use LaravelFly\Normal\ProviderRepository;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
@@ -61,16 +61,20 @@ class Application extends \LaravelFly\Application
          * following is implementing part of  parent __construct
          */
 
-        // $this->registerBaseBindings();
+        // replace $this->registerBaseBindings();
         static::setInstance($this);
         $this->instance('app', $this);
         $this->instance(Container::class, $this);
+        //todo:
 //        $this->instance(PackageManifest::class, new PackageManifest(
 //            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
 //        ));
 
-//        $this->register(new EventServiceProvider($this));
-//        $this->register(new RoutingServiceProvider($this));
+        // replace $this->register(new EventServiceProvider($this));
+        $this['events'] = clone $this['events'];
+        // replace $this->register(new RoutingServiceProvider($this));
+        // todo : obj.routes need clone too?
+        $this['router'] = clone $this['router'];
     }
     function delRequestApplication($coroutineID)
     {
@@ -103,7 +107,8 @@ class Application extends \LaravelFly\Application
         $providers = array_diff(
         // providers in request have remove from 'app.providers'
             $config->get('app.providers'),
-            $this->providersToBootOnWorker
+            $this->providersToBootOnWorker,
+            $config->get('laravelfly.providers_ignore')
         );
 
         $serviceProviders = $this->serviceProviders ;
@@ -131,6 +136,8 @@ class Application extends \LaravelFly\Application
         //todo study official registerConfiguredProviders
         (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker()))
             ->load($this->providersToBootOnWorker);
+
+        $this->loadDeferredProviders();
     }
     public function getCachedServicesPathBootOnWorker()
     {
@@ -142,7 +149,6 @@ class Application extends \LaravelFly\Application
     }
     public function bootOnWorker()
     {
-        $this->loadDeferredProviders();
 
         if ($this->bootedOnWorker) {
             return;
@@ -174,7 +180,8 @@ class Application extends \LaravelFly\Application
 
         $this->fireAppCallbacks($this->bootingCallbacks);
 
-        array_walk($this->serviceProviders, function ($p) {
+        array_walk($this->acrossServiceProviders, function ($p) {
+           echo 'boot ', get_class($p),PHP_EOL;
             $this->bootProvider($p);
         });
 

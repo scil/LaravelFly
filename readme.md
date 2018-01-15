@@ -162,6 +162,9 @@ php -dxdebug.remote_host=192.168.1.2  vendor/scil/laravel-fly/bin/laravelfly-ser
 ```
 replace 192.168.1.2 with your ip where phpstorm is.
 
+### About XDebug
+composer update/require may slow when enable XDebug in CLI environment
+
 
 ## Reload All Workers Gracefully: swoole server reloading
 

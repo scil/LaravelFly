@@ -24,7 +24,7 @@ class RegisterAndBootProvidersOnWork
             foreach ($singles as $name => $config) {
                 if (is_array($config)) {
 
-                    $app->make($name);
+                   $app->make($name);
 
                     if ($config) {
                         $needBackup[$name] = $config;
