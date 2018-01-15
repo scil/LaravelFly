@@ -61,11 +61,12 @@ Make sure `extension=swoole.so` in php cli config file, not  fpm or apache.
 
 ## Config
 
-1. Open terminal and execute `vendor/bin/publish-laravelfly-config-files`  .  
+1. execute `vendor/bin/publish-laravelfly-config-files`  .  
 you can add "--force" to overwrite old config files.  
 `vendor/bin/publish-laravelfly-config-files --force`
-2. Edit `<project_root_dir>/laravelfly.server.config.php`.
-3. Edit `<project_root_dir>/config/laravelfly.php`.   
+you can also add an argument `app` or `server` to publish only app config or server config.
+2. Edit server config file `<project_root_dir>/laravelfly.server.config.php`.
+3. Edit app config file `<project_root_dir>/config/laravelfly.php`.   
 Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/** depends " need your consideration.
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```

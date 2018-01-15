@@ -1,16 +1,25 @@
 #!/usr/bin/env php
 <?php
 
-$force = isset($argv[1]) && $argv[1] === '--force';
+$args = array_slice($argv,1);
+
+$force = in_array('--force',$args);
 
 $files = [
-    'laravelfly-app-config.example.php' => '/config/laravelfly.php',
-    'laravelfly-server-config.example.php' => '/laravelfly.server.config.php',
+    ['laravelfly-app-config.example.php' => '/config/laravelfly.php'],
+    ['laravelfly-server-config.example.php' => '/laravelfly.server.config.php']
 ];
+if(in_array('app',$args)){
+    $works=$files[0];
+}elseif(in_array('server',$args)){
+    $works=$files[1];
+}else{
+    $works=array_merge($files[0],$files[1]);
+}
 
 $root = realpath(__DIR__ . '/../../../..');
 
-foreach ($files as $src => $des) {
+foreach ($works as $src => $des) {
     $src = __DIR__ . '/../config/' . $src;
     $des = $root . $des;
 

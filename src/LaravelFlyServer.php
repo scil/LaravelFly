@@ -21,7 +21,7 @@ class LaravelFlyServer
     /**
      * @var \LaravelFly\Greedy\Application
      */
-    protected $app;
+    protected $workerApplication;
     /**
      * @var string
      */
@@ -30,7 +30,7 @@ class LaravelFlyServer
     /**
      * @var \LaravelFly\Greedy\Kernel
      */
-    protected $kernel;
+    protected $workerKernel;
 
     public function __construct($options, $kernelClass = '\App\Http\Kernel')
     {
@@ -98,19 +98,19 @@ class LaravelFlyServer
 //        echo "[INFO] worker start/reload. master pid:{$this->swoole_http_server->master_pid}; manager pid:{$this->swoole_http_server->manager_pid}", PHP_EOL;
 
         $appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
-        $this->app = $app = new $appClass($this->root);
 
-        // todo  needed?
-        $app->singleton(
+        $this->workerApplication =  new $appClass($this->root);
+
+        $this->workerApplication->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             LARAVELFLY_KERNEL
         );
-        $app->singleton(
+        $this->workerApplication->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
             \App\Exceptions\Handler::class
         );
 
-        $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $this->workerKernel = $this->workerApplication->make(\Illuminate\Contracts\Http\Kernel::class);
 
         $this->bootstrapOnWorkerStart();
 
@@ -128,10 +128,10 @@ class LaravelFlyServer
          * app['url']->request will update when app['request'] changes, as
          * there is "$app->rebinding( 'request',...)"
          */
-        $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
+        $this->workerApplication->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
 
         try {
-            $this->kernel->bootstrap();
+            $this->workerKernel->bootstrap();
         } catch (\Throwable $e) {
             echo $e;
             $this->swoole_http_server->shutdown();
@@ -146,19 +146,8 @@ class LaravelFlyServer
 
             $laravel_request = (new \LaravelFly\Coroutine\Illuminate\Request())->createFromSwoole($request);
 
-            $requestApp = $this->app->createRequestApplication(\Swoole\Coroutine::getuid());
-
-            // todo  needed?
-//            $requestApp->singleton(
-//                \Illuminate\Contracts\Http\Kernel::class,
-//                \LaravelFly\Coroutine\RequestKernel::class
-//            );
-//            $requestKernel = $requestApp->make(\Illuminate\Contracts\Http\Kernel::class);
-
-            //todo del this class, use app only
-            $requestKernel = $requestApp->make(\LaravelFly\Coroutine\RequestKernel::class);
-            echo str_repeat('abc',9);
-            $laravel_response = $requestKernel->handle($laravel_request);
+            $requestApp = clone $this->workerApplication;
+            $laravel_response= $this->workerKernel->handle($laravel_request);
 
         } else {
 
@@ -176,11 +165,11 @@ class LaravelFlyServer
             /**
              * @var Illuminate\Http\Response
              */
-            $laravel_response = $this->kernel->handle($laravel_request);
+            $laravel_response = $this->workerKernel->handle($laravel_request);
         }
 
 
-        //  once there were errors saying 'http_onReceive: connection[...] is closed' which make worker restart
+        // once there were errors saying 'http_onReceive: connection[...] is closed' which make worker restart
         // now they are useless
         // if (!$this->swoole_http_server->exist($response->fd)) {
         // return;
@@ -201,18 +190,17 @@ class LaravelFlyServer
         // gzip use nginx
         // $response->gzip(1);
 
-
         $response->end($laravel_response->getContent());
 
-        $this->kernel->terminate($laravel_request, $laravel_response);
+        $this->workerKernel->terminate($laravel_request, $laravel_response);
 
         if (LARAVELFLY_MODE == 'Coroutine') {
 
-            $this->app->delRequestApplication(\Swoole\Coroutine::getuid());
+            $this->workerApplication->delRequestApplication(\Swoole\Coroutine::getuid());
 
         } else {
 
-            $this->app->restoreAfterRequest();
+            $this->workerApplication->restoreAfterRequest();
 
         }
     }

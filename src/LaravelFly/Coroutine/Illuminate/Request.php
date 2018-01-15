@@ -62,6 +62,7 @@ class Request extends \Illuminate\Http\Request
          * from: Illuminate\Http\Request::createFromBase
          */
         $request->request = $this->getInputSource();
+        return $this;
     }
 
     function convertSwooleRequestHeader($request, $server)

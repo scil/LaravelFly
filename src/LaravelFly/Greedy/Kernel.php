@@ -17,10 +17,8 @@ class Kernel extends \LaravelFly\Normal\Kernel
 
 //        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
 //        \Illuminate\Foundation\Bootstrap\BootProviders::class,
-        'LaravelFly\Greedy\Bootstrap\RegisterAndBootProvidersOnWork',
-
-        'LaravelFly\Greedy\Bootstrap\FindViewFiles',
-
+        \LaravelFly\Greedy\Bootstrap\RegisterAndBootProvidersOnWork::class,
+        \LaravelFly\Greedy\Bootstrap\FindViewFiles::class,
         /**
          * prevent providers to run twice,see :$this->>bootProvidersInRequest
          *      `array_walk($this->serviceProviders,`
@@ -28,9 +26,8 @@ class Kernel extends \LaravelFly\Normal\Kernel
          * this item must be after the one above
          * because 'app()->make' would change 'app()->serviceProviders'
          */
-        'LaravelFly\Greedy\Bootstrap\ResetServiceProviders',
-
-        'LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross',
+        \LaravelFly\Greedy\Bootstrap\ResetServiceProviders::class,
+        \LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross::class,
 
         \LaravelFly\Normal\Bootstrap\SetBackupForBaseServices::class,
         \LaravelFly\Normal\Bootstrap\BackupConfigs::class,
