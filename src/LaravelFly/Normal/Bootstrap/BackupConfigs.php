@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelFly\Bootstrap;
+namespace LaravelFly\Normal\Bootstrap;
 
-use LaravelFly\Application;
+use LaravelFly\Normal\Application;
 
 class BackupConfigs
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly;
+namespace LaravelFly\Normal;
 
 
 class ProviderRepository extends \Illuminate\Foundation\ProviderRepository
@@ -16,7 +16,7 @@ class ProviderRepository extends \Illuminate\Foundation\ProviderRepository
             $manifest = $this->compileManifest($providers);
         }
 
-        // if is necessary
+        // this if is necessary
         if (isset($manifest['when'])) {
             foreach ($manifest['when'] as $provider => $events) {
                 $this->registerLoadEvents($provider, $events);
@@ -27,7 +27,7 @@ class ProviderRepository extends \Illuminate\Foundation\ProviderRepository
             $this->app->register($provider);
         }
 
-        // if is necessary
+        // this if is necessary
         if ($manifest['deferred']) {
             $this->app->addDeferredServices($manifest['deferred']);
         }

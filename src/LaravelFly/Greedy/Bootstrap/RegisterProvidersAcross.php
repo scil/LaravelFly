@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * * * * * * * * * * * * * * * * * * * * * * *
+ * not used by Coroutine mode
+ * * * * * * * * * * * * * * * * * * * * * * *
+ */
 namespace LaravelFly\Greedy\Bootstrap;
 
 use LaravelFly\Greedy\Application;

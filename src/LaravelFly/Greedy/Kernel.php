@@ -3,7 +3,7 @@
 namespace LaravelFly\Greedy;
 
 
-class Kernel extends \LaravelFly\Kernel
+class Kernel extends \LaravelFly\Normal\Kernel
 {
 
     protected $bootstrappers = [
@@ -11,15 +11,14 @@ class Kernel extends \LaravelFly\Kernel
         \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
-        \LaravelFly\Bootstrap\SetProvidersInRequest::class,
+        \LaravelFly\Normal\Bootstrap\SetProvidersInRequest::class,
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
 
-//        'Illuminate\Foundation\Bootstrap\RegisterProviders',
-//        'Illuminate\Foundation\Bootstrap\BootProviders',
+//        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+//        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        'LaravelFly\Greedy\Bootstrap\RegisterAndBootProvidersOnWork',
 
-
-        'LaravelFly\Greedy\Bootstrap\RegisterAndBootProvidersInWork',
         'LaravelFly\Greedy\Bootstrap\FindViewFiles',
 
         /**
@@ -30,10 +29,11 @@ class Kernel extends \LaravelFly\Kernel
          * because 'app()->make' would change 'app()->serviceProviders'
          */
         'LaravelFly\Greedy\Bootstrap\ResetServiceProviders',
+
         'LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross',
 
-        \LaravelFly\Bootstrap\SetBackupForBaseServices::class,
-        \LaravelFly\Bootstrap\BackupConfigs::class,
-        \LaravelFly\Bootstrap\BackupAttributes::class,
+        \LaravelFly\Normal\Bootstrap\SetBackupForBaseServices::class,
+        \LaravelFly\Normal\Bootstrap\BackupConfigs::class,
+        \LaravelFly\Normal\Bootstrap\BackupAttributes::class,
     ];
 }

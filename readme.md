@@ -69,9 +69,28 @@ you can add "--force" to overwrite old config files.
 Note: if using Greey Mode, about 'backup and restore', any items prefixed with "/** depends " need your consideration.
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
-if (defined('LARAVELFLY_GREEDY')) {
-    if (LARAVELFLY_GREEDY) {
+if (defined('LARAVELFLY_MODE')) {
+    if (LARAVELFLY_MODE == 'Greedy') {
         class WhichKernel extends \LaravelFly\Greedy\Kernel { }
+    }else if (LARAVELFLY_MODE == 'Coroutine') {
+        class WhichKernel extends \LaravelFly\Coroutine\Kernel { }
+    } else {
+        class WhichKernel extends \LaravelFly\Normal\Kernel { }
+    }
+} else {
+    class WhichKernel extends HttpKernel { }
+}
+
+class Kernel extends WhichKernel
+```
+
+## Optional Config
+
+* Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
+
+* if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
+```
+        'options'   => [
     } else {
         class WhichKernel extends \LaravelFly\Kernel { }
     }
@@ -136,7 +155,11 @@ LaravelFlyServer runs in cli mode, so LaravelFly debug is to debug a script
 vendor/scil/laravel-fly/bin/laravelfly-server <start|stop|restart>
 ```
 
-To debug LaravelFly on a remote host such as vagrant, read [Debugging remote CLI with phpstorm](http://www.adayinthelifeof.nl/2012/12/20/debugging-remote-cli-with-phpstorm/?utm_source=tuicool&utm_medium=referral)
+To debug LaravelFly on a remote host such as vagrant, read [Debugging remote CLI with phpstorm](http://www.adayinthelifeof.nl/2012/12/20/debugging-remote-cli-with-phpstorm/?utm_source=tuicool&utm_medium=referral) then use a command like this:
+```
+php -dxdebug.remote_host=192.168.1.2  vendor/scil/laravel-fly/bin/laravelfly-server <start|stop|restart>
+```
+replace 192.168.1.2 with your ip where phpstorm is.
 
 
 ## Reload All Workers Gracefully: swoole server reloading

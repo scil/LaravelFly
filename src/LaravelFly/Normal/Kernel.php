@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ivy
- * Date: 2015/7/28
- * Time: 21:15
- */
 
-namespace LaravelFly;
+namespace LaravelFly\Normal;
 
 
 use Exception;
@@ -25,7 +19,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
         // must placed before RegisterProviders, because it change config('app.providers')
-        \LaravelFly\Bootstrap\SetProvidersInRequest::class,
+        \LaravelFly\Normal\Bootstrap\SetProvidersInRequest::class,
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
         \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
@@ -33,14 +27,14 @@ class Kernel extends HttpKernel
         // replaced by `$this->app->bootProvidersInRequest();`
         // \Illuminate\Foundation\Bootstrap\BootProviders::class,
 
-        \LaravelFly\Bootstrap\SetBackupForBaseServices::class,
-        \LaravelFly\Bootstrap\BackupConfigs::class,
-        \LaravelFly\Bootstrap\BackupAttributes::class,
+        \LaravelFly\Normal\Bootstrap\SetBackupForBaseServices::class,
+        \LaravelFly\Normal\Bootstrap\BackupConfigs::class,
+        \LaravelFly\Normal\Bootstrap\BackupAttributes::class,
     ];
     /**
      * The application implementation.
      *
-     * @var \LaravelFly\Application
+     * @var \LaravelFly\Normal\Application
      */
     protected $app;
 

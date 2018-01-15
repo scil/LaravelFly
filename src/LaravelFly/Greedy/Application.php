@@ -7,61 +7,20 @@ use Illuminate\Log\LogServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 
 use LaravelFly\Greedy\Routing\RoutingServiceProvider;
-use LaravelFly\ProviderRepository;
+use LaravelFly\Normal\ProviderRepository;
 
-class Application extends \LaravelFly\Application
+class Application extends \LaravelFly\Normal\Application
 {
 
     protected $bootedOnWorker = false;
 
-    protected $providers_to_boot_in_worker = [];
+    /**
+     * * * * * * * * * * * * * * * * * * * * * * *
+     * follow attributes are not used by Coroutine mode
+     * * * * * * * * * * * * * * * * * * * * * * *
+     */
+    protected $providersToBootOnWorker = [];
 
-    public function setProvidersToBootInWorker($ps)
-    {
-        $this->providers_to_boot_in_worker = $ps;
-    }
-
-    public function registerConfiguredProvidersBootInWorker()
-    {
-        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootInWorker()))
-            ->load($this->providers_to_boot_in_worker);
-    }
-
-    public function getCachedServicesPathBootInWorker()
-    {
-        return $this->bootstrapPath() . '/cache/laravelfly_services_in_worker.json';
-    }
-
-    public function resetServiceProviders()
-    {
-        $this->serviceProviders = [];
-    }
-
-    public function registerProvidersAcross()
-    {
-        $config = $this->make('config');
-        $providers = array_diff(
-        // providers in request have remove from 'app.providers'
-            $config->get('app.providers'),
-            $this->providers_to_boot_in_worker
-        );
-
-        if ($providers) {
-            if ($config->get('app.debug')) {
-                echo PHP_EOL, 'Providers across ( reg on work and boot on request )', PHP_EOL, __CLASS__, PHP_EOL;
-                var_dump($providers);
-            }
-
-            (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))
-                ->load($providers);
-
-        }
-    }
-
-    public function getCachedServicesPathAcross()
-    {
-        return $this->bootstrapPath() . '/cache/laravelfly_services_across.json';
-    }
 
     public function bootOnWorker()
     {
@@ -94,4 +53,57 @@ class Application extends \LaravelFly\Application
 
         $this->register(new RoutingServiceProvider($this));
     }
+
+
+
+
+    /**
+     * * * * * * * * * * * * * * * * * * * * * * *
+     * follow methods are not used by Coroutine mode
+     * * * * * * * * * * * * * * * * * * * * * * *
+     */
+    public function setProvidersToBootOnWorker($ps)
+    {
+        $this->providersToBootOnWorker = $ps;
+    }
+
+    public function registerConfiguredProvidersBootOnWorker()
+    {
+        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker()))
+            ->load($this->providersToBootOnWorker);
+    }
+
+    public function getCachedServicesPathBootOnWorker()
+    {
+        return $this->bootstrapPath() . '/cache/laravelfly_services_on_worker.json';
+    }
+    public function resetServiceProviders()
+    {
+        $this->serviceProviders = [];
+    }
+    public function registerProvidersAcross()
+    {
+        $config = $this->make('config');
+        $providers = array_diff(
+        // providers in request have remove from 'app.providers'
+            $config->get('app.providers'),
+            $this->providersToBootOnWorker
+        );
+
+        if ($providers) {
+            if ($config->get('app.debug')) {
+                echo PHP_EOL, 'Providers across ( reg on work and boot on request )', PHP_EOL, __CLASS__, PHP_EOL;
+                var_dump($providers);
+            }
+
+            (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))
+                ->load($providers);
+
+        }
+    }
+    public function getCachedServicesPathAcross()
+    {
+        return $this->bootstrapPath() . '/cache/laravelfly_services_across.json';
+    }
+
 }

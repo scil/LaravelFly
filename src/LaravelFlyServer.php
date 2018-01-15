@@ -19,7 +19,7 @@ class LaravelFlyServer
     public $swoole_http_server;
 
     /**
-     * @var \LaravelFly\Application
+     * @var \LaravelFly\Greedy\Application
      */
     protected $app;
     /**
@@ -28,7 +28,7 @@ class LaravelFlyServer
     protected $kernelClass;
 
     /**
-     * @var \LaravelFly\Kernel
+     * @var \LaravelFly\Greedy\Kernel
      */
     protected $kernel;
 
@@ -36,7 +36,7 @@ class LaravelFlyServer
     {
 
         $this->root = realpath(__DIR__ . '/../../../..');
-        if(!(is_dir($this->root)&& is_file($this->root.'/bootstrap/app.php'))){
+        if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
             die("This doc root is not for a Laravel app: {$this->root} ");
         }
 
@@ -97,18 +97,13 @@ class LaravelFlyServer
     {
 //        echo "[INFO] worker start/reload. master pid:{$this->swoole_http_server->master_pid}; manager pid:{$this->swoole_http_server->manager_pid}", PHP_EOL;
 
-        $this->app = $app = LARAVELFLY_GREEDY ?
-            new \LaravelFly\Greedy\Application($this->root) :
-            new \LaravelFly\Application($this->root);
+        $appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
+        $this->app = $app = new $appClass($this->root);
 
+        // todo  needed?
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             LARAVELFLY_KERNEL
-        );
-        //todo is it needed
-        $app->singleton(
-            \Illuminate\Contracts\Console\Kernel::class,
-            \App\Console\Kernel::class
         );
         $app->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
@@ -147,21 +142,42 @@ class LaravelFlyServer
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
-        // global vars used by: Symfony\Component\HttpFoundation\Request::createFromGlobals()
-        // this static method is alse used by Illuminate\Auth\Guard
-        $this->setGlobal($request);
+        if (LARAVELFLY_MODE == 'Coroutine') {
 
-        // according to : Illuminate\Http\Request::capture
-        /**
-         * @var Illuminate\Http\Request
-         */
-        $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
+            $laravel_request = (new \LaravelFly\Coroutine\Illuminate\Request())->createFromSwoole($request);
 
-        // see: Illuminate\Foundation\Http\Kernel::handle($request)
-        /**
-         * @var Illuminate\Http\Response
-         */
-        $laravel_response = $this->kernel->handle($laravel_request);
+            $requestApp = $this->app->createRequestApplication(\Swoole\Coroutine::getuid());
+
+            // todo  needed?
+//            $requestApp->singleton(
+//                \Illuminate\Contracts\Http\Kernel::class,
+//                \LaravelFly\Coroutine\RequestKernel::class
+//            );
+//            $requestKernel = $requestApp->make(\Illuminate\Contracts\Http\Kernel::class);
+
+            //todo del this class, use app only
+            $requestKernel = $requestApp->make(\LaravelFly\Coroutine\RequestKernel::class);
+            echo str_repeat('abc',9);
+            $laravel_response = $requestKernel->handle($laravel_request);
+
+        } else {
+
+            // global vars used by: Symfony\Component\HttpFoundation\Request::createFromGlobals()
+            // this static method is alse used by Illuminate\Auth\Guard
+            $this->setGlobal($request);
+
+            // according to : Illuminate\Http\Request::capture
+            /**
+             * @var Illuminate\Http\Request
+             */
+            $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
+
+            // see: Illuminate\Foundation\Http\Kernel::handle($request)
+            /**
+             * @var Illuminate\Http\Response
+             */
+            $laravel_response = $this->kernel->handle($laravel_request);
+        }
 
 
         //  once there were errors saying 'http_onReceive: connection[...] is closed' which make worker restart
@@ -185,14 +201,20 @@ class LaravelFlyServer
         // gzip use nginx
         // $response->gzip(1);
 
-        $response->end($laravel_response->getContent());
 
+        $response->end($laravel_response->getContent());
 
         $this->kernel->terminate($laravel_request, $laravel_response);
 
+        if (LARAVELFLY_MODE == 'Coroutine') {
 
-        $this->app->restoreAfterRequest();
+            $this->app->delRequestApplication(\Swoole\Coroutine::getuid());
 
+        } else {
+
+            $this->app->restoreAfterRequest();
+
+        }
     }
 
     // copied from Swoole Framework
@@ -200,44 +222,22 @@ class LaravelFlyServer
     // https://github.com/swoole/framework/libs/Swoole/Http/ExtServer.php
     protected function setGlobal($request)
     {
-        if (isset($request->get)) {
-            $_GET = $request->get;
-        } else {
-            $_GET = array();
-        }
-        if (isset($request->post)) {
-            $_POST = $request->post;
-        } else {
-            $_POST = array();
-        }
-        if (isset($request->files)) {
-            $_FILES = $request->files;
-        } else {
-            $_FILES = array();
-        }
-        if (isset($request->cookie)) {
-            $_COOKIE = $request->cookie;
-        } else {
-            $_COOKIE = array();
-        }
-        if (isset($request->server)) {
-            $_SERVER = $request->server;
-        } else {
-            $_SERVER = array();
-        }
-        //todo: necessary?
-        foreach ($_SERVER as $key => $value) {
+        $_GET = $request->get ?? [];
+        $_POST = $request->post ?? [];
+        $_FILES = $request->files ?? [];
+        $_COOKIE = $request->cookie ?? [];
+
+        $_SERVER = array();
+        foreach ($request->server as $key => $value) {
             $_SERVER[strtoupper($key)] = $value;
-            unset($_SERVER[$key]);
         }
+
         $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
-        $_SERVER['REQUEST_URI'] = $request->server['request_uri'];
 
         foreach ($request->header as $key => $value) {
             $_key = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
             $_SERVER[$_key] = $value;
         }
-        $_SERVER['REMOTE_ADDR'] = $request->server['remote_addr'];
     }
 }
 
