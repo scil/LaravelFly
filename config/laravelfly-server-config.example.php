@@ -5,7 +5,7 @@ const LARAVELFLY_KERNEL= \App\Http\Kernel::class;
 // Normal
 // Greedy
 // Coroutine
-const LARAVELFLY_MODE = 'Coroutine';
+const LARAVELFLY_MODE = 'Normal';
 
 // when false, Application::runningInConsole() return false.
 const HONEST_IN_CONSOLE = true;
