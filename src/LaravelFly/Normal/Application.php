@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Facade;
 
 class Application extends \LaravelFly\Application
 {
-    use \LaravelFly\ApplicationTrait;
 
     protected $needBackUpAppAttributes = [
         'resolved',
@@ -51,23 +50,30 @@ class Application extends \LaravelFly\Application
     protected $backupedValuesBeforeRequest = [];
     protected $restoreTool = [];
 
-    protected $providerRepInRequest;
-
-    public function makeManifestForProvidersInRequest($providers)
+    /**
+     * replace \Illuminate\Foundation\Bootstrap\BootProviders::class,
+     * code from \Illuminate\Foundation\Application::boot
+     */
+    public function boot()
     {
-        $manifestPath = $this->getCachedServicesPathInRequest();
-        $this->providerRepInRequest = new ProviderRepositoryInRequest($this, new Filesystem, $manifestPath);
-        $this->providerRepInRequest->makeManifest($providers);
-    }
+        if ($this->booted) {
+            return;
+        }
 
-    public function registerConfiguredProvidersInRequest()
-    {
-        $this->providerRepInRequest->load([]);
-    }
+        $this->fireAppCallbacks($this->bootingCallbacks);
 
-    public function addDeferredServices(array $services)
-    {
-        $this->deferredServices = array_merge($this->deferredServices, $services);
+        /**  array_walk
+         * If when a provider booting, it reg some other providers,
+         * then the new providers added to $this->serviceProviders
+         * then array_walk will loop the new ones and boot them. // pingpong/modules 2.0 use this feature
+         */
+        array_walk($this->serviceProviders, function ($p) {
+            $this->bootProvider($p);
+        });
+
+        $this->booted = true;
+
+        $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
 

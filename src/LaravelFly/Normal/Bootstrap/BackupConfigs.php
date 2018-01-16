@@ -15,7 +15,7 @@ class BackupConfigs
 
 
         $needBackup = [];
-        foreach ($appConfig['laravelfly.config_need_backup'] as $config) {
+        foreach ($appConfig['laravelfly.config_changed_in_requests'] as $config) {
             if (isset($appConfig[$config])) {
                 $needBackup[$config] = $appConfig[$config];
             }

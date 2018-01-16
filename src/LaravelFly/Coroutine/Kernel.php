@@ -32,14 +32,21 @@ class Kernel extends HttpKernel
 
 //        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
 //        \Illuminate\Foundation\Bootstrap\BootProviders::class,
-        \LaravelFly\Coroutine\Bootstrap\RegisterAndBootProvidersOnWork::class,
+        \LaravelFly\Coroutine\Bootstrap\CleanProviders::class,
         \LaravelFly\Coroutine\Bootstrap\RegisterAcrossProviders::class,
+        \LaravelFly\Coroutine\Bootstrap\RegisterAndBootProvidersOnWork::class,
 
         //todo
 //        \LaravelFly\Greedy\Bootstrap\FindViewFiles::class,
 
     ];
 
+    function __clone()
+    {
+        $this->app = Container::getInstance();
+        //todo the new obj should update app->instances
+        //todo routers?
+    }
 
     public function handle($request)
     {
@@ -60,9 +67,7 @@ class Kernel extends HttpKernel
             $response = $this->renderException($request, $e);
         }
 
-        Container::getInstance()['events']
-//        $this->app['events']
-            ->dispatch(
+        $this->app['events']->dispatch(
             new Events\RequestHandled($request, $response)
         );
 
@@ -71,9 +76,7 @@ class Kernel extends HttpKernel
 
     protected function sendRequestThroughRouter($request)
     {
-        Container::getInstance()
-//        $this->app
-        ->instance('request', $request);
+        $this->app->instance('request', $request);
 
         // todo
         Facade::clearResolvedInstance('request');
@@ -81,16 +84,19 @@ class Kernel extends HttpKernel
         // replace $this->bootstrap();
         $this->app->bootInRequest();
 
-        return (new Pipeline(
-//        $this->app
-        Container::getInstance()
-        ))
+        return (new Pipeline($this->app))
             ->send($request)
-            ->through(
-//                $this->app
-        Container::getInstance()
-                    ->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
             ->then($this->dispatchToRouter());
     }
+    protected function dispatchToRouter()
+    {
+        return function ($request) {
+            //todo
+            //?  why?  request has been inserted
+            $this->app->instance('request', $request);
 
+            return $this->router->dispatch($request);
+        };
+    }
 }

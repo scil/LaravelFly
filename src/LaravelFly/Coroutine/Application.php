@@ -13,17 +13,11 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 class Application extends \LaravelFly\Application
 {
 
-    use \LaravelFly\ApplicationTrait;
-
     protected $bootedOnWorker = false;
 
     protected $bootedInRequest=false;
     protected $acrossServiceProviders=[];
 
-    /**
-     * @var array all application instances live now in current worker
-     */
-    protected static $self_instances = [];
 
     /**
      * @var int
@@ -71,44 +65,26 @@ class Application extends \LaravelFly\Application
 //        ));
 
         // replace $this->register(new EventServiceProvider($this));
-        $this['events'] = clone $this['events'];
+        $this->instance('events',  clone $this->make('events'));
         // replace $this->register(new RoutingServiceProvider($this));
         // todo : obj.routes need clone too?
-        $this['router'] = clone $this['router'];
+        $this->instance('router',  clone $this->make('router'));
     }
     function delRequestApplication($coroutineID)
     {
         unset(static::$self_instances[$coroutineID]);
     }
-    public static function getInstance()
-    {
-        $cID = \Swoole\Coroutine::getuid();
-        if (empty(static::$self_instances[$cID])) {
-            //todo
-//            static::$self_instances[$cID] = new static;
-        }
-        return static::$self_instances[$cID];
-    }
+//    function getInstances(){
+//        return static::$self_instances;
+//    }
 
-    public static function setInstance(ContainerContract $container = null)
-    {
-        return static::$self_instances[\Swoole\Coroutine::getuid()] = $container;
-    }
-    function getInstances(){
-        return static::$self_instances;
-    }
-
-    public function setProvidersToBootOnWorker($ps)
-    {
-    }
     public function registerAcrossProviders()
     {
-        $config=$this->config;
+        $config=$this->make('config');
         $providers = array_diff(
-        // providers in request have remove from 'app.providers'
+            // providers in request have remove from 'app.providers' by CleanProviders
             $config->get('app.providers'),
-            $this->providersToBootOnWorker,
-            $config->get('laravelfly.providers_ignore')
+            $this->providersToBootOnWorker
         );
 
         $serviceProviders = $this->serviceProviders ;
@@ -128,10 +104,12 @@ class Application extends \LaravelFly\Application
         $this->serviceProviders = array_merge($serviceProviders, $this->serviceProviders);
     }
 
-    public function registerConfiguredProvidersBootOnWorker($providers)
+    public function setProvidersToBootOnWorker($providers)
     {
-        $this->config = $this['config'];
         $this->providersToBootOnWorker = array_keys($providers);
+    }
+    public function registerConfiguredProvidersBootOnWorker()
+    {
 
         //todo study official registerConfiguredProviders
         (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker()))
@@ -175,11 +153,16 @@ class Application extends \LaravelFly\Application
     public function bootInRequest()
     {
         if ($this->bootedInRequest) {
+            echo 'has booted ', PHP_EOL;
             return;
         }
 
+        $this->registerConfiguredProvidersInRequest();
+
+        //todo it should be changed
         $this->fireAppCallbacks($this->bootingCallbacks);
 
+        echo 'boot ', PHP_EOL;
         array_walk($this->acrossServiceProviders, function ($p) {
            echo 'boot ', get_class($p),PHP_EOL;
             $this->bootProvider($p);

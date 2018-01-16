@@ -147,7 +147,8 @@ class LaravelFlyServer
             $laravel_request = (new \LaravelFly\Coroutine\Illuminate\Request())->createFromSwoole($request);
 
             $requestApp = clone $this->workerApplication;
-            $laravel_response= $this->workerKernel->handle($laravel_request);
+            $requestKernel = clone $this->workerKernel;
+            $laravel_response= $requestKernel->handle($laravel_request);
 
         } else {
 

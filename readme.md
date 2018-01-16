@@ -261,7 +261,7 @@ Note, Greedy Mode is still experimental and only for study.
   * create a kernel
   * kernel bootstrap
     * LoadEnvironmentVariables LoadConfiguration HandleExceptions
-    * **SetProvidersInRequest** see:config/laravelfly 'providers_in_request'
+    * **CleanProviders** see:config/laravelfly 'providers_in_request'
     * RegisterFacades and RegisterProviders
     * **backup**
   * ------ waiting for a request ------

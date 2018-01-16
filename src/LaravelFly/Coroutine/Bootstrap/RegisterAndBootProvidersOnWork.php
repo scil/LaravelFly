@@ -8,12 +8,10 @@ class RegisterAndBootProvidersOnWork
 {
     public function bootstrap(Application $app)
     {
-        $appConfig = $app['config'];
-        $providers = $appConfig['laravelfly.providers_on_worker'];
+        $providers = $app['config']['laravelfly.providers_on_worker'];
 
-        $app->registerConfiguredProvidersBootOnWorker($providers);
+        $app->registerConfiguredProvidersBootOnWorker();
         $app->bootOnWorker();
-
 
         foreach (array_values($providers) as $singles) {
             foreach ($singles as $name => $config) {
