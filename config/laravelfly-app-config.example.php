@@ -1,205 +1,191 @@
 <?php
 
+if(!defined('LARAVELFLY_MODE'))
+    return [];
 
-if (LARAVELFLY_MODE == 'Coroutine') {
-
-    return [
-        /** providers to boot in worker, before any request
-         *
-         * format:
-         *      proverder_name => [],
-         *
-         * you can also supply singleton services to made on worker
-         * only singleton services are useful and valid here.
-         * and the singleton services must not be changed during any request,
-         * otherwise they should be made in request, no on worker.
-         *
-         * a singeton service is like this:
-         *     *   $this->app->singleton('cache', function ($app) { ... });
-         *
-         * formats:
-         *      proverder_name => [
-         *        'singleton_service_name_1' => true,  //  service will be made on worker
-         *        'singleton_service_name_2' => false, //  service will not be made on worker
-         *      ],
-         */
-
-        'providers_on_worker' => [
-            Illuminate\Auth\AuthServiceProvider::class => [],
-            Illuminate\Broadcasting\BroadcastServiceProvider::class => [],
-            Illuminate\Bus\BusServiceProvider::class => [],
-            Illuminate\Cache\CacheServiceProvider::class => [
-                //todo test
-                'cache' => true,
-                'cache.store' => true,
-                /* depends */
-                // 'memcached.connector' => true,
-
-            ],
-            Illuminate\Cookie\CookieServiceProvider::class => [
-                // 'cookie' => false,
-            ],
-            Illuminate\Database\DatabaseServiceProvider::class => [],
-            Illuminate\Encryption\EncryptionServiceProvider::class => [
-                'encrypter' => true,
-            ],
-            Illuminate\Filesystem\FilesystemServiceProvider::class => [
-                'filesystem.disk' => true,
-                /** depends
-                 * if you use filesystem.cloud, comment it
-                 */
-                'filesystem.cloud' => true,
-            ],
-            /* This reg FormRequestServiceProvider, whose boot is related to request */
-            // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
-            Illuminate\Hashing\HashServiceProvider::class => [
-                /** depends
-                 * if during a request, Illuminate\Hashing\BcryptHasher::setRounds is called, disable it
-                 * related attributes: 'rounds',
-                 */
-                // 'hash' => false,
-                'hash' => true,
-            ],
-            Illuminate\Mail\MailServiceProvider::class => [],
-
-            // Illuminate\Notifications\NotificationServiceProvider::class,
-
-            /*todo need test : reg allowed?  */
-            // Illuminate\Pagination\PaginationServiceProvider::class,
-
-            Illuminate\Pipeline\PipelineServiceProvider::class => [],
-            Illuminate\Queue\QueueServiceProvider::class => [],
-            Illuminate\Redis\RedisServiceProvider::class => [
-                /** depends
-                 * comment it if redis is not used
-                 */
-                'redis' => true,
-            ],
-            Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
-            Illuminate\Session\SessionServiceProvider::class => [
-                // todo test
-                'session' => true,
-
-                // 'session.store' => false,
-                // 'Illuminate\Session\Middleware\StartSession' =>false,
-            ],
-            Illuminate\Translation\TranslationServiceProvider::class => [],
-            Illuminate\Validation\ValidationServiceProvider::class => [
-                /* todo
-                  todo it's related to db, when db reconnet, how it ? */
-                /* Illuminate\Validation\ValidationServiceProvider::class :*/
-                // 'validator' => [],
-                // 'validation.presence' => [],
-            ],
-            Illuminate\View\ViewServiceProvider::class => [
-                /** depends
-                 * if during a request, Illuminate\View\Engines::register is called, disable it
-                 * related attributes: 'resolved',
-                 */
-                // 'view.engine.resolver'=>false,
-                'view.engine.resolver' => true,
-            ],
-            /*
-             * Application Service Providers...
-             */
-            App\Providers\AppServiceProvider::class => [],
-            App\Providers\AuthServiceProvider::class => [],
-            App\Providers\EventServiceProvider::class => [],
-            App\Providers\RouteServiceProvider::class => [],
+return [
+    /**
+     * providers to boot on worker, before any request. only for Coroutine mode
+     *
+     * format:
+     *      proverder_name => [],
+     *
+     * you can also supply singleton services to made on worker
+     * only singleton services are useful and valid here.
+     * and the singleton services must not be changed during any request,
+     * otherwise they should be made in request, no on worker.
+     *
+     * a singeton service is like this:
+     *     *   $this->app->singleton('cache', function ($app) { ... });
+     *
+     * formats:
+     *      proverder_name => [
+     *        'singleton_service_name_1' => true,  //  service will be made on worker
+     *        'singleton_service_name_2' => false, //  service will not be made on worker
+     *      ],
+     */
+    'providers_on_worker' => [
+        Illuminate\Auth\AuthServiceProvider::class => [],
+        Illuminate\Broadcasting\BroadcastServiceProvider::class => [],
+        Illuminate\Bus\BusServiceProvider::class => [],
+        Illuminate\Cache\CacheServiceProvider::class => [
+            //todo test
+            'cache' => true,
+            'cache.store' => true,
+            /* depends */
+            // 'memcached.connector' => true,
 
         ],
-
-
-        'providers_ignore' => [
-            Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-            Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        Illuminate\Cookie\CookieServiceProvider::class => [
+            // 'cookie' => false,
         ],
-    ];
+        Illuminate\Database\DatabaseServiceProvider::class => [],
+        Illuminate\Encryption\EncryptionServiceProvider::class => [
+            'encrypter' => true,
+        ],
+        Illuminate\Filesystem\FilesystemServiceProvider::class => [
+            'filesystem.disk' => true,
+            'filesystem.cloud' => env('FLY_FILESYSTEM_CLOUD',false),
+        ],
+        /* This reg FormRequestServiceProvider, whose boot is related to request */
+        // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
+        Illuminate\Hashing\HashServiceProvider::class => [
+            'hash' => env('FLY_HASH',false),
+        ],
+        Illuminate\Mail\MailServiceProvider::class => [],
 
-} else {
+        // Illuminate\Notifications\NotificationServiceProvider::class,
 
-    return [
-        'config_need_backup' => [
+        /*todo need test : reg allowed?  */
+        // Illuminate\Pagination\PaginationServiceProvider::class,
+
+        Illuminate\Pipeline\PipelineServiceProvider::class => [],
+        Illuminate\Queue\QueueServiceProvider::class => [],
+        Illuminate\Redis\RedisServiceProvider::class => [
             /** depends
-             *
-             * 'debugbar.enabled',
+             * comment it if redis is not used
              */
+            'redis' => env('FLY_REDIS',false),
         ],
+        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
+        Illuminate\Session\SessionServiceProvider::class => [
+            // todo test
+            'session' => true,
 
-        'providers_ignore' => [
-            Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-            Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+            // 'session.store' => false,
+            // 'Illuminate\Session\Middleware\StartSession' =>false,
         ],
-
-        /** Providers to reg and boot after each request
+        Illuminate\Translation\TranslationServiceProvider::class => [],
+        Illuminate\Validation\ValidationServiceProvider::class => [
+            /* todo
+              todo it's related to db, when db reconnet, how it ? */
+            /* Illuminate\Validation\ValidationServiceProvider::class :*/
+            // 'validator' => [],
+            // 'validation.presence' => [],
+        ],
+        Illuminate\View\ViewServiceProvider::class => [
+            'view.engine.resolver' => env('FLY_VIEW_ENGINE_RESOLVER',false),
+        ],
+        /*
+         * Application Service Providers...
          */
-        'providers_in_request' => [
-        ],
+        App\Providers\AppServiceProvider::class => [],
+        App\Providers\AuthServiceProvider::class => [],
+        App\Providers\EventServiceProvider::class => [],
+        App\Providers\RouteServiceProvider::class => [],
 
-        /* Which properties of base services need to backup and restore.
-         * See: Illuminate\Foundation\Application::registerBaseServiceProviders
-         */
-        'BaseServices' => [
-
-            /* Illuminate\Events\EventServiceProvider::class : */
-            'events' => [
-                'listeners', 'wildcards', 'queueResolver',
-            ],
-
-            /* Illuminate\Routing\RoutingServiceProvider::class : */
-            'router' => [
-
-                /** not necessary to backup,
-                 * it will be changed during next request
-                 * // 'current',
-                 */
-
-                /** not necessary to backup,
-                 * the ref to app('request') will be released during next request
-                 * //'currentRequest',
-                 */
-
-                /** depends
-                 * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
-                 */
-                // 'middleware','middlewareGroups','middlewarePriority',
-
-                'obj.routes' => [
-                    /** depends
-                     *
-                     * Uncomment them if some of your routes are created during any request.
-                     * Besides, because values of these four properties are associate arrays,
-                     * if names of routes created during request are sometime different , please uncomment them ,
-                     */
-                    // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
-                ],
-            ], /* end 'router' */
-
-            'url' => [
-                /** not necessary to backup,
-                 *
-                 * the ref to app('request') will be released during next request;
-                 * and no need set request for `url' on every request , because there is a $app->rebinding for request:
-                 *      $app->rebinding( 'request', $this->requestRebinder() )
-                 * //'request'
-                 */
-
-                /* depends */
-                // 'forcedRoot', 'forceSchema',
-                // 'cachedRoot', 'cachedSchema',
-            ],
+    ],
 
 
-            /** nothing need to backup
-             *
-             * // 'redirect' => false,
-             * // 'routes' => false,
-             * // 'log' => false,
-             */
-        ],
-        /** providers to boot in worker, before any request
+    /**
+     * useless providers
+     */
+    'providers_ignore' => [
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+    ],
+
+    'config_need_backup' => [
+        /** depends
          *
-         * only for Greedy mode
+         * 'debugbar.enabled',
+         */
+    ],
+
+    /**
+     * Providers to reg and boot after each request. Only for Normal or Greedy mode
+     */
+    'providers_in_request' => [
+    ],
+
+    /**
+     * Which properties of base services need to backup. Only for Normal or Greedy mode
+     *
+     * See: Illuminate\Foundation\Application::registerBaseServiceProviders
+     */
+    'BaseServices' => [
+
+        /* Illuminate\Events\EventServiceProvider::class : */
+        'events' => [
+            'listeners', 'wildcards', 'queueResolver',
+        ],
+
+        /* Illuminate\Routing\RoutingServiceProvider::class : */
+        'router' => [
+
+            /** not necessary to backup,
+             * it will be changed during next request
+             * // 'current',
+             */
+
+            /** not necessary to backup,
+             * the ref to app('request') will be released during next request
+             * //'currentRequest',
+             */
+
+            /** depends
+             * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
+             */
+            // 'middleware','middlewareGroups','middlewarePriority',
+
+            'obj.routes' => [
+                /** depends
+                 *
+                 * Uncomment them if some of your routes are created during any request.
+                 * Besides, because values of these four properties are associate arrays,
+                 * if names of routes created during request are sometime different , please uncomment them ,
+                 */
+                // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
+            ],
+        ], /* end 'router' */
+
+        'url' => [
+            /** not necessary to backup,
+             *
+             * the ref to app('request') will be released during next request;
+             * and no need set request for `url' on every request , because there is a $app->rebinding for request:
+             *      $app->rebinding( 'request', $this->requestRebinder() )
+             * //'request'
+             */
+
+            /* depends */
+            // 'forcedRoot', 'forceSchema',
+            // 'cachedRoot', 'cachedSchema',
+        ],
+
+
+        /** nothing need to backup
+         *
+         * // 'redirect' => false,
+         * // 'routes' => false,
+         * // 'log' => false,
+         */
+    ],
+] +
+    (LARAVELFLY_MODE != 'Greedy' ? [] :
+    [
+        /**
+         * providers to boot in worker, before any request only for Greedy mode
          *
          * format:
          *      proverder_name => [],
@@ -393,5 +379,5 @@ if (LARAVELFLY_MODE == 'Coroutine') {
             // 'home','posts.create','layout.master',
         ]
 
-    ];
-}
+    ]);
+

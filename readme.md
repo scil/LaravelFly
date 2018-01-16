@@ -89,22 +89,19 @@ if (defined('LARAVELFLY_MODE')) {
 class Kernel extends WhichKernel
 ```
 
-## Optional Config
+## Coroutine Config for advanced users
 
-* Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
+If a service is made by app()->singleton, and it will not changed in any requests, then it can be made on worker (before any requests)to save memory.
 
-* if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
-```
-        'options'   => [
-    } else {
-        class WhichKernel extends \LaravelFly\Kernel { }
-    }
-} else {
-    class WhichKernel extends HttpKernel { }
-}
+To make laravel official services on worker, put these lines to .env and edit them:
+````
+# FLY_REDIS=True      # if 'redis' is used, uncomment this line.
+# FLY_FILESYSTEM_CLOUD=True      # if 'filesystem.cloud' is used, uncomment this line.
 
-class Kernel extends WhichKernel
-```
+# FLY_HASH=True      # if app('hash')->setRounds is never called in any requests, uncomment this line. See:Illuminate\Hashing\BcryptHasher::setRounds
+# FLY_VIEW_ENGINE_RESOLVER=True      # if app('view.engine.resolver')->register is never called in any requests, uncomment this line. See: Illuminate\View\Engines::register
+````
+
 
 ## Optional Config
 
