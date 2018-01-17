@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Normal;
+namespace LaravelFly\One;
 
 
 use Exception;
@@ -19,21 +19,21 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
         // must placed before RegisterProviders, because it change config('app.providers')
-        \LaravelFly\Normal\Bootstrap\CleanProviders::class,
+        \LaravelFly\One\Bootstrap\CleanProviders::class,
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
         \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
 
         // replaced by `$this->app->bootProvidersInRequest();`
         // \Illuminate\Foundation\Bootstrap\BootProviders::class,
 
-        \LaravelFly\Normal\Bootstrap\SetBackupForBaseServices::class,
-        \LaravelFly\Normal\Bootstrap\BackupConfigs::class,
-        \LaravelFly\Normal\Bootstrap\BackupAttributes::class,
+        \LaravelFly\One\Bootstrap\SetBackupForBaseServices::class,
+        \LaravelFly\One\Bootstrap\BackupConfigs::class,
+        \LaravelFly\One\Bootstrap\BackupAttributes::class,
     ];
     /**
      * The application implementation.
      *
-     * @var \LaravelFly\Normal\Application
+     * @var \LaravelFly\One\Application
      */
     protected $app;
 

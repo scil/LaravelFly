@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Normal;
+namespace LaravelFly\One;
 
 use Illuminate\Events\EventServiceProvider;
 //use LaravelFly\Routing\RoutingServiceProvider;

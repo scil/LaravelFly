@@ -3,7 +3,7 @@
 namespace LaravelFly\Greedy;
 
 
-class Kernel extends \LaravelFly\Normal\Kernel
+class Kernel extends \LaravelFly\One\Kernel
 {
 
     protected $bootstrappers = [
@@ -11,7 +11,7 @@ class Kernel extends \LaravelFly\Normal\Kernel
         \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
-        \LaravelFly\Normal\Bootstrap\CleanProviders::class,
+        \LaravelFly\One\Bootstrap\CleanProviders::class,
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
 
@@ -31,8 +31,8 @@ class Kernel extends \LaravelFly\Normal\Kernel
         // bug: reg should be called before any boot, but the RegisterAndBootProvidersOnWork is above
         \LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross::class,
 
-        \LaravelFly\Normal\Bootstrap\SetBackupForBaseServices::class,
-        \LaravelFly\Normal\Bootstrap\BackupConfigs::class,
-        \LaravelFly\Normal\Bootstrap\BackupAttributes::class,
+        \LaravelFly\One\Bootstrap\SetBackupForBaseServices::class,
+        \LaravelFly\One\Bootstrap\BackupConfigs::class,
+        \LaravelFly\One\Bootstrap\BackupAttributes::class,
     ];
 }

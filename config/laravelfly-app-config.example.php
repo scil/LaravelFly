@@ -123,7 +123,7 @@ return [
 
 
         /**
-         * Which properties of base services need to backup. Only for Normal or Greedy mode
+         * Which properties of base services need to backup. Only for One or Greedy mode
          *
          * See: Illuminate\Foundation\Application::registerBaseServiceProviders
          */

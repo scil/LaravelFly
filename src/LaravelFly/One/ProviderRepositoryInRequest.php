@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Normal;
+namespace LaravelFly\One;
 
 
 class ProviderRepositoryInRequest extends \Illuminate\Foundation\ProviderRepository

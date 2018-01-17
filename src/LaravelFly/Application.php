@@ -6,7 +6,7 @@ use Illuminate\Events\EventServiceProvider;
 //use LaravelFly\Routing\RoutingServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
-use LaravelFly\Normal\ProviderRepositoryInRequest;
+use LaravelFly\One\ProviderRepositoryInRequest;
 
 class Application extends \Illuminate\Foundation\Application
 {

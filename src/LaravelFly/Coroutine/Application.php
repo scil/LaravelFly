@@ -7,7 +7,7 @@ use LaravelFly\Coroutine\Illuminate\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
 
 use Illuminate\Filesystem\Filesystem;
-use LaravelFly\Normal\ProviderRepository;
+use LaravelFly\One\ProviderRepository;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
 class Application extends \LaravelFly\Application

@@ -7,9 +7,9 @@ use Illuminate\Log\LogServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 
 use LaravelFly\Greedy\Routing\RoutingServiceProvider;
-use LaravelFly\Normal\ProviderRepository;
+use LaravelFly\One\ProviderRepository;
 
-class Application extends \LaravelFly\Normal\Application
+class Application extends \LaravelFly\One\Application
 {
 
     protected $bootedOnWorker = false;

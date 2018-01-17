@@ -3,10 +3,10 @@
 const LARAVELFLY_KERNEL= \App\Http\Kernel::class;
 
 /**
- * Normal, Coroutine or Greedy
+ * One, Coroutine or Greedy
  * Greedy only for study
  */
-const LARAVELFLY_MODE = 'Normal';
+const LARAVELFLY_MODE = 'One';
 
 // when false, Application::runningInConsole() return false.
 const HONEST_IN_CONSOLE = true;
