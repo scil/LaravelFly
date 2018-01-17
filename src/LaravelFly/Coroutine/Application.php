@@ -13,43 +13,50 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 class Application extends \LaravelFly\Application
 {
 
+    /**
+     * @var bool
+     */
     protected $bootedOnWorker = false;
 
+    /**
+     * @var bool
+     */
     protected $bootedInRequest=false;
-    protected $acrossServiceProviders=[];
-
-
-    /**
-     * @var int
-     */
-    protected $coroutineID;
-
-    protected $isWorkerApplication = true;
-
-    /**
-     * @var \LaravelFly\Coroutine\Application
-     */
-    protected $workerApplication;
 
     /**
      * @var array
      */
+    protected $acrossServiceProviders=[];
 
-    // should only run for worker application , not cloned application
+    /**
+     * The id of coroutine which this instance is in
+     *
+     * @var int
+     */
+    protected $coid;
+
+    /**
+     * if this application instance is a worker app or a request app.
+     *
+     * the worker app is always $appInstance->instance or Container::$instance
+     *
+     * @var bool
+     */
+    protected $isRequestApp;
+
     public function __construct($basePath = null)
     {
         parent::__construct($basePath);
-        $this->isWorkerApplication = true;
-        $this->coroutineID = \Swoole\Coroutine::getuid();
+        $this->isRequestApp = false;
+        $this->coid = \Swoole\Coroutine::getuid();
         static::$instance = $this;
     }
 
 
     function __clone()
     {
-        $this->isWorkerApplication = false;
-        $this->workerApplication = static::$instance;
-        $this->coroutineID = \Swoole\Coroutine::getuid();
+        $this->isRequestApp = true;
+        $this->coid = \Swoole\Coroutine::getuid();
 
         /**
          * following is implementing part of  parent __construct
@@ -64,19 +71,21 @@ class Application extends \LaravelFly\Application
 //            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
 //        ));
 
-        // replace $this->register(new EventServiceProvider($this));
+        /**
+         * replace $this->register(new EventServiceProvider($this));
+         */
         $this->instance('events',  clone $this->make('events'));
-        // replace $this->register(new RoutingServiceProvider($this));
-        // todo : obj.routes need clone too?
+        /**
+         * replace $this->register(new RoutingServiceProvider($this));
+         * @todo obj.routes need clone too?
+         */
         $this->instance('router',  clone $this->make('router'));
     }
-    function delRequestApplication($coroutineID)
+
+    static function delRequestApplication($coroutineID)
     {
         unset(static::$self_instances[$coroutineID]);
     }
-//    function getInstances(){
-//        return static::$self_instances;
-//    }
 
     public function registerAcrossProviders()
     {
@@ -89,18 +98,21 @@ class Application extends \LaravelFly\Application
 
         $serviceProviders = $this->serviceProviders ;
         $this->serviceProviders = [];
+
         if ($providers) {
             if ($config->get('app.debug')) {
                 echo PHP_EOL, 'start to reg Providers across', PHP_EOL, __CLASS__, PHP_EOL;
                 var_dump($providers);
             }
 
+            //todo update code
             (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))
                 ->load($providers);
 
         }
 
         $this->acrossServiceProviders=$this->serviceProviders;
+        //todo merge? nest?
         $this->serviceProviders = array_merge($serviceProviders, $this->serviceProviders);
     }
 
@@ -140,14 +152,10 @@ class Application extends \LaravelFly\Application
 
         $this->bootedOnWorker = true;
 
-//        foreach ($this->singles as $abstract) {
-//            //todo
-//            if (!in_array($abstract, ['filesystem.cloud',]))
-//                $this->make($abstract);
-//        }
-
-        //todo it should be changed
-        $this->fireAppCallbacks($this->bootedCallbacks);
+        /**
+         * moved to {@link bootInRequest()}
+         */
+        // $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
     public function bootInRequest()
@@ -159,24 +167,25 @@ class Application extends \LaravelFly\Application
 
         $this->registerConfiguredProvidersInRequest();
 
-        //todo it should be changed
-        $this->fireAppCallbacks($this->bootingCallbacks);
+        /**
+         * moved to {@link bootOnWorker()}
+         */
+        // $this->fireAppCallbacks($this->bootingCallbacks);
 
-        echo 'boot ', PHP_EOL;
         array_walk($this->acrossServiceProviders, function ($p) {
-           echo 'boot ', get_class($p),PHP_EOL;
             $this->bootProvider($p);
         });
 
         $this->bootedInRequest= true;
 
-        //todo it should be changed
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
     /*
      * Override
-     * only for compiled all routes which are made before request
+     * use new providers for
+     * 1. new services with __clone
+     * 2. compiled all routes which are made before request
      */
     protected function registerBaseServiceProviders()
     {

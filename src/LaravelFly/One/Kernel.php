@@ -48,7 +48,6 @@ class Kernel extends HttpKernel
         // Facade::clearResolvedInstance('request');
 
         // replace $this->bootstrap();
-        $this->app->registerConfiguredProvidersInRequest();
         $this->app->boot();
 
         return (new Pipeline($this->app))

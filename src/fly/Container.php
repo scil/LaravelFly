@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * hack to make Container to work in LaravelFly Mode Coroutine
+ */
 namespace Illuminate\Container;
 
 use Closure;
@@ -13,8 +15,11 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 class Container implements ArrayAccess, ContainerContract
 {
     /**
-     * @var array all application instances live now in current worker
+     * store all application instances living now in current worker
+     *
      * hack by laravelfly
+     *
+     * @var array [int=>\LaravelFly\One\Application]
      */
     protected static $self_instances = [];
     /**
@@ -1160,11 +1165,13 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Set the globally available instance of the container.
      *
+     * hack by laravelfly
+     *
      * @return static
      */
     public static function getInstance()
     {
-        // hack by laravelfly
+
         $cID = \Swoole\Coroutine::getuid();
         if (empty(static::$self_instances[$cID])) {
             //todo
@@ -1181,12 +1188,13 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Set the shared instance of the container.
      *
+     * hack by laravelfly
+     *
      * @param  \Illuminate\Contracts\Container\Container|null $container
      * @return static
      */
     public static function setInstance(ContainerContract $container = null)
     {
-        // hack by laravelfly
         return static::$self_instances[\Swoole\Coroutine::getuid()] = $container;
         return static::$instance = $container;
     }

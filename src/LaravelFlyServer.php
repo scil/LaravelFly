@@ -9,7 +9,8 @@ class LaravelFlyServer
     protected static $instance;
 
     /**
-     * @var string where laravel app located
+     * where laravel app located
+     * @var string
      */
     protected $root;
 
@@ -19,20 +20,24 @@ class LaravelFlyServer
     public $swoole_http_server;
 
     /**
-     * @var \LaravelFly\Greedy\Application
+     * An laravel application instance living always with a worker.
+     *
+     * @var \LaravelFly\Coroutine\Application|\LaravelFly\One\Application|\LaravelFly\Greedy\Application
      */
-    protected $workerApplication;
-    /**
-     * @var string
-     */
-    protected $kernelClass;
+    protected $workerApp;
 
     /**
-     * @var \LaravelFly\Greedy\Kernel
+     * An laravel kernel instance living always with a worker.
+     *
+     * @var \LaravelFly\Coroutine\Kernel|\LaravelFly\One\Kernel|\LaravelFly\Greedy\Kernel
      */
     protected $workerKernel;
 
-    public function __construct($options, $kernelClass = '\App\Http\Kernel')
+    /**
+     * @param array $options
+     * @return LaravelFlyServer|null
+     */
+    public function __construct(array $options)
     {
 
         $this->root = realpath(__DIR__ . '/../../../..');
@@ -40,12 +45,10 @@ class LaravelFlyServer
             die("This doc root is not for a Laravel app: {$this->root} ");
         }
 
-        $this->kernelClass = $kernelClass;
-
-        if (!isset($options['pid_file'])) {
-            $options['pid_file'] = $this->root . '/bootstrap/laravelfly.pid' . $options['listen_port'];
-        } else {
+        if (isset($options['pid_file'])) {
             $options['pid_file'] .= $options['listen_port'];
+        } else {
+            $options['pid_file'] = $this->root . '/bootstrap/laravelfly.pid' . $options['listen_port'];
         }
 
         $this->swoole_http_server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
@@ -61,6 +64,10 @@ class LaravelFlyServer
 
     }
 
+    /**
+     * @param array $options
+     * @return LaravelFlyServer|null
+     */
     public static function getInstance($options)
     {
         if (!self::$instance) {
@@ -86,49 +93,58 @@ class LaravelFlyServer
 
     /**
      * Do sth. that is done in all of the Laravel requests.
+     * @see Illuminate\Foundation\Http\Kernel::handle()
      */
     protected function initSthWhenServerStart()
     {
-        // removed from Illuminate\Foundation\Http\Kernel::handle
         \Illuminate\Http\Request::enableHttpMethodParameterOverride();
     }
 
-    public function onWorkerStart()
+    protected function onWorkerStart()
     {
-//        echo "[INFO] worker start/reload. master pid:{$this->swoole_http_server->master_pid}; manager pid:{$this->swoole_http_server->manager_pid}", PHP_EOL;
 
         $appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
 
-        $this->workerApplication =  new $appClass($this->root);
+        $this->workerApp = new $appClass($this->root);
 
-        $this->workerApplication->singleton(
+        $this->workerApp->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             LARAVELFLY_KERNEL
         );
-        $this->workerApplication->singleton(
+        $this->workerApp->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
             \App\Exceptions\Handler::class
         );
 
-        $this->workerKernel = $this->workerApplication->make(\Illuminate\Contracts\Http\Kernel::class);
+        $this->workerKernel = $this->workerApp->make(\Illuminate\Contracts\Http\Kernel::class);
 
         $this->bootstrapOnWorkerStart();
 
     }
 
+    /**
+     * instance a fake request then bootstrap
+     *
+     * new UrlGenerator need a request.
+     * In Mode One, no worry about it's fake, because
+     * app['url']->request will update when app['request'] changes, as rebinding is used
+     * <code>
+     * <?php
+     * $url = new UrlGenerator(
+     *  $routes, $app->rebinding(
+     *      'request', $this->requestRebinder()
+     *  )
+     * );
+     * ?>
+     *  "$app->rebinding( 'request',...)"
+     * </code>
+     * @see  Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
+     *
+     */
     protected function bootstrapOnWorkerStart()
     {
 
-        /**
-         * instance a fake request
-         * new UrlGenerator need app['request']
-         * see: Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator
-         *
-         * no worry about it's fake, because
-         * app['url']->request will update when app['request'] changes, as
-         * there is "$app->rebinding( 'request',...)"
-         */
-        $this->workerApplication->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
+        $this->workerApp->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
 
         try {
             $this->workerKernel->bootstrap();
@@ -139,42 +155,39 @@ class LaravelFlyServer
 
     }
 
-    public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
+    protected function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
         if (LARAVELFLY_MODE == 'Coroutine') {
 
             $laravel_request = (new \LaravelFly\Coroutine\Illuminate\Request())->createFromSwoole($request);
 
-            $requestApp = clone $this->workerApplication;
+            clone $this->workerApp;
+
             $requestKernel = clone $this->workerKernel;
-            $laravel_response= $requestKernel->handle($laravel_request);
+
+            $laravel_response = $requestKernel->handle($laravel_request);
 
         } else {
 
-            // global vars used by: Symfony\Component\HttpFoundation\Request::createFromGlobals()
-            // this static method is alse used by Illuminate\Auth\Guard
+            /**
+             * @see Symfony\Component\HttpFoundation\Request::createFromGlobals() use global vars, and
+             * this static method is alse used by Illuminate\Auth\Guard
+             */
             $this->setGlobal($request);
 
-            // according to : Illuminate\Http\Request::capture
             /**
              * @var Illuminate\Http\Request
+             * @see Illuminate\Http\Request::capture
              */
             $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
 
-            // see: Illuminate\Foundation\Http\Kernel::handle($request)
             /**
              * @var Illuminate\Http\Response
+             * @see Illuminate\Foundation\Http\Kernel::handle
              */
             $laravel_response = $this->workerKernel->handle($laravel_request);
         }
-
-
-        // once there were errors saying 'http_onReceive: connection[...] is closed' which make worker restart
-        // now they are useless
-        // if (!$this->swoole_http_server->exist($response->fd)) {
-        // return;
-        // }
 
         foreach ($laravel_response->headers->allPreserveCase() as $name => $values) {
             foreach ($values as $value) {
@@ -193,22 +206,30 @@ class LaravelFlyServer
 
         $response->end($laravel_response->getContent());
 
-        $this->workerKernel->terminate($laravel_request, $laravel_response);
 
         if (LARAVELFLY_MODE == 'Coroutine') {
 
-            $this->workerApplication->delRequestApplication(\Swoole\Coroutine::getuid());
+            $requestKernel->terminate($laravel_request, $laravel_response);
+
+            LaravelFly\Coroutine\Application::delRequestApplication(\Swoole\Coroutine::getuid());
 
         } else {
 
-            $this->workerApplication->restoreAfterRequest();
+            $this->workerKernel->terminate($laravel_request, $laravel_response);
+
+            $this->workerApp->restoreAfterRequest();
 
         }
     }
 
-    // copied from Swoole Framework
-    // https://github.com/matyhtf/framework/libs/Swoole/Request.php
-    // https://github.com/swoole/framework/libs/Swoole/Http/ExtServer.php
+    /**
+     * convert swoole request info to php global vars
+     *
+     * only for Mode One or Greedy
+     *
+     * @param \swoole_http_request $request
+     * @see https://github.com/matyhtf/framework/blob/master/libs/Swoole/Request.php setGlobal()
+     */
     protected function setGlobal($request)
     {
         $_GET = $request->get ?? [];

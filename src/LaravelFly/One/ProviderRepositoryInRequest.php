@@ -5,6 +5,15 @@ namespace LaravelFly\One;
 
 class ProviderRepositoryInRequest extends \Illuminate\Foundation\ProviderRepository
 {
+
+    /**
+     * store service providers in request.
+     *
+     * This var is added, as app['config']['laravelfly.providers_in_request']
+     * are made for manifest on work, but loaded in request.
+     *
+     * @var array|null
+     */
     public $manifest;
 
     /**

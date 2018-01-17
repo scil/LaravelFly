@@ -60,6 +60,8 @@ class Application extends \LaravelFly\Application
             return;
         }
 
+        $this->app->registerConfiguredProvidersInRequest();
+
         $this->fireAppCallbacks($this->bootingCallbacks);
 
         /**  array_walk

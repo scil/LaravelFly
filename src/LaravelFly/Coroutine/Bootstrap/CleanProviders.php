@@ -12,19 +12,19 @@ class CleanProviders
 
         $appConfig = $app->make('config');
 
-        $ps = $appConfig['laravelfly.providers_in_request'];
+        $psInRequest = $appConfig['laravelfly.providers_in_request'];
 
         $appConfig['app.providers'] = array_diff(
             $appConfig['app.providers'],
-            $ps,
+            $psInRequest,
             $appConfig['laravelfly.providers_ignore']
         );
 
         $providers = $appConfig['laravelfly.providers_on_worker'];
         $app->setProvidersToBootOnWorker($providers);
 
-        if ($ps) {
-            $app->makeManifestForProvidersInRequest($ps);
+        if ($psInRequest) {
+            $app->makeManifestForProvidersInRequest($psInRequest);
         }
 
     }
