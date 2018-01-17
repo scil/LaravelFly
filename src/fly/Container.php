@@ -1,6 +1,6 @@
 <?php
 /**
- * hack to make Container to work in LaravelFly Mode Coroutine
+ * hack to make Container to work in LaravelFly Mode Cor
  */
 namespace Illuminate\Container;
 

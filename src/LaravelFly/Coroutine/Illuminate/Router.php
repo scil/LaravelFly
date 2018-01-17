@@ -13,8 +13,7 @@ class Router extends \Illuminate\Routing\Router
     {
         $this->container = Container::getInstance();
         $this->events = $this->container['events'];
-        // todo
-//        $this->routes = new RouteCollection;
+        $this->routes= $this->container['routes'];
     }
     /**
      * Override

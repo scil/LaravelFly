@@ -12,8 +12,8 @@ class RegisterAndBootProvidersOnWork
         $appConfig = $app['config'];
         $providers = $appConfig['laravelfly.providers_in_worker'];
 
-        $common = array_intersect($appConfig['app.providers'], array_keys($providers));
-        $app->setProvidersToBootOnWorker($common);
+        $providers = $appConfig['laravelfly.providers_on_worker'];
+        $app->setProvidersToBootOnWorker($providers);
 
         $app->registerConfiguredProvidersBootOnWorker();
         $app->bootOnWorker();

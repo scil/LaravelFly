@@ -100,7 +100,7 @@ class LaravelFlyServer
         \Illuminate\Http\Request::enableHttpMethodParameterOverride();
     }
 
-    protected function onWorkerStart()
+    public function onWorkerStart()
     {
 
         $appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
@@ -155,7 +155,7 @@ class LaravelFlyServer
 
     }
 
-    protected function onRequest(\swoole_http_request $request, \swoole_http_response $response)
+    public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
         if (LARAVELFLY_MODE == 'Coroutine') {

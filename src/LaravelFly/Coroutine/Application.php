@@ -21,12 +21,17 @@ class Application extends \LaravelFly\Application
     /**
      * @var bool
      */
-    protected $bootedInRequest=false;
+    protected $bootedInRequest = false;
 
     /**
      * @var array
      */
-    protected $acrossServiceProviders=[];
+    protected $providersToBootOnWorker=[];
+
+    /**
+     * @var array
+     */
+    protected $acrossServiceProviders = [];
 
     /**
      * The id of coroutine which this instance is in
@@ -52,6 +57,20 @@ class Application extends \LaravelFly\Application
         static::$instance = $this;
     }
 
+    /*
+     * Override
+     * use new providers for
+     * 1. new services with __clone
+     * 2. compiled all routes which are made before request
+     */
+    protected function registerBaseServiceProviders()
+    {
+        $this->register(new EventServiceProvider($this));
+
+        $this->register(new LogServiceProvider($this));
+
+        $this->register(new RoutingServiceProvider($this));
+    }
 
     function __clone()
     {
@@ -74,12 +93,21 @@ class Application extends \LaravelFly\Application
         /**
          * replace $this->register(new EventServiceProvider($this));
          */
-        $this->instance('events',  clone $this->make('events'));
+        $this->instance('events', clone $this->make('events'));
         /**
          * replace $this->register(new RoutingServiceProvider($this));
-         * @todo obj.routes need clone too?
+         *
+         * in most cituations, routes clone is not needed, but it's possbile that
+         * in a request a service may add more routes.
+         * If so , the array content of routes vars will grow and grow.
+         *
+         * order is important, because dependencies:
+         *  router : events routes
+         *  url : routes
          */
-        $this->instance('router',  clone $this->make('router'));
+        $this->instance('routes', clone $this->make('routes'));
+        $this->instance('router', clone $this->make('router'));
+        $this->instance('url', clone $this->make('url'));
     }
 
     static function delRequestApplication($coroutineID)
@@ -87,16 +115,21 @@ class Application extends \LaravelFly\Application
         unset(static::$self_instances[$coroutineID]);
     }
 
+    public function setProvidersToBootOnWorker($providers)
+    {
+        $this->providersToBootOnWorker = $providers;
+    }
+
     public function registerAcrossProviders()
     {
-        $config=$this->make('config');
+        $config = $this->make('config');
         $providers = array_diff(
-            // providers in request have remove from 'app.providers' by CleanProviders
+        // providers in request have remove from 'app.providers' by CleanProviders
             $config->get('app.providers'),
             $this->providersToBootOnWorker
         );
 
-        $serviceProviders = $this->serviceProviders ;
+        $serviceProvidersBack = $this->serviceProviders;
         $this->serviceProviders = [];
 
         if ($providers) {
@@ -111,15 +144,16 @@ class Application extends \LaravelFly\Application
 
         }
 
-        $this->acrossServiceProviders=$this->serviceProviders;
+        $this->acrossServiceProviders = $this->serviceProviders;
         //todo merge? nest?
-        $this->serviceProviders = array_merge($serviceProviders, $this->serviceProviders);
+        $this->serviceProviders = $serviceProvidersBack;
     }
 
-    public function setProvidersToBootOnWorker($providers)
+    public function getCachedServicesPathAcross()
     {
-        $this->providersToBootOnWorker = array_keys($providers);
+        return $this->bootstrapPath() . '/cache/laravelfly_services_across.json';
     }
+
     public function registerConfiguredProvidersBootOnWorker()
     {
 
@@ -127,16 +161,15 @@ class Application extends \LaravelFly\Application
         (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker()))
             ->load($this->providersToBootOnWorker);
 
+        //todo
         $this->loadDeferredProviders();
     }
+
     public function getCachedServicesPathBootOnWorker()
     {
         return $this->bootstrapPath() . '/cache/laravelfly_services_on_worker.json';
     }
-    public function getCachedServicesPathAcross()
-    {
-        return $this->bootstrapPath() . '/cache/laravelfly_services_across.json';
-    }
+
     public function bootOnWorker()
     {
 
@@ -158,10 +191,14 @@ class Application extends \LaravelFly\Application
         // $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
+    public function resetServiceProviders()
+    {
+        $this->serviceProviders = [];
+    }
+
     public function bootInRequest()
     {
         if ($this->bootedInRequest) {
-            echo 'has booted ', PHP_EOL;
             return;
         }
 
@@ -175,33 +212,19 @@ class Application extends \LaravelFly\Application
         array_walk($this->acrossServiceProviders, function ($p) {
             $this->bootProvider($p);
         });
+        array_walk($this->serviceProviders, function ($p) {
+            $this->bootProvider($p);
+        });
 
-        $this->bootedInRequest= true;
+        $this->bootedInRequest = $this->booted = true;
 
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
-
-    /*
-     * Override
-     * use new providers for
-     * 1. new services with __clone
-     * 2. compiled all routes which are made before request
-     */
-    protected function registerBaseServiceProviders()
-    {
-        $this->register(new EventServiceProvider($this));
-
-        $this->register(new LogServiceProvider($this));
-
-        $this->register(new RoutingServiceProvider($this));
-    }
-
     public function make($abstract, array $parameters = [])
     {
         if (in_array($abstract, ['app', \Illuminate\Foundation\Application::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class])) {
             return static::getInstance();
         }
-        //todo  event
 
         return parent::make($abstract, $parameters);
     }

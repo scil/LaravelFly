@@ -4,7 +4,7 @@ namespace LaravelFly\Coroutine\Bootstrap;
 
 use LaravelFly\Coroutine\Application;
 
-class CleanProviders
+class ReadProvidersConfig
 {
 
     public function bootstrap(Application $app)
@@ -20,7 +20,7 @@ class CleanProviders
             $appConfig['laravelfly.providers_ignore']
         );
 
-        $providers = $appConfig['laravelfly.providers_on_worker'];
+        $providers = array_keys($appConfig['laravelfly.providers_on_worker']);
         $app->setProvidersToBootOnWorker($providers);
 
         if ($psInRequest) {

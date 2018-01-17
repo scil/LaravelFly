@@ -27,8 +27,6 @@ class Kernel extends \LaravelFly\One\Kernel
          * because 'app()->make' would change 'app()->serviceProviders'
          */
         \LaravelFly\Greedy\Bootstrap\ResetServiceProviders::class,
-        //todo
-        // bug: reg should be called before any boot, but the RegisterAndBootProvidersOnWork is above
         \LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross::class,
 
         \LaravelFly\One\Bootstrap\SetBackupForBaseServices::class,

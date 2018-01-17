@@ -32,9 +32,10 @@ class Kernel extends HttpKernel
 
 //        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
 //        \Illuminate\Foundation\Bootstrap\BootProviders::class,
-        \LaravelFly\Coroutine\Bootstrap\CleanProviders::class,
+        \LaravelFly\Coroutine\Bootstrap\ReadProvidersConfig::class,
         \LaravelFly\Coroutine\Bootstrap\RegisterAcrossProviders::class,
         \LaravelFly\Coroutine\Bootstrap\RegisterAndBootProvidersOnWork::class,
+        \LaravelFly\Coroutine\Bootstrap\ResetServiceProviders::class,
 
         //todo
 //        \LaravelFly\Greedy\Bootstrap\FindViewFiles::class,
