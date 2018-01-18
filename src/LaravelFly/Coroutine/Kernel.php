@@ -45,8 +45,8 @@ class Kernel extends HttpKernel
     function __clone()
     {
         $this->app = Container::getInstance();
-        //todo the new obj should update app->instances
-        //todo routers?
+        $this->router = $this->app->make('router');
+        $this->app->instance(\Illuminate\Contracts\Http\Kernel::class, $this);
     }
 
     public function handle($request)

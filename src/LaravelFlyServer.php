@@ -211,7 +211,7 @@ class LaravelFlyServer
 
             $requestKernel->terminate($laravel_request, $laravel_response);
 
-            LaravelFly\Coroutine\Application::delRequestApplication(\Swoole\Coroutine::getuid());
+            $this->workerApp->delObjAndDataForCoroutine(\Swoole\Coroutine::getuid());
 
         } else {
 

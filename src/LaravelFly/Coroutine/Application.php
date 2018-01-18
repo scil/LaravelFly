@@ -93,7 +93,11 @@ class Application extends \LaravelFly\Application
         /**
          * replace $this->register(new EventServiceProvider($this));
          */
-        $this->instance('events', clone $this->make('events'));
+        // $this->instance('events', clone $this->make('events'));
+        $this->make('events')->initForOneCoroutine($this->coid);
+
+
+
         /**
          * replace $this->register(new RoutingServiceProvider($this));
          *
@@ -102,17 +106,28 @@ class Application extends \LaravelFly\Application
          * If so , the array content of routes vars will grow and grow.
          *
          * order is important, because dependencies:
-         *  router : events routes
+         *  router : routes
          *  url : routes
          */
+
+        /**
+         *
+         * url is not needed to implement __clone() method, because it's  attributes will updated auto.
+         * so it should be before routes.  router should be after routes, because it use __clone,no $app->rebinding
+         *
+         * @var \Illuminate\Routing\UrlGenerator
+         * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
+         * @todo test
+         */
+        $this->instance('url', clone $this->make('url'));
         $this->instance('routes', clone $this->make('routes'));
         $this->instance('router', clone $this->make('router'));
-        $this->instance('url', clone $this->make('url'));
     }
 
-    static function delRequestApplication($coroutineID)
+    public function delObjAndDataForCoroutine($cid)
     {
-        unset(static::$self_instances[$coroutineID]);
+        unset(static::$self_instances[$cid]);
+        $this->make('events')->delDataForCoroutine($cid);
     }
 
     public function setProvidersToBootOnWorker($providers)
