@@ -49,19 +49,25 @@ There are two ways.
 
 The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.This method is call Mode One as there'is always only one application in a worker.
 
-The second is to clone a new application for each request. This method is called Mode Coroutine as it uses swoole coroutine.
+The second is to clone a new application for each request. This method is called Mode Coroutine as it uses swoole coroutine.This mode is still under dev.
 
 ## Mode One vs Mode Coroutine
-
 
 feature  |  One | Coroutine 
 ------------ | ------------ | ------------- 
 global vars like $_GET, $_POST | yes  | no
 coroutine| no  | yes
 
+## php functions not fit Swoole/LaravelFly
+
+name | replacement
+------------ | ------------ 
+header | Laravel api: $response->header
+setcookie | Laravel api: $response->cookie
+
 ## Similar projects
 
-* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but there's no 'backup & restore' system, so please do not use any service which may change during a request, do not write any code that may change Laravel app during a request, such as event registering.
+* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but there's no 'backup & restore' system, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.
 
 ## Install
 

@@ -41,7 +41,7 @@ return [
          * otherwise they should be made in request, no on worker.
          *
          * a singeton service is like this:
-         *     *   $this->app->singleton('cache', function ($app) { ... });
+         *     *   $this->app->singleton('hash', function ($app) { ... });
          *
          * formats:
          *      proverder_name => [
