@@ -8,28 +8,17 @@ use Illuminate\Container\Container;
 
 class Router extends \Illuminate\Routing\Router
 {
+    /**
+     * The IoC container instance.
+     *
+     * @var \LaravelFly\Coroutine\Application
+     */
+    protected $container;
 
     function __clone()
     {
         $this->container = Container::getInstance();
         $this->events = $this->container['events'];
         $this->routes= $this->container['routes'];
-    }
-    /**
-     * Override
-     */
-    //todo
-    protected function newRoute($methods, $uri, $action)
-    {
-        if ($this->container->isBooted()) {
-            // routes creaed during request are not compiled auto. They are compiled when match
-            return (new BaseRoute($methods, $uri, $action))
-                ->setRouter($this)
-                ->setContainer($this->container);
-
-        } else {
-            // before any request, routes are compiled auto.
-            return parent::newRoute($methods, $uri, $action);
-        }
     }
 }

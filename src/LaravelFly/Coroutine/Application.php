@@ -124,7 +124,7 @@ class Application extends \LaravelFly\Application
     {
         $config = $this->make('config');
         $providers = array_diff(
-        // providers in request have remove from 'app.providers' by CleanProviders
+            // providers in request have remove from 'app.providers' by CleanProviders
             $config->get('app.providers'),
             $this->providersToBootOnWorker
         );
@@ -133,10 +133,6 @@ class Application extends \LaravelFly\Application
         $this->serviceProviders = [];
 
         if ($providers) {
-            if ($config->get('app.debug')) {
-                echo PHP_EOL, 'start to reg Providers across', PHP_EOL, __CLASS__, PHP_EOL;
-                var_dump($providers);
-            }
 
             //todo update code
             (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))

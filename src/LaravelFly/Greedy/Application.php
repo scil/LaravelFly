@@ -40,23 +40,6 @@ class Application extends \LaravelFly\One\Application
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
-
-    /*
-     * Override
-     * only for compiled all routes which are made before request
-     */
-    protected function registerBaseServiceProviders()
-    {
-        $this->register(new EventServiceProvider($this));
-
-        $this->register(new LogServiceProvider($this));
-
-        $this->register(new RoutingServiceProvider($this));
-    }
-
-
-
-
     /**
      * * * * * * * * * * * * * * * * * * * * * * *
      * follow methods are not used by Coroutine mode
