@@ -62,6 +62,7 @@ start:
 include $root . '/vendor/autoload.php';
 if(LARAVELFLY_MODE=='Coroutine'){
     include __DIR__."/../src/fly/Container.php";
+    include __DIR__."/../src/fly/ServiceProvider.php";
 }
 unset($root, $config_file, $pid_file, $pid);
 LaravelFlyServer::getInstance($options)->start();

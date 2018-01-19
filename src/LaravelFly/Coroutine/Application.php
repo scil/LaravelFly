@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Coroutine;
 
+use Illuminate\Support\ServiceProvider;
 use LaravelFly\Coroutine\Illuminate\EventServiceProvider;
 use LaravelFly\Coroutine\Illuminate\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
@@ -38,7 +39,7 @@ class Application extends \LaravelFly\Application
      *
      * @var int
      */
-    protected $coid;
+    protected $cid;
 
     /**
      * if this application instance is a worker app or a request app.
@@ -53,7 +54,7 @@ class Application extends \LaravelFly\Application
     {
         parent::__construct($basePath);
         $this->isRequestApp = false;
-        $this->coid = \Swoole\Coroutine::getuid();
+        $this->cid = \Swoole\Coroutine::getuid();
         static::$instance = $this;
     }
 
@@ -75,7 +76,7 @@ class Application extends \LaravelFly\Application
     function __clone()
     {
         $this->isRequestApp = true;
-        $this->coid = \Swoole\Coroutine::getuid();
+        $this->cid = $cid= \Swoole\Coroutine::getuid();
 
         /**
          * following is implementing part of  parent __construct
@@ -90,11 +91,13 @@ class Application extends \LaravelFly\Application
 //            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
 //        ));
 
+        ServiceProvider::initStaticArrayForOneCoroutine($cid);
+
         /**
          * replace $this->register(new EventServiceProvider($this));
          */
         // $this->instance('events', clone $this->make('events'));
-        $this->make('events')->initForOneCoroutine($this->coid);
+        $this->make('events')->initForOneCoroutine($cid);
 
 
 
@@ -128,6 +131,7 @@ class Application extends \LaravelFly\Application
     {
         unset(static::$self_instances[$cid]);
         $this->make('events')->delDataForCoroutine($cid);
+        ServiceProvider::delStaticArrayForOneCoroutine($cid);
     }
 
     public function setProvidersToBootOnWorker($providers)

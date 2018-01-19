@@ -64,8 +64,10 @@ return [
             Illuminate\Cookie\CookieServiceProvider::class => [
                 // 'cookie' => false,
             ],
-            // todo: its boot will resolve 'db' and 'db.factory'
-            // Illuminate\Database\DatabaseServiceProvider::class => [],
+            Illuminate\Database\DatabaseServiceProvider::class => [
+                'db.factory'=>true,
+                'db'=>true,
+            ],
             Illuminate\Encryption\EncryptionServiceProvider::class => [
                 'encrypter' => true,
             ],

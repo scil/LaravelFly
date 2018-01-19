@@ -1,7 +1,11 @@
 <?php
 /**
- * hack to make Container to work in LaravelFly Mode Cor
+ * hack to make Container to work in LaravelFly Mode Coroutine
+ *
+ * because app is cloned, there may be many instances of Container
+ *
  */
+
 namespace Illuminate\Container;
 
 use Closure;
