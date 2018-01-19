@@ -7,8 +7,9 @@ use Illuminate\Events\EventServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
 
-class Application extends \LaravelFly\Application
+class Application  extends \Illuminate\Foundation\Application
 {
+    use \LaravelFly\Application;
 
     protected $needBackUpAppAttributes = [
         'resolved',

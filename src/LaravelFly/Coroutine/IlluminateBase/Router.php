@@ -17,7 +17,6 @@ class Router extends \Illuminate\Routing\Router
 
     function __clone()
     {
-        $this->container = Container::getInstance();
         $this->routes= $this->container['routes'];
     }
 }

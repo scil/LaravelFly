@@ -15,7 +15,6 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 
 class Dispatcher extends \Illuminate\Events\Dispatcher
 {
-    use \LaravelFly\Coroutine\Util\Containers;
 
     /**
      * The queue resolver instance.
@@ -28,13 +27,12 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     public function __construct(ContainerContract $container)
     {
         $this->container = $container;
-        $this->initForOneCoroutine(-1);
+        $this->initForCorontine(-1);
     }
 
-    public function initForOneCoroutine(int $id )
+    public function initForCorontine(int $id )
     {
 
-        $this->containers[$id] = Container::getInstance();
         /**
          * copy values of worker instance to request instance
          *
@@ -46,15 +44,13 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
          * but there's a method {@link forget()}, it's a del action. Should i delete $this->listeners[-1] or not?
          *
          */
-        //todo deep clone ?
         $this->listeners[$id] = $id==-1? []: $this->listeners[-1];
         $this->wildcards[$id] = $id==-1? []: $this->wildcards[-1];
-        //todo clone?
         $this->queueResolver[$id] = $id==-1?null: $this->queueResolver[-1];
     }
-    public function delDataForCoroutine(int $id )
+    public function delForCoroutine(int $id )
     {
-       unset($this->containers[$id], $this->listeners[$id],$this->wildcards[$id],$this->queueResolver[$id]);
+       unset( $this->listeners[$id],$this->wildcards[$id],$this->queueResolver[$id]);
     }
 
     public function listen($events, $listener)
@@ -83,7 +79,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     protected function resolveSubscriber($subscriber)
     {
         if (is_string($subscriber)) {
-            return $this->getCurrentContainer()->make($subscriber);
+            return $this->container->make($subscriber);
         }
 
         return $subscriber;
@@ -91,7 +87,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     protected function broadcastEvent($event)
     {
-        $this->getCurrentContainer()->make(BroadcastFactory::class)->queue($event);
+        $this->container->make(BroadcastFactory::class)->queue($event);
     }
 
     public function getListeners($eventName)
@@ -142,13 +138,13 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
             return $this->createQueuedHandlerCallable($class, $method);
         }
 
-        return [$this->getCurrentContainer()->make($class), $method];
+        return [$this->container->make($class), $method];
     }
 
     protected function handlerWantsToBeQueued($class, $arguments)
     {
         if (method_exists($class, 'shouldQueue')) {
-            return $this->getCurrentContainer()->make($class)->shouldQueue($arguments[0]);
+            return $this->container->make($class)->shouldQueue($arguments[0]);
         }
 
         return true;

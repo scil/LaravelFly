@@ -160,9 +160,11 @@ class LaravelFlyServer
 
         if (LARAVELFLY_MODE == 'Coroutine') {
 
+            $cid=\Swoole\Coroutine::getuid();
+
             $laravel_request = (new \LaravelFly\Coroutine\IlluminateBase\Request())->createFromSwoole($request);
 
-            clone $this->workerApp;
+            $this->workerApp->initForCorontine($cid);
 
             $requestKernel = clone $this->workerKernel;
 
@@ -211,7 +213,7 @@ class LaravelFlyServer
 
             $requestKernel->terminate($laravel_request, $laravel_response);
 
-            $this->workerApp->delObjAndDataForCoroutine(\Swoole\Coroutine::getuid());
+            $this->workerApp->delForCoroutine($cid);
 
         } else {
 

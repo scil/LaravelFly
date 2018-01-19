@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
 use LaravelFly\One\ProviderRepositoryInRequest;
 
-class Application extends \Illuminate\Foundation\Application
+trait Application
 {
     /**
      * @var \LaravelFly\One\ProviderRepositoryInRequest

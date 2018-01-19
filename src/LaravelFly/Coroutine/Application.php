@@ -11,8 +11,10 @@ use Illuminate\Filesystem\Filesystem;
 use LaravelFly\One\ProviderRepository;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
-class Application extends \LaravelFly\Application
+class Application extends \Illuminate\Foundation\Application
 {
+
+    use \LaravelFly\Application;
 
     /**
      * @var bool
@@ -22,7 +24,7 @@ class Application extends \LaravelFly\Application
     /**
      * @var bool
      */
-    protected $bootedInRequest = false;
+    protected $bootedInRequest = [];
 
     /**
      * @var array
@@ -34,27 +36,17 @@ class Application extends \LaravelFly\Application
      */
     protected $acrossServiceProviders = [];
 
-    /**
-     * The id of coroutine which this instance is in
-     *
-     * @var int
-     */
-    protected $cid;
-
-    /**
-     * if this application instance is a worker app or a request app.
-     *
-     * the worker app is always $appInstance->instance or Container::$instance
-     *
-     * @var bool
-     */
-    protected $isRequestApp;
+    protected $arrayAttriForObj=['resolved','bindings','methodBindings','instances','aliases','abstractAliases','extenders','tags','buildStack','with','contextual','reboundCallbacks','globalResolvingCallbacks','globalAfterResolvingCallbacks','resolvingCallbacks','afterResolvingCallbacks',
+        'bootingCallbacks','bootedCallbacks','terminatingCallbacks','serviceProviders','loadedProviders','deferredServices'
+    ];
+    protected $normalAttriForObj=[
+        'hasBeenBootstrapped'=>false,'booted'=>false,
+        'bootedInRequest'=>false,
+    ];
 
     public function __construct($basePath = null)
     {
         parent::__construct($basePath);
-        $this->isRequestApp = false;
-        $this->cid = \Swoole\Coroutine::getuid();
         static::$instance = $this;
     }
 
@@ -73,33 +65,9 @@ class Application extends \LaravelFly\Application
         $this->register(new RoutingServiceProvider($this));
     }
 
-    function __clone()
+    public function initForCorontine($cid)
     {
-        $this->isRequestApp = true;
-        $this->cid = $cid= \Swoole\Coroutine::getuid();
-
-        /**
-         * following is implementing part of  parent __construct
-         */
-
-        // replace $this->registerBaseBindings();
-        static::setInstance($this);
-        $this->instance('app', $this);
-        $this->instance(Container::class, $this);
-        //todo:
-//        $this->instance(PackageManifest::class, new PackageManifest(
-//            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
-//        ));
-
-        ServiceProvider::initStaticArrayForOneCoroutine($cid);
-
-        /**
-         * replace $this->register(new EventServiceProvider($this));
-         */
-        // $this->instance('events', clone $this->make('events'));
-        $this->make('events')->initForOneCoroutine($cid);
-
-
+        parent::initForCorontine($cid);
 
         /**
          * replace $this->register(new RoutingServiceProvider($this));
@@ -122,16 +90,21 @@ class Application extends \LaravelFly\Application
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test
          */
-        $this->instance('url', clone $this->make('url'));
-        $this->instance('routes', clone $this->make('routes'));
-        $this->instance('router', clone $this->make('router'));
+        if($cid>0){
+            ServiceProvider::initForCorontine($cid);
+            $this->make('events')->initForCorontine($cid);
+            $this->instance('url', clone $this->make('url'));
+            $this->instance('routes', clone $this->make('routes'));
+            $this->instance('router', clone $this->make('router'));
+        }
     }
 
-    public function delObjAndDataForCoroutine($cid)
+    function delForCoroutine(int $cid)
     {
-        unset(static::$self_instances[$cid]);
-        $this->make('events')->delDataForCoroutine($cid);
-        ServiceProvider::delStaticArrayForOneCoroutine($cid);
+        $this->make('events')->delForCoroutine($cid);
+        ServiceProvider::delForCoroutine($cid);
+        //this should be the last line, otherwise $this->make('events') can not work
+        parent::delForCoroutine($cid);
     }
 
     public function setProvidersToBootOnWorker($providers)
@@ -141,6 +114,7 @@ class Application extends \LaravelFly\Application
 
     public function registerAcrossProviders()
     {
+        $cid=\Swoole\Coroutine::getuid();
         $config = $this->make('config');
         $providers = array_diff(
             // providers in request have remove from 'app.providers' by CleanProviders
@@ -148,8 +122,8 @@ class Application extends \LaravelFly\Application
             $this->providersToBootOnWorker
         );
 
-        $serviceProvidersBack = $this->serviceProviders;
-        $this->serviceProviders = [];
+        $serviceProvidersBack = $this->serviceProviders[$cid];
+        $this->serviceProviders[$cid] = [];
 
         if ($providers) {
 
@@ -159,9 +133,8 @@ class Application extends \LaravelFly\Application
 
         }
 
-        $this->acrossServiceProviders = $this->serviceProviders;
-        //todo merge? nest?
-        $this->serviceProviders = $serviceProvidersBack;
+        $this->acrossServiceProviders = $this->serviceProviders[$cid];
+        $this->serviceProviders[$cid] = $serviceProvidersBack;
     }
 
     public function getCachedServicesPathAcross()
@@ -188,13 +161,14 @@ class Application extends \LaravelFly\Application
     public function bootOnWorker()
     {
 
+        $cid=\Swoole\Coroutine::getuid();
         if ($this->bootedOnWorker) {
             return;
         }
 
-        $this->fireAppCallbacks($this->bootingCallbacks);
+        $this->fireAppCallbacks($this->bootingCallbacks[$cid]);
 
-        array_walk($this->serviceProviders, function ($p) {
+        array_walk($this->serviceProviders[$cid], function ($p) {
             $this->bootProvider($p);
         });
 
@@ -208,12 +182,13 @@ class Application extends \LaravelFly\Application
 
     public function resetServiceProviders()
     {
-        $this->serviceProviders = [];
+        $this->serviceProviders[\Swoole\Coroutine::getuid()] = [];
     }
 
     public function bootInRequest()
     {
-        if ($this->bootedInRequest) {
+        $cid=\Swoole\Coroutine::getuid();
+        if ($this->bootedInRequest[$cid]) {
             return;
         }
 
@@ -227,13 +202,13 @@ class Application extends \LaravelFly\Application
         array_walk($this->acrossServiceProviders, function ($p) {
             $this->bootProvider($p);
         });
-        array_walk($this->serviceProviders, function ($p) {
+        array_walk($this->serviceProviders[$cid], function ($p) {
             $this->bootProvider($p);
         });
 
-        $this->bootedInRequest = $this->booted = true;
+        $this->bootedInRequest[$cid] = $this->booted[$cid] = true;
 
-        $this->fireAppCallbacks($this->bootedCallbacks);
+        $this->fireAppCallbacks($this->bootedCallbacks[$cid]);
     }
     public function make($abstract, array $parameters = [])
     {
@@ -244,4 +219,9 @@ class Application extends \LaravelFly\Application
         return parent::make($abstract, $parameters);
     }
 
+    public function addDeferredServices(array $services)
+    {
+        $cid=\Swoole\Coroutine::getuid();
+        $this->deferredServices[$cid] = array_merge($this->deferredServices[$cid], $services);
+    }
 }

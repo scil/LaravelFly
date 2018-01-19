@@ -2,14 +2,11 @@
 /**
  * hack to make Container to work in LaravelFly Mode Coroutine
  *
- * because app is cloned, there may be many instances of Container
- *
  */
 
 namespace Illuminate\Support;
 
 use Illuminate\Console\Application as Artisan;
-use LaravelFly\Coroutine\Util\Containers;
 
 abstract class ServiceProvider
 {
@@ -18,8 +15,7 @@ abstract class ServiceProvider
      *
      * @var \Illuminate\Contracts\Foundation\Application
      */
-     // hack to make Container to work in LaravelFly Mode Coroutine
-    // protected $app;
+     protected $app;
 
     /**
      * Indicates if loading of the provider is deferred.
@@ -50,36 +46,20 @@ abstract class ServiceProvider
      */
     public function __construct($app)
     {
-        // hack by laravelfly
-        // $this->app = $app;
-        static::initStaticArrayForOneCoroutine(-1);
+        $this->app = $app;
+        static::initForCorontine(-1);
     }
 
-    /**
-     * support $this->app for this class and its subclasses in Mode Coroutine
-     *
-     * hack by laravelfly
-     *
-     * why use __get, not adding a new attri  $containers like $app('event')
-     * because this class has subclasses, they could use $this->app
-     *
-     * @param $key
-     * @return \LaravelFly\Coroutine\Application|null
-     */
-    function __get($key)
+    static function initForCorontine(int $cid )
     {
-        if($key==='app'){
-            return \Illuminate\Container\Container::getInstance();
+        //todo test
+        foreach (['publishes','publishGroups'] as $attri){
+            static::$$attri[$cid] = $cid==-1? []: static::$$attri[-1];
         }
     }
-    static function initStaticArrayForOneCoroutine(int $id )
+    static function delForCoroutine(int $cid )
     {
-        static::$publishes[$id] = $id==-1? []: static::$publishes[-1];
-        static::$publishGroups[$id] = $id==-1? []: static::$publishGroups[-1];
-    }
-    static function delStaticArrayForOneCoroutine(int $id )
-    {
-        unset(static::$publishes[$id],static::$publishGroups[$id]);
+        unset(static::$publishes[$cid],static::$publishGroups[$cid]);
     }
     /**
      * Merge the given configuration with the existing configuration.
@@ -227,12 +207,11 @@ abstract class ServiceProvider
      */
     public static function pathsToPublish($provider = null, $group = null)
     {
-        $cid=\Swoole\Coroutine::getuid();
-        if (! is_null($paths = (static::pathsForProviderOrGroup[$cid])($provider, $group))) {
+        if (! is_null($paths = static::pathsForProviderOrGroup($provider, $group))) {
             return $paths;
         }
 
-        return collect(static::$publishes[$cid])->reduce(function ($paths, $p) {
+        return collect(static::$publishes[\Swoole\Coroutine::getuid()])->reduce(function ($paths, $p) {
             return array_merge($paths, $p);
         }, []);
     }
@@ -248,7 +227,7 @@ abstract class ServiceProvider
     {
         $cid=\Swoole\Coroutine::getuid();
         if ($provider && $group) {
-            return (static::pathsForProviderAndGroup[$cid])($provider, $group);
+            return static::pathsForProviderAndGroup($provider, $group);
         } elseif ($group && array_key_exists($group, static::$publishGroups[$cid])) {
             return static::$publishGroups[$cid][$group];
         } elseif ($provider && array_key_exists($provider, static::$publishes[$cid])) {

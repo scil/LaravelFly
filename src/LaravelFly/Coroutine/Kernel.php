@@ -44,7 +44,6 @@ class Kernel extends HttpKernel
 
     function __clone()
     {
-        $this->app = Container::getInstance();
         $this->router = $this->app->make('router');
         $this->app->instance(\Illuminate\Contracts\Http\Kernel::class, $this);
     }
