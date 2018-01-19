@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Coroutine\Illuminate;
+namespace LaravelFly\Coroutine\IlluminateBase;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\FileBag;

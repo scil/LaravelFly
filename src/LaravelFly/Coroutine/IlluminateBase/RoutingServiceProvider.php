@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Coroutine\Illuminate;
+namespace LaravelFly\Coroutine\IlluminateBase;
 
 
 class RoutingServiceProvider extends \Illuminate\Routing\RoutingServiceProvider

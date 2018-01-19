@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Coroutine\Illuminate;
+namespace LaravelFly\Coroutine\IlluminateBase;
 
 use Illuminate\Routing\Route as BaseRoute;
 use Illuminate\Contracts\Events\Dispatcher;

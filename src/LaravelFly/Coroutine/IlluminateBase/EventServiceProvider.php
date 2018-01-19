@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Coroutine\Illuminate;
+namespace LaravelFly\Coroutine\IlluminateBase;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;

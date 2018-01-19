@@ -3,8 +3,8 @@
 namespace LaravelFly\Coroutine;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelFly\Coroutine\Illuminate\EventServiceProvider;
-use LaravelFly\Coroutine\Illuminate\RoutingServiceProvider;
+use LaravelFly\Coroutine\IlluminateBase\EventServiceProvider;
+use LaravelFly\Coroutine\IlluminateBase\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
 
 use Illuminate\Filesystem\Filesystem;

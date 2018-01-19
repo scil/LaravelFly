@@ -160,7 +160,7 @@ class LaravelFlyServer
 
         if (LARAVELFLY_MODE == 'Coroutine') {
 
-            $laravel_request = (new \LaravelFly\Coroutine\Illuminate\Request())->createFromSwoole($request);
+            $laravel_request = (new \LaravelFly\Coroutine\IlluminateBase\Request())->createFromSwoole($request);
 
             clone $this->workerApp;
 
