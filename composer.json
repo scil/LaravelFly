@@ -21,9 +21,6 @@
       "eaglewu/swoole-ide-helper": "dev-master"
   },
   "autoload": {
-    "files":[
-      "src/LaravelFly/Coroutine/Illuminate/Container.php"
-    ],
     "classmap": [
       "src/LaravelFlyServer.php"
     ],
