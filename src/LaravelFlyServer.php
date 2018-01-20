@@ -153,6 +153,8 @@ class LaravelFlyServer
             $this->swoole_http_server->shutdown();
         }
 
+        $this->workerApp->forgetInstance('request');
+
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
@@ -166,6 +168,7 @@ class LaravelFlyServer
 
             $this->workerApp->initForCorontine($cid);
 
+            // why use clone for kernel, because there's a \App\Http\Kernel
             $requestKernel = clone $this->workerKernel;
 
             $laravel_response = $requestKernel->handle($laravel_request);

@@ -16,41 +16,16 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 class Dispatcher extends \Illuminate\Events\Dispatcher
 {
 
-    /**
-     * The queue resolver instance.
-     *
-     * @var array of callable
-     */
-    protected $queueResolver;
+    use \LaravelFly\Coroutine\Util\Dict;
 
+    protected $normalAttriForObj=['queueResolver'=>null];
+
+    protected $arrayAttriForObj=['listeners','wildcards'];
 
     public function __construct(ContainerContract $container)
     {
         $this->container = $container;
         $this->initForCorontine(-1);
-    }
-
-    public function initForCorontine(int $id )
-    {
-
-        /**
-         * copy values of worker instance to request instance
-         *
-         * why not let them apart, it's ok for get/set actions.like this get action:
-         * <code>
-         *  array_merge( $this->listeners[\Swoole\Coroutine::getuid()], $this->listeners[-1])
-         * </code>
-         *
-         * but there's a method {@link forget()}, it's a del action. Should i delete $this->listeners[-1] or not?
-         *
-         */
-        $this->listeners[$id] = $id==-1? []: $this->listeners[-1];
-        $this->wildcards[$id] = $id==-1? []: $this->wildcards[-1];
-        $this->queueResolver[$id] = $id==-1?null: $this->queueResolver[-1];
-    }
-    public function delForCoroutine(int $id )
-    {
-       unset( $this->listeners[$id],$this->wildcards[$id],$this->queueResolver[$id]);
     }
 
     public function listen($events, $listener)
@@ -59,20 +34,20 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
             if (Str::contains($event, '*')) {
                 $this->setupWildcardListen($event, $listener);
             } else {
-                $this->listeners[\Swoole\Coroutine::getuid()][$event][] = $this->makeListener($listener);
+                $this->corDict[\Swoole\Coroutine::getuid()]['listeners'][$event][] = $this->makeListener($listener);
             }
         }
     }
 
     protected function setupWildcardListen($event, $listener)
     {
-        $this->wildcards[\Swoole\Coroutine::getuid()][$event][] = $this->makeListener($listener, true);
+        $this->corDict[\Swoole\Coroutine::getuid()]['wildcards'][$event][] = $this->makeListener($listener, true);
     }
 
     public function hasListeners($eventName)
     {
         $cid = \Swoole\Coroutine::getuid();
-        return isset($this->listeners[$cid][$eventName]) || isset($this->wildcards[$cid][$eventName]);
+        return isset($this->corDict[$cid]['listeners'][$eventName]) || isset($this->corDict[$cid]['wildcards'][$eventName]);
     }
 
     //todo
@@ -92,7 +67,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     public function getListeners($eventName)
     {
-        $listeners = $this->listeners[\Swoole\Coroutine::getuid()][$eventName] ?? [];
+        $listeners = $this->corDict[\Swoole\Coroutine::getuid()]['listeners'][$eventName] ?? [];
 
         $listeners = array_merge(
             $listeners, $this->getWildcardListeners($eventName)
@@ -107,7 +82,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     {
         $wildcards = [];
 
-        foreach ($this->wildcards[\Swoole\Coroutine::getuid()] as $key => $listeners) {
+        foreach ($this->corDict[\Swoole\Coroutine::getuid()]['wildcards'] as $key => $listeners) {
             if (Str::is($key, $eventName)) {
                 $wildcards = array_merge($wildcards, $listeners);
             }
@@ -154,9 +129,9 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     {
         $cid = \Swoole\Coroutine::getuid();
         if (Str::contains($event, '*')) {
-            unset($this->wildcards[$cid][$event]);
+            unset($this->corDict[$cid]['wildcards'][$event]);
         } else {
-            unset($this->listeners[$cid][$event]);
+            unset($this->corDict[$cid]['listeners'][$event]);
         }
     }
 
@@ -173,12 +148,12 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     protected function resolveQueue()
     {
-        return call_user_func($this->queueResolver[\Swoole\Coroutine::getuid()]);
+        return call_user_func($this->corDict[\Swoole\Coroutine::getuid()]['queueResolver']);
     }
 
     public function setQueueResolver(callable $resolver)
     {
-        $this->queueResolver[\Swoole\Coroutine::getuid()] = $resolver;
+        $this->corDict[\Swoole\Coroutine::getuid()]['queueResolver'] = $resolver;
 
         return $this;
     }

@@ -3,8 +3,9 @@
 namespace LaravelFly\Coroutine;
 
 use Illuminate\Support\ServiceProvider;
+use LaravelFly\Application as App;
 use LaravelFly\Coroutine\IlluminateBase\EventServiceProvider;
-use LaravelFly\Coroutine\IlluminateBase\RoutingServiceProvider;
+use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
 
 use Illuminate\Filesystem\Filesystem;
@@ -24,7 +25,7 @@ class Application extends \Illuminate\Foundation\Application
     /**
      * @var bool
      */
-    protected $bootedInRequest = [];
+//    protected $bootedInRequest = [];
 
     /**
      * @var array
@@ -72,21 +73,16 @@ class Application extends \Illuminate\Foundation\Application
         /**
          * replace $this->register(new RoutingServiceProvider($this));
          *
-         * in most cituations, routes clone is not needed, but it's possbile that
-         * in a request a service may add more routes.
-         * If so , the array content of routes vars will grow and grow.
-         *
-         * order is important, because dependencies:
-         *  router : routes
-         *  url : routes
+         * order is important, because relations:
+         *  router.routes
+         *  url.routes
          */
 
         /**
          *
          * url is not needed to implement __clone() method, because it's  attributes will updated auto.
-         * so it should be before routes.  router should be after routes, because it use __clone,no $app->rebinding
+         * so it should be before routes which is cloned by {@link \LaravelFly\Coroutine\Illuminate\Router::initForCorontine } .
          *
-         * @var \Illuminate\Routing\UrlGenerator
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test
          */
@@ -94,14 +90,14 @@ class Application extends \Illuminate\Foundation\Application
             ServiceProvider::initForCorontine($cid);
             $this->make('events')->initForCorontine($cid);
             $this->instance('url', clone $this->make('url'));
-            $this->instance('routes', clone $this->make('routes'));
-            $this->instance('router', clone $this->make('router'));
+            $this->make('router')->initForCorontine($cid);
         }
     }
 
     function delForCoroutine(int $cid)
     {
         $this->make('events')->delForCoroutine($cid);
+        $this->make('router')->delForCoroutine($cid);
         ServiceProvider::delForCoroutine($cid);
         //this should be the last line, otherwise $this->make('events') can not work
         parent::delForCoroutine($cid);
@@ -122,8 +118,8 @@ class Application extends \Illuminate\Foundation\Application
             $this->providersToBootOnWorker
         );
 
-        $serviceProvidersBack = $this->serviceProviders[$cid];
-        $this->serviceProviders[$cid] = [];
+        $serviceProvidersBack = $this->corDict[$cid]['serviceProviders'];
+        $this->corDict[$cid]['serviceProviders'] = [];
 
         if ($providers) {
 
@@ -133,8 +129,8 @@ class Application extends \Illuminate\Foundation\Application
 
         }
 
-        $this->acrossServiceProviders = $this->serviceProviders[$cid];
-        $this->serviceProviders[$cid] = $serviceProvidersBack;
+        $this->acrossServiceProviders = $this->corDict[$cid]['serviceProviders'];
+        $this->corDict[$cid]['serviceProviders'] = $serviceProvidersBack;
     }
 
     public function getCachedServicesPathAcross()
@@ -166,9 +162,9 @@ class Application extends \Illuminate\Foundation\Application
             return;
         }
 
-        $this->fireAppCallbacks($this->bootingCallbacks[$cid]);
+        $this->fireAppCallbacks($this->corDict[$cid]['bootingCallbacks']);
 
-        array_walk($this->serviceProviders[$cid], function ($p) {
+        array_walk($this->corDict[$cid]['serviceProviders'], function ($p) {
             $this->bootProvider($p);
         });
 
@@ -182,13 +178,13 @@ class Application extends \Illuminate\Foundation\Application
 
     public function resetServiceProviders()
     {
-        $this->serviceProviders[\Swoole\Coroutine::getuid()] = [];
+        $this->corDict[\Swoole\Coroutine::getuid()]['serviceProviders'] = [];
     }
 
     public function bootInRequest()
     {
         $cid=\Swoole\Coroutine::getuid();
-        if ($this->bootedInRequest[$cid]) {
+        if ($this->corDict[$cid]['bootedInRequest']) {
             return;
         }
 
@@ -202,13 +198,13 @@ class Application extends \Illuminate\Foundation\Application
         array_walk($this->acrossServiceProviders, function ($p) {
             $this->bootProvider($p);
         });
-        array_walk($this->serviceProviders[$cid], function ($p) {
+        array_walk($this->corDict[$cid]['serviceProviders'], function ($p) {
             $this->bootProvider($p);
         });
 
-        $this->bootedInRequest[$cid] = $this->booted[$cid] = true;
+        $this->corDict[$cid]['bootedInRequest'] = $this->corDict[$cid]['booted'] = true;
 
-        $this->fireAppCallbacks($this->bootedCallbacks[$cid]);
+        $this->fireAppCallbacks($this->corDict[$cid]['bootedCallbacks']);
     }
     public function make($abstract, array $parameters = [])
     {
@@ -222,6 +218,6 @@ class Application extends \Illuminate\Foundation\Application
     public function addDeferredServices(array $services)
     {
         $cid=\Swoole\Coroutine::getuid();
-        $this->deferredServices[$cid] = array_merge($this->deferredServices[$cid], $services);
+        $this->corDict[$cid]['deferredServices'] = array_merge($this->corDict[$cid]['deferredServices'], $services);
     }
 }
