@@ -73,12 +73,16 @@ return [
             ],
             Illuminate\Filesystem\FilesystemServiceProvider::class => [
                 'filesystem.disk' => true,
-                'filesystem.cloud' => env('FLY_FILESYSTEM_CLOUD', false),
+                'filesystem.cloud' => defined('LARAVELFLY_SINGLETON')?
+                    LARAVELFLY_SINGLETON['filesystem.cloud']:
+                    false,
             ],
             /* This reg FormRequestServiceProvider, whose boot is related to request */
             // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
             Illuminate\Hashing\HashServiceProvider::class => [
-                'hash' => env('FLY_HASH', false),
+                'hash' => defined('LARAVELFLY_SINGLETON')?
+                    LARAVELFLY_SINGLETON['hash']:
+                    false,
             ],
             Illuminate\Mail\MailServiceProvider::class => [],
 
@@ -90,7 +94,9 @@ return [
             Illuminate\Pipeline\PipelineServiceProvider::class => [],
             Illuminate\Queue\QueueServiceProvider::class => [],
             Illuminate\Redis\RedisServiceProvider::class => [
-                'redis' => env('FLY_REDIS', false),
+                'redis' => defined('LARAVELFLY_SINGLETON')?
+                    LARAVELFLY_SINGLETON['redis']:
+                    false,
             ],
             Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
             Illuminate\Session\SessionServiceProvider::class => [

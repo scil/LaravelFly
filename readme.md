@@ -103,19 +103,6 @@ if (defined('LARAVELFLY_MODE')) {
 class Kernel extends WhichKernel
 ```
 
-## Coroutine Config for advanced users
-
-If a service is made by app()->singleton, and it will not changed in any requests, then it can be made on worker (before any requests)to save memory.
-
-To make laravel official services on worker, put these lines to .env and edit them:
-````
-# FLY_REDIS=True      # if 'redis' is used, uncomment this line.
-# FLY_FILESYSTEM_CLOUD=True      # if 'filesystem.cloud' is used, uncomment this line.
-
-# FLY_HASH=True      # if app('hash')->setRounds is never called in any requests, uncomment this line. See:Illuminate\Hashing\BcryptHasher::setRounds
-# FLY_VIEW_ENGINE_RESOLVER=True      # if app('view.engine.resolver')->register is never called in any requests, uncomment this line. See: Illuminate\View\Engines::register
-````
-
 
 ## Optional Config
 

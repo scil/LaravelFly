@@ -26,6 +26,8 @@ class LaravelFlyServer
      */
     protected $workerApp;
 
+    protected $kernel;
+
     /**
      * An laravel kernel instance living always with a worker.
      *
@@ -41,6 +43,7 @@ class LaravelFlyServer
     {
 
         $this->root = realpath(__DIR__ . '/../../../..');
+        $this->kernel=$options['kernel']??'';
         if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
             die("This doc root is not for a Laravel app: {$this->root} ");
         }
@@ -109,7 +112,7 @@ class LaravelFlyServer
 
         $this->workerApp->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            LARAVELFLY_KERNEL
+            $this->kernel
         );
         $this->workerApp->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
