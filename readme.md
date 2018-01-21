@@ -47,13 +47,13 @@ The problem is that, objects which created before request may be changed during 
 
 There are two ways.
 
-The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.This method is call Mode One as there'is always only one application in a worker.
+The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.This method is call Mode Simple.
 
 The second is to clone a new application for each request. This method is called Mode Coroutine as it uses swoole coroutine.This mode is still under dev.
 
-## Mode One vs Mode Coroutine
+## Mode Simple vs Mode Coroutine
 
-feature  |  One | Coroutine 
+feature  |  Simple | Coroutine 
 ------------ | ------------ | ------------- 
 global vars like $_GET, $_POST | yes  | no
 coroutine| no  | yes
@@ -91,8 +91,8 @@ Note: items prefixed with "/** depends " need your consideration.
 if (defined('LARAVELFLY_MODE')) {
     if (LARAVELFLY_MODE == 'Coroutine') {
         class WhichKernel extends \LaravelFly\Coroutine\Kernel { }
-    }elseif (LARAVELFLY_MODE == 'One') {
-        class WhichKernel extends \LaravelFly\One\Kernel { }
+    }elseif (LARAVELFLY_MODE == 'Simple') {
+        class WhichKernel extends \LaravelFly\Simple\Kernel { }
     } else {
         class WhichKernel extends \LaravelFly\Greedy\Kernel { }
     }
@@ -219,7 +219,7 @@ If you use APC/OpCache, you could use one of these measures
 - [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
 
 
-## One Mode and Greedy Mode
+## Simple Mode and Greedy Mode
 
 First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
@@ -234,9 +234,9 @@ First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
 The "$bootstrappers" is what Laravel do before handling a request, LaravelFly execute them before any request, except the last two items "RegisterProviders" and "BootProviders"
 
-In One Mode, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
+In Simple Mode, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
 
-In Greedy Mode, providers in "config('laravelfly.providers_in_worker')" are registered and booted before any request. Other providers follow One Mode rule. 
+In Greedy Mode, providers in "config('laravelfly.providers_in_worker')" are registered and booted before any request. Other providers follow Simple Mode rule. 
 
 And In Greedy Mode, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".If necessary, you should define which properties need to backup. 
 
@@ -254,7 +254,7 @@ Note, Greedy Mode is still experimental and only for study.
 
 ## Flow
 
-### A Worker Flow in One Mode 
+### A Worker Flow in Simple Mode 
 
 * a new worker process
   * create an app 

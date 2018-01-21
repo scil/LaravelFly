@@ -82,7 +82,7 @@ class Container implements ArrayAccess, ContainerContract
         }
 
         $cid = \Swoole\Coroutine::getuid();
-        return isset($this->corDict[$cid]['corDict']['resolved'][$abstract]) ||
+        return isset($this->corDict[$cid]['resolved'][$abstract]) ||
             isset($this->corDict[$cid]['instances'][$abstract]);
     }
 
@@ -572,7 +572,7 @@ class Container implements ArrayAccess, ContainerContract
         // Before returning, we will also set the resolved flag to "true" and pop off
         // the parameter overrides for this build. After those two things are done
         // we will be ready to return back the fully constructed class instance.
-        $this->corDict[$cid]['corDict']['resolved'][$abstract] = true;
+        $this->corDict[$cid]['resolved'][$abstract] = true;
 
         array_pop($this->corDict[$cid]['with']);
 
@@ -1151,7 +1151,7 @@ class Container implements ArrayAccess, ContainerContract
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        unset($this->corDict[$cid]['bindings'][$key], $this->corDict[$cid]['instances'][$key], $this->corDict[$cid]['corDict']['resolved'][$key]);
+        unset($this->corDict[$cid]['bindings'][$key], $this->corDict[$cid]['instances'][$key], $this->corDict[$cid]['resolved'][$key]);
     }
 
     /**

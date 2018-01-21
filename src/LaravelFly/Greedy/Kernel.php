@@ -3,7 +3,7 @@
 namespace LaravelFly\Greedy;
 
 
-class Kernel extends \LaravelFly\One\Kernel
+class Kernel extends \LaravelFly\Simple\Kernel
 {
 
     protected $bootstrappers = [
@@ -11,7 +11,7 @@ class Kernel extends \LaravelFly\One\Kernel
         \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
-        \LaravelFly\One\Bootstrap\CleanProviders::class,
+        \LaravelFly\Simple\Bootstrap\CleanProviders::class,
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
 
@@ -29,8 +29,8 @@ class Kernel extends \LaravelFly\One\Kernel
         \LaravelFly\Greedy\Bootstrap\ResetServiceProviders::class,
         \LaravelFly\Greedy\Bootstrap\RegisterProvidersAcross::class,
 
-        \LaravelFly\One\Bootstrap\SetBackupForBaseServices::class,
-        \LaravelFly\One\Bootstrap\BackupConfigs::class,
-        \LaravelFly\One\Bootstrap\BackupAttributes::class,
+        \LaravelFly\Simple\Bootstrap\SetBackupForBaseServices::class,
+        \LaravelFly\Simple\Bootstrap\BackupConfigs::class,
+        \LaravelFly\Simple\Bootstrap\BackupAttributes::class,
     ];
 }

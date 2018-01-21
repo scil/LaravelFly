@@ -1,10 +1,10 @@
 <?php
 
 /**
- * One, Coroutine or Greedy
+ * Simple, Coroutine or Greedy
  * Greedy only for study
  */
-const LARAVELFLY_MODE = 'One';
+const LARAVELFLY_MODE = 'Simple';
 
 /**
  * Tell application it's running in cli mode.
@@ -19,16 +19,16 @@ const HONEST_IN_CONSOLE = true;
  *
  * only for Mode Coroutine and advanced users
  *
- * A SERVICE APPROPRIATE FOR COROUTINE must satisfy folling conditions:
+ * A COROUTINE-FRIENDLY SERVICE must satisfy folling conditions:
  * 1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }
  * 2. its vars will not changed in any requests
- * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A SERVICE APPROPRIATE FOR COROUTINE
+ * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
 const LARAVELFLY_SINGLETON= [
     "redis" => false,   // to true if 'redis' is used
     'filesystem.cloud' => false,   // to true if 'filesystem.cloud' is used
     'hash' => false,  // to true if app('hash')->setRounds is never called in any requests
-    'view.engine.resolver' => false  // to true if app('view.engine.resolver')->register is never called in any requests. See: Illuminate\View\Engines::register
+    'view.engine.resolver' => false,  // to true if app('view.engine.resolver')->register is never called in any requests. See: Illuminate\View\Engines::register
 ];
 
 /**

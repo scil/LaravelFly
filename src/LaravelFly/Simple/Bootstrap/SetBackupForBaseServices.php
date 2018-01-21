@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelFly\One\Bootstrap;
+namespace LaravelFly\Simple\Bootstrap;
 
-use LaravelFly\One\Application;
+use LaravelFly\Simple\Application;
 
 class SetBackupForBaseServices
 {

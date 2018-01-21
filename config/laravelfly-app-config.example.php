@@ -7,7 +7,7 @@ return [
         'config_changed_in_requests' => [
             /** depends
              * Debugbar is disabled after its booting, so it's necessary to maintain this config for each request.
-            // 'debugbar.enabled',
+             * // 'debugbar.enabled',
              */
         ],
 
@@ -28,6 +28,11 @@ return [
          */
         'providers_in_request' => [
         ],
+
+        /**
+         * use coroutine for database.only for Coroutine mode
+         */
+        'coroutine_database' => true,
 
         /**
          * providers to reg and boot on worker, before any request. only for Coroutine mode
@@ -64,24 +69,25 @@ return [
             Illuminate\Cookie\CookieServiceProvider::class => [
                 // 'cookie' => false,
             ],
-            Illuminate\Database\DatabaseServiceProvider::class => [
-                'db.factory'=>true,
-                'db'=>true,
+            // replace Illuminate\Database\DatabaseServiceProvider::class => [
+            LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class => [
+                'db.factory' => true,
+                'db' => true,
             ],
             Illuminate\Encryption\EncryptionServiceProvider::class => [
                 'encrypter' => true,
             ],
             Illuminate\Filesystem\FilesystemServiceProvider::class => [
                 'filesystem.disk' => true,
-                'filesystem.cloud' => defined('LARAVELFLY_SINGLETON')?
-                    LARAVELFLY_SINGLETON['filesystem.cloud']:
+                'filesystem.cloud' => defined('LARAVELFLY_SINGLETON') ?
+                    LARAVELFLY_SINGLETON['filesystem.cloud'] :
                     false,
             ],
             /* This reg FormRequestServiceProvider, whose boot is related to request */
             // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
             Illuminate\Hashing\HashServiceProvider::class => [
-                'hash' => defined('LARAVELFLY_SINGLETON')?
-                    LARAVELFLY_SINGLETON['hash']:
+                'hash' => defined('LARAVELFLY_SINGLETON') ?
+                    LARAVELFLY_SINGLETON['hash'] :
                     false,
             ],
             Illuminate\Mail\MailServiceProvider::class => [],
@@ -94,8 +100,8 @@ return [
             Illuminate\Pipeline\PipelineServiceProvider::class => [],
             Illuminate\Queue\QueueServiceProvider::class => [],
             Illuminate\Redis\RedisServiceProvider::class => [
-                'redis' => defined('LARAVELFLY_SINGLETON')?
-                    LARAVELFLY_SINGLETON['redis']:
+                'redis' => defined('LARAVELFLY_SINGLETON') ?
+                    LARAVELFLY_SINGLETON['redis'] :
                     false,
             ],
             Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],

@@ -6,12 +6,12 @@ use Illuminate\Events\EventServiceProvider;
 //use LaravelFly\Routing\RoutingServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
-use LaravelFly\One\ProviderRepositoryInRequest;
+use LaravelFly\Simple\ProviderRepositoryInRequest;
 
 trait Application
 {
     /**
-     * @var \LaravelFly\One\ProviderRepositoryInRequest
+     * @var \LaravelFly\Simple\ProviderRepositoryInRequest
      */
     protected $providerRepInRequest;
 

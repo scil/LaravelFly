@@ -22,7 +22,7 @@ class LaravelFlyServer
     /**
      * An laravel application instance living always with a worker.
      *
-     * @var \LaravelFly\Coroutine\Application|\LaravelFly\One\Application|\LaravelFly\Greedy\Application
+     * @var \LaravelFly\Coroutine\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application
      */
     protected $workerApp;
 
@@ -31,7 +31,7 @@ class LaravelFlyServer
     /**
      * An laravel kernel instance living always with a worker.
      *
-     * @var \LaravelFly\Coroutine\Kernel|\LaravelFly\One\Kernel|\LaravelFly\Greedy\Kernel
+     * @var \LaravelFly\Coroutine\Kernel|\LaravelFly\Simple\Kernel|\LaravelFly\Greedy\Kernel
      */
     protected $workerKernel;
 
