@@ -4,7 +4,7 @@ namespace LaravelFly\Coroutine\Illuminate\Database;
 
 use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
-use Illuminate\Database\DatabaseManager;
+//use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Queue\EntityResolver;
@@ -26,9 +26,7 @@ class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvid
         // the database. We will inject the factory into the manager so that it may
         // make the connections while they are actually needed and not of before.
         $this->app->singleton('db.factory', function ($app) {
-            return $app->make('config')['laravelfly.coroutine_database']?
-                new \LaravelFly\Coroutine\Illuminate\Database\ConnectionFactory($app) :
-                new \Illuminate\Database\Connectors\ConnectionFactory($app);
+            return new \LaravelFly\Coroutine\Illuminate\Database\ConnectionFactory($app);
         });
 
         // The database manager is used to resolve various connections, since multiple

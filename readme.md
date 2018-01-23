@@ -108,11 +108,18 @@ class Kernel extends WhichKernel
 
 * Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
 
-* if you want to use mysql persistent, add following to config/database.php ( do not worry about "server has gone away", laravel would reconnect it auto)
+* if you want to use mysql persistent, add following to config/database.php
 ```
-        'options'   => [
-            PDO::ATTR_PERSISTENT => true,
-        ],
+'options' => [
+    PDO::ATTR_PERSISTENT => true,
+],
+```
+* In Coroutine mode,coroutine can be used for mysql. Please compile swoole with  --enable-coroutine, then disable xdebug, xhprof, or blackfire. Yes, currently, swoole not compatible with them. Third, add `'coroutine' => true,` to config/database.
+```
+'mysql' => [
+    'driver' => 'mysql',
+    'coroutine' => true,
+],
 ```
 
 ## Config examples for Third Party Serivce

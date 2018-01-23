@@ -30,11 +30,6 @@ return [
         ],
 
         /**
-         * use coroutine for database.only for Coroutine mode
-         */
-        'coroutine_database' => true,
-
-        /**
          * providers to reg and boot on worker, before any request. only for Coroutine mode
          *
          * format:

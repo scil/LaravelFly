@@ -13,16 +13,12 @@ class MySqlConnection extends \Illuminate\Database\MySqlConnection
 {
     public function select($query, $bindings = [], $useReadPdo = true)
     {
-
-        return $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
+        return $this->run($query, $bindings, function ($query, $bindings){
             if ($this->pretending()) {
                 return [];
             }
 
-            //todo
-            //laravel-swoole-cp ： https://github.com/breeze2/laravel-swoole-cp/blob/master/vendor/laravel/framework/src/Illuminate/Database/MySqlSwooleProxyConnection.php
-            $statement = $this->prepared($this->getPdoForSelect($useReadPdo)
-                ->prepare($query));
+            $statement = $this->preparedForSwoole($this->pdo->prepare($query));
 
             $this->bindValues($statement, $this->prepareBindings($bindings));
 
@@ -30,6 +26,17 @@ class MySqlConnection extends \Illuminate\Database\MySqlConnection
 
             return $statement->fetchAll();
         });
+    }
+    protected function preparedForSwoole($statement)
+    {
+//        $statement->setFetchMode($this->fetchMode);
+
+        $this->event(new \Illuminate\Database\Events\StatementPrepared(
+            $this, $statement
+        ));
+
+        var_dump($statement);
+        return $statement;
     }
 
 }
