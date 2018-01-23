@@ -30,19 +30,21 @@ class Application extends \Illuminate\Foundation\Application
     /**
      * @var array
      */
-    protected $providersToBootOnWorker=[];
+    protected $providersToBootOnWorker = [];
 
     /**
      * @var array
      */
     protected $acrossServiceProviders = [];
 
-    protected $arrayAttriForObj=['resolved','bindings','methodBindings','instances','aliases','abstractAliases','extenders','tags','buildStack','with','contextual','reboundCallbacks','globalResolvingCallbacks','globalAfterResolvingCallbacks','resolvingCallbacks','afterResolvingCallbacks',
-        'bootingCallbacks','bootedCallbacks','terminatingCallbacks','serviceProviders','loadedProviders','deferredServices'
+    protected $CFServices = [];
+
+    protected $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+        'bootingCallbacks', 'bootedCallbacks', 'terminatingCallbacks', 'serviceProviders', 'loadedProviders', 'deferredServices'
     ];
-    protected $normalAttriForObj=[
-        'hasBeenBootstrapped'=>false,'booted'=>false,
-        'bootedInRequest'=>false,
+    protected $normalAttriForObj = [
+        'hasBeenBootstrapped' => false, 'booted' => false,
+        'bootedInRequest' => false,
     ];
 
     public function __construct($basePath = null)
@@ -86,7 +88,7 @@ class Application extends \Illuminate\Foundation\Application
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test
          */
-        if($cid>0){
+        if ($cid > 0) {
             ServiceProvider::initForCorontine($cid);
             $this->make('events')->initForCorontine($cid);
             $this->instance('url', clone $this->make('url'));
@@ -105,32 +107,38 @@ class Application extends \Illuminate\Foundation\Application
 
     public function setProvidersToBootOnWorker($providers)
     {
-        $this->providersToBootOnWorker = $providers;
+        if ($providers)
+            $this->providersToBootOnWorker = $providers;
+    }
+
+    public function setCFServices($services)
+    {
+        if ($services)
+            $this->CFServices = $services;
     }
 
     public function registerAcrossProviders()
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid = \Swoole\Coroutine::getuid();
         $config = $this->make('config');
         $providers = array_diff(
-            // providers in request have remove from 'app.providers' by CleanProviders
+        // providers in request have remove from 'app.providers' by CleanProviders
             $config->get('app.providers'),
             $this->providersToBootOnWorker
         );
 
-        $serviceProvidersBack = $this->corDict[$cid]['serviceProviders'];
-        $this->corDict[$cid]['serviceProviders'] = [];
-
         if ($providers) {
+            $serviceProvidersBack = $this->corDict[$cid]['serviceProviders'];
+            $this->corDict[$cid]['serviceProviders'] = [];
 
             //todo update code
             (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))
                 ->load($providers);
 
+            $this->acrossServiceProviders = $this->corDict[$cid]['serviceProviders'];
+            $this->corDict[$cid]['serviceProviders'] = $serviceProvidersBack;
         }
 
-        $this->acrossServiceProviders = $this->corDict[$cid]['serviceProviders'];
-        $this->corDict[$cid]['serviceProviders'] = $serviceProvidersBack;
     }
 
     public function getCachedServicesPathAcross()
@@ -157,7 +165,7 @@ class Application extends \Illuminate\Foundation\Application
     public function bootOnWorker()
     {
 
-        $cid=\Swoole\Coroutine::getuid();
+        $cid = \Swoole\Coroutine::getuid();
         if ($this->bootedOnWorker) {
             return;
         }
@@ -176,6 +184,13 @@ class Application extends \Illuminate\Foundation\Application
         // $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
+    public function makeCFServices()
+    {
+        foreach ($this->CFServices as $service) {
+            $this->make($service);
+        }
+    }
+
     public function resetServiceProviders()
     {
         $this->corDict[\Swoole\Coroutine::getuid()]['serviceProviders'] = [];
@@ -183,7 +198,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function bootInRequest()
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid = \Swoole\Coroutine::getuid();
         if ($this->corDict[$cid]['bootedInRequest']) {
             return;
         }
@@ -206,6 +221,7 @@ class Application extends \Illuminate\Foundation\Application
 
         $this->fireAppCallbacks($this->corDict[$cid]['bootedCallbacks']);
     }
+
     public function make($abstract, array $parameters = [])
     {
         if (in_array($abstract, ['app', \Illuminate\Foundation\Application::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class])) {
@@ -217,7 +233,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function addDeferredServices(array $services)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid = \Swoole\Coroutine::getuid();
         $this->corDict[$cid]['deferredServices'] = array_merge($this->corDict[$cid]['deferredServices'], $services);
     }
 }

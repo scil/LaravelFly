@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Coroutine\IlluminateBase;
 
+use Symfony\Component\Routing\Router;
 
 class RoutingServiceProvider extends \Illuminate\Routing\RoutingServiceProvider
 {

@@ -44,9 +44,10 @@ return [
          *     *   $this->app->singleton('hash', function ($app) { ... });
          *
          * formats:
-         *      proverder_name => [
-         *        'singleton_service_name_1' => true,  //  service will be made on worker
-         *        'singleton_service_name_2' => false, //  service will not be made on worker
+         *      proverder=> [
+         *        'singleton_service_1' => true,  //  service will be made on worker
+         *        'singleton_service_2' => false, //  service will not be made on worker
+         *        'another_provider' => 'replaced', // this provider will be replaced and deleted from app['config']['app.providers']
          *      ],
          */
         'providers_on_worker' => [
@@ -64,8 +65,8 @@ return [
             Illuminate\Cookie\CookieServiceProvider::class => [
                 // 'cookie' => false,
             ],
-            // replace Illuminate\Database\DatabaseServiceProvider::class => [
             LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class => [
+                Illuminate\Database\DatabaseServiceProvider::class=> 'replaced' ,
                 'db.factory' => true,
                 'db' => true,
             ],

@@ -11,15 +11,7 @@ class RegisterAndBootProvidersOnWork
 
         $app->registerConfiguredProvidersBootOnWorker();
         $app->bootOnWorker();
-
-        $providers = $app['config']['laravelfly.providers_on_worker'];
-        foreach (array_values($providers) as $singles) {
-            foreach ($singles as $name => $config) {
-                if ($config) {
-                    $app->make($name);
-                }
-            }
-        }
+        $app->makeCFServices();
 
     }
 }
