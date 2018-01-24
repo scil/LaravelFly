@@ -125,10 +125,6 @@ class LaravelFlyServer
 
         $this->bootstrapOnWorkerStart();
 
-//        Facade::clearResolvedInstances();
-//        $this->workerApp->instance('files',new \LaravelFly\Coroutine\Illuminate\Filesystem());
-
-
     }
 
     /**
