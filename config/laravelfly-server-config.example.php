@@ -46,6 +46,9 @@ return [
     // like pm.start_servers in php-fpm, but there's no option like pm.max_children
     'worker_num' => 4,
 
+    // max number of coroutines handled by a worker in the same time
+    'max_coro_num' => 3000,
+
     // set it to false when debug, otherwise true
     'daemonize' => true,
 
