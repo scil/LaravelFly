@@ -19,9 +19,9 @@ class ReadProvidersConfig
         $replaced = [];
         foreach (array_values($worker_providers) as $singles) {
             foreach ($singles as $name => $config) {
-                if($config===true){
+                if ($config === true) {
                     $CFServices[] = $name;
-                }elseif($config==='replaced'){
+                } elseif ($config === 'replaced') {
                     $replaced[] = $name;
                 }
             }

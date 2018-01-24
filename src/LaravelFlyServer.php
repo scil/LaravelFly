@@ -1,6 +1,8 @@
 <?php
 
 
+use Illuminate\Support\Facades\Facade;
+
 class LaravelFlyServer
 {
     /**
@@ -122,6 +124,10 @@ class LaravelFlyServer
         $this->workerKernel = $this->workerApp->make(\Illuminate\Contracts\Http\Kernel::class);
 
         $this->bootstrapOnWorkerStart();
+
+//        Facade::clearResolvedInstances();
+//        $this->workerApp->instance('files',new \LaravelFly\Coroutine\Illuminate\Filesystem());
+
 
     }
 

@@ -14,7 +14,6 @@ class SwooleCoroutineMySQL
 
     function __construct($config)
     {
-        $config['user']=$config['user']??$config['username'];
         $this->swoole = new \Swoole\Coroutine\MySQL();
         $this->swoole->connect($config);
         return $this;

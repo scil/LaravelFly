@@ -45,6 +45,8 @@ class MySqlConnector extends \Illuminate\Database\Connectors\MySqlConnector
     {
 
         try {
+            $config['user']=$config['username'];
+            $config['strict_type']=$config['strict'];
             return new \LaravelFly\Coroutine\Illuminate\Database\FakePDO\SwooleCoroutineMySQL($config);
         } catch (Exception $e) {
             return $this->tryAgainIfCausedByLostConnection(
