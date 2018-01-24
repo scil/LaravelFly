@@ -66,5 +66,7 @@ if(LARAVELFLY_MODE=='Coroutine'){
     include __DIR__."/../src/fly/ServiceProvider.php";
     include __DIR__."/../src/fly/Router.php";
 }
-unset($root, $config_file, $pid_file, $pid);
-LaravelFlyServer::getInstance($options)->start();
+
+$Server=$options['server']??'LaravelFlyServer';
+unset($root, $config_file, $pid_file, $pid, $options['server']);
+$Server::getInstance($options)->start();
