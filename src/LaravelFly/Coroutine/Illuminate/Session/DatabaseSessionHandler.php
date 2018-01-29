@@ -20,7 +20,7 @@ class DatabaseSessionHandler extends \Illuminate\Session\DatabaseSessionHandler
 
     public function __construct(ConnectionInterface $connection, $table, $minutes, Container $container = null)
     {
-        $this->initForCorontine(-1, true);
+        $this->initOnWorker( true);
         parent::__construct($connection, $table, $minutes, $container);
     }
 

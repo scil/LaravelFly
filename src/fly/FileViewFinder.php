@@ -19,7 +19,7 @@ class FileViewFinder implements ViewFinderInterface
 
     public function __construct(Filesystem $files, array $paths, array $extensions = null)
     {
-        $this->initForCorontine(-1, true);
+        $this->initOnWorker( true);
 
         $this->corDict[-1]['paths'] = $paths;
         $this->files = $files;

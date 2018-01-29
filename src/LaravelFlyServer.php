@@ -171,7 +171,7 @@ class LaravelFlyServer
 
             $laravel_request = (new \LaravelFly\Coroutine\IlluminateBase\Request())->createFromSwoole($request);
 
-            $this->workerApp->initForCorontine($cid, false);
+            $this->workerApp->initForCorontine($cid);
 
             // why use clone for kernel, because there's a \App\Http\Kernel
             $requestKernel = clone $this->workerKernel;

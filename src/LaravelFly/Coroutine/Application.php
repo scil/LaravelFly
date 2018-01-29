@@ -68,9 +68,9 @@ class Application extends \Illuminate\Foundation\Application
         $this->register(new RoutingServiceProvider($this));
     }
 
-    public function initForCorontine($cid, $listen = false)
+    public function initForCorontine($cid)
     {
-        parent::initForCorontine($cid, false);
+        parent::initForCorontine($cid);
 
         /**
          * replace $this->register(new RoutingServiceProvider($this));
@@ -83,19 +83,17 @@ class Application extends \Illuminate\Foundation\Application
         /**
          *
          * url is not needed to implement __clone() method, because it's  attributes will updated auto.
-         * so it should be before routes which is cloned by {@link \LaravelFly\Coroutine\Illuminate\Router::initForCorontine } .
+         * so it should be before routes which is cloned by {@link \LaravelFly\Coroutine\Illuminate\Router::initOnWorker } .
          *
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test
          */
-        if ($cid > 0) {
-            ServiceProvider::initForCorontine($cid,false);
-            $this->make('events')->initForCorontine($cid,false);
-            $this->instance('url', clone $this->make('url'));
-            $this->make('router')->initForCorontine($cid,false);
+        ServiceProvider::initForCorontine($cid);
+        $this->make('events')->initForCorontine($cid);
+        $this->instance('url', clone $this->make('url'));
+        $this->make('router')->initForCorontine($cid);
 
-            $this->make('events')->dispatch('cor.start', [$cid]);
-        }
+        $this->make('events')->dispatch('cor.start', [$cid]);
     }
 
     function delForCoroutine(int $cid)

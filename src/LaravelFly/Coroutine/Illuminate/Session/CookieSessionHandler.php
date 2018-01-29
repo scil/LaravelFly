@@ -15,7 +15,7 @@ class CookieSessionHandler extends \Illuminate\Session\CookieSessionHandler
 
     public function __construct(CookieJar $cookie, $minutes)
     {
-        $this->initForCorontine(-1, true);
+        $this->initOnWorker( true);
         parent::__construct($cookie, $minutes);
     }
 

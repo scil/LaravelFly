@@ -21,7 +21,7 @@ class StartSession extends \Illuminate\Session\Middleware\StartSession
     public function __construct(SessionManager $manager)
     {
         $this->manager = $manager;
-        $this->initForCorontine(-1, true);
+        $this->initOnWorker( true);
     }
     public function handle($request, Closure $next)
     {

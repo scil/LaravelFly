@@ -28,12 +28,12 @@ class Container implements ArrayAccess, ContainerContract
     //todo why public?
 //    public $contextual = [];
 
-    protected $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'];
+//    protected $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'];
     
 
     function __construct()
     {
-        $this->initForCorontine(-1,false);
+        $this->initOnWorker(false);
     }
 
     /**

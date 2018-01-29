@@ -56,11 +56,11 @@ class Router implements RegistrarContract, BindingRegistrar
             'routes' => function () {
                 return new RouteCollection;
             }];
-        $this->initForCorontine(-1);
+        $this->initOnWorker(false);
     }
-    public function initForCorontine($cid)
+    public function initForCorontine($cid )
     {
-        $this->init($cid,false);
+        $this->init($cid);
         $newRoutes = clone $this->corDict[-1]['routes'];
         $this->corDict[$cid]['routes']= $newRoutes;
         $this->container->instance('routes', $newRoutes);

@@ -22,9 +22,9 @@ class AuthManager extends \Illuminate\Auth\AuthManager
 
         $this->app = $app;
 
-        $this->initForCorontine(-1,true);
+        $this->initOnWorker(true);
 
-        // this statement must be after initForCorontine
+        // this statement must be after initOnWorker
         $this->corDict[-1]['userResolver'] = function ($guard = null) {
             return $this->guard($guard)->user();
         };

@@ -15,7 +15,7 @@ class CookieJar extends \Illuminate\Cookie\CookieJar
 
     public function __construct()
     {
-        $this->initForCorontine(-1, true);
+        $this->initOnWorker( true);
     }
 
     public function queued($key, $default = null)

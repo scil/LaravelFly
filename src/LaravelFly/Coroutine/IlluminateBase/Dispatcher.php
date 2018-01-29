@@ -25,7 +25,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     public function __construct(ContainerContract $container)
     {
         $this->container = $container;
-        $this->initForCorontine(-1,false);
+        $this->initOnWorker(false);
     }
 
     public function listen($events, $listener)

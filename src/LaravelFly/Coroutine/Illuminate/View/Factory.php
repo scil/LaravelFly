@@ -41,7 +41,7 @@ class Factory extends \Illuminate\View\Factory
 
     public function __construct(EngineResolver $engines, ViewFinderInterface $finder, Dispatcher $events)
     {
-        $this->initForCorontine(-1, true);
+        $this->initOnWorker( true);
         static::initStaticForCorontine(-1, true);
 
         // this line must be the last, because it visit share
