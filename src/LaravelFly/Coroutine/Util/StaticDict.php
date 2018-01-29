@@ -37,7 +37,6 @@ trait StaticDict
                     }
                 }
             }
-            var_dump(static::$corStaticDict);
 
             if($listen){
                 Container::getInstance()->make('events')->listen('cor.start',function ($cid){

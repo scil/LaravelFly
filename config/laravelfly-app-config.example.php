@@ -112,8 +112,6 @@ return [
             ],
            \LaravelFly\Coroutine\Illuminate\View\ViewServiceProvider::class => [
                 '_replace'=>Illuminate\View\ViewServiceProvider::class ,
-                'view'=>true,
-                'view.engine.resolver' => env('FLY_VIEW_ENGINE_RESOLVER', false),
             ],
             /*
              * Application Service Providers...
