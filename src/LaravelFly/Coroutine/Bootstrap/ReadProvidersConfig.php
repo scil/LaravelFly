@@ -16,27 +16,37 @@ class ReadProvidersConfig
 
         $worker_providers = $app['config']['laravelfly.providers_on_worker'];
         $CFServices = [];
-        $replaced = [];
-        foreach (array_values($worker_providers) as $singles) {
-            foreach ($singles as $name => $config) {
+        $providersReplaced = [];
+        $providersOnWork = [];
+        foreach ($worker_providers as $provider => $providerConfig) {
+            $replaced = false;
+
+            foreach ($providerConfig as $CFS_name => $config) {
                 if ($config === true) {
-                    $CFServices[] = $name;
-                } elseif ($config === 'replaced') {
-                    $replaced[] = $name;
+                    $CFServices[] = $CFS_name;
+                } elseif ($CFS_name == '_replaced_by' && class_exists($providerConfig['_replaced_by'])) {
+                    $replaced = true;
                 }
+            }
+
+            if ($replaced) {
+                $providersOnWork[] = $providerConfig['_replaced_by'];
+                $providersReplaced[] = $provider;
+            } else {
+                $providersOnWork[] = $provider;
             }
         }
 
         $appConfig['app.providers'] = array_diff(
             $appConfig['app.providers'],
-            $replaced,
+            $providersReplaced,
             $psInRequest,
             $appConfig['laravelfly.providers_ignore']
         );
 
         $app->makeManifestForProvidersInRequest($psInRequest);
 
-        $app->setProvidersToBootOnWorker(array_keys($worker_providers));
+        $app->setProvidersToBootOnWorker($providersOnWork);
 
         $app->setCFServices($CFServices);
 

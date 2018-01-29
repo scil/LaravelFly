@@ -193,7 +193,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function resetServiceProviders()
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['serviceProviders'] = [];
+        $this->corDict[-1]['serviceProviders'] = [];
     }
 
     public function bootInRequest()

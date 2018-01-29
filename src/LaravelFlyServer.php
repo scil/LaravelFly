@@ -181,8 +181,8 @@ class LaravelFlyServer
         } else {
 
             /**
-             * @see Symfony\Component\HttpFoundation\Request::createFromGlobals() use global vars, and
-             * this static method is alse used by Illuminate\Auth\Guard
+             * @see \Symfony\Component\HttpFoundation\Request::createFromGlobals() use global vars, and
+             * this static method is alse used by {@link \Illuminate\Auth\SessionGuard }
              */
             $this->setGlobal($request);
 
