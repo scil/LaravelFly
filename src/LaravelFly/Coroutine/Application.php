@@ -70,7 +70,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function initForCorontine($cid, $listen = false)
     {
-        parent::initForCorontine($cid);
+        parent::initForCorontine($cid, false);
 
         /**
          * replace $this->register(new RoutingServiceProvider($this));
@@ -89,10 +89,10 @@ class Application extends \Illuminate\Foundation\Application
          * @todo test
          */
         if ($cid > 0) {
-            ServiceProvider::initForCorontine($cid);
-            $this->make('events')->initForCorontine($cid);
+            ServiceProvider::initForCorontine($cid,false);
+            $this->make('events')->initForCorontine($cid,false);
             $this->instance('url', clone $this->make('url'));
-            $this->make('router')->initForCorontine($cid);
+            $this->make('router')->initForCorontine($cid,false);
 
             $this->make('events')->dispatch('cor.start', [$cid]);
         }

@@ -10,7 +10,7 @@ trait Dict
 
     protected $corDict = [];
 
-    public function initForCorontine($cid, $listen=false)
+    public function initForCorontine($cid, $listen=true)
     {
         if ($cid > 0) {
             $this->corDict[$cid] = $this->corDict[-1];

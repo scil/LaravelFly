@@ -60,7 +60,7 @@ class Router implements RegistrarContract, BindingRegistrar
     }
     public function initForCorontine($cid)
     {
-        $this->init($cid);
+        $this->init($cid,false);
         $newRoutes = clone $this->corDict[-1]['routes'];
         $this->corDict[$cid]['routes']= $newRoutes;
         $this->container->instance('routes', $newRoutes);

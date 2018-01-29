@@ -33,7 +33,7 @@ class Container implements ArrayAccess, ContainerContract
 
     function __construct()
     {
-        $this->initForCorontine(-1);
+        $this->initForCorontine(-1,false);
     }
 
     /**

@@ -93,7 +93,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function __construct($basePath = null)
     {
-        $this->initForCorontine(-1);
+        $this->initForCorontine(-1,false);
 
         if ($basePath) {
             $this->setBasePath($basePath);
