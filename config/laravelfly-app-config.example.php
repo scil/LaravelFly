@@ -51,8 +51,8 @@ return [
          *      ],
          */
         'providers_on_worker' => [
-            LaravelFly\Coroutine\Illuminate\Auth\AuthServiceProvider::class=> [
-                '_replace'=> Illuminate\Auth\AuthServiceProvider::class ,
+            LaravelFly\Coroutine\Illuminate\Auth\AuthServiceProvider::class => [
+                '_replace' => Illuminate\Auth\AuthServiceProvider::class,
             ],
             Illuminate\Broadcasting\BroadcastServiceProvider::class => [],
             Illuminate\Bus\BusServiceProvider::class => [],
@@ -64,11 +64,11 @@ return [
                 // 'memcached.connector' => true,
 
             ],
-            LaravelFly\Coroutine\Illuminate\Cookie\CookieServiceProvider::class=> [
-                '_replace'=> Illuminate\Cookie\CookieServiceProvider::class ,
+            LaravelFly\Coroutine\Illuminate\Cookie\CookieServiceProvider::class => [
+                '_replace' => Illuminate\Cookie\CookieServiceProvider::class,
             ],
-            LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class=> [
-                '_replace'=> Illuminate\Database\DatabaseServiceProvider::class,
+            LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class => [
+                '_replace' => Illuminate\Database\DatabaseServiceProvider::class,
             ],
             Illuminate\Encryption\EncryptionServiceProvider::class => [
                 'encrypter' => true,
@@ -86,8 +86,7 @@ return [
 
             // Illuminate\Notifications\NotificationServiceProvider::class,
 
-            /*todo need test : reg allowed?  */
-            // Illuminate\Pagination\PaginationServiceProvider::class,
+            Illuminate\Pagination\PaginationServiceProvider::class => [],
 
             Illuminate\Pipeline\PipelineServiceProvider::class => [],
             Illuminate\Queue\QueueServiceProvider::class => [],
@@ -95,12 +94,8 @@ return [
                 'redis' => LARAVELFLY_SINGLETON['redis'],
             ],
             Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
-            Illuminate\Session\SessionServiceProvider::class => [
-                // todo test
-//                'session' => true,
-
-                // 'session.store' => false,
-                // 'Illuminate\Session\Middleware\StartSession' =>false,
+            LaravelFly\Coroutine\Illuminate\Session\SessionServiceProvider::class => [
+                '_replace' => Illuminate\Session\SessionServiceProvider::class,
             ],
             Illuminate\Translation\TranslationServiceProvider::class => [],
             Illuminate\Validation\ValidationServiceProvider::class => [
@@ -110,8 +105,8 @@ return [
 //                // 'validator' => [],
 //                // 'validation.presence' => [],
             ],
-           \LaravelFly\Coroutine\Illuminate\View\ViewServiceProvider::class => [
-                '_replace'=>Illuminate\View\ViewServiceProvider::class ,
+            \LaravelFly\Coroutine\Illuminate\View\ViewServiceProvider::class => [
+                '_replace' => Illuminate\View\ViewServiceProvider::class,
             ],
             /*
              * Application Service Providers...
@@ -189,7 +184,6 @@ return [
              */
         ],
     ] +
-
 
 
     (LARAVELFLY_MODE != 'Greedy' ? [] :
