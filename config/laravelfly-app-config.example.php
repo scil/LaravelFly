@@ -43,15 +43,15 @@ return [
          *     *   $this->app->singleton('hash', function ($app) { ... });
          *
          * formats:
-         *      proverder1=> [
-         *        '_replaced_by' => 'provider2', // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
+         *      proverder2=> [
+         *        '_replace' => 'provider1', // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
          *        'singleton_service_1' => true,  //  service will be made on worker
          *        'singleton_service_2' => false, //  service will not be made on worker
          *      ],
          */
         'providers_on_worker' => [
-            Illuminate\Auth\AuthServiceProvider::class => [
-                '_replaced_by'=> LaravelFly\Coroutine\Illuminate\Auth\AuthServiceProvider::class,
+            LaravelFly\Coroutine\Illuminate\Auth\AuthServiceProvider::class=> [
+                '_replace'=> Illuminate\Auth\AuthServiceProvider::class ,
             ],
             Illuminate\Broadcasting\BroadcastServiceProvider::class => [],
             Illuminate\Bus\BusServiceProvider::class => [],
@@ -66,24 +66,20 @@ return [
             Illuminate\Cookie\CookieServiceProvider::class => [
                 // 'cookie' => false,
             ],
-            Illuminate\Database\DatabaseServiceProvider::class=> [
-                '_replaced_by'=> LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class,
+            LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class=> [
+                '_replace'=> Illuminate\Database\DatabaseServiceProvider::class,
             ],
             Illuminate\Encryption\EncryptionServiceProvider::class => [
                 'encrypter' => true,
             ],
             Illuminate\Filesystem\FilesystemServiceProvider::class => [
                 'filesystem.disk' => true,
-                'filesystem.cloud' => defined('LARAVELFLY_SINGLETON') ?
-                    LARAVELFLY_SINGLETON['filesystem.cloud'] :
-                    false,
+                'filesystem.cloud' => LARAVELFLY_SINGLETON['filesystem.cloud'],
             ],
             /* This reg FormRequestServiceProvider, whose boot is related to request */
             // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
             Illuminate\Hashing\HashServiceProvider::class => [
-                'hash' => defined('LARAVELFLY_SINGLETON') ?
-                    LARAVELFLY_SINGLETON['hash'] :
-                    false,
+                'hash' => LARAVELFLY_SINGLETON['hash']
             ],
             Illuminate\Mail\MailServiceProvider::class => [],
 
@@ -95,9 +91,7 @@ return [
             Illuminate\Pipeline\PipelineServiceProvider::class => [],
             Illuminate\Queue\QueueServiceProvider::class => [],
             Illuminate\Redis\RedisServiceProvider::class => [
-                'redis' => defined('LARAVELFLY_SINGLETON') ?
-                    LARAVELFLY_SINGLETON['redis'] :
-                    false,
+                'redis' => LARAVELFLY_SINGLETON['redis'],
             ],
             Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
             Illuminate\Session\SessionServiceProvider::class => [

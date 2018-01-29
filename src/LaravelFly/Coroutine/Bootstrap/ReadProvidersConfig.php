@@ -19,24 +19,28 @@ class ReadProvidersConfig
         $providersReplaced = [];
         $providersOnWork = [];
         foreach ($worker_providers as $provider => $providerConfig) {
+
+            $providersOnWork[] = $provider;
+
             $replaced = false;
             $_CFServices = [];
 
             foreach ($providerConfig as $CFS_name => $config) {
                 if ($config === true) {
                     $_CFServices[] = $CFS_name;
-                } elseif (!$replaced && $CFS_name == '_replaced_by' && class_exists($providerConfig['_replaced_by'])) {
+                } elseif (!$replaced && $CFS_name == '_replace') {
                     $replaced = true;
+                    $providersReplaced[] = $config;
                 }
             }
 
-            if ($replaced) {
-                $providersReplaced[] = $provider;
-                $provider = $providerConfig['_replaced_by'];
-            }
 
-            $providersOnWork[] = $provider;
-            $CFServices = array_unique(array_merge($_CFServices, $provider::coroutineFriendlyServices(), $CFServices));
+            if (!$_CFServices) {
+                $_CFServices = $provider::coroutineFriendlyServices();
+            }
+            if ($_CFServices) {
+                $CFServices = array_unique(array_merge($_CFServices, $CFServices));
+            }
         }
 
         $appConfig['app.providers'] = array_diff(
