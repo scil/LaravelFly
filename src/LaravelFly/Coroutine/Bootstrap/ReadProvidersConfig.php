@@ -24,7 +24,7 @@ class ReadProvidersConfig
             foreach ($providerConfig as $CFS_name => $config) {
                 if ($config === true) {
                     $CFServices[] = $CFS_name;
-                } elseif ($CFS_name == '_replaced_by' && class_exists($providerConfig['_replaced_by'])) {
+                } elseif ( !$replaced && $CFS_name == '_replaced_by' && class_exists($providerConfig['_replaced_by'])) {
                     $replaced = true;
                 }
             }
