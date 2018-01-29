@@ -93,6 +93,7 @@ class Application extends \Illuminate\Foundation\Application
             $this->make('events')->initForCorontine($cid);
             $this->instance('url', clone $this->make('url'));
             $this->make('router')->initForCorontine($cid);
+
             $this->make('events')->dispatch('cor.start', [$cid]);
         }
     }
@@ -102,9 +103,13 @@ class Application extends \Illuminate\Foundation\Application
 
         $this->make('events')->dispatch('cor.end', [$cid]);
 
-        $this->make('events')->delForCoroutine($cid);
         $this->make('router')->delForCoroutine($cid);
+
         ServiceProvider::delForCoroutine($cid);
+
+        //this should be the last second, events maybe used by anything, like dispatch 'cor.end'
+        $this->make('events')->delForCoroutine($cid);
+
         //this should be the last line, otherwise $this->make('events') can not work
         parent::delForCoroutine($cid);
     }

@@ -22,24 +22,27 @@ class ReadProvidersConfig
 
             $providersOnWork[] = $provider;
 
-            $replaced = false;
-            $_CFServices = [];
+            if (isset($providerConfig['_replace'])) {
+                $providersReplaced[] = $providerConfig['_replace'];
+                unset($providerConfig['_replace']);
+            }
+
+            $officalCFServices = $provider::coroutineFriendlyServices();
+            // $officalCFServices is base
+            $curCFServices = $officalCFServices;
 
             foreach ($providerConfig as $CFS_name => $config) {
-                if ($config === true) {
-                    $_CFServices[] = $CFS_name;
-                } elseif (!$replaced && $CFS_name == '_replace') {
-                    $replaced = true;
-                    $providersReplaced[] = $config;
+                // true $config only works when empty $officalCFServices
+                if ($config === true && !$officalCFServices) {
+                    $curCFServices[] = $CFS_name;
+                }elseif($config===false && in_array($CFS_name,$officalCFServices)){
+                    $curCFServices=array_diff($curCFServices,[$CFS_name]);
                 }
             }
 
 
-            if (!$_CFServices) {
-                $_CFServices = $provider::coroutineFriendlyServices();
-            }
-            if ($_CFServices) {
-                $CFServices = array_unique(array_merge($_CFServices, $CFServices));
+            if ($curCFServices) {
+                $CFServices = array_unique(array_merge($curCFServices, $CFServices));
             }
         }
 

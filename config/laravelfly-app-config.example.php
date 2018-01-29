@@ -46,7 +46,8 @@ return [
          *      proverder2=> [
          *        '_replace' => 'provider1', // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
          *        'singleton_service_1' => true,  //  service will be made on worker
-         *        'singleton_service_2' => false, //  service will not be made on worker
+         *        'singleton_service_2' => false, //  service will not be made on worker,
+         *                                            even if the service has apply if using coroutineFriendlyServices()
          *      ],
          */
         'providers_on_worker' => [
