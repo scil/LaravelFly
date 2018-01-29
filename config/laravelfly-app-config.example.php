@@ -97,13 +97,13 @@ return [
             LaravelFly\Coroutine\Illuminate\Session\SessionServiceProvider::class => [
                 '_replace' => Illuminate\Session\SessionServiceProvider::class,
             ],
-            Illuminate\Translation\TranslationServiceProvider::class => [],
+            Illuminate\Translation\TranslationServiceProvider::class => [
+                'translation.loader' => true,
+                'translator' => true,
+            ],
             Illuminate\Validation\ValidationServiceProvider::class => [
-//                /* todo
-//                  todo it's related to db, when db reconnet, how it ? */
-//                /* Illuminate\Validation\ValidationServiceProvider::class :*/
-//                // 'validator' => [],
-//                // 'validation.presence' => [],
+                'validator' => true,
+                'validation.presence' => true,
             ],
             \LaravelFly\Coroutine\Illuminate\View\ViewServiceProvider::class => [
                 '_replace' => Illuminate\View\ViewServiceProvider::class,
