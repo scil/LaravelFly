@@ -68,7 +68,7 @@ class Application extends \Illuminate\Foundation\Application
         $this->register(new RoutingServiceProvider($this));
     }
 
-    public function initForCorontine($cid)
+    public function initForCorontine($cid, $listen = false)
     {
         parent::initForCorontine($cid);
 
@@ -93,11 +93,15 @@ class Application extends \Illuminate\Foundation\Application
             $this->make('events')->initForCorontine($cid);
             $this->instance('url', clone $this->make('url'));
             $this->make('router')->initForCorontine($cid);
+            $this->make('events')->dispatch('cor.start', [$cid]);
         }
     }
 
     function delForCoroutine(int $cid)
     {
+
+        $this->make('events')->dispatch('cor.end', [$cid]);
+
         $this->make('events')->delForCoroutine($cid);
         $this->make('router')->delForCoroutine($cid);
         ServiceProvider::delForCoroutine($cid);
