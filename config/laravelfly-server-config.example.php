@@ -26,11 +26,23 @@ const HONEST_IN_CONSOLE = false;
  * 2. its vars will not changed in any requests
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
-const LARAVELFLY_SINGLETON= [
-    "redis" => false,   // to true if 'redis' is used
-    'filesystem.cloud' => false,   // to true if 'filesystem.cloud' is used
-    'hash' => false,  // to true if app('hash')->setRounds is never called in any requests
-    'view' => false,  // to true if app('view.engine.resolver')->register is never called in any requests. See: Illuminate\View\Engines::register
+const LARAVELFLY_SINGLETON = [
+    // to true if 'redis' is used
+    "redis" => false,
+
+    // to true if 'filesystem.cloud' is used
+    'filesystem.cloud' => false,
+
+    // to false if app('hash')->setRounds may be called in a request
+    'hash' => true,
+
+    /**
+     * to false if same view name refers to different view files in different requests.
+     * for example:
+     *      view 'home' may points to 'guest_location/home.blade.php' for a guest ,
+     *      while to 'admin_location/home.blade.php' for an admin
+     */
+    'view.finder' => true,
 ];
 
 /**

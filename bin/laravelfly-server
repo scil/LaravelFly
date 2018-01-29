@@ -27,12 +27,12 @@ if ($argv[1] == 'start') {
 if (!isset($options['pid_file'])) {
     $pid_file = $root . '/bootstrap/laravelfly.pid' . $options['listen_port'];
 } else {
-    $pid_file = $options['pid_file'] .   $options['listen_port'];
+    $pid_file = $options['pid_file'] . $options['listen_port'];
 }
 
 $pid = 0;
 try {
-    if(is_file($pid_file))
+    if (is_file($pid_file))
         $pid = (int)file_get_contents($pid_file);
 } catch (Throwable $e) {
     print("pid can not be read from $pid_file \n");
@@ -60,20 +60,18 @@ exit();
 
 start:
 include $root . '/vendor/autoload.php';
-if(LARAVELFLY_MODE=='Coroutine'){
-    include __DIR__."/../src/fly/Container.php";
-    include __DIR__."/../src/fly/Application.php";
-    include __DIR__."/../src/fly/ServiceProvider.php";
-    include __DIR__."/../src/fly/Router.php";
-    if(LARAVELFLY_SINGLETON['view']){
-        include __DIR__."/../src/fly/ViewConcerns/ManagesComponents.php";
-        include __DIR__."/../src/fly/ViewConcerns/ManagesLayouts.php";
-        include __DIR__."/../src/fly/ViewConcerns/ManagesLoops.php";
-        include __DIR__."/../src/fly/ViewConcerns/ManagesStacks.php";
-        include __DIR__."/../src/fly/ViewConcerns/ManagesTranslations.php";
-    }
+if (LARAVELFLY_MODE == 'Coroutine') {
+    include __DIR__ . "/../src/fly/Container.php";
+    include __DIR__ . "/../src/fly/Application.php";
+    include __DIR__ . "/../src/fly/ServiceProvider.php";
+    include __DIR__ . "/../src/fly/Router.php";
+    include __DIR__ . "/../src/fly/ViewConcerns/ManagesComponents.php";
+    include __DIR__ . "/../src/fly/ViewConcerns/ManagesLayouts.php";
+    include __DIR__ . "/../src/fly/ViewConcerns/ManagesLoops.php";
+    include __DIR__ . "/../src/fly/ViewConcerns/ManagesStacks.php";
+    include __DIR__ . "/../src/fly/ViewConcerns/ManagesTranslations.php";
 }
 
-$Server=$options['server']??'LaravelFlyServer';
+$Server = $options['server'] ?? 'LaravelFlyServer';
 unset($root, $config_file, $pid_file, $pid, $options['server']);
 $Server::getInstance($options)->start();
