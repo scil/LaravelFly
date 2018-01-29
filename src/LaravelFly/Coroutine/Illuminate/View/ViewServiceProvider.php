@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Illuminate\View\Engines not rewriten to be A COROUTINE-FRIENDLY SERVICE.
- * so this provider requires app('view.engine.resolver')->register is called on work, and never called in any requests.
- * I think it's rare to call it in a request.
- *
- * @See: Illuminate\View\Engines::register()
- */
-
 namespace LaravelFly\Coroutine\Illuminate\View;
 
 use Illuminate\View\Engines\PhpEngine;
@@ -23,6 +15,14 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 
     static public function coroutineFriendlyServices()
     {
+        /**
+         * Illuminate\View\Engines not rewriten to be A COROUTINE-FRIENDLY SERVICE.
+         * so this provider requires app('view.engine.resolver')->register is called on work, and never called in any requests.
+         * I think it's rare to call it in a request.
+         *
+         * @See: Illuminate\View\Engines::register()
+         */
+
         return ['view'];
     }
 

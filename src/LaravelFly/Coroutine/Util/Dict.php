@@ -12,17 +12,17 @@ trait Dict
     // protected $arrayAttriForObj=[];
     protected $corDict = [];
 
-    public function initForCorontine($cid, $listen=true)
+    public function initForCorontine($cid, $listen = true)
     {
         if ($cid > 0) {
             $this->corDict[$cid] = $this->corDict[-1];
         } else {
-            if ($this->arrayAttriForObj) {
+            if ($this->arrayAttriForObj ?? false) {
                 foreach ($this->arrayAttriForObj as $attri) {
                     $this->corDict[-1][$attri] = [];
                 }
             }
-            if ($this->normalAttriForObj) {
+            if ($this->normalAttriForObj ?? false) {
                 foreach ($this->normalAttriForObj as $attri => $defaultValue) {
                     if (is_callable($defaultValue)) {
                         $this->corDict[-1][$attri] = $defaultValue();
@@ -32,12 +32,12 @@ trait Dict
                 }
             }
 
-            if($listen){
-                Container::getInstance()->make('events')->listen('cor.start',function ($cid){
+            if ($listen) {
+                Container::getInstance()->make('events')->listen('cor.start', function ($cid) {
                     $this->initForCorontine($cid);
                 });
 
-                Container::getInstance()->make('events')->listen('cor.end',function ($cid){
+                Container::getInstance()->make('events')->listen('cor.end', function ($cid) {
                     $this->delForCoroutine($cid);
                 });
             }
