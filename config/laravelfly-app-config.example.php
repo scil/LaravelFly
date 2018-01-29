@@ -1,7 +1,6 @@
 <?php
 
-if (!defined('LARAVELFLY_MODE'))
-    return [];
+if (!defined('LARAVELFLY_MODE')) return [];
 
 return [
         'config_changed_in_requests' => [
@@ -51,7 +50,9 @@ return [
          *      ],
          */
         'providers_on_worker' => [
-            Illuminate\Auth\AuthServiceProvider::class => [],
+            Illuminate\Auth\AuthServiceProvider::class => [
+                '_replaced_by'=> LaravelFly\Coroutine\Illuminate\Auth\AuthServiceProvider::class,
+            ],
             Illuminate\Broadcasting\BroadcastServiceProvider::class => [],
             Illuminate\Bus\BusServiceProvider::class => [],
             Illuminate\Cache\CacheServiceProvider::class => [
@@ -66,9 +67,7 @@ return [
                 // 'cookie' => false,
             ],
             Illuminate\Database\DatabaseServiceProvider::class=> [
-                '_replaced_by'=> LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class  ,
-                'db.factory' => true,
-                'db' => true,
+                '_replaced_by'=> LaravelFly\Coroutine\Illuminate\Database\DatabaseServiceProvider::class,
             ],
             Illuminate\Encryption\EncryptionServiceProvider::class => [
                 'encrypter' => true,

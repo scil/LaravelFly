@@ -61,6 +61,10 @@ abstract class ServiceProvider
     {
         unset(static::$publishes[$cid],static::$publishGroups[$cid]);
     }
+    static public function coroutineFriendlyServices()
+    {
+        return [];
+    }
     /**
      * Merge the given configuration with the existing configuration.
      *

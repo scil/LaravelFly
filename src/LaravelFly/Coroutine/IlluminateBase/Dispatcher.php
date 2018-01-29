@@ -46,8 +46,8 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     public function hasListeners($eventName)
     {
-        $cid = \Swoole\Coroutine::getuid();
-        return isset($this->corDict[$cid]['listeners'][$eventName]) || isset($this->corDict[$cid]['wildcards'][$eventName]);
+        $current = $this->corDict[\Swoole\Coroutine::getuid()];
+        return isset($current['listeners'][$eventName]) || isset($current['wildcards'][$eventName]);
     }
 
     //todo
