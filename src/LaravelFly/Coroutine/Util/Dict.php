@@ -8,6 +8,8 @@ use Illuminate\Container\Container;
 trait Dict
 {
 
+    // protected $normalAttriForObj=[];
+    // protected $arrayAttriForObj=[];
     protected $corDict = [];
 
     public function initForCorontine($cid, $listen=true)

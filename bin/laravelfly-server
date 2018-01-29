@@ -65,6 +65,13 @@ if(LARAVELFLY_MODE=='Coroutine'){
     include __DIR__."/../src/fly/Application.php";
     include __DIR__."/../src/fly/ServiceProvider.php";
     include __DIR__."/../src/fly/Router.php";
+    if(LARAVELFLY_SINGLETON['view']){
+        include __DIR__."/../src/fly/ViewConcerns/ManagesComponents.php";
+        include __DIR__."/../src/fly/ViewConcerns/ManagesLayouts.php";
+        include __DIR__."/../src/fly/ViewConcerns/ManagesLoops.php";
+        include __DIR__."/../src/fly/ViewConcerns/ManagesStacks.php";
+        include __DIR__."/../src/fly/ViewConcerns/ManagesTranslations.php";
+    }
 }
 
 $Server=$options['server']??'LaravelFlyServer';

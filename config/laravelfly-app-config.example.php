@@ -57,10 +57,10 @@ return [
             Illuminate\Broadcasting\BroadcastServiceProvider::class => [],
             Illuminate\Bus\BusServiceProvider::class => [],
             Illuminate\Cache\CacheServiceProvider::class => [
-                //todo test
                 'cache' => true,
                 'cache.store' => true,
                 /* depends */
+                // if memcached is used, enable it
                 // 'memcached.connector' => true,
 
             ],
@@ -110,7 +110,9 @@ return [
 //                // 'validator' => [],
 //                // 'validation.presence' => [],
             ],
-            Illuminate\View\ViewServiceProvider::class => [
+           \LaravelFly\Coroutine\Illuminate\View\ViewServiceProvider::class => [
+                '_replace'=>Illuminate\View\ViewServiceProvider::class ,
+                'view'=>true,
                 'view.engine.resolver' => env('FLY_VIEW_ENGINE_RESOLVER', false),
             ],
             /*

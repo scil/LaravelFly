@@ -7,12 +7,14 @@
 const LARAVELFLY_MODE = 'Simple';
 
 /**
- * Tell application it's running in cli mode.
+ * honest that application is running in cli mode.
  *
  * Some serivces, such as DebugBar, not run in cli mode.
- * Set it false, Application::runningInConsole() return false, and DebugBar can start.
+ * Some service providers, such as MailServiceProvider, get ready to publish  resources in cli mode.
+ *
+ * Set it true, Application::runningInConsole() return true, and DebugBar can not start.
  */
-const HONEST_IN_CONSOLE = true;
+const HONEST_IN_CONSOLE = false;
 
 /**
  * make some services on worker, before any requests, to save memory
@@ -28,7 +30,7 @@ const LARAVELFLY_SINGLETON= [
     "redis" => false,   // to true if 'redis' is used
     'filesystem.cloud' => false,   // to true if 'filesystem.cloud' is used
     'hash' => false,  // to true if app('hash')->setRounds is never called in any requests
-    'view.engine.resolver' => false,  // to true if app('view.engine.resolver')->register is never called in any requests. See: Illuminate\View\Engines::register
+    'view' => false,  // to true if app('view.engine.resolver')->register is never called in any requests. See: Illuminate\View\Engines::register
 ];
 
 /**
