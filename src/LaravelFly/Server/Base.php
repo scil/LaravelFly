@@ -40,7 +40,7 @@ class Base
     public function __construct(array &$options)
     {
 
-        $this->root = realpath(__DIR__ . '/../../../../..');
+        $this->root = realpath(__DIR__ . '/../../../../../..');
         $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
         $this->kernelClass = $options['kernel'] ?? '';
         if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {

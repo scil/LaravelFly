@@ -25,9 +25,9 @@ if ($argv[1] == 'start') {
 }
 
 if (!isset($options['pid_file'])) {
-    $pid_file = $root . '/bootstrap/laravelfly.pid' . $options['listen_port'];
+    $pid_file = $root .'/bootstrap/laravel-fly-http-' . $options['listen_port'] . '.pid';
 } else {
-    $pid_file = $options['pid_file'] . $options['listen_port'];
+    $pid_file = $options['pid_file'] . '-' . $options['listen_port'];
 }
 
 $pid = 0;

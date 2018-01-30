@@ -21,15 +21,12 @@
       "eaglewu/swoole-ide-helper": "dev-master"
   },
   "autoload": {
-    "classmap": [
-      "src/LaravelFly.php"
-    ],
     "psr-4": {
       "LaravelFly\\": "src/LaravelFly/"
     }
   },
   "bin": [
-    "bin/laravelfly-server",
+    "bin/laravelfly",
     "bin/publish-laravelfly-config-files"
   ]
 }

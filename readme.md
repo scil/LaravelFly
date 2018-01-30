@@ -131,7 +131,7 @@ class Kernel extends WhichKernel
 
 Execute 
 ```
-vendor/bin/laravelfly-server start [$server_config_file]
+vendor/bin/laravelfly start [$server_config_file]
 ```
 Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.config.php`.
 
@@ -145,7 +145,7 @@ Two methods:
 
 * Execute 
 ```
-vendor/bin/laravelfly-server stop [$server_config_file]
+vendor/bin/laravelfly stop [$server_config_file]
 ```
 
 * in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
@@ -154,7 +154,7 @@ vendor/bin/laravelfly-server stop [$server_config_file]
 ## Restart
 
 ```
-vendor/bin/laravelfly-server restart [$server_config_file]
+vendor/bin/laravelfly restart [$server_config_file]
 ```
 
 
@@ -162,12 +162,12 @@ vendor/bin/laravelfly-server restart [$server_config_file]
 
 LaravelFlyServer runs in cli mode, so LaravelFly debug is to debug a script 
 ```
-vendor/scil/laravel-fly/bin/laravelfly-server <start|stop|restart>
+vendor/scil/laravel-fly/bin/laravelfly <start|stop|restart>
 ```
 
 To debug LaravelFly on a remote host such as vagrant, read [Debugging remote CLI with phpstorm](http://www.adayinthelifeof.nl/2012/12/20/debugging-remote-cli-with-phpstorm/?utm_source=tuicool&utm_medium=referral) then use a command like this:
 ```
-php -dxdebug.remote_host=192.168.1.2  vendor/scil/laravel-fly/bin/laravelfly-server <start|stop|restart>
+php -dxdebug.remote_host=192.168.1.2  vendor/scil/laravel-fly/bin/laravelfly <start|stop|restart>
 ```
 replace 192.168.1.2 with your ip where phpstorm is.
 
@@ -186,7 +186,7 @@ Gracefully is that: worker willl finish its work before die.
 ### Two methods to reload
 * Execute 
 ```
-vendor/bin/laravelfly-server reload [$server_config_file]
+vendor/bin/laravelfly reload [$server_config_file]
 ```
 
 * in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
