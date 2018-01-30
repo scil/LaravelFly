@@ -90,5 +90,5 @@ return [
 
     'kernel' => \App\Http\Kernel::class,
 
-    'server' => LaravelFlyServer::class,
+    'server' => \LaravelFly\Server\HttpServer::class,
 ];

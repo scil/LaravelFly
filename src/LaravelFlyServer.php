@@ -93,14 +93,14 @@ class LaravelFlyServer
             die('[FAILED] ' . $e->getMessage() . PHP_EOL);
         }
 
-        $this->initSthWhenServerStart();
+        $this->initAfterStart();
     }
 
     /**
      * Do sth. that is done in all of the Laravel requests.
      * @see Illuminate\Foundation\Http\Kernel::handle()
      */
-    protected function initSthWhenServerStart()
+    protected function initAfterStart()
     {
         \Illuminate\Http\Request::enableHttpMethodParameterOverride();
     }

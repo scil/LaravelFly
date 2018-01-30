@@ -73,6 +73,5 @@ if (LARAVELFLY_MODE == 'Coroutine') {
 
 }
 
-$Server = $options['server'] ?? 'LaravelFlyServer';
-unset($root, $config_file, $pid_file, $pid, $options['server']);
-$Server::getInstance($options)->start();
+unset($root, $config_file, $pid_file, $pid);
+LaravelFly::getInstance($options)->start();

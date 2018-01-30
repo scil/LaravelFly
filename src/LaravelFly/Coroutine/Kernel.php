@@ -51,7 +51,7 @@ class Kernel extends HttpKernel
     public function handle($request)
     {
         try {
-            // moved to LaravelFlyServer::initSthWhenServerStart
+            // moved to LaravelFlyServer::initAfterStart
             // $request::enableHttpMethodParameterOverride();
 
             $response = $this->sendRequestThroughRouter($request);
