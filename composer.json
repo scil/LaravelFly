@@ -22,7 +22,7 @@
   },
   "autoload": {
     "classmap": [
-      "src/LaravelFlyServer.php"
+      "src/LaravelFly.php"
     ],
     "psr-4": {
       "LaravelFly\\": "src/LaravelFly/"

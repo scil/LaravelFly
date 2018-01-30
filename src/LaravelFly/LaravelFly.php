@@ -1,5 +1,5 @@
 <?php
-
+namespace LaravelFly;
 
 class LaravelFly
 {

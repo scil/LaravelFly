@@ -74,4 +74,4 @@ if (LARAVELFLY_MODE == 'Coroutine') {
 }
 
 unset($root, $config_file, $pid_file, $pid);
-LaravelFly::getInstance($options)->start();
+\LaravelFly\LaravelFly::getInstance($options)->start();
