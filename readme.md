@@ -79,13 +79,10 @@ Make sure `extension=swoole.so` in php cli config file, not  fpm or apache.
 
 ## Config
 
-1. execute `vendor/bin/publish-laravelfly-config-files`  .  
-you can add "--force" to overwrite old config files.  
+1. Execute `php artisan vendor:publish --tag=fly-server`  .  
 `vendor/bin/publish-laravelfly-config-files --force`
-you can also add an argument `app` or `server` to publish only app config or server config.
 2. Edit server config file `<project_root_dir>/laravelfly.server.config.php`.
-3. Edit app config file `<project_root_dir>/config/laravelfly.php`.   
-Note: items prefixed with "/** depends " need your consideration.
+3. Execute `php artisan vendor:publish --tag=fly-app`
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_MODE')) {
@@ -121,6 +118,8 @@ class Kernel extends WhichKernel
     'coroutine' => true,
 ],
 ```
+* Edit `<project_root_dir>/config/laravelfly.php`.   
+Note: items prefixed with "/** depends " deverve your consideration.
 
 ## Config examples for Third Party Serivce
 * [Debugbar](package_config_examples/Debugbar.md)

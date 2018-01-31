@@ -28,5 +28,14 @@
   "bin": [
     "bin/laravelfly",
     "bin/publish-laravelfly-config-files"
-  ]
+  ],
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LaravelFly\\Providers\\PublishConfigServiceProvider"
+      ],
+      "aliases": {
+      }
+    }
+  },
 }

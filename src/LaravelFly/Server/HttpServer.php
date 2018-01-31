@@ -15,12 +15,6 @@ class HttpServer extends Base implements ServerInterface
 
         parent::__construct($options);
 
-        if (isset($options['pid_file'])) {
-            $options['pid_file'] .= '-' . $options['listen_port'];
-        } else {
-            $options['pid_file'] = $this->root . '/bootstrap/laravel-fly-http-' . $options['listen_port'] . '.pid';
-        }
-
         $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
         $server->set($options);
@@ -59,7 +53,7 @@ class HttpServer extends Base implements ServerInterface
      */
     public function onWorkerStart()
     {
-        parent::onWorkerStart();
+        $this->startLaravel();
 
         $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
 

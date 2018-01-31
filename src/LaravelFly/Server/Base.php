@@ -41,15 +41,21 @@ class Base
     {
 
         $this->root = realpath(__DIR__ . '/../../../../../..');
-        $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
-        $this->kernelClass = $options['kernel'] ?? '';
         if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
             die("This doc root is not for a Laravel app: {$this->root} ");
         }
 
+        $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
+        $this->kernelClass = $options['kernel'] ?? '';
+
+        if (isset($options['pid_file'])) {
+            $options['pid_file'] .= '-' . $options['listen_port'];
+        } else {
+            $options['pid_file'] = $this->root . '/bootstrap/laravel-fly-' . $options['listen_port'] . '.pid';
+        }
     }
 
-    public function onWorkerStart()
+    public function startLaravel()
     {
 
         $this->app = new $this->appClass($this->root);
