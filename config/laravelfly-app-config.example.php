@@ -50,12 +50,16 @@ return [
          *        'singleton_service_2' => false, //  service will not be made on worker,
          *                                            even if the service has apply if using coroutineFriendlyServices()
          *      ],
+         *      proverder3=> true,           // this provider will be booted on worker
+         *      proverder4=> false,           // this provider will not be booted on worker
+         *      proverder5=> null,           // this provider will not be booted on worker too.
          */
         'providers_on_worker' => [
             LaravelFly\Coroutine\Illuminate\Auth\AuthServiceProvider::class => [
                 '_replace' => Illuminate\Auth\AuthServiceProvider::class,
             ],
-            Illuminate\Broadcasting\BroadcastServiceProvider::class => [],
+            Illuminate\Broadcasting\BroadcastServiceProvider::class => LARAVELFLY_CF_SERVICES['broadcast'] ?
+                [] : false,
             Illuminate\Bus\BusServiceProvider::class => [],
             Illuminate\Cache\CacheServiceProvider::class => [
                 'cache' => true,
@@ -76,12 +80,12 @@ return [
             ],
             Illuminate\Filesystem\FilesystemServiceProvider::class => [
                 'filesystem.disk' => true,
-                'filesystem.cloud' => LARAVELFLY_SINGLETON['filesystem.cloud'],
+                'filesystem.cloud' => LARAVELFLY_CF_SERVICES['filesystem.cloud'],
             ],
             /* This reg FormRequestServiceProvider, whose boot is related to request */
             // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
             Illuminate\Hashing\HashServiceProvider::class => [
-                'hash' => LARAVELFLY_SINGLETON['hash']
+                'hash' => LARAVELFLY_CF_SERVICES['hash']
             ],
             Illuminate\Mail\MailServiceProvider::class => [],
 
@@ -92,7 +96,7 @@ return [
             Illuminate\Pipeline\PipelineServiceProvider::class => [],
             Illuminate\Queue\QueueServiceProvider::class => [],
             Illuminate\Redis\RedisServiceProvider::class => [
-                'redis' => LARAVELFLY_SINGLETON['redis'],
+                'redis' => LARAVELFLY_CF_SERVICES['redis'],
             ],
             Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
             LaravelFly\Coroutine\Illuminate\Session\SessionServiceProvider::class => [
@@ -115,6 +119,8 @@ return [
             App\Providers\AppServiceProvider::class => [],
             //todo
             App\Providers\AuthServiceProvider::class => [],
+            App\Providers\BroadcastServiceProvider::class => LARAVELFLY_CF_SERVICES['broadcast'] ?
+                [] : false,
             App\Providers\EventServiceProvider::class => [],
             App\Providers\RouteServiceProvider::class => [],
 

@@ -20,7 +20,11 @@ class ReadProvidersConfig
         $providersOnWork = [];
         foreach ($worker_providers as $provider => $providerConfig) {
 
+            if($providerConfig===false || is_null($providerConfig)) continue;
+
             $providersOnWork[] = $provider;
+
+            if(!is_array($providerConfig)) continue;
 
             if (isset($providerConfig['_replace'])) {
                 $providersReplaced[] = $providerConfig['_replace'];

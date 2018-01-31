@@ -26,12 +26,13 @@ const HONEST_IN_CONSOLE = false;
  * 2. its vars will not changed in any requests
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
-const LARAVELFLY_SINGLETON = [
-    // to true if 'redis' is used
+const LARAVELFLY_CF_SERVICES = [
+    /**
+     * make the corresponding service to be true if you use it.
+     */
     "redis" => false,
-
-    // to true if 'filesystem.cloud' is used
     'filesystem.cloud' => false,
+    'broadcast'=>false,
 
     // to false if app('hash')->setRounds may be called in a request
     'hash' => true,
@@ -59,6 +60,10 @@ return [
      */
     'server' => \LaravelFly\Server\HttpServer::class,
 
+    /**
+     * this is not for \LaravelFly\Server\WebSocketServer which always uses '0.0.0.0'
+     * extend it and overwrite its __construct() if you need different listen_ip,
+     */
     // 'listen_ip' => '0.0.0.0',// listen to any address
     'listen_ip' => '127.0.0.1',// listen only to localhost
 

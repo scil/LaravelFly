@@ -34,7 +34,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     public function registerViewFinder()
     {
 
-        if (!LARAVELFLY_SINGLETON['view.finder'])
+        if (!LARAVELFLY_CF_SERVICES['view.finder'])
             include __DIR__ . '/../../../../fly/FileViewFinder.php';
 
         $this->app->bind('view.finder', function ($app) {
