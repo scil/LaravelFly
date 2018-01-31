@@ -90,5 +90,6 @@ return [
 
     'kernel' => \App\Http\Kernel::class,
 
-    'server' => \LaravelFly\Server\HttpServer::class,
+//    'server' => \LaravelFly\Server\HttpServer::class,
+    'server' => \LaravelFly\Server\WebSocketServer::class,
 ];

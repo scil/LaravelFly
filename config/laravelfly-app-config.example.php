@@ -17,6 +17,7 @@ return [
          */
         'providers_ignore' => [
             Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+            LaravelFly\Providers\PublishServiceProvider::class,
             Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         ],
 

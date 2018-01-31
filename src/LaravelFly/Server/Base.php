@@ -24,7 +24,11 @@ class Base
     protected $kernelClass;
 
     /**
-     * An laravel application instance living always with a worker.
+     * An laravel application instance living always with a worker, not the server.
+     *
+     * In Mode Coroutine, it can't be made living always with the server,
+     * because most of Coroutine-Friendly Services are made only by \Swoole\Coroutine::getuid()
+     * without using swoole_server::$worker_id, they can not distinguish coroutines in different workers.
      *
      * @var \LaravelFly\Coroutine\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application
      */
