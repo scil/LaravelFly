@@ -81,7 +81,7 @@ Make sure `extension=swoole.so` in php cli config file, not  fpm or apache.
 
 1. Execute `php artisan vendor:publish --tag=fly-server`  .  
 `vendor/bin/publish-laravelfly-config-files --force`
-2. Edit server config file `<project_root_dir>/laravelfly.server.config.php`.
+2. Edit server config file `<project_root_dir>/laravelfly.php`.
 3. Execute `php artisan vendor:publish --tag=fly-app`
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
@@ -132,7 +132,7 @@ Execute
 ```
 vendor/bin/laravelfly start [$server_config_file]
 ```
-Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly.server.config.php`.
+Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly..php`.
 
 You can make multiple config files which have different listen_port, and you can run multiple server.
 
@@ -246,7 +246,7 @@ In Greedy Mode, providers in "config('laravelfly.providers_in_worker')" are regi
 
 And In Greedy Mode, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".If necessary, you should define which properties need to backup. 
 
-You can choose Mode in <project_root_dir>/laravelfly.server.php after you publish config files.
+You can choose Mode in <project_root_dir>/laravelfly.php after you publish config files.
 
 In Greedy Mode, response to homepage visit would be 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
 ```

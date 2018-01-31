@@ -52,6 +52,13 @@ const LARAVELFLY_SINGLETON = [
  * 2. Swoole server configuration https://www.swoole.co.uk/docs/modules/swoole-server/configuration
  */
 return [
+    /**
+     * options:
+     *      \LaravelFly\Server\WebSocketServer::class
+     *      \LaravelFly\Server\HttpServer::class
+     */
+    'server' => \LaravelFly\Server\HttpServer::class,
+
     // 'listen_ip' => '0.0.0.0',// listen to any address
     'listen_ip' => '127.0.0.1',// listen only to localhost
 
@@ -87,9 +94,6 @@ return [
      */
     //'pid_file' => '/run/laravelfly/pid',
 
-
     'kernel' => \App\Http\Kernel::class,
 
-//    'server' => \LaravelFly\Server\HttpServer::class,
-    'server' => \LaravelFly\Server\WebSocketServer::class,
 ];

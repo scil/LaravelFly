@@ -13,7 +13,7 @@ class PublishServiceProvider extends ServiceProvider
         ],'fly-app');
 
         $this->publishes([
-            __DIR__ . '/../../../config/laravelfly-server-config.example.php' => base_path('laravelfly.server.config.php'),
+            __DIR__ . '/../../../config/laravelfly-server-config.example.php' => base_path('laravelfly.php'),
         ],'fly-server');
     }
 }
