@@ -32,7 +32,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "LaravelFly\\Providers\\PublishConfigServiceProvider"
+        "LaravelFly\\Providers\\PublishServiceProvider"
       ],
       "aliases": {
       }
