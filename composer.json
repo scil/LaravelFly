@@ -26,8 +26,7 @@
     }
   },
   "bin": [
-    "bin/laravelfly",
-    "bin/publish-laravelfly-config-files"
+    "bin/laravelfly"
   ],
   "extra": {
     "laravel": {
