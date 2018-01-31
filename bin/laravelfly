@@ -12,7 +12,7 @@ U;
 }
 
 $root = realpath(__DIR__ . '/../../../..');
-$config_file = $argc == 3 ? $argv[2] : $root . '/laravelfly.server.config.php';
+$config_file = $argc == 3 ? $argv[2] : $root . '/laravelfly.php';
 
 try {
     $options = require $config_file;

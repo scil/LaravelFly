@@ -134,7 +134,7 @@ vendor/bin/laravelfly start [$server_config_file]
 ```
 Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly..php`.
 
-You can make multiple config files which have different listen_port, and you can run multiple server.
+You can make multiple config files which have different listen_port, then you can run multiple server.
 
 Note: LaravelFly will not supply an artisan command to run server, for the sake of less memory usage.
 
