@@ -58,8 +58,11 @@ return [
             LaravelFly\Coroutine\Illuminate\Auth\AuthServiceProvider::class => [
                 '_replace' => Illuminate\Auth\AuthServiceProvider::class,
             ],
-            Illuminate\Broadcasting\BroadcastServiceProvider::class => LARAVELFLY_CF_SERVICES['broadcast'] ?
-                [] : false,
+            Illuminate\Broadcasting\BroadcastServiceProvider::class =>
+                LARAVELFLY_CF_SERVICES['broadcast'] ? [
+                    Illuminate\Broadcasting\BroadcastManager::class,
+                    Illuminate\Contracts\Broadcasting\Broadcaster::class,
+                ] : false,
             Illuminate\Bus\BusServiceProvider::class => [],
             Illuminate\Cache\CacheServiceProvider::class => [
                 'cache' => true,

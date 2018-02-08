@@ -33,16 +33,13 @@ class WebSocketServer extends Base implements ServerInterface
     {
         $this->server->on('open', array($this, 'onOpen'));
         $this->server->on('message', array($this, 'onMessage'));
+        $this->server->on('close', array($this, 'onClose'));
     }
 
     function onOpen(\swoole_websocket_server $svr, \swoole_http_request $req)
     {
-        var_dump('onopen');
         var_dump($req);
     }
 
-    function onMessage(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
-    {
-    }
 
 }

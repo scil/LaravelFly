@@ -29,7 +29,6 @@ class LaravelFly
         $class = $options['server'];
         unset($options['server']);
         $this->server = new $class($options);
-        $this->server->setListeners();
     }
 
     function start()

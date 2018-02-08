@@ -18,6 +18,8 @@ class HttpServer extends Base implements ServerInterface
         $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
         $server->set($options);
+
+        $this->setListeners();
     }
 
     function setListeners()
@@ -53,6 +55,8 @@ class HttpServer extends Base implements ServerInterface
      */
     public function onWorkerStart()
     {
+        opcache_reset();
+
         $this->startLaravel();
 
         $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
