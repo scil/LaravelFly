@@ -39,10 +39,10 @@ class Application extends \Illuminate\Foundation\Application
 
     protected $CFServices = [];
 
-    protected $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
         'bootingCallbacks', 'bootedCallbacks', 'terminatingCallbacks', 'serviceProviders', 'loadedProviders', 'deferredServices'
     ];
-    protected $normalAttriForObj = [
+    protected static $normalAttriForObj = [
         'hasBeenBootstrapped' => false, 'booted' => false,
         'bootedInRequest' => false,
     ];
@@ -126,7 +126,6 @@ class Application extends \Illuminate\Foundation\Application
 
     public function registerAcrossProviders()
     {
-        $cid = \Swoole\Coroutine::getuid();
         $config = $this->make('config');
         $providers = array_diff(
         // providers in request have remove from 'app.providers' by CleanProviders
@@ -135,15 +134,15 @@ class Application extends \Illuminate\Foundation\Application
         );
 
         if ($providers) {
-            $serviceProvidersBack = $this->corDict[$cid]['serviceProviders'];
-            $this->corDict[$cid]['serviceProviders'] = [];
+            $serviceProvidersBack = static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'];
+            static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'] = [];
 
             //todo update code
             (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))
                 ->load($providers);
 
-            $this->acrossServiceProviders = $this->corDict[$cid]['serviceProviders'];
-            $this->corDict[$cid]['serviceProviders'] = $serviceProvidersBack;
+            $this->acrossServiceProviders = static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'];
+            static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'] = $serviceProvidersBack;
         }
 
     }
@@ -177,9 +176,9 @@ class Application extends \Illuminate\Foundation\Application
             return;
         }
 
-        $this->fireAppCallbacks($this->corDict[$cid]['bootingCallbacks']);
+        $this->fireAppCallbacks(static::$corDict[$cid]['bootingCallbacks']);
 
-        array_walk($this->corDict[$cid]['serviceProviders'], function ($p) {
+        array_walk(static::$corDict[$cid]['serviceProviders'], function ($p) {
             $this->bootProvider($p);
         });
 
@@ -200,13 +199,13 @@ class Application extends \Illuminate\Foundation\Application
 
     public function resetServiceProviders()
     {
-        $this->corDict[-1]['serviceProviders'] = [];
+        static::$corDict[\Swoole\Coroutine::getuid()]['serviceProviders'] = [];
     }
 
     public function bootInRequest()
     {
         $cid = \Swoole\Coroutine::getuid();
-        if ($this->corDict[$cid]['bootedInRequest']) {
+        if (static::$corDict[$cid]['bootedInRequest']) {
             return;
         }
 
@@ -220,13 +219,13 @@ class Application extends \Illuminate\Foundation\Application
         array_walk($this->acrossServiceProviders, function ($p) {
             $this->bootProvider($p);
         });
-        array_walk($this->corDict[$cid]['serviceProviders'], function ($p) {
+        array_walk(static::$corDict[$cid]['serviceProviders'], function ($p) {
             $this->bootProvider($p);
         });
 
-        $this->corDict[$cid]['bootedInRequest'] = $this->corDict[$cid]['booted'] = true;
+        static::$corDict[$cid]['bootedInRequest'] = static::$corDict[$cid]['booted'] = true;
 
-        $this->fireAppCallbacks($this->corDict[$cid]['bootedCallbacks']);
+        $this->fireAppCallbacks(static::$corDict[$cid]['bootedCallbacks']);
     }
 
     public function make($abstract, array $parameters = [])
@@ -241,6 +240,6 @@ class Application extends \Illuminate\Foundation\Application
     public function addDeferredServices(array $services)
     {
         $cid = \Swoole\Coroutine::getuid();
-        $this->corDict[$cid]['deferredServices'] = array_merge($this->corDict[$cid]['deferredServices'], $services);
+        static::$corDict[$cid]['deferredServices'] = array_merge(static::$corDict[$cid]['deferredServices'], $services);
     }
 }

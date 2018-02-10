@@ -40,9 +40,9 @@ class Router implements RegistrarContract, BindingRegistrar
 
     public static $verbs = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
 
-    protected $normalAttriForObj = [];
+    protected static $normalAttriForObj = [];
 
-    protected $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns', 'groupStack'];
+    protected static $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns', 'groupStack'];
 
 
     public function __construct(Dispatcher $events, Container $container = null)
@@ -50,7 +50,7 @@ class Router implements RegistrarContract, BindingRegistrar
         $this->events = $events;
         $this->container = $container ?: new Container;
 
-        $this->normalAttriForObj = [
+        static::$normalAttriForObj = [
             'current' => null,
             'currentRequest' => null,
             'routes' => function () {
@@ -61,8 +61,8 @@ class Router implements RegistrarContract, BindingRegistrar
     public function initForCorontine($cid )
     {
         $this->init($cid);
-        $newRoutes = clone $this->corDict[-1]['routes'];
-        $this->corDict[$cid]['routes']= $newRoutes;
+        $newRoutes = clone static::$corDict[WORKER_COROUTINE_ID]['routes'];
+        static::$corDict[$cid]['routes']= $newRoutes;
         $this->container->instance('routes', $newRoutes);
     }
 
@@ -274,16 +274,16 @@ class Router implements RegistrarContract, BindingRegistrar
         // have created the routes, we will pop the attributes off the stack.
         $this->loadRoutes($routes);
 
-        array_pop($this->corDict[$cid]['groupStack']);
+        array_pop(static::$corDict[$cid]['groupStack']);
     }
 
     protected function updateGroupStack(array $attributes, $cid)
     {
-        if (!empty($this->corDict[$cid]['groupStack'])) {
-            $attributes = RouteGroup::merge($attributes, end($this->corDict[$cid]['groupStack']));
+        if (!empty(static::$corDict[$cid]['groupStack'])) {
+            $attributes = RouteGroup::merge($attributes, end(static::$corDict[$cid]['groupStack']));
         }
 
-        $this->corDict[$cid]['groupStack'][] = $attributes;
+        static::$corDict[$cid]['groupStack'][] = $attributes;
     }
 
     /**
@@ -294,7 +294,7 @@ class Router implements RegistrarContract, BindingRegistrar
      */
     public function mergeWithLastGroup($new)
     {
-        return RouteGroup::merge($new, end($this->corDict[\Swoole\Coroutine::getuid()]['groupStack']));
+        return RouteGroup::merge($new, end(static::$corDict[\Swoole\Coroutine::getuid()]['groupStack']));
     }
 
     protected function loadRoutes($routes)
@@ -310,8 +310,8 @@ class Router implements RegistrarContract, BindingRegistrar
     public function getLastGroupPrefix()
     {
         $cid = \Swoole\Coroutine::getuid();
-        if (!empty($this->corDict[$cid]['groupStack'])) {
-            $last = end($this->corDict[$cid]['groupStack']);
+        if (!empty(static::$corDict[$cid]['groupStack'])) {
+            $last = end(static::$corDict[$cid]['groupStack']);
 
             return $last['prefix'] ?? '';
         }
@@ -321,7 +321,7 @@ class Router implements RegistrarContract, BindingRegistrar
 
     protected function addRoute($methods, $uri, $action)
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['routes']->add($this->createRoute($methods, $uri, $action));
+        return static::$corDict[\Swoole\Coroutine::getuid()]['routes']->add($this->createRoute($methods, $uri, $action));
     }
 
     protected function createRoute($methods, $uri, $action)
@@ -367,7 +367,7 @@ class Router implements RegistrarContract, BindingRegistrar
         // Here we'll merge any group "uses" statement if necessary so that the action
         // has the proper clause for this property. Then we can simply set the name
         // of the controller on the action and return the action array for usage.
-        if (!empty($this->corDict[$cid]['groupStack'])) {
+        if (!empty(static::$corDict[$cid]['groupStack'])) {
             $action['uses'] = $this->prependGroupNamespace($action['uses'], $cid);
         }
 
@@ -381,7 +381,7 @@ class Router implements RegistrarContract, BindingRegistrar
 
     protected function prependGroupNamespace($class, $cid)
     {
-        $group = end($this->corDict[$cid]['groupStack']);
+        $group = end(static::$corDict[$cid]['groupStack']);
 
         return isset($group['namespace']) && strpos($class, '\\') !== 0
             ? $group['namespace'] . '\\' . $class : $class;
@@ -407,7 +407,7 @@ class Router implements RegistrarContract, BindingRegistrar
     protected function addWhereClausesToRoute($route, $cid)
     {
         $route->where(array_merge(
-            $this->corDict[$cid]['patterns'], $route->getAction()['where'] ?? []
+            static::$corDict[$cid]['patterns'], $route->getAction()['where'] ?? []
         ));
 
         return $route;
@@ -421,9 +421,9 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        $route = tap($this->corDict[$cid]['routes']->getByName($name))->bind($this->corDict[$cid]['currentRequest']);
+        $route = tap(static::$corDict[$cid]['routes']->getByName($name))->bind(static::$corDict[$cid]['currentRequest']);
 
-        return $this->runRoute($this->corDict[$cid]['currentRequest'], $route);
+        return $this->runRoute(static::$corDict[$cid]['currentRequest'], $route);
     }
 
     /**
@@ -434,7 +434,7 @@ class Router implements RegistrarContract, BindingRegistrar
      */
     public function dispatch(Request $request)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['currentRequest'] = $request;
+        static::$corDict[\Swoole\Coroutine::getuid()]['currentRequest'] = $request;
 
         return $this->dispatchToRoute($request);
     }
@@ -447,7 +447,7 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        $this->corDict[$cid]['current'] = $route = $this->corDict[$cid]['routes']->match($request);
+        static::$corDict[$cid]['current'] = $route = static::$corDict[$cid]['routes']->match($request);
 
         $this->container->instance(Route::class, $route);
 
@@ -486,7 +486,7 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
             $cid = \Swoole\Coroutine::getuid();
-            return (array)MiddlewareNameResolver::resolve($name, $this->corDict[$cid]['middleware'], $this->corDict[$cid]['middlewareGroups']);
+            return (array)MiddlewareNameResolver::resolve($name, static::$corDict[$cid]['middleware'], static::$corDict[$cid]['middlewareGroups']);
         })->flatten();
 
         return $this->sortMiddleware($middleware);
@@ -494,7 +494,7 @@ class Router implements RegistrarContract, BindingRegistrar
 
     protected function sortMiddleware(Collection $middlewares)
     {
-        return (new SortedMiddleware($this->corDict[\Swoole\Coroutine::getuid()]['middlewarePriority'], $middlewares))->all();
+        return (new SortedMiddleware(static::$corDict[\Swoole\Coroutine::getuid()]['middlewarePriority'], $middlewares))->all();
     }
     public function prepareResponse($request, $response)
     {
@@ -537,7 +537,7 @@ class Router implements RegistrarContract, BindingRegistrar
     public function substituteBindings($route)
     {
         $cid = \Swoole\Coroutine::getuid();
-        $one = $this->corDict[$cid]['binders'];
+        $one = static::$corDict[$cid]['binders'];
         foreach ($route->parameters() as $key => $value) {
             if (isset($one[$key])) {
                 $route->setParameter($key, $this->performBinding($key, $value, $route, $cid));
@@ -552,7 +552,7 @@ public function substituteImplicitBindings($route)
     }
     protected function performBinding($key, $value, $route, $cid)
     {
-        return call_user_func($this->corDict[$cid]['binders'][$key], $value, $route);
+        return call_user_func(static::$corDict[$cid]['binders'][$key], $value, $route);
     }
 
     public function matched($callback)
@@ -561,24 +561,24 @@ public function substituteImplicitBindings($route)
     }
     public function getMiddleware()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['middleware'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['middleware'];
     }
 
     public function aliasMiddleware($name, $class)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['middleware'][$name] = $class;
+        static::$corDict[\Swoole\Coroutine::getuid()]['middleware'][$name] = $class;
 
         return $this;
     }
 
     public function hasMiddlewareGroup($name)
     {
-        return array_key_exists($name, $this->corDict[\Swoole\Coroutine::getuid()]['middlewareGroups']);
+        return array_key_exists($name, static::$corDict[\Swoole\Coroutine::getuid()]['middlewareGroups']);
     }
 
     public function getMiddlewareGroups()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['middlewareGroups'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['middlewareGroups'];
     }
 
     /**
@@ -590,7 +590,7 @@ public function substituteImplicitBindings($route)
      */
     public function middlewareGroup($name, array $middleware)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['middlewareGroups'][$name] = $middleware;
+        static::$corDict[\Swoole\Coroutine::getuid()]['middlewareGroups'][$name] = $middleware;
 
         return $this;
     }
@@ -607,8 +607,8 @@ public function substituteImplicitBindings($route)
     public function prependMiddlewareToGroup($group, $middleware)
     {
         $cid = \Swoole\Coroutine::getuid();
-        if (isset($this->corDict[$cid]['middlewareGroups'][$group]) && !in_array($middleware, $this->corDict[$cid]['middlewareGroups'][$group])) {
-            array_unshift($this->corDict[$cid]['middlewareGroups'][$group], $middleware);
+        if (isset(static::$corDict[$cid]['middlewareGroups'][$group]) && !in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
+            array_unshift(static::$corDict[$cid]['middlewareGroups'][$group], $middleware);
         }
 
         return $this;
@@ -626,12 +626,12 @@ public function substituteImplicitBindings($route)
     public function pushMiddlewareToGroup($group, $middleware)
     {
         $cid = \Swoole\Coroutine::getuid();
-        if (!array_key_exists($group, $this->corDict[$cid]['middlewareGroups'])) {
-            $this->corDict[$cid]['middlewareGroups'][$group] = [];
+        if (!array_key_exists($group, static::$corDict[$cid]['middlewareGroups'])) {
+            static::$corDict[$cid]['middlewareGroups'][$group] = [];
         }
 
-        if (!in_array($middleware, $this->corDict[$cid]['middlewareGroups'][$group])) {
-            $this->corDict[$cid]['middlewareGroups'][$group][] = $middleware;
+        if (!in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
+            static::$corDict[$cid]['middlewareGroups'][$group][] = $middleware;
         }
 
         return $this;
@@ -647,7 +647,7 @@ public function substituteImplicitBindings($route)
     public function bind($key, $binder)
     {
         $cid = \Swoole\Coroutine::getuid();
-        $this->corDict[$cid]['binders'][str_replace('-', '_', $key)] = RouteBinding::forCallback(
+        static::$corDict[$cid]['binders'][str_replace('-', '_', $key)] = RouteBinding::forCallback(
             $this->container, $binder
         );
     }
@@ -659,8 +659,8 @@ public function substituteImplicitBindings($route)
     public function getBindingCallback($key)
     {
         $cid = \Swoole\Coroutine::getuid();
-        if (isset($this->corDict[$cid]['binders'][$key = str_replace('-', '_', $key)])) {
-            return $this->corDict[$cid]['binders'][$key];
+        if (isset(static::$corDict[$cid]['binders'][$key = str_replace('-', '_', $key)])) {
+            return static::$corDict[$cid]['binders'][$key];
         }
     }
 
@@ -671,7 +671,7 @@ public function substituteImplicitBindings($route)
      */
     public function getPatterns()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['patterns'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['patterns'];
     }
 
     /**
@@ -683,7 +683,7 @@ public function substituteImplicitBindings($route)
      */
     public function pattern($key, $pattern)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['patterns'][$key] = $pattern;
+        static::$corDict[\Swoole\Coroutine::getuid()]['patterns'][$key] = $pattern;
     }
 
     /**
@@ -693,7 +693,7 @@ public function substituteImplicitBindings($route)
      */
     public function hasGroupStack()
     {
-        return !empty($this->corDict[\Swoole\Coroutine::getuid()]['groupStack']);
+        return !empty(static::$corDict[\Swoole\Coroutine::getuid()]['groupStack']);
     }
 
     /**
@@ -703,7 +703,7 @@ public function substituteImplicitBindings($route)
      */
     public function getGroupStack()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['groupStack'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['groupStack'];
     }
 
     public function input($key, $default = null)
@@ -712,7 +712,7 @@ public function substituteImplicitBindings($route)
     }
     public function getCurrentRequest()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['currentRequest'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['currentRequest'];
     }
 
     public function getCurrentRoute()
@@ -721,7 +721,7 @@ public function substituteImplicitBindings($route)
     }
     public function current()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['current'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['current'];
     }
 
     public function has($name)
@@ -729,7 +729,7 @@ public function substituteImplicitBindings($route)
         $names = is_array($name) ? $name : func_get_args();
 
         foreach ($names as $value) {
-            if (!$this->corDict[\Swoole\Coroutine::getuid()]['routes']->hasNamedRoute($value)) {
+            if (!static::$corDict[\Swoole\Coroutine::getuid()]['routes']->hasNamedRoute($value)) {
                 return false;
             }
         }
@@ -861,7 +861,7 @@ public function substituteImplicitBindings($route)
      */
     public function getRoutes()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['routes'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['routes'];
     }
 
     /**
@@ -877,9 +877,9 @@ public function substituteImplicitBindings($route)
             $route->setRouter($this)->setContainer($this->container);
         }
 
-        $this->corDict[$cid]['routes'] = $routes;
+        static::$corDict[$cid]['routes'] = $routes;
 
-        $this->container->instance('routes', $this->corDict[$cid]['routes']);
+        $this->container->instance('routes', static::$corDict[$cid]['routes']);
     }
     public function __call($method, $parameters)
     {

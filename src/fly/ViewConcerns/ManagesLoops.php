@@ -20,16 +20,16 @@ trait ManagesLoops
 
         $length = is_array($data) || $data instanceof Countable ? count($data) : null;
 
-        $parent = Arr::last($this->corDict[$cid]['loopsStack']);
+        $parent = Arr::last(static::$corDict[$cid]['loopsStack']);
 
-        $this->corDict[$cid]['loopsStack'][] = [
+        static::$corDict[$cid]['loopsStack'][] = [
             'iteration' => 0,
             'index' => 0,
             'remaining' => $length ?? null,
             'count' => $length,
             'first' => true,
             'last' => isset($length) ? $length == 1 : null,
-            'depth' => count($this->corDict[$cid]['loopsStack']) + 1,
+            'depth' => count(static::$corDict[$cid]['loopsStack']) + 1,
             'parent' => $parent ? (object) $parent : null,
         ];
     }
@@ -43,9 +43,9 @@ trait ManagesLoops
     {
         $cid=\Swoole\Coroutine::getuid();
 
-        $loop = $this->corDict[$cid]['loopsStack'][$index = count($this->loopsStack) - 1];
+        $loop = static::$corDict[$cid]['loopsStack'][$index = count(static::$corDict[$cid]['loopsStack']) - 1];
 
-        $this->corDict[$cid]['loopsStack'][$index] = array_merge($this->loopsStack[$index], [
+        static::$corDict[$cid]['loopsStack'][$index] = array_merge(static::$corDict[$cid]['loopsStack'][$index], [
             'iteration' => $loop['iteration'] + 1,
             'index' => $loop['iteration'],
             'first' => $loop['iteration'] == 0,
@@ -61,7 +61,7 @@ trait ManagesLoops
      */
     public function popLoop()
     {
-        array_pop($this->corDict[\Swoole\Coroutine::getuid()]['loopsStack']);
+        array_pop(static::$corDict[\Swoole\Coroutine::getuid()]['loopsStack']);
     }
 
     /**
@@ -71,7 +71,7 @@ trait ManagesLoops
      */
     public function getLastLoop()
     {
-        if ($last = Arr::last($this->corDict[\Swoole\Coroutine::getuid()]['loopsStack'])) {
+        if ($last = Arr::last(static::$corDict[\Swoole\Coroutine::getuid()]['loopsStack'])) {
             return (object) $last;
         }
     }
@@ -83,6 +83,6 @@ trait ManagesLoops
      */
     public function getLoopStack()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['loopsStack'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['loopsStack'];
     }
 }

@@ -47,14 +47,14 @@ abstract class ServiceProvider
     public function __construct($app)
     {
         $this->app = $app;
-        static::initForCorontine(-1);
+        static::initForCorontine(WORKER_COROUTINE_ID);
     }
 
     static function initForCorontine(int $cid )
     {
         //todo test
         foreach (['publishes','publishGroups'] as $attri){
-            static::$$attri[$cid] = $cid==-1? []: static::$$attri[-1];
+            static::$$attri[$cid] = $cid==WORKER_COROUTINE_ID? []: static::$$attri[WORKER_COROUTINE_ID];
         }
     }
     static function delForCoroutine(int $cid )

@@ -45,11 +45,11 @@ trait ManagesComponents
     {
         if (ob_start()) {
             $cid = \Swoole\Coroutine::getuid();
-            $this->corDict[$cid]['componentStack'][] = $name;
+            static::$corDict[$cid]['componentStack'][] = $name;
 
-            $this->corDict[$cid]['componentData'][$this->currentComponent()] = $data;
+            static::$corDict[$cid]['componentData'][$this->currentComponent()] = $data;
 
-            $this->corDict[$cid]['slots'][$this->currentComponent()] = [];
+            static::$corDict[$cid]['slots'][$this->currentComponent()] = [];
         }
     }
 
@@ -60,7 +60,7 @@ trait ManagesComponents
      */
     public function renderComponent()
     {
-        $name = array_pop($this->corDict[\Swoole\Coroutine::getuid()]['componentStack']);
+        $name = array_pop(static::$corDict[\Swoole\Coroutine::getuid()]['componentStack']);
 
         return $this->make($name, $this->componentData($name))->render();
     }
@@ -75,9 +75,9 @@ trait ManagesComponents
     {
         $cid=\Swoole\Coroutine::getuid();
         return array_merge(
-            $this->corDict[$cid]['componentData'][count($this->corDict[$cid]['componentStack'])],
+            static::$corDict[$cid]['componentData'][count(static::$corDict[$cid]['componentStack'])],
             ['slot' => new HtmlString(trim(ob_get_clean()))],
-            $this->corDict[$cid]['slots'][count($this->componentStack)]
+            static::$corDict[$cid]['slots'][count($this->componentStack)]
         );
     }
 
@@ -92,12 +92,12 @@ trait ManagesComponents
     {
         $cid=\Swoole\Coroutine::getuid();
         if (count(func_get_args()) == 2) {
-            $this->corDict[$cid]['slots'][$this->currentComponent()][$name] = $content;
+            static::$corDict[$cid]['slots'][$this->currentComponent()][$name] = $content;
         } else {
             if (ob_start()) {
-                $this->corDict[$cid]['slots'][$this->currentComponent()][$name] = '';
+                static::$corDict[$cid]['slots'][$this->currentComponent()][$name] = '';
 
-                $this->corDict[$cid]['slotStack'][$this->currentComponent()][] = $name;
+                static::$corDict[$cid]['slotStack'][$this->currentComponent()][] = $name;
             }
         }
     }
@@ -110,13 +110,13 @@ trait ManagesComponents
     public function endSlot()
     {
         $cid=\Swoole\Coroutine::getuid();
-        last($this->corDict[$cid]['componentStack']);
+        last(static::$corDict[$cid]['componentStack']);
 
         $currentSlot = array_pop(
-            $this->corDict[$cid]['slotStack'][$this->currentComponent()]
+            static::$corDict[$cid]['slotStack'][$this->currentComponent()]
         );
 
-        $this->corDict[$cid]['slots'][$this->currentComponent()]
+        static::$corDict[$cid]['slots'][$this->currentComponent()]
         [$currentSlot] = new HtmlString(trim(ob_get_clean()));
     }
 
@@ -127,6 +127,6 @@ trait ManagesComponents
      */
     protected function currentComponent()
     {
-        return count($this->corDict[\Swoole\Coroutine::getuid()]['componentStack']) - 1;
+        return count(static::$corDict[\Swoole\Coroutine::getuid()]['componentStack']) - 1;
     }
 }

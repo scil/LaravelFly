@@ -17,7 +17,7 @@ trait ManagesStacks
     {
         if ($content === '') {
             if (ob_start()) {
-                $this->corDict[\Swoole\Coroutine::getuid()]['pushStack'][] = $section;
+                static::$corDict[\Swoole\Coroutine::getuid()]['pushStack'][] = $section;
             }
         } else {
             $this->extendPush($section, $content);
@@ -34,11 +34,11 @@ trait ManagesStacks
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        if (empty($this->corDict[$cid]['pushStack'])) {
+        if (empty(static::$corDict[$cid]['pushStack'])) {
             throw new InvalidArgumentException('Cannot end a push stack without first starting one.');
         }
 
-        return tap(array_pop($this->corDict[$cid]['pushStack']), function ($last) {
+        return tap(array_pop(static::$corDict[$cid]['pushStack']), function ($last) {
             $this->extendPush($last, ob_get_clean());
         });
     }
@@ -54,14 +54,14 @@ trait ManagesStacks
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        if (!isset($this->corDict[$cid]['pushes'][$section])) {
-            $this->corDict[$cid]['pushes'][$section] = [];
+        if (!isset(static::$corDict[$cid]['pushes'][$section])) {
+            static::$corDict[$cid]['pushes'][$section] = [];
         }
 
-        if (!isset($this->corDict[$cid]['pushes'][$section][$this->renderCount])) {
-            $this->corDict[$cid]['pushes'][$section][$this->renderCount] = $content;
+        if (!isset(static::$corDict[$cid]['pushes'][$section][$this->renderCount])) {
+            static::$corDict[$cid]['pushes'][$section][$this->renderCount] = $content;
         } else {
-            $this->corDict[$cid]['pushes'][$section][$this->renderCount] .= $content;
+            static::$corDict[$cid]['pushes'][$section][$this->renderCount] .= $content;
         }
     }
 
@@ -76,7 +76,7 @@ trait ManagesStacks
     {
         if ($content === '') {
             if (ob_start()) {
-                $this->corDict[\Swoole\Coroutine::getuid()]['pushStack'][] = $section;
+                static::$corDict[\Swoole\Coroutine::getuid()]['pushStack'][] = $section;
             }
         } else {
             $this->extendPrepend($section, $content);
@@ -93,11 +93,11 @@ trait ManagesStacks
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        if (empty($this->corDict[$cid]['pushStack'])) {
+        if (empty(static::$corDict[$cid]['pushStack'])) {
             throw new InvalidArgumentException('Cannot end a prepend operation without first starting one.');
         }
 
-        return tap(array_pop($this->corDict[$cid]['pushStack']), function ($last) {
+        return tap(array_pop(static::$corDict[$cid]['pushStack']), function ($last) {
             $this->extendPrepend($last, ob_get_clean());
         });
     }
@@ -113,14 +113,14 @@ trait ManagesStacks
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        if (!isset($this->corDict[$cid]['prepends'][$section])) {
-            $this->corDict[$cid]['prepends'][$section] = [];
+        if (!isset(static::$corDict[$cid]['prepends'][$section])) {
+            static::$corDict[$cid]['prepends'][$section] = [];
         }
 
-        if (!isset($this->corDict[$cid]['prepends'][$section][$this->renderCount])) {
-            $this->corDict[$cid]['prepends'][$section][$this->renderCount] = $content;
+        if (!isset(static::$corDict[$cid]['prepends'][$section][$this->renderCount])) {
+            static::$corDict[$cid]['prepends'][$section][$this->renderCount] = $content;
         } else {
-            $this->corDict[$cid]['prepends'][$section][$this->renderCount] = $content . $this->prepends[$section][$this->renderCount];
+            static::$corDict[$cid]['prepends'][$section][$this->renderCount] = $content . $this->prepends[$section][$this->renderCount];
         }
     }
 
@@ -135,18 +135,18 @@ trait ManagesStacks
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        if (!isset($this->corDict[$cid]['pushes'][$section]) && !isset($this->prepends[$section])) {
+        if (!isset(static::$corDict[$cid]['pushes'][$section]) && !isset($this->prepends[$section])) {
             return $default;
         }
 
         $output = '';
 
-        if (isset($this->corDict[$cid]['prepends'][$section])) {
-            $output .= implode(array_reverse($this->corDict[$cid]['prepends'][$section]));
+        if (isset(static::$corDict[$cid]['prepends'][$section])) {
+            $output .= implode(array_reverse(static::$corDict[$cid]['prepends'][$section]));
         }
 
-        if (isset($this->corDict[$cid]['pushes'][$section])) {
-            $output .= implode($this->corDict[$cid]['pushes'][$section]);
+        if (isset(static::$corDict[$cid]['pushes'][$section])) {
+            $output .= implode(static::$corDict[$cid]['pushes'][$section]);
         }
 
         return $output;
@@ -160,8 +160,8 @@ trait ManagesStacks
     public function flushStacks()
     {
         $cid = \Swoole\Coroutine::getuid();
-        $this->corDict[$cid]['pushes'] = [];
-        $this->corDict[$cid]['prepends'] = [];
-        $this->corDict[$cid]['pushStack'] = [];
+        static::$corDict[$cid]['pushes'] = [];
+        static::$corDict[$cid]['prepends'] = [];
+        static::$corDict[$cid]['pushStack'] = [];
     }
 }

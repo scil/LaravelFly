@@ -18,9 +18,9 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     use \LaravelFly\Coroutine\Util\Dict;
 
-    protected $normalAttriForObj=['queueResolver'=>null];
+    protected static $normalAttriForObj=['queueResolver'=>null];
 
-    protected $arrayAttriForObj=['listeners','wildcards'];
+    protected static $arrayAttriForObj=['listeners','wildcards'];
 
     public function __construct(ContainerContract $container)
     {
@@ -34,19 +34,19 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
             if (Str::contains($event, '*')) {
                 $this->setupWildcardListen($event, $listener);
             } else {
-                $this->corDict[\Swoole\Coroutine::getuid()]['listeners'][$event][] = $this->makeListener($listener);
+                static::$corDict[\Swoole\Coroutine::getuid()]['listeners'][$event][] = $this->makeListener($listener);
             }
         }
     }
 
     protected function setupWildcardListen($event, $listener)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['wildcards'][$event][] = $this->makeListener($listener, true);
+        static::$corDict[\Swoole\Coroutine::getuid()]['wildcards'][$event][] = $this->makeListener($listener, true);
     }
 
     public function hasListeners($eventName)
     {
-        $current = $this->corDict[\Swoole\Coroutine::getuid()];
+        $current = static::$corDict[\Swoole\Coroutine::getuid()];
         return isset($current['listeners'][$eventName]) || isset($current['wildcards'][$eventName]);
     }
 
@@ -67,7 +67,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     public function getListeners($eventName)
     {
-        $listeners = $this->corDict[\Swoole\Coroutine::getuid()]['listeners'][$eventName] ?? [];
+        $listeners = static::$corDict[\Swoole\Coroutine::getuid()]['listeners'][$eventName] ?? [];
 
         $listeners = array_merge(
             $listeners, $this->getWildcardListeners($eventName)
@@ -82,7 +82,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     {
         $wildcards = [];
 
-        foreach ($this->corDict[\Swoole\Coroutine::getuid()]['wildcards'] as $key => $listeners) {
+        foreach (static::$corDict[\Swoole\Coroutine::getuid()]['wildcards'] as $key => $listeners) {
             if (Str::is($key, $eventName)) {
                 $wildcards = array_merge($wildcards, $listeners);
             }
@@ -129,9 +129,9 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     {
         $cid = \Swoole\Coroutine::getuid();
         if (Str::contains($event, '*')) {
-            unset($this->corDict[$cid]['wildcards'][$event]);
+            unset(static::$corDict[$cid]['wildcards'][$event]);
         } else {
-            unset($this->corDict[$cid]['listeners'][$event]);
+            unset(static::$corDict[$cid]['listeners'][$event]);
         }
     }
 
@@ -148,12 +148,12 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     protected function resolveQueue()
     {
-        return call_user_func($this->corDict[\Swoole\Coroutine::getuid()]['queueResolver']);
+        return call_user_func(static::$corDict[\Swoole\Coroutine::getuid()]['queueResolver']);
     }
 
     public function setQueueResolver(callable $resolver)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['queueResolver'] = $resolver;
+        static::$corDict[\Swoole\Coroutine::getuid()]['queueResolver'] = $resolver;
 
         return $this;
     }

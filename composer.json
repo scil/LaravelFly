@@ -15,7 +15,7 @@
   ],
   "require": {
     "laravel/framework": "5.5.*",
-    "ext-swoole": "^1.9.23 || >=2.0.9"
+    "ext-swoole": "^1.9.23 || >=2.1.0"
   },
   "require-dev": {
       "eaglewu/swoole-ide-helper": "dev-master"

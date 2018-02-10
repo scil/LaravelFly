@@ -16,7 +16,7 @@ use Illuminate\Contracts\Container\Container;
 class DatabaseSessionHandler extends \Illuminate\Session\DatabaseSessionHandler
 {
     use Dict;
-    protected $normalAttriForObj = ['exists' => null,];
+    protected static $normalAttriForObj = ['exists' => null,];
 
     public function __construct(ConnectionInterface $connection, $table, $minutes, Container $container = null)
     {
@@ -29,13 +29,13 @@ class DatabaseSessionHandler extends \Illuminate\Session\DatabaseSessionHandler
         $session = (object)$this->getQuery()->find($sessionId);
 
         if ($this->expired($session)) {
-            $this->corDict[\Swoole\Coroutine::getuid()]['exists'] = true;
+            static::$corDict[\Swoole\Coroutine::getuid()]['exists'] = true;
 
             return '';
         }
 
         if (isset($session->payload)) {
-            $this->corDict[\Swoole\Coroutine::getuid()]['exists'] = true;
+            static::$corDict[\Swoole\Coroutine::getuid()]['exists'] = true;
 
             return base64_decode($session->payload);
         }
@@ -49,22 +49,22 @@ class DatabaseSessionHandler extends \Illuminate\Session\DatabaseSessionHandler
 
         $cid = \Swoole\Coroutine::getuid();
 
-        if (!$this->corDict[$cid]['exists']) {
+        if (!static::$corDict[$cid]['exists']) {
             $this->read($sessionId);
         }
 
-        if ($this->corDict[$cid]['exists']) {
+        if (static::$corDict[$cid]['exists']) {
             $this->performUpdate($sessionId, $payload);
         } else {
             $this->performInsert($sessionId, $payload);
         }
 
-        return $this->corDict[$cid]['exists'] = true;
+        return static::$corDict[$cid]['exists'] = true;
     }
 
     public function setExists($value)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['exists'] = $value;
+        static::$corDict[\Swoole\Coroutine::getuid()]['exists'] = $value;
 
         return $this;
     }

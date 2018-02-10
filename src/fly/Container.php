@@ -28,7 +28,7 @@ class Container implements ArrayAccess, ContainerContract
     //todo why public?
 //    public $contextual = [];
 
-//    protected $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'];
+//    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'];
     
 
     function __construct()
@@ -56,8 +56,8 @@ class Container implements ArrayAccess, ContainerContract
     public function bound($abstract)
     {
         $cid = \Swoole\Coroutine::getuid();
-        return isset($this->corDict[$cid]['bindings'][$abstract]) ||
-            isset($this->corDict[$cid]['instances'][$abstract]) ||
+        return isset(static::$corDict[$cid]['bindings'][$abstract]) ||
+            isset(static::$corDict[$cid]['instances'][$abstract]) ||
             $this->isAlias($abstract);
     }
 
@@ -82,8 +82,8 @@ class Container implements ArrayAccess, ContainerContract
         }
 
         $cid = \Swoole\Coroutine::getuid();
-        return isset($this->corDict[$cid]['resolved'][$abstract]) ||
-            isset($this->corDict[$cid]['instances'][$abstract]);
+        return isset(static::$corDict[$cid]['resolved'][$abstract]) ||
+            isset(static::$corDict[$cid]['instances'][$abstract]);
     }
 
     /**
@@ -95,9 +95,9 @@ class Container implements ArrayAccess, ContainerContract
     public function isShared($abstract)
     {
         $cid = \Swoole\Coroutine::getuid();
-        return isset($this->corDict[$cid]['instances'][$abstract]) ||
-            (isset($this->corDict[$cid]['bindings'][$abstract]['shared']) &&
-                $this->corDict[$cid]['bindings'][$abstract]['shared'] === true);
+        return isset(static::$corDict[$cid]['instances'][$abstract]) ||
+            (isset(static::$corDict[$cid]['bindings'][$abstract]['shared']) &&
+                static::$corDict[$cid]['bindings'][$abstract]['shared'] === true);
     }
 
     /**
@@ -108,7 +108,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function isAlias($name)
     {
-        return isset($this->corDict[\Swoole\Coroutine::getuid()]['aliases'][$name]);
+        return isset(static::$corDict[\Swoole\Coroutine::getuid()]['aliases'][$name]);
     }
 
     /**
@@ -139,7 +139,7 @@ class Container implements ArrayAccess, ContainerContract
             $concrete = $this->getClosure($abstract, $concrete);
         }
 
-        $this->corDict[$cid]['bindings'][$abstract] = compact('concrete', 'shared');
+        static::$corDict[$cid]['bindings'][$abstract] = compact('concrete', 'shared');
 
         // If the abstract type was already resolved in this container we'll fire the
         // rebound listener so that any objects which have already gotten resolved
@@ -175,7 +175,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function hasMethodBinding($method)
     {
-        return isset($this->corDict[\Swoole\Coroutine::getuid()]['methodBindings'][$method]);
+        return isset(static::$corDict[\Swoole\Coroutine::getuid()]['methodBindings'][$method]);
     }
 
     /**
@@ -187,7 +187,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function bindMethod($method, $callback)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['methodBindings'][$method] = $callback;
+        static::$corDict[\Swoole\Coroutine::getuid()]['methodBindings'][$method] = $callback;
     }
 
     /**
@@ -199,7 +199,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function callMethodBinding($method, $instance)
     {
-        return call_user_func($this->corDict[\Swoole\Coroutine::getuid()]['methodBindings'][$method], $instance, $this);
+        return call_user_func(static::$corDict[\Swoole\Coroutine::getuid()]['methodBindings'][$method], $instance, $this);
     }
 
     /**
@@ -212,7 +212,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function addContextualBinding($concrete, $abstract, $implementation)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['contextual'][$concrete][$this->getAlias($abstract)] = $implementation;
+        static::$corDict[\Swoole\Coroutine::getuid()]['contextual'][$concrete][$this->getAlias($abstract)] = $implementation;
     }
 
     /**
@@ -257,12 +257,12 @@ class Container implements ArrayAccess, ContainerContract
 
         $cid = \Swoole\Coroutine::getuid();
 
-        if (isset($this->corDict[$cid]['instances'][$abstract])) {
-            $this->corDict[$cid]['instances'][$abstract] = $closure($this->corDict[$cid]['instances'][$abstract], $this);
+        if (isset(static::$corDict[$cid]['instances'][$abstract])) {
+            static::$corDict[$cid]['instances'][$abstract] = $closure(static::$corDict[$cid]['instances'][$abstract], $this);
 
             $this->rebound($abstract, $cid);
         } else {
-            $this->corDict[$cid]['extenders'][$abstract][] = $closure;
+            static::$corDict[$cid]['extenders'][$abstract][] = $closure;
 
             if ($this->resolved($abstract)) {
                 $this->rebound($abstract, $cid);
@@ -285,12 +285,12 @@ class Container implements ArrayAccess, ContainerContract
 
         $isBound = $this->bound($abstract);
 
-        unset($this->corDict[$cid]['aliases'][$abstract]);
+        unset(static::$corDict[$cid]['aliases'][$abstract]);
 
         // We'll check to determine if this type has been bound before, and if it has
         // we will fire the rebound callbacks registered with the container and it
         // can be updated with consuming classes that have gotten resolved here.
-        $this->corDict[$cid]['instances'][$abstract] = $instance;
+        static::$corDict[$cid]['instances'][$abstract] = $instance;
 
         if ($isBound) {
             $this->rebound($abstract, $cid);
@@ -307,14 +307,14 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function removeAbstractAlias($searched, $cid)
     {
-        if (!isset($this->corDict[$cid]['aliases'][$searched])) {
+        if (!isset(static::$corDict[$cid]['aliases'][$searched])) {
             return;
         }
 
-        foreach ($this->corDict[$cid]['abstractAliases'] as $abstract => $aliases) {
+        foreach (static::$corDict[$cid]['abstractAliases'] as $abstract => $aliases) {
             foreach ($aliases as $index => $alias) {
                 if ($alias == $searched) {
-                    unset($this->corDict[$cid]['abstractAliases'][$abstract][$index]);
+                    unset(static::$corDict[$cid]['abstractAliases'][$abstract][$index]);
                 }
             }
         }
@@ -334,12 +334,12 @@ class Container implements ArrayAccess, ContainerContract
         $cid = \Swoole\Coroutine::getuid();
 
         foreach ($tags as $tag) {
-            if (!isset($this->corDict[$cid]['tags'][$tag])) {
-                $this->corDict[$cid]['tags'][$tag] = [];
+            if (!isset(static::$corDict[$cid]['tags'][$tag])) {
+                static::$corDict[$cid]['tags'][$tag] = [];
             }
 
             foreach ((array)$abstracts as $abstract) {
-                $this->corDict[$cid]['tags'][$tag][] = $abstract;
+                static::$corDict[$cid]['tags'][$tag][] = $abstract;
             }
         }
     }
@@ -356,8 +356,8 @@ class Container implements ArrayAccess, ContainerContract
 
         $cid = \Swoole\Coroutine::getuid();
 
-        if (isset($this->corDict[$cid]['tags'][$tag])) {
-            foreach ($this->corDict[$cid]['tags'][$tag] as $abstract) {
+        if (isset(static::$corDict[$cid]['tags'][$tag])) {
+            foreach (static::$corDict[$cid]['tags'][$tag] as $abstract) {
                 $results[] = $this->make($abstract);
             }
         }
@@ -376,9 +376,9 @@ class Container implements ArrayAccess, ContainerContract
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        $this->corDict[$cid]['aliases'][$alias] = $abstract;
+        static::$corDict[$cid]['aliases'][$alias] = $abstract;
 
-        $this->corDict[$cid]['abstractAliases'][$abstract][] = $alias;
+        static::$corDict[$cid]['abstractAliases'][$abstract][] = $alias;
     }
 
     /**
@@ -390,7 +390,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function rebinding($abstract, Closure $callback)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['reboundCallbacks'][$abstract = $this->getAlias($abstract)][] = $callback;
+        static::$corDict[\Swoole\Coroutine::getuid()]['reboundCallbacks'][$abstract = $this->getAlias($abstract)][] = $callback;
 
         if ($this->bound($abstract)) {
             return $this->make($abstract);
@@ -435,8 +435,8 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function getReboundCallbacks($abstract, $cid)
     {
-        if (isset($this->corDict[$cid]['reboundCallbacks'][$abstract])) {
-            return $this->corDict[$cid]['reboundCallbacks'][$abstract];
+        if (isset(static::$corDict[$cid]['reboundCallbacks'][$abstract])) {
+            return static::$corDict[$cid]['reboundCallbacks'][$abstract];
         }
 
         return [];
@@ -536,11 +536,11 @@ class Container implements ArrayAccess, ContainerContract
         // If an instance of the type is currently being managed as a singleton we'll
         // just return an existing instance instead of instantiating new instances
         // so the developer can keep using the same objects instance every time.
-        if (isset($this->corDict[$cid]['instances'][$abstract]) && !$needsContextualBuild) {
-            return $this->corDict[$cid]['instances'][$abstract];
+        if (isset(static::$corDict[$cid]['instances'][$abstract]) && !$needsContextualBuild) {
+            return static::$corDict[$cid]['instances'][$abstract];
         }
 
-        $this->corDict[$cid]['with'][] = $parameters;
+        static::$corDict[$cid]['with'][] = $parameters;
 
         $concrete = $this->getConcrete($abstract, $cid);
 
@@ -564,7 +564,7 @@ class Container implements ArrayAccess, ContainerContract
         // the instances in "memory" so we can return it later without creating an
         // entirely new instance of an object on each subsequent request for it.
         if ($this->isShared($abstract) && !$needsContextualBuild) {
-            $this->corDict[$cid]['instances'][$abstract] = $object;
+            static::$corDict[$cid]['instances'][$abstract] = $object;
         }
 
         $this->fireResolvingCallbacks($abstract, $object, $cid);
@@ -572,9 +572,9 @@ class Container implements ArrayAccess, ContainerContract
         // Before returning, we will also set the resolved flag to "true" and pop off
         // the parameter overrides for this build. After those two things are done
         // we will be ready to return back the fully constructed class instance.
-        $this->corDict[$cid]['resolved'][$abstract] = true;
+        static::$corDict[$cid]['resolved'][$abstract] = true;
 
-        array_pop($this->corDict[$cid]['with']);
+        array_pop(static::$corDict[$cid]['with']);
 
         return $object;
     }
@@ -594,8 +594,8 @@ class Container implements ArrayAccess, ContainerContract
         // If we don't have a registered resolver or concrete for the type, we'll just
         // assume each type is a concrete name and will attempt to resolve it as is
         // since the container should be able to resolve concretes automatically.
-        if (isset($this->corDict[$cid]['bindings'][$abstract])) {
-            return $this->corDict[$cid]['bindings'][$abstract]['concrete'];
+        if (isset(static::$corDict[$cid]['bindings'][$abstract])) {
+            return static::$corDict[$cid]['bindings'][$abstract]['concrete'];
         }
 
         return $abstract;
@@ -616,11 +616,11 @@ class Container implements ArrayAccess, ContainerContract
         // Next we need to see if a contextual binding might be bound under an alias of the
         // given abstract type. So, we will need to check if any aliases exist with this
         // type and then spin through them and check for contextual bindings on these.
-        if (empty($this->corDict[$cid]['abstractAliases'][$abstract])) {
+        if (empty(static::$corDict[$cid]['abstractAliases'][$abstract])) {
             return;
         }
 
-        foreach ($this->corDict[$cid]['abstractAliases'][$abstract] as $alias) {
+        foreach (static::$corDict[$cid]['abstractAliases'][$abstract] as $alias) {
             if (!is_null($binding = $this->findInContextualBindings($alias, $cid))) {
                 return $binding;
             }
@@ -635,8 +635,8 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function findInContextualBindings($abstract, $cid)
     {
-        if (isset($this->corDict[$cid]['contextual'][end($this->corDict[$cid]['buildStack'])][$abstract])) {
-            return $this->corDict[$cid]['contextual'][end($this->corDict[$cid]['buildStack'])][$abstract];
+        if (isset(static::$corDict[$cid]['contextual'][end(static::$corDict[$cid]['buildStack'])][$abstract])) {
+            return static::$corDict[$cid]['contextual'][end(static::$corDict[$cid]['buildStack'])][$abstract];
         }
     }
 
@@ -680,7 +680,7 @@ class Container implements ArrayAccess, ContainerContract
             return $this->notInstantiable($concrete, $cid);
         }
 
-        $this->corDict[$cid]['buildStack'][] = $concrete;
+        static::$corDict[$cid]['buildStack'][] = $concrete;
 
         $constructor = $reflector->getConstructor();
 
@@ -688,7 +688,7 @@ class Container implements ArrayAccess, ContainerContract
         // we can just resolve the instances of the objects right away, without
         // resolving any other types or dependencies out of these containers.
         if (is_null($constructor)) {
-            array_pop($this->corDict[$cid]['buildStack']);
+            array_pop(static::$corDict[$cid]['buildStack']);
 
             return new $concrete;
         }
@@ -702,7 +702,7 @@ class Container implements ArrayAccess, ContainerContract
             $dependencies, $cid
         );
 
-        array_pop($this->corDict[$cid]['buildStack']);
+        array_pop(static::$corDict[$cid]['buildStack']);
 
         return $reflector->newInstanceArgs($instances);
     }
@@ -769,7 +769,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function getLastParameterOverride($cid)
     {
-        return count($this->corDict[$cid]['with']) ? end($this->corDict[$cid]['with']) : [];
+        return count(static::$corDict[$cid]['with']) ? end(static::$corDict[$cid]['with']) : [];
     }
 
     /**
@@ -829,8 +829,8 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function notInstantiable($concrete, $cid)
     {
-        if (!empty($this->corDict[$cid]['buildStack'])) {
-            $previous = implode(', ', $this->corDict[$cid]['buildStack']);
+        if (!empty(static::$corDict[$cid]['buildStack'])) {
+            $previous = implode(', ', static::$corDict[$cid]['buildStack']);
 
             $message = "Target [$concrete] is not instantiable while building [$previous].";
         } else {
@@ -871,9 +871,9 @@ class Container implements ArrayAccess, ContainerContract
         $cid = \Swoole\Coroutine::getuid();
 
         if (is_null($callback) && $abstract instanceof Closure) {
-            $this->corDict[$cid]['globalResolvingCallbacks'][] = $abstract;
+            static::$corDict[$cid]['globalResolvingCallbacks'][] = $abstract;
         } else {
-            $this->corDict[$cid]['resolvingCallbacks'][$abstract][] = $callback;
+            static::$corDict[$cid]['resolvingCallbacks'][$abstract][] = $callback;
         }
     }
 
@@ -893,9 +893,9 @@ class Container implements ArrayAccess, ContainerContract
         $cid = \Swoole\Coroutine::getuid();
 
         if ($abstract instanceof Closure && is_null($callback)) {
-            $this->corDict[$cid]['globalAfterResolvingCallbacks'][] = $abstract;
+            static::$corDict[$cid]['globalAfterResolvingCallbacks'][] = $abstract;
         } else {
-            $this->corDict[$cid]['afterResolvingCallbacks'][$abstract][] = $callback;
+            static::$corDict[$cid]['afterResolvingCallbacks'][$abstract][] = $callback;
         }
     }
 
@@ -909,10 +909,10 @@ class Container implements ArrayAccess, ContainerContract
     protected function fireResolvingCallbacks($abstract, $object, $cid)
     {
 
-        $this->fireCallbackArray($object, $this->corDict[$cid]['globalResolvingCallbacks']);
+        $this->fireCallbackArray($object, static::$corDict[$cid]['globalResolvingCallbacks']);
 
         $this->fireCallbackArray(
-            $object, $this->getCallbacksForType($abstract, $object, $this->corDict[$cid]['resolvingCallbacks'])
+            $object, $this->getCallbacksForType($abstract, $object, static::$corDict[$cid]['resolvingCallbacks'])
         );
 
         $this->fireAfterResolvingCallbacks($abstract, $object, $cid);
@@ -928,10 +928,10 @@ class Container implements ArrayAccess, ContainerContract
     protected function fireAfterResolvingCallbacks($abstract, $object, $cid)
     {
 
-        $this->fireCallbackArray($object, $this->corDict[$cid]['globalAfterResolvingCallbacks']);
+        $this->fireCallbackArray($object, static::$corDict[$cid]['globalAfterResolvingCallbacks']);
 
         $this->fireCallbackArray(
-            $object, $this->getCallbacksForType($abstract, $object, $this->corDict[$cid]['afterResolvingCallbacks'])
+            $object, $this->getCallbacksForType($abstract, $object, static::$corDict[$cid]['afterResolvingCallbacks'])
         );
     }
 
@@ -978,7 +978,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function getBindings()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['bindings'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['bindings'];
     }
 
     /**
@@ -993,15 +993,15 @@ class Container implements ArrayAccess, ContainerContract
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        if (!isset($this->corDict[$cid]['aliases'][$abstract])) {
+        if (!isset(static::$corDict[$cid]['aliases'][$abstract])) {
             return $abstract;
         }
 
-        if ($this->corDict[$cid]['aliases'][$abstract] === $abstract) {
+        if (static::$corDict[$cid]['aliases'][$abstract] === $abstract) {
             throw new LogicException("[{$abstract}] is aliased to itself.");
         }
 
-        return $this->getAlias($this->corDict[$cid]['aliases'][$abstract]);
+        return $this->getAlias(static::$corDict[$cid]['aliases'][$abstract]);
     }
 
     /**
@@ -1014,8 +1014,8 @@ class Container implements ArrayAccess, ContainerContract
     {
         $abstract = $this->getAlias($abstract);
 
-        if (isset($this->corDict[$cid]['extenders'][$abstract])) {
-            return $this->corDict[$cid]['extenders'][$abstract];
+        if (isset(static::$corDict[$cid]['extenders'][$abstract])) {
+            return static::$corDict[$cid]['extenders'][$abstract];
         }
 
         return [];
@@ -1029,7 +1029,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function forgetExtenders($abstract)
     {
-        unset($this->corDict[\Swoole\Coroutine::getuid()]['extenders'][$this->getAlias($abstract)]);
+        unset(static::$corDict[\Swoole\Coroutine::getuid()]['extenders'][$this->getAlias($abstract)]);
     }
 
     /**
@@ -1041,7 +1041,7 @@ class Container implements ArrayAccess, ContainerContract
     protected function dropStaleInstances($abstract, $cid)
     {
 
-        unset($this->corDict[$cid]['instances'][$abstract], $this->corDict[$cid]['aliases'][$abstract]);
+        unset(static::$corDict[$cid]['instances'][$abstract], static::$corDict[$cid]['aliases'][$abstract]);
     }
 
     /**
@@ -1052,7 +1052,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function forgetInstance($abstract)
     {
-        unset($this->corDict[\Swoole\Coroutine::getuid()]['instances'][$abstract]);
+        unset(static::$corDict[\Swoole\Coroutine::getuid()]['instances'][$abstract]);
     }
 
     /**
@@ -1062,7 +1062,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function forgetInstances()
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['instances'] = [];
+        static::$corDict[\Swoole\Coroutine::getuid()]['instances'] = [];
     }
 
     /**
@@ -1073,11 +1073,11 @@ class Container implements ArrayAccess, ContainerContract
     public function flush()
     {
         $cid = \Swoole\Coroutine::getuid();
-        $this->corDict[$cid]['aliases'] = [];
-        $this->corDict[$cid]['resolved'] = [];
-        $this->corDict[$cid]['bindings'] = [];
-        $this->corDict[$cid]['instances'] = [];
-        $this->corDict[$cid]['abstractAliases'] = [];
+        static::$corDict[$cid]['aliases'] = [];
+        static::$corDict[$cid]['resolved'] = [];
+        static::$corDict[$cid]['bindings'] = [];
+        static::$corDict[$cid]['instances'] = [];
+        static::$corDict[$cid]['abstractAliases'] = [];
     }
 
     /**
@@ -1151,7 +1151,7 @@ class Container implements ArrayAccess, ContainerContract
     {
         $cid = \Swoole\Coroutine::getuid();
 
-        unset($this->corDict[$cid]['bindings'][$key], $this->corDict[$cid]['instances'][$key], $this->corDict[$cid]['resolved'][$key]);
+        unset(static::$corDict[$cid]['bindings'][$key], static::$corDict[$cid]['instances'][$key], static::$corDict[$cid]['resolved'][$key]);
     }
 
     /**

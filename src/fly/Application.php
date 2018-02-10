@@ -81,10 +81,10 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     protected $namespace;
 
-//    protected $arrayAttriForObj=['resolved','bindings','methodBindings','instances','aliases','abstractAliases','extenders','tags','buildStack','with','contextual','reboundCallbacks','globalResolvingCallbacks','globalAfterResolvingCallbacks','resolvingCallbacks','afterResolvingCallbacks',
+//    protected static $arrayAttriForObj=['resolved','bindings','methodBindings','instances','aliases','abstractAliases','extenders','tags','buildStack','with','contextual','reboundCallbacks','globalResolvingCallbacks','globalAfterResolvingCallbacks','resolvingCallbacks','afterResolvingCallbacks',
 //       'bootingCallbacks','bootedCallbacks','terminatingCallbacks','serviceProviders','loadedProviders','deferredServices'
 //        ];
-//    protected $normalAttriForObj=['hasBeenBootstrapped'=>false,'booted'=>false];
+//    protected static $normalAttriForObj=['hasBeenBootstrapped'=>false,'booted'=>false];
     /**
      * Create a new Illuminate application instance.
      *
@@ -157,7 +157,7 @@ class Application extends \Illuminate\Container\Container implements Application
     public function bootstrapWith(array $bootstrappers)
     {
         $cid=\Swoole\Coroutine::getuid();
-        $this->corDict[$cid]['hasBeenBootstrapped'] = true;
+        static::$corDict[$cid]['hasBeenBootstrapped'] = true;
 
         foreach ($bootstrappers as $bootstrapper) {
             $this['events']->fire('bootstrapping: '.$bootstrapper, [$this]);
@@ -212,7 +212,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function hasBeenBootstrapped()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['hasBeenBootstrapped'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['hasBeenBootstrapped'];
     }
 
     /**
@@ -544,7 +544,7 @@ class Application extends \Illuminate\Container\Container implements Application
         // If the application has already booted, we will call this boot method on
         // the provider class so it has an opportunity to do its boot logic and
         // will be ready for any usage by this developer's application logic.
-        if ($this->corDict[$cid]['booted']) {
+        if (static::$corDict[$cid]['booted']) {
             $this->bootProvider($provider);
         }
 
@@ -572,7 +572,7 @@ class Application extends \Illuminate\Container\Container implements Application
     {
         $name = is_string($provider) ? $provider : get_class($provider);
 
-        return Arr::where($this->corDict[\Swoole\Coroutine::getuid()]['serviceProviders'], function ($value) use ($name) {
+        return Arr::where(static::$corDict[\Swoole\Coroutine::getuid()]['serviceProviders'], function ($value) use ($name) {
             return $value instanceof $name;
         });
     }
@@ -596,9 +596,9 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     protected function markAsRegistered($provider,$cid)
     {
-        $this->corDict[$cid]['serviceProviders'][] = $provider;
+        static::$corDict[$cid]['serviceProviders'][] = $provider;
 
-        $this->corDict[$cid]['loadedProviders'][get_class($provider)] = true;
+        static::$corDict[$cid]['loadedProviders'][get_class($provider)] = true;
     }
 
     /**
@@ -612,11 +612,11 @@ class Application extends \Illuminate\Container\Container implements Application
         // We will simply spin through each of the deferred providers and register each
         // one and boot them if the application has booted. This should make each of
         // the remaining services available to this application for immediate use.
-        foreach ($this->corDict[$cid]['deferredServices'] as $service => $provider) {
+        foreach (static::$corDict[$cid]['deferredServices'] as $service => $provider) {
             $this->loadDeferredProvider($service);
         }
 
-        $this->corDict[$cid]['deferredServices'] = [];
+        static::$corDict[$cid]['deferredServices'] = [];
     }
 
     /**
@@ -628,16 +628,16 @@ class Application extends \Illuminate\Container\Container implements Application
     public function loadDeferredProvider($service)
     {
         $cid=\Swoole\Coroutine::getuid();
-        if (! isset($this->corDict[$cid]['deferredServices'][$service])) {
+        if (! isset(static::$corDict[$cid]['deferredServices'][$service])) {
             return;
         }
 
-        $provider = $this->corDict[$cid]['deferredServices'][$service];
+        $provider = static::$corDict[$cid]['deferredServices'][$service];
 
         // If the service provider has not already been loaded and registered we can
         // register it with the application and remove the service from this list
         // of deferred services, since it will already be loaded on subsequent.
-        if (! isset($this->corDict[$cid]['loadedProviders'][$provider])) {
+        if (! isset(static::$corDict[$cid]['loadedProviders'][$provider])) {
             $this->registerDeferredProvider($provider, $service);
         }
     }
@@ -656,12 +656,12 @@ class Application extends \Illuminate\Container\Container implements Application
         // will remove it from our local list of the deferred services with related
         // providers so that this container does not try to resolve it out again.
         if ($service) {
-            unset($this->corDict[$cid]['deferredServices'][$service]);
+            unset(static::$corDict[$cid]['deferredServices'][$service]);
         }
 
         $this->register($instance = new $provider($this));
 
-        if (! $this->corDict[$cid]['booted']) {
+        if (! static::$corDict[$cid]['booted']) {
             $this->booting(function () use ($instance) {
                 $this->bootProvider($instance);
             });
@@ -682,7 +682,7 @@ class Application extends \Illuminate\Container\Container implements Application
         $cid=\Swoole\Coroutine::getuid();
         $abstract = $this->getAlias($abstract);
 
-        if (isset($this->corDict[$cid]['deferredServices'][$abstract]) && ! isset($this->corDict[$cid]['instances'][$abstract])) {
+        if (isset(static::$corDict[$cid]['deferredServices'][$abstract]) && ! isset(static::$corDict[$cid]['instances'][$abstract])) {
             $this->loadDeferredProvider($abstract);
         }
 
@@ -699,7 +699,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function bound($abstract)
     {
-        return isset($this->corDict[\Swoole\Coroutine::getuid()]['deferredServices'][$abstract]) || parent::bound($abstract);
+        return isset(static::$corDict[\Swoole\Coroutine::getuid()]['deferredServices'][$abstract]) || parent::bound($abstract);
     }
 
     /**
@@ -709,7 +709,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function isBooted()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['booted'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['booted'];
     }
 
     /**
@@ -720,22 +720,22 @@ class Application extends \Illuminate\Container\Container implements Application
     public function boot()
     {
         $cid=\Swoole\Coroutine::getuid();
-        if ($this->corDict[$cid]['booted']) {
+        if (static::$corDict[$cid]['booted']) {
             return;
         }
 
         // Once the application has booted we will also fire some "booted" callbacks
         // for any listeners that need to do work after this initial booting gets
         // finished. This is useful when ordering the boot-up processes we run.
-        $this->fireAppCallbacks($this->corDict[$cid]['bootingCallbacks']);
+        $this->fireAppCallbacks(static::$corDict[$cid]['bootingCallbacks']);
 
-        array_walk($this->corDict[$cid]['serviceProviders'], function ($p) {
+        array_walk(static::$corDict[$cid]['serviceProviders'], function ($p) {
             $this->bootProvider($p);
         });
 
-        $this->corDict[$cid]['booted'] = true;
+        static::$corDict[$cid]['booted'] = true;
 
-        $this->fireAppCallbacks($this->corDict[$cid]['bootedCallbacks']);
+        $this->fireAppCallbacks(static::$corDict[$cid]['bootedCallbacks']);
     }
 
     /**
@@ -759,7 +759,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function booting($callback)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['bootingCallbacks'][] = $callback;
+        static::$corDict[\Swoole\Coroutine::getuid()]['bootingCallbacks'][] = $callback;
     }
 
     /**
@@ -770,7 +770,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function booted($callback)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['bootedCallbacks'][] = $callback;
+        static::$corDict[\Swoole\Coroutine::getuid()]['bootedCallbacks'][] = $callback;
 
         if ($this->isBooted()) {
             $this->fireAppCallbacks([$callback]);
@@ -906,7 +906,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function terminating(Closure $callback)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['terminatingCallbacks'][] = $callback;
+        static::$corDict[\Swoole\Coroutine::getuid()]['terminatingCallbacks'][] = $callback;
 
         return $this;
     }
@@ -918,7 +918,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function terminate()
     {
-        foreach ($this->corDict[\Swoole\Coroutine::getuid()]['terminatingCallbacks'] as $terminating) {
+        foreach (static::$corDict[\Swoole\Coroutine::getuid()]['terminatingCallbacks'] as $terminating) {
             $this->call($terminating);
         }
     }
@@ -930,7 +930,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function getLoadedProviders()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['loadedProviders'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['loadedProviders'];
     }
 
     /**
@@ -940,7 +940,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function getDeferredServices()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['deferredServices'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['deferredServices'];
     }
 
     /**
@@ -951,7 +951,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function setDeferredServices(array $services)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['deferredServices'] = $services;
+        static::$corDict[\Swoole\Coroutine::getuid()]['deferredServices'] = $services;
     }
 
     /**
@@ -963,7 +963,7 @@ class Application extends \Illuminate\Container\Container implements Application
     public function addDeferredServices(array $services)
     {
         $cid=\Swoole\Coroutine::getuid();
-        $this->corDict[$cid]['deferredServices'] = array_merge($this->corDict[$cid]['deferredServices'], $services);
+        static::$corDict[$cid]['deferredServices'] = array_merge(static::$corDict[$cid]['deferredServices'], $services);
     }
 
     /**
@@ -974,7 +974,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function isDeferredService($service)
     {
-        return isset($this->corDict[\Swoole\Coroutine::getuid()]['deferredServices'][$service]);
+        return isset(static::$corDict[\Swoole\Coroutine::getuid()]['deferredServices'][$service]);
     }
 
     /**
@@ -1116,16 +1116,16 @@ class Application extends \Illuminate\Container\Container implements Application
         parent::flush();
         $cid=\Swoole\Coroutine::getuid();
 
-        $this->corDict[$cid]['buildStack'] = [];
-        $this->corDict[$cid]['loadedProviders'] = [];
-        $this->corDict[$cid]['bootedCallbacks'] = [];
-        $this->corDict[$cid]['bootingCallbacks'] = [];
-        $this->corDict[$cid]['deferredServices'] = [];
-        $this->corDict[$cid]['reboundCallbacks'] = [];
-        $this->corDict[$cid]['serviceProviders'] = [];
-        $this->corDict[$cid]['resolvingCallbacks'] = [];
-        $this->corDict[$cid]['afterResolvingCallbacks'] = [];
-        $this->corDict[$cid]['globalResolvingCallbacks'] = [];
+        static::$corDict[$cid]['buildStack'] = [];
+        static::$corDict[$cid]['loadedProviders'] = [];
+        static::$corDict[$cid]['bootedCallbacks'] = [];
+        static::$corDict[$cid]['bootingCallbacks'] = [];
+        static::$corDict[$cid]['deferredServices'] = [];
+        static::$corDict[$cid]['reboundCallbacks'] = [];
+        static::$corDict[$cid]['serviceProviders'] = [];
+        static::$corDict[$cid]['resolvingCallbacks'] = [];
+        static::$corDict[$cid]['afterResolvingCallbacks'] = [];
+        static::$corDict[$cid]['globalResolvingCallbacks'] = [];
     }
 
     /**

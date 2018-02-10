@@ -26,7 +26,7 @@ trait ManagesLayouts
     {
         if ($content === null) {
             if (ob_start()) {
-                $this->corDict[\Swoole\Coroutine::getuid()]['sectionStack'][] = $section;
+                static::$corDict[\Swoole\Coroutine::getuid()]['sectionStack'][] = $section;
             }
         } else {
             $this->extendSection($section, $content instanceof View ? $content : e($content), \Swoole\Coroutine::getuid());
@@ -52,7 +52,7 @@ trait ManagesLayouts
      */
     public function yieldSection()
     {
-        if (empty($this->corDict[\Swoole\Coroutine::getuid()]['sectionStack'])) {
+        if (empty(static::$corDict[\Swoole\Coroutine::getuid()]['sectionStack'])) {
             return '';
         }
 
@@ -69,14 +69,14 @@ trait ManagesLayouts
     public function stopSection($overwrite = false)
     {
         $cid=\Swoole\Coroutine::getuid();
-        if (empty($this->corDict[$cid]['sectionStack'])) {
+        if (empty(static::$corDict[$cid]['sectionStack'])) {
             throw new InvalidArgumentException('Cannot end a section without first starting one.');
         }
 
-        $last = array_pop($this->corDict[$cid]['sectionStack']);
+        $last = array_pop(static::$corDict[$cid]['sectionStack']);
 
         if ($overwrite) {
-            $this->corDict[$cid]['sections'][$last] = ob_get_clean();
+            static::$corDict[$cid]['sections'][$last] = ob_get_clean();
         } else {
             $this->extendSection($last, ob_get_clean(), $cid);
         }
@@ -93,16 +93,16 @@ trait ManagesLayouts
     public function appendSection()
     {
         $cid=\Swoole\Coroutine::getuid();
-        if (empty($this->corDict[$cid]['sectionStack'])) {
+        if (empty(static::$corDict[$cid]['sectionStack'])) {
             throw new InvalidArgumentException('Cannot end a section without first starting one.');
         }
 
-        $last = array_pop($this->corDict[$cid]['sectionStack']);
+        $last = array_pop(static::$corDict[$cid]['sectionStack']);
 
-        if (isset($this->corDict[$cid]['sections'][$last])) {
-            $this->corDict[$cid]['sections'][$last] .= ob_get_clean();
+        if (isset(static::$corDict[$cid]['sections'][$last])) {
+            static::$corDict[$cid]['sections'][$last] .= ob_get_clean();
         } else {
-            $this->corDict[$cid]['sections'][$last] = ob_get_clean();
+            static::$corDict[$cid]['sections'][$last] = ob_get_clean();
         }
 
         return $last;
@@ -117,11 +117,11 @@ trait ManagesLayouts
      */
     protected function extendSection($section, $content, $cid)
     {
-        if (isset($this->corDict[$cid]['sections'][$section])) {
-            $content = str_replace(static::parentPlaceholder($section), $content, $this->corDict[$cid]['sections'][$section]);
+        if (isset(static::$corDict[$cid]['sections'][$section])) {
+            $content = str_replace(static::parentPlaceholder($section), $content, static::$corDict[$cid]['sections'][$section]);
         }
 
-        $this->corDict[$cid]['sections'][$section] = $content;
+        static::$corDict[$cid]['sections'][$section] = $content;
     }
 
     /**
@@ -137,8 +137,8 @@ trait ManagesLayouts
 
         $cid=\Swoole\Coroutine::getuid();
 
-        if (isset($this->corDict[$cid]['sections'][$section])) {
-            $sectionContent = $this->corDict[$cid]['sections'][$section];
+        if (isset(static::$corDict[$cid]['sections'][$section])) {
+            $sectionContent = static::$corDict[$cid]['sections'][$section];
         }
 
         $sectionContent = str_replace('@@parent', '--parent--holder--', $sectionContent);
@@ -173,7 +173,7 @@ trait ManagesLayouts
      */
     public function hasSection($name)
     {
-        return array_key_exists($name, $this->corDict[\Swoole\Coroutine::getuid()]['sections']);
+        return array_key_exists($name, static::$corDict[\Swoole\Coroutine::getuid()]['sections']);
     }
 
     /**
@@ -195,7 +195,7 @@ trait ManagesLayouts
      */
     public function getSections()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['sections'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['sections'];
     }
 
     /**
@@ -206,7 +206,7 @@ trait ManagesLayouts
     public function flushSections()
     {
         $cid=\Swoole\Coroutine::getuid();
-        $this->corDict[$cid]['sections'] = [];
-        $this->corDict[$cid]['sectionStack'] = [];
+        static::$corDict[$cid]['sections'] = [];
+        static::$corDict[$cid]['sectionStack'] = [];
     }
 }

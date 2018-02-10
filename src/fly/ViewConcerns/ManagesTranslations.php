@@ -15,7 +15,7 @@ trait ManagesTranslations
     {
         ob_start();
 
-        $this->corDict[\Swoole\Coroutine::getuid()]['translationReplacements'] = $replacements;
+        static::$corDict[\Swoole\Coroutine::getuid()]['translationReplacements'] = $replacements;
     }
 
     /**
@@ -26,7 +26,7 @@ trait ManagesTranslations
     public function renderTranslation()
     {
         return $this->container->make('translator')->getFromJson(
-            trim(ob_get_clean()), $this->corDict[\Swoole\Coroutine::getuid()]['translationReplacements']
+            trim(ob_get_clean()), static::$corDict[\Swoole\Coroutine::getuid()]['translationReplacements']
         );
     }
 }

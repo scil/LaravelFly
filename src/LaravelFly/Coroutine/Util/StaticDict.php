@@ -21,19 +21,19 @@ trait StaticDict
     static public function initStaticForCorontine($cid, $listen = true)
     {
         if ($cid > 0) {
-            static::$corStaticDict[$cid] = static::$corStaticDict[-1];
+            static::$corStaticDict[$cid] = static::$corStaticDict[WORKER_COROUTINE_ID];
         } else {
             if (static::$arrayStaticAttri ?? false) {
                 foreach (static::$arrayStaticAttri as $attri) {
-                    static::$corStaticDict[-1][$attri] = [];
+                    static::$corStaticDict[WORKER_COROUTINE_ID][$attri] = [];
                 }
             }
             if (static::$normalStaticAttri ?? false) {
                 foreach (static::$normalStaticAttri as $attri => $defaultValue) {
                     if (is_callable($defaultValue)) {
-                        static::$corStaticDict[-1][$attri] = $defaultValue();
+                        static::$corStaticDict[WORKER_COROUTINE_ID][$attri] = $defaultValue();
                     } else {
-                        static::$corStaticDict[-1][$attri] = $defaultValue;
+                        static::$corStaticDict[WORKER_COROUTINE_ID][$attri] = $defaultValue;
                     }
                 }
             }

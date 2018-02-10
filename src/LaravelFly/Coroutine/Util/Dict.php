@@ -8,23 +8,23 @@ use Illuminate\Container\Container;
 trait Dict
 {
 
-    // protected $normalAttriForObj=[];
-    // protected $arrayAttriForObj=[];
-    protected $corDict = [];
+    // protected static $normalAttriForObj=[];
+    // protected static $arrayAttriForObj=[];
+    protected static $corDict = [];
 
     public function initOnWorker($listen = true)
     {
-        if ($this->arrayAttriForObj ?? false) {
-            foreach ($this->arrayAttriForObj as $attri) {
-                $this->corDict[-1][$attri] = [];
+        if (static::$arrayAttriForObj ?? false) {
+            foreach (static::$arrayAttriForObj as $attri) {
+                static::$corDict[WORKER_COROUTINE_ID][$attri] = [];
             }
         }
-        if ($this->normalAttriForObj ?? false) {
-            foreach ($this->normalAttriForObj as $attri => $defaultValue) {
+        if (static::$normalAttriForObj ?? false) {
+            foreach (static::$normalAttriForObj as $attri => $defaultValue) {
                 if (is_callable($defaultValue)) {
-                    $this->corDict[-1][$attri] = $defaultValue();
+                    static::$corDict[WORKER_COROUTINE_ID][$attri] = $defaultValue();
                 } else {
-                    $this->corDict[-1][$attri] = $defaultValue;
+                    static::$corDict[WORKER_COROUTINE_ID][$attri] = $defaultValue;
                 }
             }
         }
@@ -44,12 +44,12 @@ trait Dict
 
     public function initForCorontine($cid)
     {
-        $this->corDict[$cid] = $this->corDict[-1];
+        static::$corDict[$cid] = static::$corDict[WORKER_COROUTINE_ID];
     }
 
     function delForCoroutine(int $cid)
     {
-        unset($this->corDict[$cid]);
+        unset(static::$corDict[$cid]);
     }
 
 

@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 class StartSession extends \Illuminate\Session\Middleware\StartSession
 {
     use Dict;
-    protected $normalAttriForObj = ['sessionHandled' => false,];
+    protected static $normalAttriForObj = ['sessionHandled' => false,];
 
     public function __construct(SessionManager $manager)
     {
@@ -25,7 +25,7 @@ class StartSession extends \Illuminate\Session\Middleware\StartSession
     }
     public function handle($request, Closure $next)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['sessionHandled'] = true;
+        static::$corDict[\Swoole\Coroutine::getuid()]['sessionHandled'] = true;
 
         // If a session driver has been configured, we will need to start the session here
         // so that the data is ready for an application. Note that the Laravel sessions
@@ -61,7 +61,7 @@ class StartSession extends \Illuminate\Session\Middleware\StartSession
      */
     public function terminate($request, $response)
     {
-        if ($this->corDict[\Swoole\Coroutine::getuid()]['sessionHandled'] && $this->sessionConfigured() && ! $this->usingCookieSessions()) {
+        if (static::$corDict[\Swoole\Coroutine::getuid()]['sessionHandled'] && $this->sessionConfigured() && ! $this->usingCookieSessions()) {
             $this->manager->driver()->save();
         }
     }

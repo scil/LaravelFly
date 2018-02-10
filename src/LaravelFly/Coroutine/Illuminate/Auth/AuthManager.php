@@ -9,9 +9,9 @@ class AuthManager extends \Illuminate\Auth\AuthManager
 {
     use \LaravelFly\Coroutine\Util\Dict;
 
-    protected $normalAttriForObj=['userResolver'=>null];
+    protected static $normalAttriForObj=['userResolver'=>null];
 
-    protected $arrayAttriForObj = [
+    protected static $arrayAttriForObj = [
         'guards',
         // 'customCreators'
         ];
@@ -25,7 +25,7 @@ class AuthManager extends \Illuminate\Auth\AuthManager
         $this->initOnWorker(true);
 
         // this statement must be after initOnWorker
-        $this->corDict[-1]['userResolver'] = function ($guard = null) {
+        static::$corDict[WORKER_COROUTINE_ID]['userResolver'] = function ($guard = null) {
             return $this->guard($guard)->user();
         };
 
@@ -36,8 +36,8 @@ class AuthManager extends \Illuminate\Auth\AuthManager
         $name = $name ?: $this->getDefaultDriver();
 
         $cid = \Swoole\Coroutine::getuid();
-        return $this->corDict[$cid]['guards'][$name] ??
-            ($this->corDict[$cid]['guards'][$name] = $this->resolve($name));
+        return static::$corDict[$cid]['guards'][$name] ??
+            (static::$corDict[$cid]['guards'][$name] = $this->resolve($name));
     }
 
     public function shouldUse($name)
@@ -46,17 +46,17 @@ class AuthManager extends \Illuminate\Auth\AuthManager
 
         $this->setDefaultDriver($name);
 
-        $this->corDict[\Swoole\Coroutine::getuid()]['userResolver'] = function ($name = null) {
+        static::$corDict[\Swoole\Coroutine::getuid()]['userResolver'] = function ($name = null) {
             return $this->guard($name)->user();
         };
     }
     public function userResolver()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['userResolver'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['userResolver'];
     }
     public function resolveUsersUsing(Closure $userResolver)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['userResolver'] = $userResolver;
+        static::$corDict[\Swoole\Coroutine::getuid()]['userResolver'] = $userResolver;
 
         return $this;
     }

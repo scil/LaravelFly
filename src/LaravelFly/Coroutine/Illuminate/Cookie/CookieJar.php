@@ -11,7 +11,7 @@ use Illuminate\Contracts\Cookie\QueueingFactory as JarContract;
 class CookieJar extends \Illuminate\Cookie\CookieJar
 {
     use Dict;
-    protected $arrayAttriForObj = ['queued',];
+    protected static $arrayAttriForObj = ['queued',];
 
     public function __construct()
     {
@@ -20,7 +20,7 @@ class CookieJar extends \Illuminate\Cookie\CookieJar
 
     public function queued($key, $default = null)
     {
-        return Arr::get($this->corDict[\Swoole\Coroutine::getuid()]['queued'], $key, $default);
+        return Arr::get(static::$corDict[\Swoole\Coroutine::getuid()]['queued'], $key, $default);
     }
 
     public function queue(...$parameters)
@@ -31,16 +31,16 @@ class CookieJar extends \Illuminate\Cookie\CookieJar
             $cookie = call_user_func_array([$this, 'make'], $parameters);
         }
 
-        $this->corDict[\Swoole\Coroutine::getuid()]['queued'][$cookie->getName()] = $cookie;
+        static::$corDict[\Swoole\Coroutine::getuid()]['queued'][$cookie->getName()] = $cookie;
     }
 
     public function unqueue($name)
     {
-        unset($this->corDict[\Swoole\Coroutine::getuid()]['queued'][$name]);
+        unset(static::$corDict[\Swoole\Coroutine::getuid()]['queued'][$name]);
     }
 
     public function getQueuedCookies()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['queued'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['queued'];
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Contracts\Cookie\QueueingFactory as CookieJar;
 class CookieSessionHandler extends \Illuminate\Session\CookieSessionHandler
 {
     use Dict;
-    protected $normalAttriForObj = ['request' => null,];
+    protected static $normalAttriForObj = ['request' => null,];
 
     public function __construct(CookieJar $cookie, $minutes)
     {
@@ -21,7 +21,7 @@ class CookieSessionHandler extends \Illuminate\Session\CookieSessionHandler
 
     public function read($sessionId)
     {
-        $value = $this->corDict[\Swoole\Coroutine::getuid()]['request']->cookies->get($sessionId) ?: '';
+        $value = static::$corDict[\Swoole\Coroutine::getuid()]['request']->cookies->get($sessionId) ?: '';
 
         if (!is_null($decoded = json_decode($value, true)) && is_array($decoded)) {
             if (isset($decoded['expires']) && $this->currentTime() <= $decoded['expires']) {
@@ -34,6 +34,6 @@ class CookieSessionHandler extends \Illuminate\Session\CookieSessionHandler
 
     public function setRequest(Request $request)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['request'] = $request;
+        static::$corDict[\Swoole\Coroutine::getuid()]['request'] = $request;
     }
 }

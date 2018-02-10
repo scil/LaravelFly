@@ -10,8 +10,8 @@ class FileViewFinder implements ViewFinderInterface
 {
 
     use Dict;
-    protected $arrayAttriForObj = ['paths', 'views', 'hints'];
-    protected $normalAttriForObj=[];
+    protected static $arrayAttriForObj = ['paths', 'views', 'hints'];
+    protected static $normalAttriForObj=[];
 
 
     protected $files;
@@ -21,7 +21,7 @@ class FileViewFinder implements ViewFinderInterface
     {
         $this->initOnWorker( true);
 
-        $this->corDict[-1]['paths'] = $paths;
+        static::$corDict[WORKER_COROUTINE_ID]['paths'] = $paths;
         $this->files = $files;
         if (isset($extensions)) {
             $this->extensions = $extensions;
@@ -32,15 +32,15 @@ class FileViewFinder implements ViewFinderInterface
     {
         $cid=\Swoole\Coroutine::getuid();
 
-        if (isset($this->corDict[$cid]['views'][$name])) {
-            return $this->corDict[$cid]['views'][$name];
+        if (isset(static::$corDict[$cid]['views'][$name])) {
+            return static::$corDict[$cid]['views'][$name];
         }
 
         if ($this->hasHintInformation($name = trim($name))) {
-            return $this->corDict[$cid]['views'][$name] = $this->findNamespacedView($name,$cid);
+            return static::$corDict[$cid]['views'][$name] = $this->findNamespacedView($name,$cid);
         }
 
-        return $this->corDict[$cid]['views'][$name] = $this->findInPaths($name, $this->corDict[$cid]['paths']);
+        return static::$corDict[$cid]['views'][$name] = $this->findInPaths($name, static::$corDict[$cid]['paths']);
     }
 
     /**
@@ -53,7 +53,7 @@ class FileViewFinder implements ViewFinderInterface
     {
         list($namespace, $view) = $this->parseNamespaceSegments($name,$cid);
 
-        return $this->findInPaths($view, $this->corDict[$cid]['hints'][$namespace]);
+        return $this->findInPaths($view, static::$corDict[$cid]['hints'][$namespace]);
     }
 
     /**
@@ -72,7 +72,7 @@ class FileViewFinder implements ViewFinderInterface
             throw new InvalidArgumentException("View [$name] has an invalid name.");
         }
 
-        if (!isset($this->corDict[$cid]['hints'][$segments[0]])) {
+        if (!isset(static::$corDict[$cid]['hints'][$segments[0]])) {
             throw new InvalidArgumentException("No hint path defined for [{$segments[0]}].");
         }
 
@@ -122,7 +122,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function addLocation($location)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['paths'][] = $location;
+        static::$corDict[\Swoole\Coroutine::getuid()]['paths'][] = $location;
     }
 
     /**
@@ -133,7 +133,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function prependLocation($location)
     {
-        array_unshift($this->corDict[\Swoole\Coroutine::getuid()]['paths'], $location);
+        array_unshift(static::$corDict[\Swoole\Coroutine::getuid()]['paths'], $location);
     }
 
     /**
@@ -149,11 +149,11 @@ class FileViewFinder implements ViewFinderInterface
 
         $cid=\Swoole\Coroutine::getuid();
 
-        if (isset($this->corDict[$cid]['hints'][$namespace])) {
-            $hints = array_merge($this->corDict[$cid]['hints'][$namespace], $hints);
+        if (isset(static::$corDict[$cid]['hints'][$namespace])) {
+            $hints = array_merge(static::$corDict[$cid]['hints'][$namespace], $hints);
         }
 
-        $this->corDict[$cid]['hints'][$namespace] = $hints;
+        static::$corDict[$cid]['hints'][$namespace] = $hints;
     }
 
     /**
@@ -169,11 +169,11 @@ class FileViewFinder implements ViewFinderInterface
 
         $cid=\Swoole\Coroutine::getuid();
 
-        if (isset($this->corDict[$cid]['hints'][$namespace])) {
-            $hints = array_merge($hints, $this->corDict[$cid]['hints'][$namespace]);
+        if (isset(static::$corDict[$cid]['hints'][$namespace])) {
+            $hints = array_merge($hints, static::$corDict[$cid]['hints'][$namespace]);
         }
 
-        $this->corDict[$cid]['hints'][$namespace] = $hints;
+        static::$corDict[$cid]['hints'][$namespace] = $hints;
     }
 
     /**
@@ -185,7 +185,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function replaceNamespace($namespace, $hints)
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['hints'][$namespace] = (array)$hints;
+        static::$corDict[\Swoole\Coroutine::getuid()]['hints'][$namespace] = (array)$hints;
     }
 
     /**
@@ -221,8 +221,8 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function flush()
     {
-        var_dump('flush',$this->corDict[\Swoole\Coroutine::getuid()]['views'] );
-        $this->corDict[\Swoole\Coroutine::getuid()]['views'] = [];
+        var_dump('flush',static::$corDict[\Swoole\Coroutine::getuid()]['views'] );
+        static::$corDict[\Swoole\Coroutine::getuid()]['views'] = [];
     }
 
     /**
@@ -242,7 +242,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function getPaths()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['paths'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['paths'];
     }
 
     /**
@@ -252,7 +252,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function getHints()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['hints'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['hints'];
     }
 
     /**

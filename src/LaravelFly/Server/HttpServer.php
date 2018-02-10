@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Server;
 
+
 class HttpServer extends Base implements ServerInterface
 {
     /**
@@ -57,6 +58,7 @@ class HttpServer extends Base implements ServerInterface
     {
         opcache_reset();
 
+//        var_dump(\Swoole\Coroutine::getuid());die();
         $this->startLaravel();
 
         $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));

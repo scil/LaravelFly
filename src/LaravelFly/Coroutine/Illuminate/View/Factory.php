@@ -20,9 +20,9 @@ class Factory extends \Illuminate\View\Factory
     use Dict;
     use StaticDict;
 
-    protected $normalAttriForObj = ['renderCount' => 0];
+    protected static $normalAttriForObj = ['renderCount' => 0];
 
-    protected $arrayAttriForObj = ['shared',
+    protected static $arrayAttriForObj = ['shared',
         // ManagesLayouts
         'sections', 'sectionStack',
         // ManagesComponents
@@ -54,7 +54,7 @@ class Factory extends \Illuminate\View\Factory
 
         $cid = \Swoole\Coroutine::getuid();
         foreach ($keys as $key => $value) {
-            $this->corDict[$cid]['shared'][$key] = $value;
+            static::$corDict[$cid]['shared'][$key] = $value;
         }
 
         return $value;
@@ -62,22 +62,22 @@ class Factory extends \Illuminate\View\Factory
 
     public function shared($key, $default = null)
     {
-        return Arr::get($this->corDict[\Swoole\Coroutine::getuid()]['shared'], $key, $default);
+        return Arr::get(static::$corDict[\Swoole\Coroutine::getuid()]['shared'], $key, $default);
     }
 
     public function getShared()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['shared'];
+        return static::$corDict[\Swoole\Coroutine::getuid()]['shared'];
     }
 
     public function incrementRender()
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['renderCount']++;
+        static::$corDict[\Swoole\Coroutine::getuid()]['renderCount']++;
     }
 
     public function decrementRender()
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['renderCount']--;
+        static::$corDict[\Swoole\Coroutine::getuid()]['renderCount']--;
     }
 
     /**
@@ -87,12 +87,12 @@ class Factory extends \Illuminate\View\Factory
      */
     public function doneRendering()
     {
-        return $this->corDict[\Swoole\Coroutine::getuid()]['renderCount'] == 0;
+        return static::$corDict[\Swoole\Coroutine::getuid()]['renderCount'] == 0;
     }
 
     public function flushState()
     {
-        $this->corDict[\Swoole\Coroutine::getuid()]['renderCount'] = 0;
+        static::$corDict[\Swoole\Coroutine::getuid()]['renderCount'] = 0;
 
         $this->flushSections();
         $this->flushStacks();
