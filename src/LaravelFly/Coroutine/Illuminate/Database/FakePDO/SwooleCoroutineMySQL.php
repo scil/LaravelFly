@@ -1,6 +1,7 @@
 <?php
 
 namespace LaravelFly\Coroutine\Illuminate\Database\FakePDO;
+use Mockery\Exception;
 
 /**
  * a layer between swoole coroutine mysql and PDO
@@ -18,33 +19,61 @@ class SwooleCoroutineMySQL
         $this->swoole->connect($config);
         return $this;
     }
-    function prepare($query){
-        echo 'swoole prepare ', $query,PHP_EOL ;
-        $r= $this->swoole->prepare($query);
-        var_dump($r);
-        die('now prepare return bool true, waiting swoole new version 2.0.13');
-        return new SwooleCoroutineMySQLStatement($r);
+
+    function prepare($query)
+    {
+        if (false === $r = $this->swoole->prepare($query)) {
+            throw new \Exception($this->swoole->errno. ':'. $this->swoole->error);
+        }
+        return new SwooleCoroutineMySQLStatement($r,$this);
     }
-    function exec($query){
-        echo 'swoole exec',PHP_EOL;
+
+    function exec($query)
+    {
+        echo 'swoole exec', PHP_EOL;
         var_dump($query);
         return $this->swoole->query($query);
     }
 }
 
-class SwooleCoroutineMySQLStatement{
-    var $binded=[];
+class SwooleCoroutineMySQLStatement
+{
+    var $binded = [];
     var $stmt;
-    function __construct(\Swoole\Coroutine\MySQL\Statement $statement)
+    var $r = [];
+
+    function __construct(\Swoole\Coroutine\MySQL\Statement $statement, $swoole)
     {
-        $this->stmt=$statement;
+        $this->stmt = $statement;
+        $this->swoole=$swoole;
     }
 
-    function bindValue($index,$value){
-       $this->binded[]=$value;
-   }
-   function execute(){
-        return $this->stmt->execute($this->binded);
+    function bindValue($index, $value)
+    {
+        $this->binded[] = $value;
+    }
 
-   }
+    function execute()
+    {
+        return $this->r = $this->stmt->execute($this->binded);
+    }
+
+    function fetchAll()
+    {
+        if (false === $this->r) {
+            throw new \Exception($this->swoole->errno. ':'. $this->swoole->error);
+        }
+
+        // LaravelFly uses PDO::FETCH_OBJ
+        foreach ($this->r as $one) {
+            $obj[] = (object)$one;
+        }
+        return $obj;
+
+    }
+
+    function rowCount()
+    {
+        return $this->stmt->affected_rows;
+    }
 }
