@@ -1,5 +1,5 @@
 
-LaravelFly uses LaravelFlyServer(swoole http server based) to run Laravel faster. 
+LaravelFly runs Laravel faster with LaravelFlyServer(swoole http server based) and avoid data perturbation between different requests.
 
 It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project.
 
@@ -26,30 +26,83 @@ Time per request ( across) |  79.087  | 815.223  |  1836.702  | 368.935
  100%  | 37331  | 59981  | 1574593  |   60137
 
 
-1. Fly 5 workers:   nginx laravelfly 5workers ( 'worker_num' => 5,  LARAVELFLY_GREEDY = false;)
+1. Fly 5 workers:   nginx laravelfly 5workers ( 'worker_num' => 5,  LARAVELFLY_MODE = 'Normal';)
 `ab -n 2000 -c 10 http://127.0.0.1:9502/`
 2. fpm 5 servers:  nginx fpm 5servers ( pm=static  pm.max_children=5)
  `ab -n 2000 -c 10 http://127.0.0.1:9588/`
 3. fpm 5+ servers:  nginx fpm 5+servers  ( pm = dynamic pm.start_servers = 5 pm.max_children = 50)
  `ab -n 2000 -c 10 http://127.0.0.1:9588/`
-4. Fly 1 worker:     nginx  laravelfly 1workers ( 'worker_num' => 1, LARAVELFLY_GREEDY = false;)
+4. Fly 1 worker:     nginx  laravelfly 1workers ( 'worker_num' => 1, LARAVELFLY_MODE = 'Normal';)
 `ab -n 2000 -c 10 http://127.0.0.1:9502/ `
 
 Test date : 2017/11
 
-## What
+## Key concept: swoole worker.
 
 [Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would first finish its work then die, and a new worker will be created.
 
-LaravelFly loads resources as more as possible before any request.
+Laravel's services/resources can be loaed following the start of server or worker.
 
-The problem is that, objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, a event registered in a request will persist in subsequent requests. Second example, `app('view')` has a protected property "shared", which sometime is not appropriate to share this property across different requests.
+## Design: 
 
-There are two ways.
+### A laravel application is created `onWorkerStart`
 
-The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.This method is call Mode Simple.
+This means: There's an application in each worker process. When a new worker starts, a new application is made.
 
-The second is to clone a new application for each request. This method is called Mode Coroutine as it uses swoole coroutine.This mode is still under dev.
+Goods:
+* Hot Reload On Code Change. You can reload LaravelFly server manually or automatically with files monitor.
+* After a worker has handled 'max_request' requests, it will stop and a new worker starts.Maybe it  helps set aside suspicions that php can't run long time.
+
+### Load services `onWorkerStart` as many as possbile?
+
+First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
+```
+    protected $bootstrappers = [
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ];
+```
+The "$bootstrappers" is what Laravel do before handling a request, LaravelFly execute them before any request, except the last two items "RegisterProviders" and "BootProviders"
+
+In Mode Normal, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
+
+In Mode Coroutine or Mode Greedy, providers in "config('laravelfly.providers_on_worker')" are registered and booted before any request. Other providers follow Mode Normal rule. 
+
+And In Mode Coroutine or Mode Greedy, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".
+
+In Mode Greedy, response to homepage visit would be 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
+```
+// routes/web.php
+$a=0;
+Route::get('/',function()use(&$a){
+    return ++$a;
+});
+```
+Note, Mode Greedy is still experimental and only for study.
+
+Mode Coroutine is under dev and is future.
+
+## Challenge: data pollution
+
+Objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, a event registered in a request will persist in subsequent requests. Second example, `app('view')` has a protected property "shared", which sometime is not appropriate to share this property across different requests.
+
+Global variables and static members have similar problems.
+
+Mode Coroutine is more complicated than Mode Normal or Greedy. Requests are not handled one by one.
+
+There are three solutions..
+
+The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.This method is call Mode Simple or Mode Greedy. Mode Simple only handle laravel's key objects, such as app, event. Mode Greedy tries to load services as many as possible, such as db, cache. Note: Mode Greedy is only for study.
+ 
+The first solution can not use swoole's coroutine.
+
+The second is to clone app/event/.. to make a new app/event/.. for each request. 
+
+The third is to refactor laravel's services, moving related members to a new associative array with coroutine id as keys. This method is called Mode Coroutine as it uses swoole coroutine.This mode is under dev.
 
 ## Mode Simple vs Mode Coroutine
 
@@ -67,7 +120,7 @@ setcookie | Laravel api: $response->cookie
 
 ## Similar projects
 
-* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but there's no 'backup & restore' system, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.
+* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data perturbation, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.
 
 ## Install
 
@@ -217,50 +270,17 @@ If you use APC/OpCache, you could use one of these measures
 
 ### Todo
 
-- [ ] memmory and cpu test
 - [ ] add tests
-- [ ] improve backup and restore
 - [ ] Laravel5.5, like package auto-detection
 - [ ] send file
 - [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
 
 
-## Simple Mode and Greedy Mode
-
-First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
-```
-    protected $bootstrappers = [
-        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
-        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
-        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-        \Illuminate\Foundation\Bootstrap\BootProviders::class,
-    ];
-```
-The "$bootstrappers" is what Laravel do before handling a request, LaravelFly execute them before any request, except the last two items "RegisterProviders" and "BootProviders"
-
-In Simple Mode, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
-
-In Greedy Mode, providers in "config('laravelfly.providers_in_worker')" are registered and booted before any request. Other providers follow Simple Mode rule. 
-
-And In Greedy Mode, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".If necessary, you should define which properties need to backup. 
-
-You can choose Mode in <project_root_dir>/laravelfly.php after you publish config files.
-
-In Greedy Mode, response to homepage visit would be 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
-```
-// routes/web.php
-$a=0;
-Route::get('/',function()use(&$a){
-    return ++$a;
-});
-```
-Note, Greedy Mode is still experimental and only for study.
+## Mode Normal and Mode Greedy
 
 ## Flow
 
-### A Worker Flow in Simple Mode 
+### A Worker Flow in Mode Normal 
 
 * a new worker process
   * create an app 
