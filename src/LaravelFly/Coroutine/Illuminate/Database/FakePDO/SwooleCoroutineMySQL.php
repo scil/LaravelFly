@@ -23,15 +23,13 @@ class SwooleCoroutineMySQL
     function prepare($query)
     {
         if (false === $r = $this->swoole->prepare($query)) {
-            throw new \Exception($this->swoole->errno. ':'. $this->swoole->error);
+            throw new \Exception($this->swoole->errno. ': '. $this->swoole->error);
         }
         return new SwooleCoroutineMySQLStatement($r,$this);
     }
 
     function exec($query)
     {
-        echo 'swoole exec', PHP_EOL;
-        var_dump($query);
         return $this->swoole->query($query);
     }
 }
@@ -65,10 +63,7 @@ class SwooleCoroutineMySQLStatement
         }
 
         // LaravelFly uses PDO::FETCH_OBJ
-        foreach ($this->r as $one) {
-            $obj[] = (object)$one;
-        }
-        return $obj;
+        return array_map(function ($row){ return (object)$row; },$this->r);
 
     }
 

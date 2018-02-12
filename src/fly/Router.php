@@ -455,6 +455,7 @@ class Router implements RegistrarContract, BindingRegistrar
     }
     protected function runRoute(Request $request, Route $route)
     {
+
         $request->setRouteResolver(function () use ($route) {
             return $route;
         });

@@ -13,6 +13,7 @@ class MySqlConnection extends \Illuminate\Database\MySqlConnection
 {
     public function select($query, $bindings = [], $useReadPdo = true)
     {
+
         return $this->run($query, $bindings, function ($query, $bindings) {
             if ($this->pretending()) {
                 return [];

@@ -1,5 +1,5 @@
 
-LaravelFly runs Laravel faster with LaravelFlyServer(swoole http server based) and avoid data perturbation between different requests.
+LaravelFly runs Laravel faster with LaravelFlyServer(swoole http server based) and avoid data pollution between different requests.
 
 It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project.
 
@@ -45,7 +45,7 @@ Laravel's services/resources can be loaed following the start of server or worke
 
 ## Design: 
 
-### A laravel application is created `onWorkerStart`
+### 1. A laravel application is created `onWorkerStart`
 
 This means: There's an application in each worker process. When a new worker starts, a new application is made.
 
@@ -53,7 +53,7 @@ Goods:
 * Hot Reload On Code Change. You can reload LaravelFly server manually or automatically with files monitor.
 * After a worker has handled 'max_request' requests, it will stop and a new worker starts.Maybe it  helps set aside suspicions that php can't run long time.
 
-### Load services `onWorkerStart` as many as possbile?
+### 2. Load services `onWorkerStart` as many as possbile?
 
 First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
@@ -100,16 +100,16 @@ The first is to backup some objects before any request, and restore them after e
  
 The first solution can not use swoole's coroutine.
 
-The second is to clone app/event/.. to make a new app/event/.. for each request. 
+The second is to clone or create new objects such as app/event/.. for each request. 
 
 The third is to refactor laravel's services, moving related members to a new associative array with coroutine id as keys. This method is called Mode Coroutine as it uses swoole coroutine.This mode is under dev.
 
 ## Mode Simple vs Mode Coroutine
 
-feature  |  Simple | Coroutine 
+features  |  Mode Simple | Mode Coroutine 
 ------------ | ------------ | ------------- 
 global vars like $_GET, $_POST | yes  | no
-coroutine| no  | yes
+coroutine| no  | yes (conditional)
 
 ## php functions not fit Swoole/LaravelFly
 
@@ -120,7 +120,7 @@ setcookie | Laravel api: $response->cookie
 
 ## Similar projects
 
-* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data perturbation, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.
+* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.
 
 ## Install
 
@@ -164,7 +164,7 @@ class Kernel extends WhichKernel
     PDO::ATTR_PERSISTENT => true,
 ],
 ```
-* In Coroutine mode,coroutine can be used for mysql. Please compile swoole with  --enable-coroutine, then disable xdebug, xhprof, or blackfire. Yes, currently, swoole not compatible with them. Third, add `'coroutine' => true,` to config/database.
+* In Mode Coroutine,coroutine can be used for mysql. Please compile swoole with  --enable-coroutine, then disable xdebug, xhprof, or blackfire. Yes, currently, swoole not compatible with them. Third, add `'coroutine' => true,` to config/database. This feature is still under dev.And you must disable xdubug or similar library.
 ```
 'mysql' => [
     'driver' => 'mysql',
@@ -183,7 +183,7 @@ Note: items prefixed with "/** depends " deverve your consideration.
 
 Execute 
 ```
-vendor/bin/laravelfly start [$server_config_file]
+php vendor/bin/laravelfly start [$server_config_file]
 ```
 Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly..php`.
 
@@ -197,7 +197,7 @@ Two methods:
 
 * Execute 
 ```
-vendor/bin/laravelfly stop [$server_config_file]
+php vendor/bin/laravelfly stop [$server_config_file]
 ```
 
 * in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
@@ -206,7 +206,7 @@ vendor/bin/laravelfly stop [$server_config_file]
 ## Restart
 
 ```
-vendor/bin/laravelfly restart [$server_config_file]
+php vendor/bin/laravelfly restart [$server_config_file]
 ```
 
 
@@ -214,7 +214,7 @@ vendor/bin/laravelfly restart [$server_config_file]
 
 LaravelFlyServer runs in cli mode, so LaravelFly debug is to debug a script 
 ```
-vendor/scil/laravel-fly/bin/laravelfly <start|stop|restart>
+php vendor/scil/laravel-fly/bin/laravelfly <start|stop|restart>
 ```
 
 To debug LaravelFly on a remote host such as vagrant, read [Debugging remote CLI with phpstorm](http://www.adayinthelifeof.nl/2012/12/20/debugging-remote-cli-with-phpstorm/?utm_source=tuicool&utm_medium=referral) then use a command like this:
@@ -238,7 +238,7 @@ Gracefully is that: worker willl finish its work before die.
 ### Two methods to reload
 * Execute 
 ```
-vendor/bin/laravelfly reload [$server_config_file]
+php vendor/bin/laravelfly reload [$server_config_file]
 ```
 
 * in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
