@@ -2,8 +2,10 @@
 
 namespace LaravelFly\Server;
 
-class WebSocketServer extends Base implements ServerInterface
+class WebSocketServer implements ServerInterface
 {
+    use Common{
+    }
     /**
      * @var \swoole_websocket_server
      */
@@ -20,7 +22,7 @@ class WebSocketServer extends Base implements ServerInterface
     public function __construct(array $options)
     {
 
-        parent::__construct($options);
+        $this->parseOptions($options);
 
         $options['listen_ip'] = '0.0.0.0';
 

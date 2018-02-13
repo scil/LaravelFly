@@ -3,8 +3,11 @@
 namespace LaravelFly\Server;
 
 
-class HttpServer extends Base implements ServerInterface
+class HttpServer implements ServerInterface
 {
+    use Common{
+        start as _start;
+    }
     /**
      * @var \swoole_http_server
      */
@@ -14,7 +17,7 @@ class HttpServer extends Base implements ServerInterface
     public function __construct(array $options)
     {
 
-        parent::__construct($options);
+        $this->parseOptions($options);
 
         $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
@@ -30,8 +33,9 @@ class HttpServer extends Base implements ServerInterface
         $this->server->on('request', array($this, 'onRequest'));
     }
 
-    public function initAfterStart()
+    public function start()
     {
+        $this->_start();
         \Illuminate\Http\Request::enableHttpMethodParameterOverride();
     }
 
@@ -58,7 +62,6 @@ class HttpServer extends Base implements ServerInterface
     {
         opcache_reset();
 
-//        var_dump(\Swoole\Coroutine::getuid());die();
         $this->startLaravel();
 
         $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
@@ -111,22 +114,7 @@ class HttpServer extends Base implements ServerInterface
             $laravel_response = $this->kernel->handle($laravel_request);
         }
 
-        foreach ($laravel_response->headers->allPreserveCase() as $name => $values) {
-            foreach ($values as $value) {
-                $response->header($name, $value);
-            }
-        }
-
-        foreach ($laravel_response->headers->getCookies() as $cookie) {
-            $response->cookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
-        }
-
-        $response->status($laravel_response->getStatusCode());
-
-        // gzip use nginx
-        // $response->gzip(1);
-
-        $response->end($laravel_response->getContent());
+        $this->swooleResponse($response, $laravel_response);
 
 
         if (LARAVELFLY_MODE == 'Coroutine') {
@@ -144,31 +132,5 @@ class HttpServer extends Base implements ServerInterface
         }
     }
 
-    /**
-     * convert swoole request info to php global vars
-     *
-     * only for Mode One or Greedy
-     *
-     * @param \swoole_http_request $request
-     * @see https://github.com/matyhtf/framework/blob/master/libs/Swoole/Request.php setGlobal()
-     */
-    protected function setGlobal($request)
-    {
-        $_GET = $request->get ?? [];
-        $_POST = $request->post ?? [];
-        $_FILES = $request->files ?? [];
-        $_COOKIE = $request->cookie ?? [];
 
-        $_SERVER = array();
-        foreach ($request->server as $key => $value) {
-            $_SERVER[strtoupper($key)] = $value;
-        }
-
-        $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
-
-        foreach ($request->header as $key => $value) {
-            $_key = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
-            $_SERVER[$_key] = $value;
-        }
-    }
 }

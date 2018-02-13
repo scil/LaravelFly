@@ -15,7 +15,8 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 class Application extends \Illuminate\Foundation\Application
 {
 
-    use \LaravelFly\Application;
+    use \LaravelFly\ApplicationTrait\ProvidersInRequest;
+    use \LaravelFly\ApplicationTrait\InConsole;
 
     /**
      * @var bool

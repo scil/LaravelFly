@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly;
+namespace LaravelFly\ApplicationTrait;
 
 use Illuminate\Events\EventServiceProvider;
 //use LaravelFly\Routing\RoutingServiceProvider;
@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
 use LaravelFly\Simple\ProviderRepositoryInRequest;
 
-trait Application
+trait ProvidersInRequest
 {
     /**
      * @var \LaravelFly\Simple\ProviderRepositoryInRequest
@@ -47,15 +47,4 @@ trait Application
     {
         $this->deferredServices = array_merge($this->deferredServices, $services);
     }
-
-    public function runningInConsole()
-    {
-        if (defined('HONEST_IN_CONSOLE')) {
-            return HONEST_IN_CONSOLE;
-        } else {
-            return parent::runningInConsole();
-        }
-    }
-
-
 }

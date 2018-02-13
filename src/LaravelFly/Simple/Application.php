@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Facade;
 
 class Application  extends \Illuminate\Foundation\Application
 {
-    use \LaravelFly\Application;
+    use \LaravelFly\ApplicationTrait\ProvidersInRequest;
+    use \LaravelFly\ApplicationTrait\InConsole;
 
     protected $needBackUpAppAttributes = [
         'resolved',

@@ -1,4 +1,5 @@
 <?php
+
 namespace LaravelFly;
 
 class LaravelFly
@@ -24,9 +25,10 @@ class LaravelFly
         }
         return self::$instance;
     }
+
     function __construct(array $options)
     {
-        $class = $options['server'];
+        $class = LARAVELFLY_MODE == 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
         unset($options['server']);
         $this->server = new $class($options);
     }

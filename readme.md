@@ -1,11 +1,18 @@
+Tinker can be used online and laravel can be much faster by LaravelFly.
 
-LaravelFly runs Laravel faster with LaravelFlyServer(swoole http server based) and avoid data pollution between different requests.
+```php
+Route::get('shell',function(){
+  tinker();
+});
+```
+
+By putting laravel on swoole, and LaravelFly runs Laravel faster and it can avoid data pollution between different requests.
 
 It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project.
 
 There is a nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm.conf) which let you use LaravelFlyServer as the primary server, and the phpfpm as a backup tool which will be passed requests when the LaravelFlyServer is unavailable. .
 
-## Test
+## Speed Test
 
 ### A simple ab test 
 
@@ -41,7 +48,11 @@ Goods:
 * Hot Reload On Code Change. You can reload LaravelFly server manually or automatically with files monitor.
 * After a worker has handled 'max_request' requests, it will stop and a new worker starts.Maybe it  helps set aside suspicions that php can't run long time.
 
+But, in Mode FpmLike, all objects are loaded onRequest, like php-fpm. Mode FpmLike does nothing except converting swoole request to laravel request and laravel reponse to swoole response.It just provides a opportunity to use tinker, \Psy\sh() or similar shells online.
+
 ### 2. Load services `onWorkerStart` as many as possbile?
+
+Before handling a request, laravel does much work.
 
 First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
@@ -131,6 +142,8 @@ if (defined('LARAVELFLY_MODE')) {
         class WhichKernel extends \LaravelFly\Coroutine\Kernel { }
     }elseif (LARAVELFLY_MODE == 'Simple') {
         class WhichKernel extends \LaravelFly\Simple\Kernel { }
+    } elseif (LARAVELFLY_MODE == 'FpmLike') {
+        class WhichKernel extends HttpKernel{}
     } else {
         class WhichKernel extends \LaravelFly\Greedy\Kernel { }
     }
@@ -171,7 +184,7 @@ Note: items prefixed with "/** depends " deverve your consideration.
 
 Execute 
 ```
-php vendor/bin/laravelfly start [$server_config_file]
+vendor/bin/laravelfly start [$server_config_file]
 ```
 Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly..php`.
 
@@ -185,7 +198,7 @@ Two methods:
 
 * Execute 
 ```
-php vendor/bin/laravelfly stop [$server_config_file]
+vendor/bin/laravelfly stop [$server_config_file]
 ```
 
 * in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
@@ -194,7 +207,7 @@ php vendor/bin/laravelfly stop [$server_config_file]
 ## Restart
 
 ```
-php vendor/bin/laravelfly restart [$server_config_file]
+vendor/bin/laravelfly restart [$server_config_file]
 ```
 
 
@@ -226,7 +239,7 @@ Gracefully is that: worker willl finish its work before die.
 ### Two methods to reload
 * Execute 
 ```
-php vendor/bin/laravelfly reload [$server_config_file]
+vendor/bin/laravelfly reload [$server_config_file]
 ```
 
 * in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.

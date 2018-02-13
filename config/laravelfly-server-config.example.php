@@ -1,8 +1,12 @@
 <?php
 
 /**
- * Simple, Coroutine or Greedy
- * Greedy only for study
+ * Simple, Coroutine, FpmLike or Greedy
+ *
+ * FpmLike :
+ *      like php-fpm, objects are made in each request.
+ * Greedy :
+ *      only for study
  */
 const LARAVELFLY_MODE = 'Simple';
 
@@ -56,9 +60,11 @@ const LARAVELFLY_CF_SERVICES = [
  */
 return [
     /**
-     * options:
-     *      \LaravelFly\Server\WebSocketServer::class
+     * provided by LaravelFly:
      *      \LaravelFly\Server\HttpServer::class
+     *      \LaravelFly\Server\WebSocketServer::class  // still under dev
+     *
+     * when LARAVELFLY_MODE == 'FpmLike', this is ignored and \LaravelFly\Server\FpmHttpServer::class is used.
      */
     'server' => \LaravelFly\Server\HttpServer::class,
 
