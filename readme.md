@@ -36,7 +36,7 @@ blade file for view('fly')
 
 Visit '/hi' from localhost, you can enter tinker shell like this: 
 [![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
-The tinker() demo to use vars, change vars, use Log::info and so on.
+The tinker() demo to read/write vars, use Log::info and so on.
 
 ## Speed Test
 
@@ -56,7 +56,8 @@ Requests per second   | 3.08|  5.17  | 34.28
   80%  |   3213|  383   | 187
   99%   | 38584| 33720  | 3903
 
-Test date : 2018/02
+* Test date : 2018/02
+* Visited url relates to 5 Modes and 5 db query.
 
 ## Usability 
 
