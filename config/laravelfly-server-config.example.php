@@ -10,6 +10,11 @@
  */
 const LARAVELFLY_MODE = 'Simple';
 
+/**
+ * if use tinker()
+ */
+const LARAVELFLY_TINKER = true;
+
 const WORKER_COROUTINE_ID=1;
 
 /**

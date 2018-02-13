@@ -18,12 +18,8 @@ class Shell extends \Psy\Shell
     protected $config;
 
     /**
-     * @var \Laravel\Tinker\Console\TinkerCommand
+     * @var \Illuminate\Foundation\Application
      */
-    protected $laravelTinkerCommand;
-
-    protected $loader;
-
     protected $application;
 
     /**
@@ -31,7 +27,13 @@ class Shell extends \Psy\Shell
      */
     protected $server;
 
-    static $me;
+    /**
+     * @var Shell
+     */
+    static $instance;
+
+    protected $loader;
+
 
     public function __construct(Configuration $config = null)
     {
@@ -41,74 +43,73 @@ class Shell extends \Psy\Shell
         \Psy\info($this->config);
     }
 
-    function init($server)
-    {
-        $this->server = $server;
-        $this->laravelTinkerCommand = new TinkerCommand();
-        $this->make();
-    }
-
-    function setApplication($app)
-    {
-        $this->laravelTinkerCommand->setApplication($app);
-    }
-
-    function make()
+    /**
+     * @param $server \LaravelFly\Server\ServerInterface
+     */
+    static function make($server)
     {
         $config = new Configuration([
             'updateCheck' => 'never'
         ]);
 
+        $tk = new TinkerCommand();
+
         $config->getPresenter()->addCasters(
-            $this->laravelTinkerCommand->getCasters()
+            $tk->getCasters()
         );
 
-        static::$me = $shell = new Shell($config);
+        static::$instance = $shell = new Shell($config);
 
-        $shell->addCommands($this->getCommands());
+        $shell->server = $server;
+
+        $commands = $shell->getDefaultCommands();
+        // this will overwrite Psy's WhereamiCommand
+        $commands[] = new WhereamiCommand($shell->config->colorMode());
+
+        $shell->addCommands($commands);
         //todo
 //        $shell->setIncludes($this->argument('include'));
 
-        $path = $this->server->path('vendor/composer/autoload_classmap.php');
+        $path = $shell->server->path('vendor/composer/autoload_classmap.php');
 
-        $this->loader = ClassAliasAutoloader::register($shell, $path);
+        $shell->loader = ClassAliasAutoloader::register($shell, $path);
 
+        if ($shell->has('whereami')) {
+            $shell->addInput('whereami -n3', true);
+        }
+    }
+
+    /**
+     * @param $app \Illuminate\Foundation\Application
+     */
+    static function withApplication($app)
+    {
+        $shell = static::$instance;
+
+        $app->instance('tinker', $shell);
     }
 
     static function debug(array $vars = array(), $boundObject = null)
     {
 
-        $sh = static::$me;
-        $sh->setScopeVariables($vars);
-        if ($sh->has('whereami')) {
-            $sh->addInput('whereami -n2', true);
-        }
+        $shell = static::$instance;
+
+        $shell->setScopeVariables($vars);
+
+
         if ($boundObject !== null) {
-            $sh->setBoundObject($boundObject);
+            $shell->setBoundObject($boundObject);
         }
 
         try {
-            $sh->run();
+            $shell->run();
         } finally {
             //todo
 //            $this->loader->unregister();
         }
-        return $sh->getScopeVariables(false);
+        return $shell->getScopeVariables(false);
     }
 
-
-    protected function getCommands()
-    {
-        $commands = parent::getDefaultCommands();
-
-        $commands[] = new WhereamiCommand($this->config->colorMode());
-
-        if ($this->laravelTinkerCommand->hasApplication()) {
-            $commands = array_merge($commands, $this->laravelTinkerCommand->getCommands());
-        }
-
-        return $commands;
-    }
 }
 
 

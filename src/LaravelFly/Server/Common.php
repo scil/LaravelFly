@@ -58,6 +58,18 @@ Trait Common
 
         $this->kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
 
+        if (LARAVELFLY_TINKER) {
+
+            if ($options['daemonize'] == true) {
+                $options['daemonize'] = false;
+//            echo '[INFO] daemonize is disabled in Mode FpmLike.', PHP_EOL;
+            }
+
+            if ($options['worker_num'] == 1) {
+//            echo '[INFO] worker_num is 1, your server can not response any other requests when using shell', PHP_EOL;
+            }
+        }
+
     }
 
     public function path($path = null)
@@ -89,6 +101,12 @@ Trait Common
         );
 
         $this->kernel = $this->app->make(\Illuminate\Contracts\Http\Kernel::class);
+
+
+        if (LARAVELFLY_TINKER){
+            \LaravelFly\Tinker\Shell::make($this);
+            \LaravelFly\Tinker\Shell::withApplication($this->app);
+        }
 
     }
 

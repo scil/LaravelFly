@@ -10,18 +10,8 @@ namespace LaravelFly\Tinker;
 
 class TinkerCommand extends \Laravel\Tinker\Console\TinkerCommand
 {
-    var $application;
-
-    public function hasApplication()
-    {
-        return $this->application;
-    }
     public function getCasters()
     {
         return parent::getCasters();
-    }
-    public function getCommands()
-    {
-        return parent::getCommands();
     }
 }

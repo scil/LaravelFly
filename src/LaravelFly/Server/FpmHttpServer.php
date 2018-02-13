@@ -22,14 +22,6 @@ class FpmHttpServer implements ServerInterface
 
         $this->kernelClass = null;
 
-        if ($options['daemonize'] == true) {
-            $options['daemonize'] = false;
-            echo '[INFO] daemonize is disabled in Mode FpmLike.', PHP_EOL;
-        }
-
-        if ($options['worker_num'] == 1) {
-            echo '[INFO] worker_num is 1, your server can not response any other requests when using shell', PHP_EOL;
-        }
 
         $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
@@ -48,13 +40,18 @@ class FpmHttpServer implements ServerInterface
 
     public function onWorkerStart()
     {
-        (new \LaravelFly\Tinker\Shell)->init($this);
+        if (LARAVELFLY_TINKER)
+            \LaravelFly\Tinker\Shell::make($this);
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
         $app = new $this->appClass($this->root);
+
+        if (LARAVELFLY_TINKER){
+            \LaravelFly\Tinker\Shell::withApplication($app);
+        }
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,

@@ -34,8 +34,6 @@ class WhereamiCommand extends \Psy\Command\WhereamiCommand
     {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,13);
 
-//        var_dump($backtrace);
-
         return end($backtrace);
     }
 }

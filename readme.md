@@ -1,8 +1,15 @@
 Tinker can be used online and laravel can be much faster by LaravelFly.
 
 ```php
-Route::get('shell',function(){
-  tinker();
+Route::get('hi', function () {
+
+    $msg = 'hello';
+
+    if (starts_with(Request::ip(), ['192.168', '127'])) {
+        eval(tinker());
+    }
+
+    return $msg;
 });
 ```
 
@@ -34,13 +41,13 @@ Test date : 2018/02
 
 ## Key concept: swoole worker.
 
-[Swoole](https://github.com/swoole/swoole-src) is an event-based & concurrent tool , written in C, for PHP. The memory allocated in Swoole worker will not be free'd after a request, that can improve preformance a lot. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would first finish its work then die, and a new worker will be created.
+[Swoole](https://github.com/swoole/swoole-src) is an event-based tool. The memory allocated in Swoole worker will not be free'd after a request. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would first finish its work then die, and a new worker will be created.
 
-Laravel's services/resources can be loaed following the start of server or worker.
+Laravel's services/resources can be loaed following the start of swoole server or swoole worker.
 
-## Design: 
+## Design For Speed 
 
-### 1. A laravel application is created `onWorkerStart`
+### 1. Laravel application is created `onWorkerStart`
 
 This means: There's an application in each worker process. When a new worker starts, a new application is made.
 
@@ -48,13 +55,13 @@ Goods:
 * Hot Reload On Code Change. You can reload LaravelFly server manually or automatically with files monitor.
 * After a worker has handled 'max_request' requests, it will stop and a new worker starts.Maybe it  helps set aside suspicions that php can't run long time.
 
-But, in Mode FpmLike, all objects are loaded onRequest, like php-fpm. Mode FpmLike does nothing except converting swoole request to laravel request and laravel reponse to swoole response.It just provides a opportunity to use tinker, \Psy\sh() or similar shells online.
+BTW, in Mode FpmLike, all objects are loaded onRequest, like php-fpm. Mode FpmLike does nothing except converting swoole request to laravel request and laravel reponse to swoole response.It just provides a opportunity to use tinker() or similar shells online.
 
 ### 2. Load services `onWorkerStart` as many as possbile?
 
 Before handling a request, laravel does much work.
 
-First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
+Let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
@@ -67,9 +74,9 @@ First, let's take a look at `Illuminate\Foundation\Http\Kernel::$bootstrappers`:
 ```
 The "$bootstrappers" is what Laravel do before handling a request, LaravelFly execute them before any request, except the last two items "RegisterProviders" and "BootProviders"
 
-In Mode Normal, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
+In Mode Simple, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
 
-In Mode Coroutine or Mode Greedy, providers in "config('laravelfly.providers_on_worker')" are registered and booted before any request. Other providers follow Mode Normal rule. 
+In Mode Coroutine or Mode Greedy, providers in "config('laravelfly.providers_on_worker')" are registered and booted before any request. Other providers follow Mode Simple rule. 
 
 And In Mode Coroutine or Mode Greedy, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".
 
@@ -91,7 +98,7 @@ Objects which created before request may be changed during a request, and the ch
 
 Global variables and static members have similar problems.
 
-Mode Coroutine is more complicated than Mode Normal or Greedy. Requests are not handled one by one.
+Mode Coroutine is more complicated than Mode Simple or Greedy. Requests are not handled one by one.
 
 There are three solutions..
 
@@ -132,9 +139,11 @@ Make sure `extension=swoole.so` in php cli config file, not  fpm or apache.
 ## Config
 
 1. Execute `php artisan vendor:publish --tag=fly-server`  .  
-`vendor/bin/publish-laravelfly-config-files --force`
 2. Edit server config file `<project_root_dir>/laravelfly.php`.
-3. Execute `php artisan vendor:publish --tag=fly-app`
+3. If you use tinker(), put this line at the top of `public/index.php` :  
+` function tinker(){ return '';} `  
+This line avoids error `Call to undefined function tinker()`  when you use php-fpm with tinker() in your code.
+
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_MODE')) {
@@ -154,7 +163,6 @@ if (defined('LARAVELFLY_MODE')) {
 class Kernel extends WhichKernel
 ```
 
-
 ## Optional Config
 
 * Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
@@ -165,14 +173,14 @@ class Kernel extends WhichKernel
     PDO::ATTR_PERSISTENT => true,
 ],
 ```
-* In Mode Coroutine,coroutine can be used for mysql. Please compile swoole with  --enable-coroutine, then disable xdebug, xhprof, or blackfire. Yes, currently, swoole not compatible with them. Third, add `'coroutine' => true,` to config/database. This feature is still under dev.And you must disable xdubug or similar library.
+* In Mode Coroutine,coroutine can be used for mysql. Please compile swoole with  --enable-coroutine, then disable xdebug, xhprof, or blackfire. Yes, currently, swoole not compatible with them. Third, add `'coroutine' => true,` to config/database. This feature is still under dev.And you must disable xdebug or similar library.
 ```
 'mysql' => [
     'driver' => 'mysql',
     'coroutine' => true,
 ],
 ```
-* Edit `<project_root_dir>/config/laravelfly.php`.   
+* Execute `php artisan vendor:publish --tag=fly-app`  and edit `<project_root_dir>/config/laravelfly.php`.   
 Note: items prefixed with "/** depends " deverve your consideration.
 
 ## Config examples for Third Party Serivce
@@ -276,12 +284,9 @@ If you use APC/OpCache, you could use one of these measures
 - [ ] send file
 - [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
 
-
-## Mode Normal and Mode Greedy
-
 ## Flow
 
-### A Worker Flow in Mode Normal 
+### A Worker Flow in Mode Simple 
 
 * a new worker process
   * create an app 
