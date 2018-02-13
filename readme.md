@@ -1,19 +1,36 @@
 Tinker can be used online and laravel can be much faster by LaravelFly.
 
+## Tinker online
+
 ```php
 Route::get('hi', function () {
-
-    $msg = 'hello';
+    $friends = 'Tinker';
 
     if (starts_with(Request::ip(), ['192.168', '127'])) {
         eval(tinker());
     }
 
-    return $msg;
+    return view('fly', compact('friends'));
 });
 ```
 
-By putting laravel on swoole, and LaravelFly runs Laravel faster and it can avoid data pollution between different requests.
+blade file for view('fly') 
+
+```blade.php
+@php(eval(tinker()))
+
+@foreach($friends as $one)
+
+    <p>Hello, {!! $one !!}!</p>
+
+@endforeach
+```
+
+Visit '/hi' from localhost, you can enter tinker shell like this: 
+[![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
+The tinker() demo to use vars, change vars, use Log::info and so on.
+
+## Usability 
 
 It's a composer package and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project.
 
@@ -115,7 +132,7 @@ The third is to refactor laravel's services, moving related members to a new ass
 features  |  Mode Simple | Mode Coroutine 
 ------------ | ------------ | ------------- 
 global vars like $_GET, $_POST | yes  | no
-coroutine| no  | yes (conditional)
+coroutine| no  | yes (conditional*)
 
 ## php functions not fit Swoole/LaravelFly
 
