@@ -21,7 +21,7 @@
       "eaglewu/swoole-ide-helper": "dev-master"
   },
   "autoload": {
-    "files":[
+    "files": [
       "src/functions.php"
     ],
     "psr-4": {
