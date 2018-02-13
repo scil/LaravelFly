@@ -34,8 +34,19 @@ blade file for view('fly')
 @endforeach
 ```
 
-Visit '/hi' from localhost, you can enter tinker shell like this: 
+The response may be:
+```
+Hello, Tinker!
+
+Hello, PsySh!
+
+Hello, World!
+```
+
+Visit 'http://server.name/hi' from localhost, enter tinker shell and do like this: 
+
 [![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
+
 The tinker() demo to read/write vars, use Log::info and so on.
 
 ## Speed Test

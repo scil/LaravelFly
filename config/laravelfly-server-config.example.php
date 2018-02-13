@@ -3,17 +3,15 @@
 /**
  * Simple, Coroutine, FpmLike or Greedy
  *
- * FpmLike :
- *      like php-fpm, objects are made in each request.
- * Greedy :
- *      only for study
+ * FpmLike: like php-fpm, objects are made in each request.
+ * Greedy: only for study
  */
 const LARAVELFLY_MODE = 'Simple';
 
 /**
- * if use tinker()
+ * true if you use tinker()
  */
-const LARAVELFLY_TINKER = true;
+const LARAVELFLY_TINKER = false;
 
 const WORKER_COROUTINE_ID=1;
 
@@ -24,6 +22,7 @@ const WORKER_COROUTINE_ID=1;
  * Some service providers, such as MailServiceProvider, get ready to publish  resources in cli mode.
  *
  * Set it true, Application::runningInConsole() return true, and DebugBar can not start.
+ * If you use FpmLike, must keep it false.
  */
 const HONEST_IN_CONSOLE = false;
 
@@ -89,6 +88,7 @@ return [
     'max_coro_num' => 3000,
 
     // set it to false when debug, otherwise true
+    // if you use tinker(), daemonize is disabled always.
     'daemonize' => true,
 
     // like pm.max_requests in php-fpm
