@@ -3,6 +3,8 @@
 namespace LaravelFly\Server;
 
 
+use LaravelFly\Tinker;
+
 class FpmHttpServer implements ServerInterface
 {
     use Common;
@@ -22,12 +24,12 @@ class FpmHttpServer implements ServerInterface
 
         if ($options['daemonize'] == true) {
             $options['daemonize'] = false;
-            echo '[INFO] daemonize is disabled in Mode FpmLike.',PHP_EOL;
+            echo '[INFO] daemonize is disabled in Mode FpmLike.', PHP_EOL;
         }
 
 
         if ($options['worker_num'] == 1) {
-            echo '[INFO] worker_num is 1, your server can not response any requests when eval(\Psy\sh())',PHP_EOL;
+            echo '[INFO] worker_num is 1, your server can not response any requests when eval(\Psy\sh())', PHP_EOL;
         }
 
         $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
@@ -47,6 +49,7 @@ class FpmHttpServer implements ServerInterface
 
     public function onWorkerStart()
     {
+        (new \LaravelFly\Tinker)->make($this);
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
