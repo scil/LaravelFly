@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Simple, Coroutine, FpmLike or Greedy
+ * Simple, Dict, FpmLike or Greedy
  *
  * FpmLike: like php-fpm, objects are made in each request.
  * Greedy: only for study
@@ -29,7 +29,7 @@ const HONEST_IN_CONSOLE = false;
 /**
  * make some services on worker, before any requests, to save memory
  *
- * only for Mode Coroutine and advanced users
+ * only for Mode Dict and advanced users
  *
  * A COROUTINE-FRIENDLY SERVICE must satisfy folling conditions:
  * 1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }

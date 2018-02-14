@@ -1,4 +1,6 @@
-LaravelFly runs Laravel much faster, and Tinker can be used online(when Laravel is working). Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
+LaravelFly runs Laravel much faster, and make Tinker to be used online(when Laravel is working).
+
+Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
 ## Doc
 
@@ -22,7 +24,7 @@ Route::get('hi', function () {
 });
 ```
 
-blade file for view('fly') 
+blade file
 
 ```blade.php
 @php(eval(tinker()))
@@ -52,11 +54,11 @@ The tinker() demo to read/write vars, use Log::info. You can try these commands:
 // visit private members
 sudo app()->booted
 
-// use Mode or Controller without writing namespace, thanks to ClassAliasAutoloader provided by laravel
-// and ode instance are printed beautifully, thanks to casters provided by laravel TinkerCommand 
+// use Model or Controller without writing namespace, thanks to ClassAliasAutoloader
+// and the instance is printed beautifully, thanks to casters provided by laravel
 $user = User::first()
 
-// which class aliases
+// which class aliases are defined
 sudo app('tinker')->loader->classes
 
 // like dir() in Python
@@ -79,7 +81,7 @@ $__file
 
 ```
 
-`eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly server which apply the opportunity to use shell online.
+`eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly server, but LaravelFly applies the opportunity to use shell online.
 
 There may be a problem with tabcompletion. see [tabcompletion only works "the second time](https://github.com/bobthecow/psysh/issues/435)
 
@@ -87,26 +89,24 @@ There may be a problem with tabcompletion. see [tabcompletion only works "the se
 
 ### A simple ab test 
 
-env:   
-ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
-php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
-
-`ab -k -n 1000 -c 10 http://zhenc.test/green `
-
-item   | fpm |  Fly Simple | Fly Coroutine
+.   | fpm |  Fly Mode Simple | Fly Mode Dict
 ------------ | ------------ | ------------- | ------------- 
-Time taken for tests | 325 | 193.44  | 29.17
+Time taken | 325 | 193.44  | 29.17
 Requests per second   | 3.08|  5.17  | 34.28
   50%  | 2538|   167  | 126
   80%  |   3213|  383   | 187
   99%   | 38584| 33720  | 3903
 
+* `ab -k -n 1000 -c 10 http://zhenc.test/green `
+* A visit to http://zhenc.test/green relates to 5 Models and 5 db query.
+* env:   
+ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
+php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
 * Test date : 2018/02
-* Visited url relates to 5 Modes and 5 db query.
 
 ## Usability 
 
-It's a composer package based on swoole and can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run same laravel project.
+It can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run the same laravel project.
 
 There is a nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm.conf) which let you use LaravelFlyServer as the primary server, and the phpfpm as a backup tool which will be passed requests when the LaravelFlyServer is unavailable. .
 
@@ -119,9 +119,9 @@ name | replacement
 header | Laravel api: $response->header
 setcookie | Laravel api: $response->cookie
 
-### Mode Simple vs Mode Coroutine
+### Mode Simple vs Mode Dict
 
-features  |  Mode Simple | Mode Coroutine 
+features  |  Mode Simple | Mode Dict 
 ------------ | ------------ | ------------- 
 global vars like $_GET, $_POST | yes  | no
 coroutine| no  | yes (conditional*)
@@ -135,4 +135,4 @@ coroutine| no  | yes (conditional*)
 
 ## Similar projects that use swoole and laravel
 
-* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: like LaravelFly, laravoole loads app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.
+* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.

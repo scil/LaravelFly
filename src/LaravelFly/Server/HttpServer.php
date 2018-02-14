@@ -80,11 +80,11 @@ class HttpServer implements ServerInterface
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
-        if (LARAVELFLY_MODE == 'Coroutine') {
+        if (LARAVELFLY_MODE == 'Dict') {
 
             $cid = \Swoole\Coroutine::getuid();
 
-            $laravel_request = (new \LaravelFly\Coroutine\IlluminateBase\Request())->createFromSwoole($request);
+            $laravel_request = (new \LaravelFly\Dict\IlluminateBase\Request())->createFromSwoole($request);
 
             $this->app->initForCorontine($cid);
 
@@ -117,7 +117,7 @@ class HttpServer implements ServerInterface
         $this->swooleResponse($response, $laravel_response);
 
 
-        if (LARAVELFLY_MODE == 'Coroutine') {
+        if (LARAVELFLY_MODE == 'Dict') {
 
             $requestKernel->terminate($laravel_request, $laravel_response);
 

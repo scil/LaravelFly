@@ -4,7 +4,7 @@
 
 Laravel's services/resources can be loaed following the start of swoole server or swoole worker.
 
-## Design For Speed 
+## Design
 
 ### 1. Laravel application is created `onWorkerStart`
 
@@ -35,9 +35,9 @@ The "$bootstrappers" is what Laravel do before handling a request, LaravelFly ex
 
 In Mode Simple, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
 
-In Mode Coroutine or Mode Greedy, providers in "config('laravelfly.providers_on_worker')" are registered and booted before any request. Other providers follow Mode Simple rule. 
+In Mode Dict or Mode Greedy, providers in "config('laravelfly.providers_on_worker')" are registered and booted before any request. Other providers follow Mode Simple rule. 
 
-And In Mode Coroutine or Mode Greedy, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".
+And In Mode Dict or Mode Greedy, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".
 
 In Mode Greedy, response to homepage visit would be 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
 ```
@@ -49,7 +49,7 @@ Route::get('/',function()use(&$a){
 ```
 Note, Mode Greedy is still experimental and only for study.
 
-Mode Coroutine is under dev and is future.
+Mode Dict is under dev and is future.
 
 ## Challenge: data pollution
 
@@ -57,7 +57,7 @@ Objects which created before request may be changed during a request, and the ch
 
 Global variables and static members have similar problems.
 
-Mode Coroutine is more complicated than Mode Simple or Greedy. Requests are not handled one by one.
+Mode Dict is more complicated than Mode Simple or Greedy. Requests are not handled one by one.
 
 There are three solutions..
 
@@ -67,6 +67,6 @@ The first solution can not use swoole's coroutine.
 
 The second is to clone or create new objects such as app/event/.. for each request. 
 
-The third is to refactor laravel's services, moving related members to a new associative array with coroutine id as keys. This method is called Mode Coroutine as it uses swoole coroutine.This mode is under dev.
+The third is to refactor laravel's services, moving related members to a new associative array with coroutine id as keys. This method is called Mode Dict as it uses swoole coroutine.This mode is under dev.
 
 

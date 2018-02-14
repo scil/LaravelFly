@@ -17,8 +17,8 @@ This line avoids error `Call to undefined function tinker()`  when you use php-f
 4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_MODE')) {
-    if (LARAVELFLY_MODE == 'Coroutine') {
-        class WhichKernel extends \LaravelFly\Coroutine\Kernel { }
+    if (LARAVELFLY_MODE == 'Dict') {
+        class WhichKernel extends \LaravelFly\Dict\Kernel { }
     }elseif (LARAVELFLY_MODE == 'Simple') {
         class WhichKernel extends \LaravelFly\Simple\Kernel { }
     } elseif (LARAVELFLY_MODE == 'FpmLike') {
@@ -43,7 +43,7 @@ class Kernel extends WhichKernel
     PDO::ATTR_PERSISTENT => true,
 ],
 ```
-* In Mode Coroutine,coroutine can be used for mysql. Please compile swoole with  --enable-coroutine, then disable xdebug, xhprof, or blackfire. Yes, currently, swoole not compatible with them. Third, add `'coroutine' => true,` to config/database. This feature is still under dev.And you must disable xdebug or similar library.
+* In Mode Dict,coroutine can be used for mysql. Please compile swoole with  --enable-coroutine, then disable xdebug, xhprof, or blackfire. Yes, currently, swoole not compatible with them. Third, add `'coroutine' => true,` to config/database. This feature is still under dev.And you must disable xdebug or similar library.
 ```
 'mysql' => [
     'driver' => 'mysql',

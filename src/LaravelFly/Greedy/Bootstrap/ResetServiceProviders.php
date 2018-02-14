@@ -2,7 +2,7 @@
 
 /**
  * * * * * * * * * * * * * * * * * * * * * * *
- * not used by Coroutine mode
+ * not used by Dict mode
  * * * * * * * * * * * * * * * * * * * * * * *
  */
 namespace LaravelFly\Greedy\Bootstrap;

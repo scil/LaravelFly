@@ -16,7 +16,7 @@ class Application extends \LaravelFly\Simple\Application
 
     /**
      * * * * * * * * * * * * * * * * * * * * * * *
-     * follow attributes are not used by Coroutine mode
+     * follow attributes are not used by Dict mode
      * * * * * * * * * * * * * * * * * * * * * * *
      */
     protected $providersToBootOnWorker = [];
@@ -42,7 +42,7 @@ class Application extends \LaravelFly\Simple\Application
 
     /**
      * * * * * * * * * * * * * * * * * * * * * * *
-     * follow methods are not used by Coroutine mode
+     * follow methods are not used by Dict mode
      * * * * * * * * * * * * * * * * * * * * * * *
      */
     public function setProvidersToBootOnWorker($ps)
