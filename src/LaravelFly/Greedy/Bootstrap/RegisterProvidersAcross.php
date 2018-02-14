@@ -1,10 +1,5 @@
 <?php
 
-/**
- * * * * * * * * * * * * * * * * * * * * * * *
- * not used by Dict mode
- * * * * * * * * * * * * * * * * * * * * * * *
- */
 namespace LaravelFly\Greedy\Bootstrap;
 
 use LaravelFly\Greedy\Application;

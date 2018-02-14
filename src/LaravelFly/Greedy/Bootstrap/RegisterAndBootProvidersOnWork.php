@@ -9,10 +9,9 @@ class RegisterAndBootProvidersOnWork
     public function bootstrap(Application $app)
     {
 
-        $appConfig = $app['config'];
-        $providers = $appConfig['laravelfly.providers_in_worker'];
+        $greedyConfig = require_once __DIR__.'/../config.php';
 
-        $providers = $appConfig['laravelfly.providers_on_worker'];
+        $providers = $greedyConfig['providers_on_worker'];
         $app->setProvidersToBootOnWorker($providers);
 
         $app->registerConfiguredProvidersBootOnWorker();

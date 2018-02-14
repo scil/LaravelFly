@@ -14,11 +14,6 @@ class Application extends \LaravelFly\Simple\Application
 
     protected $bootedOnWorker = false;
 
-    /**
-     * * * * * * * * * * * * * * * * * * * * * * *
-     * follow attributes are not used by Dict mode
-     * * * * * * * * * * * * * * * * * * * * * * *
-     */
     protected $providersToBootOnWorker = [];
 
 
@@ -40,11 +35,6 @@ class Application extends \LaravelFly\Simple\Application
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
 
-    /**
-     * * * * * * * * * * * * * * * * * * * * * * *
-     * follow methods are not used by Dict mode
-     * * * * * * * * * * * * * * * * * * * * * * *
-     */
     public function setProvidersToBootOnWorker($ps)
     {
         $this->providersToBootOnWorker = $ps;

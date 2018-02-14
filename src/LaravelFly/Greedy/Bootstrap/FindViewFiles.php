@@ -14,7 +14,9 @@ class FindViewFiles
      */
     public function bootstrap(Application $app)
     {
-        if ($views = $app->make('config')->get('laravelfly.views_to_find_in_worker')) {
+        $greedyConfig = require_once __DIR__.'/../config.php';
+
+        if ($views = $greedyConfig['views_to_find_in_worker']) {
             $finder = $app->make('view')->getFinder();
 
             try {
