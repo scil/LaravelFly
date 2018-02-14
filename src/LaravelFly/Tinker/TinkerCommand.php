@@ -12,6 +12,17 @@ class TinkerCommand extends \Laravel\Tinker\Console\TinkerCommand
 {
     public function getCasters()
     {
-        return parent::getCasters();
+        $casters = parent::getCasters();
+
+        if (class_exists('Swoole\Server\Port')) {
+            $casters['Swoole\Server\Port'] = 'LaravelFly\Tinker\TinkerCaster::castSwooleServerPort';
+        }
+        if (class_exists('Swoole\Http\Server')) {
+            $casters['Swoole\Http\Server'] = 'LaravelFly\Tinker\TinkerCaster::castSwooleHttpServer';
+        }
+
+        return $casters;
+
     }
+
 }

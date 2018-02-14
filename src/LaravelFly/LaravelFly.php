@@ -7,18 +7,21 @@ class LaravelFly
     /**
      * @var \LaravelFly\Server\ServerInterface
      */
-    protected $server;
+    protected static $server;
 
     /**
-     * @var \LaravelFly
+     * @var LaravelFly
      */
     protected static $instance;
 
-    public static function getInstance($options)
+    public static function getInstance($options = null)
     {
         if (!self::$instance) {
             try {
-                self::$instance = new static($options);
+                self::$instance = new static();
+                $class = LARAVELFLY_MODE == 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
+                unset($options['server']);
+                self::$server = new $class($options);
             } catch (\Throwable $e) {
                 die('[FAILED] ' . $e->getMessage() . PHP_EOL);
             }
@@ -26,16 +29,17 @@ class LaravelFly
         return self::$instance;
     }
 
-    function __construct(array $options)
+    static function getServer()
     {
-        $class = LARAVELFLY_MODE == 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
-        unset($options['server']);
-        $this->server = new $class($options);
+        if (!self::$instance) {
+            throw new \Exception('LaravelFly is not ready');
+        }
+        return  self::$server;
     }
 
     function start()
     {
-        $this->server->start();
+        static::getServer()->start();
     }
 
 }

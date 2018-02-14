@@ -10,12 +10,14 @@ namespace LaravelFly\Tinker;
 use Psy\Shell as BaseShell;
 use Psy\Configuration;
 use Illuminate\Console\Command;
-use Laravel\Tinker\ClassAliasAutoloader;
 use Symfony\Component\Console\Input\InputArgument;
 
 class Shell extends \Psy\Shell
 {
-    protected $config;
+    /**
+     * @var Configuration
+     */
+    protected static $config;
 
     /**
      * @var \Illuminate\Foundation\Application
@@ -32,15 +34,15 @@ class Shell extends \Psy\Shell
      */
     static $instance;
 
+    /**
+     * @var ClassAliasAutoloader
+     */
     protected $loader;
 
 
     public function __construct(Configuration $config = null)
     {
         parent::__construct($config);
-        $this->config = $config ?: new Configuration();
-        $this->config->setShell($this);
-        \Psy\info($this->config);
     }
 
     /**
@@ -48,8 +50,9 @@ class Shell extends \Psy\Shell
      */
     static function make($server)
     {
-        $config = new Configuration([
-            'updateCheck' => 'never'
+        static::$config = $config = new Configuration([
+            'updateCheck' => 'never',
+            'eraseDuplicates' => true,
         ]);
 
         $tk = new TinkerCommand();
@@ -60,11 +63,15 @@ class Shell extends \Psy\Shell
 
         static::$instance = $shell = new Shell($config);
 
+        $config->setShell($shell);
+
+        \Psy\info($config);
+
         $shell->server = $server;
 
         $commands = $shell->getDefaultCommands();
         // this will overwrite Psy's WhereamiCommand
-        $commands[] = new WhereamiCommand($shell->config->colorMode());
+        $commands[] = new WhereamiCommand($config->colorMode());
 
         $shell->addCommands($commands);
         //todo
@@ -79,14 +86,10 @@ class Shell extends \Psy\Shell
         }
     }
 
-    /**
-     * @param $app \Illuminate\Foundation\Application
-     */
-    static function withApplication($app)
+    static function addAlias($array)
     {
         $shell = static::$instance;
-
-        $app->instance('tinker', $shell);
+        $shell->loader->addClasses($array);
     }
 
     static function debug(array $vars = array(), $boundObject = null)

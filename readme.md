@@ -47,7 +47,38 @@ Visit 'http://server.name/hi' from localhost, enter tinker shell and do like thi
 
 [![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
 
-The tinker() demo to read/write vars, use Log::info and so on.
+The tinker() demo to read/write vars, use Log::info. You can try these commands:
+```php
+// visit private members
+sudo app()->booted
+
+// use Mode or Controller without writing namespace, thanks to ClassAliasAutoloader provided by laravel
+// and ode instance are printed beautifully, thanks to casters provided by laravel TinkerCommand 
+$user = User::first()
+
+// which class aliases
+sudo app('tinker')->loader->classes
+
+// like dir() in Python
+ls -la $user
+
+// read doc
+doc $user->save
+
+// check code
+show $user->query
+
+// check server pid and pidfile
+LaravelFly::getServer()
+
+// run shell commands
+`pwd && ls `
+
+$__file
+
+```
+
+`eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly/swoole server which apply the opportunity to use shell online.
 
 ## Speed Test
 

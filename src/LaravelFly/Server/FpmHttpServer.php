@@ -40,8 +40,7 @@ class FpmHttpServer implements ServerInterface
 
     public function onWorkerStart()
     {
-        if (LARAVELFLY_TINKER)
-            \LaravelFly\Tinker\Shell::make($this);
+        $this->initTinker();
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
@@ -49,9 +48,7 @@ class FpmHttpServer implements ServerInterface
 
         $app = new $this->appClass($this->root);
 
-        if (LARAVELFLY_TINKER){
-            \LaravelFly\Tinker\Shell::withApplication($app);
-        }
+        $this->withTinker($app);
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,

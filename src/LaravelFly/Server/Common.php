@@ -103,10 +103,7 @@ Trait Common
         $this->kernel = $this->app->make(\Illuminate\Contracts\Http\Kernel::class);
 
 
-        if (LARAVELFLY_TINKER) {
-            \LaravelFly\Tinker\Shell::make($this);
-            \LaravelFly\Tinker\Shell::withApplication($this->app);
-        }
+        $this->initTinker($this->app);
 
     }
 
@@ -162,5 +159,30 @@ Trait Common
         // $response->gzip(1);
 
         $response->end($laravel_response->getContent());
+    }
+
+    protected function initTinker($app = null)
+    {
+        if (!LARAVELFLY_TINKER) return;
+
+        \LaravelFly\Tinker\Shell::make($this);
+
+        \LaravelFly\Tinker\Shell::addAlias([
+            \LaravelFly\LaravelFly::class,
+        ]);
+
+        if ($app) {
+            $this->withTinker($app);
+        }
+    }
+
+    protected function withTinker(\Illuminate\Foundation\Application $app = null)
+    {
+        if (!LARAVELFLY_TINKER) return;
+
+        $shell = \LaravelFly\Tinker\Shell::$instance;
+        $app = $app ?: $this->app;
+        $app->instance('tinker', $shell);
+
     }
 }
