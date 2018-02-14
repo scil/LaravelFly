@@ -2,6 +2,8 @@
 
 namespace LaravelFly;
 
+use LaravelFly\Exception\LaravelFlyException as Exception;
+
 class LaravelFly
 {
     /**
@@ -16,6 +18,7 @@ class LaravelFly
 
     public static function getInstance($options = null)
     {
+
         if (!self::$instance) {
             try {
                 self::$instance = new static();
@@ -23,7 +26,7 @@ class LaravelFly
                 unset($options['server']);
                 self::$server = new $class($options);
             } catch (\Throwable $e) {
-                die('[FAILED] ' . $e->getMessage() . PHP_EOL);
+                throw new Exception($e->getMessage());
             }
         }
         return self::$instance;
@@ -32,9 +35,9 @@ class LaravelFly
     static function getServer()
     {
         if (!self::$instance) {
-            throw new \Exception('LaravelFly is not ready');
+            throw new Exception('LaravelFly is not ready');
         }
-        return  self::$server;
+        return self::$server;
     }
 
     function start()

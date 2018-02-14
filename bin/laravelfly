@@ -61,6 +61,9 @@ exit();
 start:
 include $root . '/vendor/autoload.php';
 
+if (class_exists('NunoMaduro\Collision\Provider'))
+    (new \NunoMaduro\Collision\Provider)->register();
+
 if (LARAVELFLY_MODE == 'Coroutine') {
     include __DIR__ . "/../src/fly/Container.php";
     include __DIR__ . "/../src/fly/Application.php";

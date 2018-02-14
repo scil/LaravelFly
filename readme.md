@@ -1,4 +1,4 @@
-Tinker can be used online and laravel can be much faster by LaravelFly. Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
+LaravelFly runs Laravel much faster, and Tinker can be used online(when Laravel is working). Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
 ## Doc
 
@@ -74,11 +74,14 @@ LaravelFly::getServer()
 // run shell commands
 `pwd && ls `
 
+// magic var
 $__file
 
 ```
 
-`eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly/swoole server which apply the opportunity to use shell online.
+`eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly server which apply the opportunity to use shell online.
+
+There may be a problem with tabcompletion. see [tabcompletion only works "the second time](https://github.com/bobthecow/psysh/issues/435)
 
 ## Speed Test
 
@@ -109,19 +112,19 @@ There is a nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to
 
 ## Tips for use
 
-### Mode Simple vs Mode Coroutine
-
-features  |  Mode Simple | Mode Coroutine 
------------- | ------------ | ------------- 
-global vars like $_GET, $_POST | yes  | no
-coroutine| no  | yes (conditional*)
-
 ### php functions not fit Swoole/LaravelFly
 
 name | replacement
 ------------ | ------------ 
 header | Laravel api: $response->header
 setcookie | Laravel api: $response->cookie
+
+### Mode Simple vs Mode Coroutine
+
+features  |  Mode Simple | Mode Coroutine 
+------------ | ------------ | ------------- 
+global vars like $_GET, $_POST | yes  | no
+coroutine| no  | yes (conditional*)
 
 ### Todo
 

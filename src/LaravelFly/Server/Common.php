@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Server;
 
+use LaravelFly\Exception\LaravelFlyException as Exception;
 
 Trait Common
 {
@@ -82,7 +83,7 @@ Trait Common
         try {
             $this->server->start();
         } catch (\Throwable $e) {
-            die('[FAILED] ' . $e->getMessage() . PHP_EOL);
+            throw new Exception($e->getMessage());
         }
     }
 

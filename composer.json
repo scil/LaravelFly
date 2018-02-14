@@ -18,7 +18,8 @@
     "ext-swoole": "^1.9.23 || >=2.1.0"
   },
   "require-dev": {
-      "eaglewu/swoole-ide-helper": "dev-master"
+    "eaglewu/swoole-ide-helper": "dev-master",
+    "nunomaduro/collision": "^1.1"
   },
   "autoload": {
     "files": [
