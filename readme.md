@@ -10,7 +10,28 @@ Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://git
 
 [How LaravelFly Works](doc/design.md)
 
+## Speed Test
+
+### A simple ab test 
+
+ `ab -k -n 1000 -c 10 http://zc.test/green `
+
+.   | fpm |  Fly Mode Simple | Fly Mode Dict
+------------ | ------------ | ------------- | ------------- 
+Requests per second   | 3 |  5  | 34
+Time taken ≈ | 325 | 195  | 30
+  50%  | 2538|   167  | 126
+  80%  |   3213|  383   | 187
+  99%   | 38584| 33720  | 3903
+
+* A visit to http://zhenc.test/green relates to 5 Models and 5 db query.
+* env:   
+ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
+php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
+* Test date : 2018/02
 ## Tinker online: use tinker when laravel is working
+
+### used in router
 
 ```php
 Route::get('hi', function () {
@@ -24,7 +45,7 @@ Route::get('hi', function () {
 });
 ```
 
-blade file
+### used in view file
 
 ```blade.php
 @php(eval(tinker()))
@@ -49,7 +70,9 @@ Visit 'http://server.name/hi' from localhost, enter tinker shell and do like thi
 
 [![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
 
-The tinker() demo to read/write vars, use Log::info. You can try these commands:
+The tinker() demo to read/write vars, use Log::info. 
+
+### You can try these commands:
 ```php
 // visit private members
 sudo app()->booted
@@ -85,24 +108,6 @@ $__file
 
 There may be a problem with tabcompletion. see [tabcompletion only works "the second time](https://github.com/bobthecow/psysh/issues/435)
 
-## Speed Test
-
-### A simple ab test 
-
-.   | fpm |  Fly Mode Simple | Fly Mode Dict
------------- | ------------ | ------------- | ------------- 
-Time taken | 325 | 193.44  | 29.17
-Requests per second   | 3.08|  5.17  | 34.28
-  50%  | 2538|   167  | 126
-  80%  |   3213|  383   | 187
-  99%   | 38584| 33720  | 3903
-
-* `ab -k -n 1000 -c 10 http://zhenc.test/green `
-* A visit to http://zhenc.test/green relates to 5 Models and 5 db query.
-* env:   
-ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
-php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
-* Test date : 2018/02
 
 ## Usability 
 
