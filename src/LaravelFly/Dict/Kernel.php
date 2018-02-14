@@ -35,6 +35,7 @@ class Kernel extends HttpKernel
         \LaravelFly\Dict\Bootstrap\ReadProvidersConfig::class,
         \LaravelFly\Dict\Bootstrap\RegisterAcrossProviders::class,
         \LaravelFly\Dict\Bootstrap\RegisterAndBootProvidersOnWork::class,
+        \LaravelFly\Dict\Bootstrap\ResolveSomeFacadeAliases::class,
         \LaravelFly\Dict\Bootstrap\ResetServiceProviders::class,
 
         //todo

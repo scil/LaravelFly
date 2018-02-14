@@ -2,9 +2,6 @@
 /**
  * a file intended to replace official Filesystem, now it's not in use, because tests not show very good performance.
 
- * use thie file:.add tow lines to end of LaravelFlyServer::onWorkerStart (why? because Co::fread/fwrite only work in Dict
-        Facade::clearResolvedInstances();
-        $this->workerApp->instance('files',new \LaravelFly\Dict\Illuminate\Filesystem());
  * use note:  views should be compiled before any requests, otherwise something like flock should be used.
 
  * test swoole api :  add routes:

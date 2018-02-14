@@ -58,6 +58,10 @@ return [
      *      proverder5=> null,           // this provider will not be booted on worker too.
      */
     'providers_on_worker' => [
+        // this is not in config('app.providers') and has once registered in Application:;registerBaseServiceProviders
+        Illuminate\Log\LogServiceProvider::class => [
+            'log' => true,
+        ],
         LaravelFly\Dict\Illuminate\Auth\AuthServiceProvider::class => [
             '_replace' => Illuminate\Auth\AuthServiceProvider::class,
         ],
@@ -131,7 +135,6 @@ return [
         App\Providers\RouteServiceProvider::class => [],
 
     ],
-
 
     /**
      * Which properties of base services need to backup. Only for Mode One or Greedy

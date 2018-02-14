@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Dict;
 
+use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 use LaravelFly\Application as App;
 use LaravelFly\Dict\IlluminateBase\EventServiceProvider;
@@ -90,6 +91,7 @@ class Application extends \Illuminate\Foundation\Application
          * @todo test
          */
         ServiceProvider::initForCorontine($cid);
+        Facade::initForCorontine($cid);
         $this->make('events')->initForCorontine($cid);
         $this->instance('url', clone $this->make('url'));
         $this->make('router')->initForCorontine($cid);
@@ -105,6 +107,8 @@ class Application extends \Illuminate\Foundation\Application
         $this->make('router')->delForCoroutine($cid);
 
         ServiceProvider::delForCoroutine($cid);
+
+        Facade::delForCoroutine($cid);
 
         //this should be the last second, events maybe used by anything, like dispatch 'cor.end'
         $this->make('events')->delForCoroutine($cid);
@@ -196,6 +200,24 @@ class Application extends \Illuminate\Foundation\Application
         foreach ($this->CFServices as $service) {
             $this->make($service);
         }
+    }
+
+    public function instanceResolvedOnWorker($abstract)
+    {
+        if ($this->isAlias($abstract)) {
+            $abstract = $this->getAlias($abstract);
+        }
+
+        return isset(static::$corDict[WORKER_COROUTINE_ID]['instances'][$abstract]);
+
+    }
+    public function getInstanceOnWorker($abstract){
+
+        if ($this->isAlias($abstract)) {
+            $abstract = $this->getAlias($abstract);
+        }
+
+        return static::$corDict[WORKER_COROUTINE_ID]['instances'][$abstract];
     }
 
     public function resetServiceProviders()

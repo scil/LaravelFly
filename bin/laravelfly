@@ -74,7 +74,9 @@ if (LARAVELFLY_MODE == 'Dict') {
     include __DIR__ . "/../src/fly/ViewConcerns/ManagesLoops.php";
     include __DIR__ . "/../src/fly/ViewConcerns/ManagesStacks.php";
     include __DIR__ . "/../src/fly/ViewConcerns/ManagesTranslations.php";
+    include __DIR__ . "/../src/fly/Facade.php";
 
+    //blackhole
     include __DIR__ . "/../src/fly/Controller.php";
     include __DIR__ . "/../src/fly/Relation.php";
     include __DIR__ . "/../src/fly/Collection.php";
