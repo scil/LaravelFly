@@ -21,10 +21,10 @@ class TinkerCaster
     ];
 
     private static $swooleServerProperties = [
-        'master_pid',
-        'manager_pid',
         'worker_id',
         'worker_pid',
+        'master_pid',
+        'manager_pid',
         'taskworker',
         'connections',
 //        'host',
@@ -63,6 +63,10 @@ class TinkerCaster
     public static function castSwooleHttpServer($server)
     {
         $results = [];
+
+        if($server->setting['worker_num']>1){
+            $results[Caster::PREFIX_VIRTUAL . '** TIP **'] = 'worker_id and worker_pid are of only the worker in which tinker() runs';
+        }
 
         foreach (self::$swooleServerProperties as $prop) {
             $v = $server->$prop;
