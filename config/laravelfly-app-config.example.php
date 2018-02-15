@@ -89,6 +89,7 @@ return [
             'encrypter' => true,
         ],
         Illuminate\Filesystem\FilesystemServiceProvider::class => [
+            'files' => true,
             'filesystem.disk' => true,
             'filesystem.cloud' => LARAVELFLY_CF_SERVICES['filesystem.cloud'],
         ],
