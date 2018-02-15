@@ -65,24 +65,24 @@ if (class_exists('NunoMaduro\Collision\Provider'))
     (new \NunoMaduro\Collision\Provider)->register();
 
 if (LARAVELFLY_MODE == 'Dict') {
-    include __DIR__ . "/../src/fly/Container.php";
-    include __DIR__ . "/../src/fly/Application.php";
-    include __DIR__ . "/../src/fly/ServiceProvider.php";
-    include __DIR__ . "/../src/fly/Router.php";
-    include __DIR__ . "/../src/fly/ViewConcerns/ManagesComponents.php";
-    include __DIR__ . "/../src/fly/ViewConcerns/ManagesLayouts.php";
-    include __DIR__ . "/../src/fly/ViewConcerns/ManagesLoops.php";
-    include __DIR__ . "/../src/fly/ViewConcerns/ManagesStacks.php";
-    include __DIR__ . "/../src/fly/ViewConcerns/ManagesTranslations.php";
-    include __DIR__ . "/../src/fly/Facade.php";
+    require __DIR__ . "/../src/fly/Container.php";
+    require __DIR__ . "/../src/fly/Application.php";
+    require __DIR__ . "/../src/fly/ServiceProvider.php";
+    require __DIR__ . "/../src/fly/Router.php";
+    require __DIR__ . "/../src/fly/ViewConcerns/ManagesComponents.php";
+    require __DIR__ . "/../src/fly/ViewConcerns/ManagesLayouts.php";
+    require __DIR__ . "/../src/fly/ViewConcerns/ManagesLoops.php";
+    require __DIR__ . "/../src/fly/ViewConcerns/ManagesStacks.php";
+    require __DIR__ . "/../src/fly/ViewConcerns/ManagesTranslations.php";
+    require __DIR__ . "/../src/fly/Facade.php";
 
     //blackhole
-    include __DIR__ . "/../src/fly/Controller.php";
-    include __DIR__ . "/../src/fly/Relation.php";
-    include __DIR__ . "/../src/fly/Collection.php";
+    require __DIR__ . "/../src/fly/Controller.php";
+    require __DIR__ . "/../src/fly/Relation.php";
+    require __DIR__ . "/../src/fly/Collection.php";
 }
 
-include $root . '/vendor/scil/laravel-fly/src/functions.php';
+require $root . '/vendor/scil/laravel-fly/src/functions.php';
 
 unset($root, $config_file, $pid_file, $pid);
 \LaravelFly\LaravelFly::getInstance($options)->start();
