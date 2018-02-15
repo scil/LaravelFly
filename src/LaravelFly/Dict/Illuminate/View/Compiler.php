@@ -11,6 +11,16 @@ namespace LaravelFly\Dict\Illuminate\View;
 
 trait Compiler
 {
+    /**
+     * save view info.
+     *
+     * structure:
+     * [
+     *      path1=>[compiledPath, compiledTime],
+     *      path2=>...
+     * ]
+     * @var array
+     */
     protected static $map = [];
 
     public function getCompiledPath($path)

@@ -1,4 +1,8 @@
 <?php
+/**
+ * add cache for view mtime and compiled file
+ *
+ */
 
 namespace LaravelFly\Dict\Illuminate\View;
 

@@ -46,7 +46,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     }
 
     /**
-     * overwwite laravel offical's 'blade.compiler' to use cache view's info
+     * overwwite laravel offical's 'blade.compiler' to cache view's info
      *
      * @param EngineResolver $resolver
      */
