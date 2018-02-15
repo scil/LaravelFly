@@ -58,7 +58,7 @@ class HttpServer implements ServerInterface
      * @see  \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
      *
      */
-    public function onWorkerStart()
+    public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
         opcache_reset();
 

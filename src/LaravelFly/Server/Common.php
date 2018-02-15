@@ -90,21 +90,21 @@ Trait Common
     public function startLaravel()
     {
 
-        $this->app = new $this->appClass($this->root);
+        $this->app = $app = new $this->appClass($this->root);
 
-        $this->app->singleton(
+        $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             $this->kernelClass
         );
-        $this->app->singleton(
+        $app->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
             \App\Exceptions\Handler::class
         );
 
-        $this->kernel = $this->app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
 
-        $this->initTinker($this->app);
+        $this->initTinker($app);
 
     }
 
