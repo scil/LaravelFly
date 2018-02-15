@@ -1,12 +1,12 @@
-## Key concept: swoole worker.
+# Key concept: swoole worker.
 
 [Swoole](https://github.com/swoole/swoole-src) is an event-based tool. The memory allocated in Swoole worker will not be free'd after a request. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would first finish its work then die, and a new worker will be created.
 
 Laravel's services/resources can be loaed following the start of swoole server or swoole worker.
 
-## Design
+# Design
 
-### 1. Laravel application is created `onWorkerStart`
+## 1. Laravel application is created `onWorkerStart`
 
 This means: There's an application in each worker process. When a new worker starts, a new application is made.
 
@@ -16,7 +16,7 @@ Goods:
 
 BTW, in Mode FpmLike, all objects are loaded onRequest, like php-fpm. Mode FpmLike does nothing except converting swoole request to laravel request and laravel reponse to swoole response.It just provides a opportunity to use tinker() or similar shells online.
 
-### 2. Load services `onWorkerStart` as many as possbile?
+## 2. Load services `onWorkerStart` as many as possbile?
 
 Before handling a request, laravel does much work.
 
@@ -69,4 +69,4 @@ The second is to clone or create new objects such as app/event/.. for each reque
 
 The third is to refactor laravel's services, moving related members to a new associative array with coroutine id as keys. This method is called Mode Dict as it uses swoole coroutine.This mode is under dev.
 
-
+#  Minor improvement
