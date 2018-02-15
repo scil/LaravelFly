@@ -32,8 +32,19 @@ class WhereamiCommand extends \Psy\Command\WhereamiCommand
      */
     protected function trace()
     {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,13);
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
 
         return end($backtrace);
+    }
+
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        parent::execute($input, $output);
+        // It's not good for these lines to put here, but handy.
+        $output->startPaging();
+        $output->writeln(sprintf('Tip <info>%s.%s</info>:', 'All info available in this shell are about only objects in current worker process', 'PID:'.getmypid()));
+        $output->writeln('');
+        $output->stopPaging();
     }
 }
