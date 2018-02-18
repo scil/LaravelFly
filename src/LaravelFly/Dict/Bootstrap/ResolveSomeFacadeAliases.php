@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Dict\Bootstrap;
 
+use Illuminate\Foundation\PackageManifest;
 use Illuminate\Support\Facades\Facade;
 use LaravelFly\Dict\Application;
 
@@ -18,8 +19,11 @@ class ResolveSomeFacadeAliases
     public function bootstrap(Application $app)
     {
 
-        $aliasAndInstance = [];
-        foreach (array_keys($app->make('config')->get('app.aliases')) as $staticClass) {
+        $all = array_keys(array_merge(
+            $app->make('config')->get('app.aliases'),
+            $app->make(PackageManifest::class)->aliases()));
+
+        foreach ($all as $staticClass) {
             if (in_array($staticClass, $this->black)) {
                 continue;
             }
@@ -33,17 +37,18 @@ class ResolveSomeFacadeAliases
             }
 
             $method->setAccessible(true);
-            $alias = $method->invoke(null);
-            if (is_object($alias)) {
+            $facadeAccessor = $method->invoke(null);
+
+            if (is_object($facadeAccessor)) {
                 // such as \Illuminate\Support\Facades\Blade
                 continue;
             }
 
-            if ($app->instanceResolvedOnWorker($alias)) {
-                $aliasAndInstance[$alias] = $app->getInstanceOnWorker($alias);
+            if ($app->instanceResolvedOnWorker($facadeAccessor)) {
+                echo $staticClass,"\n";
+                $staticClass::getFacadeRoot();
             }
         }
-        Facade::initOnWorker($aliasAndInstance);
 
     }
 }

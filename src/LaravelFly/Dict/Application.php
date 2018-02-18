@@ -206,16 +206,6 @@ class Application extends \Illuminate\Foundation\Application
 
     }
 
-    public function getInstanceOnWorker($abstract)
-    {
-
-        if ($this->isAlias($abstract)) {
-            $abstract = $this->getAlias($abstract);
-        }
-
-        return static::$corDict[WORKER_COROUTINE_ID]['instances'][$abstract];
-    }
-
     public function resetServiceProviders()
     {
         static::$corDict[\Swoole\Coroutine::getuid()]['serviceProviders'] = [];

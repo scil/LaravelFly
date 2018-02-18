@@ -73,7 +73,7 @@ Visit 'http://server.name/hi' from localhost, enter tinker shell and do like thi
 
 The tinker() demo to read/write vars, use Log::info. 
 
-### You can try these commands:
+### You can try these commands in tinker:
 ```php
 // visit private members
 sudo app()->booted
@@ -82,7 +82,7 @@ sudo app()->booted
 // and the instance is printed beautifully, thanks to casters provided by laravel
 $user = User::first()
 
-// which class aliases are defined
+// which class aliases are defined in tinker
 sudo app('tinker')->loader->classes
 
 // like dir() in Python
