@@ -1,4 +1,4 @@
-LaravelFly runs Laravel much faster, and make Tinker to be used online(when Laravel is working).
+LaravelFly runs Laravel much faster, and make Tinker to be used online(use tinker while Laravel is responding requests from browsers).
 
 Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
@@ -6,7 +6,7 @@ Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://git
 
 [Install & Config](doc/install.md)
 
-[Run, Stop, Restop, Load & Debug](doc/server.md)
+[Run, Reload & Debug](doc/server.md)
 
 [How LaravelFly Works](doc/design.md)
 
@@ -29,6 +29,7 @@ Time taken ≈ | 325 | 195  | 30
 ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
 php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
 * Test date : 2018/02
+
 ## Tinker online: use tinker when laravel is working
 
 ### used in router
@@ -135,8 +136,8 @@ coroutine| no  | yes (conditional*)
 
 ### Todo
 
-- [ ] add tests
 - [ ] Laravel5.5, like package auto-detection
+- [ ] add tests
 - [ ] send file
 - [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
 

@@ -131,14 +131,8 @@ class Application extends \Illuminate\Foundation\Application
 
     public function registerAcrossProviders()
     {
-        $config = $this->make('config');
-        $providers = array_diff(
-        // providers in request have remove from 'app.providers' by CleanProviders
-            $config->get('app.providers'),
-            $this->providersToBootOnWorker
-        );
 
-        if ($providers) {
+        if ($providers = $this->make('config')->get('app.providers')) {
             $serviceProvidersBack = static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'];
             static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'] = [];
 
@@ -211,7 +205,9 @@ class Application extends \Illuminate\Foundation\Application
         return isset(static::$corDict[WORKER_COROUTINE_ID]['instances'][$abstract]);
 
     }
-    public function getInstanceOnWorker($abstract){
+
+    public function getInstanceOnWorker($abstract)
+    {
 
         if ($this->isAlias($abstract)) {
             $abstract = $this->getAlias($abstract);

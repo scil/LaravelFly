@@ -20,8 +20,10 @@ return [
      */
     'providers_ignore' => [
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        Laravel\Tinker\TinkerServiceProvider::class,
+        Fideloper\Proxy\TrustedProxyServiceProvider::class,
         LaravelFly\Providers\PublishServiceProvider::class,
-        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
     ],
 
     /**
@@ -134,6 +136,11 @@ return [
             [] : false,
         App\Providers\EventServiceProvider::class => [],
         App\Providers\RouteServiceProvider::class => [],
+
+        // Collision is an error handler framework for console/command-line PHP applications such as laravelfly
+        NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class =>[
+            Illuminate\Contracts\Debug\ExceptionHandler::class=>true,
+        ],
 
     ],
 

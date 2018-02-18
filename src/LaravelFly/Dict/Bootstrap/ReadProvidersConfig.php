@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Dict\Bootstrap;
 
+use Illuminate\Foundation\PackageManifest;
 use LaravelFly\Dict\Application;
 
 class ReadProvidersConfig
@@ -20,11 +21,11 @@ class ReadProvidersConfig
         $providersOnWork = [];
         foreach ($worker_providers as $provider => $providerConfig) {
 
-            if($providerConfig===false || is_null($providerConfig)) continue;
+            if ($providerConfig === false || is_null($providerConfig)) continue;
 
             $providersOnWork[] = $provider;
 
-            if(!is_array($providerConfig)) continue;
+            if (!is_array($providerConfig)) continue;
 
             if (isset($providerConfig['_replace'])) {
                 $providersReplaced[] = $providerConfig['_replace'];
@@ -39,8 +40,8 @@ class ReadProvidersConfig
                 // true $config only works when empty $officalCFServices
                 if ($config === true && !$officalCFServices) {
                     $curCFServices[] = $CFS_name;
-                }elseif($config===false && in_array($CFS_name,$officalCFServices)){
-                    $curCFServices=array_diff($curCFServices,[$CFS_name]);
+                } elseif ($config === false && in_array($CFS_name, $officalCFServices)) {
+                    $curCFServices = array_diff($curCFServices, [$CFS_name]);
                 }
             }
 
@@ -50,9 +51,14 @@ class ReadProvidersConfig
             }
         }
 
+        $providersInComposer = $app->make(PackageManifest::class)->providers();
+        $allProviders = array_merge($appConfig['app.providers'], $providersInComposer);
+
+        // 'app.providers' only providers across
         $appConfig['app.providers'] = array_diff(
-            $appConfig['app.providers'],
+            $allProviders,
             $providersReplaced,
+            $providersOnWork,
             $psInRequest,
             $appConfig['laravelfly.providers_ignore']
         );
