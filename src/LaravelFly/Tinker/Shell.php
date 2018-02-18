@@ -81,9 +81,7 @@ class Shell extends \Psy\Shell
 
         $shell->loader = ClassAliasAutoloader::register($shell, $path);
 
-        if ($shell->has('whereami')) {
-            $shell->addInput('whereami -n3', true);
-        }
+        $shell->addInput('whereami -n3', true);
     }
 
     static function addAlias($array)

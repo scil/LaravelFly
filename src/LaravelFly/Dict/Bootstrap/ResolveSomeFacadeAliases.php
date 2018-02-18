@@ -45,7 +45,6 @@ class ResolveSomeFacadeAliases
             }
 
             if ($app->instanceResolvedOnWorker($facadeAccessor)) {
-                echo $staticClass,"\n";
                 $staticClass::getFacadeRoot();
             }
         }

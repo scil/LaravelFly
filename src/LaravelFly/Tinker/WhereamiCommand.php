@@ -32,18 +32,31 @@ class WhereamiCommand extends \Psy\Command\WhereamiCommand
      */
     protected function trace()
     {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
+        foreach (array_reverse(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)) as $stackFrame) {
+            if ($this->isDebugCall($stackFrame)) {
+                return $stackFrame;
+            }
+        }
+
 
         return end($backtrace);
     }
 
+    protected static function isDebugCall(array $stackFrame)
+    {
+        $class = isset($stackFrame['class']) ? $stackFrame['class'] : null;
+        $function = isset($stackFrame['function']) ? $stackFrame['function'] : null;
+
+        return ($class === 'LaravelFly\Tinker\Shell' && in_array($function, array('__construct', 'debug'))) ||
+            ($class === null && $function === 'tinker');
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
         // It's not good for these lines to put here, but handy.
         $output->startPaging();
-        $output->writeln(sprintf('Tip <info>%s.%s</info>:', 'All info available in this shell are about only objects in current worker process', 'PID:'.getmypid()));
+        $output->writeln(sprintf('Tip <info>%s.%s</info>:', 'All info available in this shell are about only objects in current worker process', 'PID:' . getmypid()));
         $output->writeln('');
         $output->stopPaging();
     }
