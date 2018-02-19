@@ -1,9 +1,9 @@
 
-## Run
+## Start
 
 Execute 
 ```
-vendor/bin/laravelfly start [$server_config_file]
+php vendor/scil/laravel-fly/bin/fly start [$server_config_file]
 ```
 Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly..php`.
 
@@ -17,16 +17,16 @@ Two methods:
 
 * Execute 
 ```
-vendor/bin/laravelfly stop [$server_config_file]
+php vendor/scil/laravel-fly/bin/fly stop [$server_config_file]
 ```
 
-* in php code file, you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->shutdown();` .
+* in php code file, you can make your own swoole http server by extending 'LaravelFly\Server\HttpServer', and use `$this->server->shutdown();` .
 
 
 ## Restart
 
 ```
-vendor/bin/laravelfly restart [$server_config_file]
+php vendor/scil/laravel-fly/bin/fly restart [$server_config_file]
 ```
 
 
@@ -34,12 +34,12 @@ vendor/bin/laravelfly restart [$server_config_file]
 
 LaravelFlyServer runs in cli mode, so LaravelFly debug is to debug a script 
 ```
-php vendor/scil/laravel-fly/bin/laravelfly <start|stop|restart>
+php vendor/scil/laravel-fly/bin/fly <start|stop|restart>
 ```
 
 To debug LaravelFly on a remote host such as vagrant, read [Debugging remote CLI with phpstorm](http://www.adayinthelifeof.nl/2012/12/20/debugging-remote-cli-with-phpstorm/?utm_source=tuicool&utm_medium=referral) then use a command like this:
 ```
-php -dxdebug.remote_host=192.168.1.2  vendor/scil/laravel-fly/bin/laravelfly <start|stop|restart>
+php -dxdebug.remote_host=192.168.1.2  vendor/scil/laravel-fly/bin/fly <start|stop|restart>
 ```
 replace 192.168.1.2 with your ip where phpstorm is.
 
@@ -58,16 +58,10 @@ Gracefully is that: worker willl finish its work before die.
 ### Two methods to reload
 * Execute 
 ```
-vendor/bin/laravelfly reload [$server_config_file]
+php vendor/scil/laravel-fly/bin/fly reload [$server_config_file]
 ```
 
-* in php , you can make your own swoole http server by extending 'LaravelFlyServer', and use `$this->swoole_http_server->reload();` under some conditions like some files changed.
-
-### Details:
-1. Send USR1 to swoole manager process
-2. swoole manager process send TERM to all worker processes
-3. Every worker first finish it's work, then call OnWorkerStop callback, then kill itself.
-4. manager process creates new worker processes.
+* in php , you can make your own swoole http server by extending 'LaravelFly\Server\HttpServer', and use `$this->server->reload();` under some conditions like some files changed.
 
 ## Hot Reload On Code Change
 

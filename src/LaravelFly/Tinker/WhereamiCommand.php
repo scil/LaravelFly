@@ -38,7 +38,6 @@ class WhereamiCommand extends \Psy\Command\WhereamiCommand
             }
         }
 
-
         return end($backtrace);
     }
 

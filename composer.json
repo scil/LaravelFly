@@ -29,9 +29,6 @@
       "LaravelFly\\": "src/LaravelFly/"
     }
   },
-  "bin": [
-    "bin/laravelfly"
-  ],
   "extra": {
     "laravel": {
       "providers": [

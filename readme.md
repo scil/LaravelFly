@@ -6,7 +6,7 @@ Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://git
 
 [Install & Config](doc/install.md)
 
-[Run, Reload & Debug](doc/server.md)
+[Start, Reload & Debug](doc/server.md)
 
 [How LaravelFly Works](doc/design.md)
 

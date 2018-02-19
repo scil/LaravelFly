@@ -158,6 +158,10 @@ return [
 
         /* Illuminate\Routing\RoutingServiceProvider::class : */
         'router' => [
+            /** depends
+             * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
+             */
+            // 'middleware','middlewareGroups','middlewarePriority',
 
             /** not necessary to backup,
              * it will be changed during next request
@@ -168,11 +172,6 @@ return [
              * the ref to app('request') will be released during next request
              * //'currentRequest',
              */
-
-            /** depends
-             * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
-             */
-            // 'middleware','middlewareGroups','middlewarePriority',
 
             'obj.routes' => [
                 /** depends
@@ -186,6 +185,10 @@ return [
         ], /* end 'router' */
 
         'url' => [
+            /* depends */
+            // 'forcedRoot', 'forceSchema',
+            // 'cachedRoot', 'cachedSchema',
+
             /** not necessary to backup,
              *
              * the ref to app('request') will be released during next request;
@@ -193,10 +196,6 @@ return [
              *      $app->rebinding( 'request', $this->requestRebinder() )
              * //'request'
              */
-
-            /* depends */
-            // 'forcedRoot', 'forceSchema',
-            // 'cachedRoot', 'cachedSchema',
         ],
 
 
