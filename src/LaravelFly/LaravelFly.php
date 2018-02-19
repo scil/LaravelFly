@@ -29,18 +29,10 @@ class LaravelFly
     public static function setDispatcher(EventDispatcher $dispatcher)
     {
         if (self::$instance) {
-            throw new LaravelFlyException(__CLASS__.' has inited.');
+            throw new LaravelFlyException(__CLASS__.' has inited');
         };
 
         self::$dispatcher = $dispatcher;
-    }
-
-    /**
-     * @return EventDispatcher
-     */
-    static function getDispatcher(): EventDispatcher
-    {
-        return static::$dispatcher;
     }
 
     static function init($options = null)

@@ -9,6 +9,7 @@ class HttpServer implements ServerInterface
 {
     use Common {
         start as _start;
+        onWorkerStart as _onWorkerStart;
     }
 
     /**
@@ -18,9 +19,11 @@ class HttpServer implements ServerInterface
 
     function setListeners()
     {
-        $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
+        $this->swoole->on('WorkerStart', array($this, 'onWorkerStart'));
 
-        $this->server->on('request', array($this, 'onRequest'));
+        $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
+
+        $this->swoole->on('request', array($this, 'onRequest'));
     }
 
     public function start()
@@ -31,7 +34,8 @@ class HttpServer implements ServerInterface
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
-        opcache_reset();
+
+        $this->_onWorkerStart($server,$worker_id);
 
         $this->startLaravel();
 
@@ -60,13 +64,10 @@ class HttpServer implements ServerInterface
             $this->kernel->bootstrap();
         } catch (\Throwable $e) {
             echo $e;
-            $this->server->shutdown();
+            $this->swoole->shutdown();
         }
 
         $this->app->forgetInstance('request');
-
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
-        $this->dispatcher->dispatch('worker.started', $event);
 
     }
 

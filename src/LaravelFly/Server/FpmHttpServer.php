@@ -12,29 +12,24 @@ class FpmHttpServer implements ServerInterface
      */
     const APP_TYPE = 'request';
 
-    use Common{
+    use Common {
         create as _create;
     }
 
     function setListeners()
     {
-        $this->server->on('WorkerStart', array($this, 'onWorkerStart'));
+        $this->swoole->on('WorkerStart', array($this, 'onWorkerStart'));
 
-        $this->server->on('request', array($this, 'onRequest'));
+        $this->swoole->on('request', array($this, 'onRequest'));
     }
 
-    public function onWorkerStart(\swoole_server $server, int $worker_id)
-    {
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
-        $this->dispatcher->dispatch('worker.started', $event);
-    }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
         $app = new $this->appClass($this->root);
 
-        $event = new GenericEvent(null,['server'=>$this,'request'=>$request,'app'=>$app]);
+        $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => $request]);
         $this->dispatcher->dispatch('app.created', $event);
 
         $app->singleton(

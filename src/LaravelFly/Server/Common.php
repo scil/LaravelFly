@@ -22,7 +22,7 @@ Trait Common
     /**
      * @var \swoole_http_server
      */
-    var $server;
+    var $swoole;
 
 
     /**
@@ -59,7 +59,7 @@ Trait Common
      */
     protected $kernel;
 
-    protected $workers = [];
+    static $workerIds=[];
 
     public function __construct(array $options, $dispatcher = null)
     {
@@ -75,16 +75,21 @@ Trait Common
 
         $this->parseOptions($options);
 
+        // why global vars not work
+        // $this->workerIdsSubscriber();
+
         $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
         $this->dispatcher->dispatch('server.creating', $event);
         // then listeners can change options
         $options = $this->options = $event['options'];
 
-        $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+        $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
-        $server->set($options);
+        $swoole->set($options);
 
         $this->setListeners();
+
+        $swoole->fly = $this;
 
         $event = new GenericEvent(null, ['server' => $this]);
         $this->dispatcher->dispatch('server.created', $event);
@@ -92,7 +97,7 @@ Trait Common
 
     public function getSwooleServer(): \swoole_server
     {
-        return $this->server;
+        return $this->swoole;
     }
 
     protected function parseOptions(array &$options)
@@ -124,22 +129,24 @@ Trait Common
                 echo '[INFO] worker_num is 1, your server can not response any other requests when using shell', PHP_EOL;
             }
 
-
-            $this->dispatcher->addListener('worker.started', function (GenericEvent $event) {
-                \LaravelFly\Tinker\Shell::make($event['server']);
-
-                \LaravelFly\Tinker\Shell::addAlias([
-                    \LaravelFly\LaravelFly::class,
-                ]);
-            });
-
-            $this->dispatcher->addListener('app.created', function (GenericEvent $event) {
-                $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
-            });
+            $this->tinkerSubscriber();
         }
 
     }
 
+    public function onWorkerStart(\swoole_server $server, int $worker_id)
+    {
+        opcache_reset();
+
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $this->dispatcher->dispatch('worker.starting', $event);
+    }
+
+    public function onWorkerStop(\swoole_server $server, int $worker_id)
+    {
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $this->dispatcher->dispatch('worker.stopped', $event);
+    }
 
     /**
      * @return \LaravelFly\Dict\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
@@ -154,19 +161,37 @@ Trait Common
         return $this::APP_TYPE;
     }
 
-    protected function addWorker($id)
+    function tinkerSubscriber()
     {
-        $this->workers[getmypid()] = $id;
+
+        $this->dispatcher->addListener('worker.starting', function (GenericEvent $event) {
+            \LaravelFly\Tinker\Shell::make($event['server']);
+
+            \LaravelFly\Tinker\Shell::addAlias([
+                \LaravelFly\LaravelFly::class,
+            ]);
+        });
+
+        $this->dispatcher->addListener('app.created', function (GenericEvent $event) {
+            $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
+        });
+
     }
 
-    protected function removeWorker()
+    function workerIdsSubscriber()
     {
-        unset($this->workers[getmypid()]);
+        $this->dispatcher->addListener('worker.starting', function (GenericEvent $event) {
+            static::$workerIds[$event['workerid']] = getmypid();
+//            var_dump($event['server']->getWorkerIds());
+        });
+        $this->dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
+            unset(static::$workerIds[$event['workerid']]);
+        });
     }
 
-    function getWorkers()
+    function getWorkerIds()
     {
-        return $this->workers;
+        return static::$workerIds;
     }
 
     public function path($path = null)
@@ -177,7 +202,7 @@ Trait Common
     public function start()
     {
         try {
-            $this->server->start();
+            $this->swoole->start();
         } catch (\Throwable $e) {
             throw new Exception($e->getMessage());
         }
@@ -200,7 +225,8 @@ Trait Common
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
 
-        $event = new GenericEvent(null, ['server' => $this, 'app' => $app]);
+        // the 'request' here is different form FpmHttpServer
+        $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);
         $this->dispatcher->dispatch('app.created', $event);
 
     }
