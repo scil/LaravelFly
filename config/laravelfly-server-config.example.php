@@ -69,7 +69,7 @@ return [
     'server' => \LaravelFly\Server\HttpServer::class,
 
     /**
-     * true if you use tinker()
+     * true if you use eval(tinker())
      */
     'tinker' => false,
 
@@ -84,6 +84,16 @@ return [
 
     // like pm.start_servers in php-fpm, but there's no option like pm.max_children
     'worker_num' => 4,
+
+    /**
+     * if you use more than one workers, you can control which worker handle a request by sending worker-id
+     *
+     * curl zhenc.test/hi?worker-id=0   will use worker 1
+     * curl zhenc.test/hi?worker-id=1   will use worker 2
+     *
+     * it's useful if you want to use eval(tinker()) in different worker process.
+     */
+    'dispatch_by_query'=>false,
 
     // max number of coroutines handled by a worker in the same time
     'max_coro_num' => 3000,

@@ -59,7 +59,7 @@ Trait Common
      */
     protected $kernel;
 
-    static $workerIds=[];
+    static $workerIds = [];
 
     public function __construct(array $options, $dispatcher = null)
     {
@@ -131,6 +131,39 @@ Trait Common
 
             $this->tinkerSubscriber();
         }
+
+        $this->parseDispatchByQuery($options);
+    }
+
+    protected function parseDispatchByQuery(&$options)
+    {
+        if (empty($options['dispatch_by_query'])) return;
+
+        if ($options['worker_num'] == 1) {
+            echo '[INFO] worker_num is 1, dispatch_by_query is useless', PHP_EOL;
+            return;
+        }
+
+        if (isset($options['dispatch_func'])) {
+            echo '[INFO] dispatch_func is set, dispatch_by_query is disabled', PHP_EOL;
+            return;
+        }
+
+        $options['dispatch_func'] = function ($serv, $fd, $type, $data) {
+            if (preg_match('/worker-(id|pid)=(\d+)/i', $data, $matches)) {
+                if ($matches[1] == 'id') {
+                    var_dump(
+                        intval($matches[2]) % $serv->setting['worker_num']
+                    );
+                    return intval($matches[2]) % $serv->setting['worker_num'];
+                } else {
+//                var_dump($serv->fly->getWorkerIds());
+//                $id = array_search(intval($matches[2]), $serv->fly->getWorkerIds());
+//                if ($id === false) {}
+                }
+                return $fd % $serv->setting['worker_num'];
+            }
+        };
 
     }
 
