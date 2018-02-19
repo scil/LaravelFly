@@ -8,12 +8,8 @@
  */
 const LARAVELFLY_MODE = 'Simple';
 
-/**
- * true if you use tinker()
- */
-const LARAVELFLY_TINKER = false;
 
-const WORKER_COROUTINE_ID=1;
+const WORKER_COROUTINE_ID = 1;
 
 /**
  * honest that application is running in cli mode.
@@ -42,7 +38,7 @@ const LARAVELFLY_CF_SERVICES = [
      */
     "redis" => false,
     'filesystem.cloud' => false,
-    'broadcast'=>false,
+    'broadcast' => false,
 
     // to false if app('hash')->setRounds may be called in a request
     'hash' => true,
@@ -71,6 +67,11 @@ return [
      * when LARAVELFLY_MODE == 'FpmLike', this is ignored and \LaravelFly\Server\FpmHttpServer::class is used.
      */
     'server' => \LaravelFly\Server\HttpServer::class,
+
+    /**
+     * true if you use tinker()
+     */
+    'tinker' => false,
 
     /**
      * this is not for \LaravelFly\Server\WebSocketServer which always uses '0.0.0.0'

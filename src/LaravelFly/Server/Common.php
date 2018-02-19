@@ -2,10 +2,28 @@
 
 namespace LaravelFly\Server;
 
+use function foo\func;
 use LaravelFly\Exception\LaravelFlyException as Exception;
+use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 Trait Common
 {
+    /**
+     * @var array
+     */
+    protected $options;
+
+    /**
+     * @var EventDispatcher
+     */
+    protected $dispatcher;
+
+    /**
+     * @var \swoole_http_server
+     */
+    var $server;
+
 
     /**
      * where laravel app located
@@ -24,7 +42,7 @@ Trait Common
     protected $kernelClass;
 
     /**
-     * An laravel application instance living always with a worker, not the server.
+     * For APP_TYPE=='worker', an laravel application instance living always with a worker, not the server.
      *
      * In Mode Dict, it can't be made living always with the server,
      * because most of Dict-Friendly Services are made only by \Swoole\Coroutine::getuid()
@@ -41,7 +59,43 @@ Trait Common
      */
     protected $kernel;
 
-    public function parseOptions(array &$options)
+    protected $workers = [];
+
+    public function __construct(array $options, $dispatcher = null)
+    {
+
+        $this->options = $options;
+
+        $this->dispatcher = $dispatcher ?: new EventDispatcher();
+    }
+
+    public function create()
+    {
+        $options = $this->options;
+
+        $this->parseOptions($options);
+
+        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
+        $this->dispatcher->dispatch('server.creating', $event);
+        // then listeners can change options
+        $options = $this->options = $event['options'];
+
+        $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+
+        $server->set($options);
+
+        $this->setListeners();
+
+        $event = new GenericEvent(null, ['server' => $this]);
+        $this->dispatcher->dispatch('server.created', $event);
+    }
+
+    public function getSwooleServer(): \swoole_server
+    {
+        return $this->server;
+    }
+
+    protected function parseOptions(array &$options)
     {
 
         $this->root = realpath(__DIR__ . '/../../../../../..');
@@ -59,7 +113,7 @@ Trait Common
 
         $this->kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
 
-        if (LARAVELFLY_TINKER) {
+        if ($options['tinker'] ?? false) {
 
             if ($options['daemonize'] == true) {
                 $options['daemonize'] = false;
@@ -69,8 +123,50 @@ Trait Common
             if ($options['worker_num'] == 1) {
                 echo '[INFO] worker_num is 1, your server can not response any other requests when using shell', PHP_EOL;
             }
+
+
+            $this->dispatcher->addListener('worker.started', function (GenericEvent $event) {
+                \LaravelFly\Tinker\Shell::make($event['server']);
+
+                \LaravelFly\Tinker\Shell::addAlias([
+                    \LaravelFly\LaravelFly::class,
+                ]);
+            });
+
+            $this->dispatcher->addListener('app.created', function (GenericEvent $event) {
+                $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
+            });
         }
 
+    }
+
+
+    /**
+     * @return \LaravelFly\Dict\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
+     */
+    public function getApp()
+    {
+        return $this->app;
+    }
+
+    public function getAppType()
+    {
+        return $this::APP_TYPE;
+    }
+
+    protected function addWorker($id)
+    {
+        $this->workers[getmypid()] = $id;
+    }
+
+    protected function removeWorker()
+    {
+        unset($this->workers[getmypid()]);
+    }
+
+    function getWorkers()
+    {
+        return $this->workers;
     }
 
     public function path($path = null)
@@ -104,7 +200,8 @@ Trait Common
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
 
-        $this->initTinker($app);
+        $event = new GenericEvent(null, ['server' => $this, 'app' => $app]);
+        $this->dispatcher->dispatch('app.created', $event);
 
     }
 
@@ -162,28 +259,4 @@ Trait Common
         $response->end($laravel_response->getContent());
     }
 
-    protected function initTinker($app = null)
-    {
-        if (!LARAVELFLY_TINKER) return;
-
-        \LaravelFly\Tinker\Shell::make($this);
-
-        \LaravelFly\Tinker\Shell::addAlias([
-            \LaravelFly\LaravelFly::class,
-        ]);
-
-        if ($app) {
-            $this->withTinker($app);
-        }
-    }
-
-    protected function withTinker(\Illuminate\Foundation\Application $app = null)
-    {
-        if (!LARAVELFLY_TINKER) return;
-
-        $shell = \LaravelFly\Tinker\Shell::$instance;
-        $app = $app ?: $this->app;
-        $app->instance('tinker', $shell);
-
-    }
 }

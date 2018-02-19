@@ -2,29 +2,19 @@
 
 namespace LaravelFly\Server;
 
+use LaravelFly\Server\Event\WorkerStarted;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class HttpServer implements ServerInterface
 {
-    use Common{
+    use Common {
         start as _start;
     }
+
     /**
-     * @var \swoole_http_server
+     * every worker has an app
      */
-    var $server;
-
-
-    public function __construct(array $options)
-    {
-
-        $this->parseOptions($options);
-
-        $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
-
-        $server->set($options);
-
-        $this->setListeners();
-    }
+    const APP_TYPE = 'worker';
 
     function setListeners()
     {
@@ -39,31 +29,31 @@ class HttpServer implements ServerInterface
         \Illuminate\Http\Request::enableHttpMethodParameterOverride();
     }
 
-    /**
-     * instance a fake request then bootstrap
-     *
-     * new UrlGenerator need a request.
-     * In Mode One, no worry about it's fake, because
-     * app['url']->request will update when app['request'] changes, as rebinding is used
-     * <code>
-     * <?php
-     * $url = new UrlGenerator(
-     *  $routes, $app->rebinding(
-     *      'request', $this->requestRebinder()
-     *  )
-     * );
-     * ?>
-     *  "$app->rebinding( 'request',...)"
-     * </code>
-     * @see  \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
-     *
-     */
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
         opcache_reset();
 
         $this->startLaravel();
 
+        /**
+         * instance a fake request then bootstrap
+         *
+         * new UrlGenerator need a request.
+         * In Mode One, no worry about it's fake, because
+         * app['url']->request will update when app['request'] changes, as rebinding is used
+         * <code>
+         * <?php
+         * $url = new UrlGenerator(
+         *  $routes, $app->rebinding(
+         *      'request', $this->requestRebinder()
+         *  )
+         * );
+         * ?>
+         *  "$app->rebinding( 'request',...)"
+         * </code>
+         * @see  \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
+         *
+         */
         $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
 
         try {
@@ -74,6 +64,9 @@ class HttpServer implements ServerInterface
         }
 
         $this->app->forgetInstance('request');
+
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $this->dispatcher->dispatch('worker.started', $event);
 
     }
 

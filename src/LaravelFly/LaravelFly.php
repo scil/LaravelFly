@@ -3,9 +3,16 @@
 namespace LaravelFly;
 
 use LaravelFly\Exception\LaravelFlyException as Exception;
+use LaravelFly\Exception\LaravelFlyException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class LaravelFly
 {
+    /**
+     * @var EventDispatcher
+     */
+    protected static $dispatcher;
+
     /**
      * @var \LaravelFly\Server\ServerInterface
      */
@@ -16,21 +23,55 @@ class LaravelFly
      */
     protected static $instance;
 
+    /**
+     * @param EventDispatcher $dispatcher
+     */
+    public static function setDispatcher(EventDispatcher $dispatcher)
+    {
+        if (self::$instance) {
+            throw new LaravelFlyException(__CLASS__.' has inited.');
+        };
+
+        self::$dispatcher = $dispatcher;
+    }
+
+    /**
+     * @return EventDispatcher
+     */
+    static function getDispatcher(): EventDispatcher
+    {
+        return static::$dispatcher;
+    }
+
+    static function init($options = null)
+    {
+        if (self::$instance) return;
+
+        self::$instance = new static();
+
+        if (null === static::$dispatcher) {
+            static::$dispatcher = new EventDispatcher();
+        }
+
+        $dispatcher = static::$dispatcher;
+
+        $class = LARAVELFLY_MODE == 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
+
+        self::$server = new $class($options, $dispatcher);
+
+        self::$server->create();
+
+    }
+
     public static function getInstance($options = null)
     {
 
         if (!self::$instance) {
-            try {
-                self::$instance = new static();
-                $class = LARAVELFLY_MODE == 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
-                unset($options['server']);
-                self::$server = new $class($options);
-            } catch (\Throwable $e) {
-                throw new Exception($e->getMessage());
-            }
+            static::init($options);
         }
         return self::$instance;
     }
+
 
     static function getServer()
     {
@@ -44,5 +85,6 @@ class LaravelFly
     {
         static::getServer()->start();
     }
+
 
 }

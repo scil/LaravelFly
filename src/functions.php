@@ -10,7 +10,6 @@ if (!function_exists('tinker')) {
      */
     function tinker()
     {
-        if (LARAVELFLY_TINKER)
-            return 'extract(\LaravelFly\Tinker\Shell::debug(get_defined_vars(), $this ?? null));';
+        return 'extract(\LaravelFly\Tinker\Shell::debug(get_defined_vars(), $this ?? null));';
     }
 }

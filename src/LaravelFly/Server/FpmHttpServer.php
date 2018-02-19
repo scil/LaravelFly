@@ -3,32 +3,17 @@
 namespace LaravelFly\Server;
 
 
-use LaravelFly\Tinker;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class FpmHttpServer implements ServerInterface
 {
-    use Common;
-
     /**
-     * @var \swoole_http_server
+     * every request has an app
      */
-    var $server;
+    const APP_TYPE = 'request';
 
-
-    public function __construct(array $options)
-    {
-
-        $this->parseOptions($options);
-
-        $this->kernelClass = null;
-
-
-        $this->server = $server = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
-
-        $server->set($options);
-
-        $this->setListeners();
-
+    use Common{
+        create as _create;
     }
 
     function setListeners()
@@ -38,9 +23,10 @@ class FpmHttpServer implements ServerInterface
         $this->server->on('request', array($this, 'onRequest'));
     }
 
-    public function onWorkerStart()
+    public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
-        $this->initTinker();
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $this->dispatcher->dispatch('worker.started', $event);
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
@@ -48,7 +34,8 @@ class FpmHttpServer implements ServerInterface
 
         $app = new $this->appClass($this->root);
 
-        $this->withTinker($app);
+        $event = new GenericEvent(null,['server'=>$this,'request'=>$request,'app'=>$app]);
+        $this->dispatcher->dispatch('app.created', $event);
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,

@@ -82,6 +82,10 @@ if (LARAVELFLY_MODE == 'Dict') {
     require __DIR__ . "/../src/fly/Collection.php";
 }
 
+if(empty($options['tinker'])){
+    function tinker(){}
+}
+
 require $root . '/vendor/scil/laravel-fly/src/functions.php';
 
 unset($root, $config_file, $pid_file, $pid);

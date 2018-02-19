@@ -9,12 +9,7 @@ Make sure `extension=swoole.so` in php cli config file, not  fpm or apache.
 ## Config
 
 1. Execute `php artisan vendor:publish --tag=fly-server`  .  
-2. Edit server config file `<project_root_dir>/laravelfly.php`.
-3. If you use tinker(), put this line at the top of `public/index.php` :  
-` function tinker(){ return '';} `  
-This line avoids error `Call to undefined function tinker()`  when you use php-fpm with tinker() in your code.
-
-4. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
+2. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_MODE')) {
     if (LARAVELFLY_MODE == 'Dict') {
@@ -37,6 +32,11 @@ class Kernel extends WhichKernel
 
 * Config and restart nginx: swoole http server lacks some http functions, so it's better to use swoole with other http servers like nginx. There is a nginx site conf example at `vendor/scil/laravel-fly/config/nginx+swoole.conf`.
 
+* Edit server config file `<project_root_dir>/laravelfly.php`.
+
+* If you use tinker(), put this line at the top of `public/index.php` :  
+` function tinker(){ return '';} `  
+This line avoids error `Call to undefined function tinker()`  when you use php-fpm with tinker() left in your code.
 * if you want to use mysql persistent, add following to config/database.php
 ```
 'options' => [
