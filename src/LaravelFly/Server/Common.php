@@ -59,7 +59,7 @@ Trait Common
      */
     protected $kernel;
 
-    static $workerIds = [];
+    protected static $workerIds;
 
     public function __construct(array $options, $dispatcher = null)
     {
@@ -88,7 +88,7 @@ Trait Common
 
         $swoole->fly = $this;
 
-        $event = new GenericEvent(null, ['server' => $this]);
+        $event = new GenericEvent(null, ['server' => $this, 'swoole' => $swoole, 'options' => $options]);
         $this->dispatcher->dispatch('server.created', $event);
     }
 
@@ -110,32 +110,10 @@ Trait Common
 
         $this->kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
 
-        $this->createWorkerIds($options);
 
         $this->prepareTinker($options);
 
         $this->dispatchByQuery($options);
-    }
-
-    protected function createWorkerIds($options)
-    {
-        static::$workerIds = $table = new \swoole_table($options['worker_num']);
-
-        $table->column('id', \swoole_table::TYPE_INT, 1);
-        $table->column('pid', \swoole_table::TYPE_INT, 3);
-        $table->create();
-        $this->workerIdsSubscriber();
-
-    }
-
-    function workerIdsSubscriber()
-    {
-        $this->dispatcher->addListener('worker.starting', function (GenericEvent $event) {
-            static::$workerIds->set($event['workerid'], ['id' => $event['workerid'], 'pid' => getmypid()]);
-        });
-        $this->dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
-            static::$workerIds->del($event['workerid']);
-        });
     }
 
     protected function prepareTinker(&$options)
@@ -202,6 +180,27 @@ Trait Common
             }
         };
 
+        $this->createWorkerIds($options);
+    }
+
+    protected function createWorkerIds($options)
+    {
+        static::$workerIds = $table = new \swoole_table($options['worker_num']);
+
+        $table->column('id', \swoole_table::TYPE_INT, 1);
+        $table->column('pid', \swoole_table::TYPE_INT, 3);
+        $table->create();
+        $this->workerIdsSubscriber();
+    }
+
+    function workerIdsSubscriber()
+    {
+        $this->dispatcher->addListener('worker.starting', function (GenericEvent $event) {
+            static::$workerIds->set($event['workerid'], ['id' => $event['workerid'], 'pid' => getmypid()]);
+        });
+        $this->dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
+            static::$workerIds->del($event['workerid']);
+        });
     }
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
