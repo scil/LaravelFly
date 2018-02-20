@@ -75,9 +75,6 @@ Trait Common
 
         $this->parseOptions($options);
 
-        // why global vars not work
-        // $this->workerIdsSubscriber();
-
         $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
         $this->dispatcher->dispatch('server.creating', $event);
         // then listeners can change options
@@ -113,56 +110,49 @@ Trait Common
 
         $this->kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
 
-        $this->parseTinker($options);
+        $this->createWorkerIds($options);
 
-        $this->parseDispatchByQuery($options);
+        $this->prepareTinker($options);
+
+        $this->dispatchByQuery($options);
     }
 
-    protected function parseTinker(&$options)
+    protected function createWorkerIds($options)
+    {
+        static::$workerIds = $table = new \swoole_table($options['worker_num']);
+
+        $table->column('id', \swoole_table::TYPE_INT, 1);
+        $table->column('pid', \swoole_table::TYPE_INT, 3);
+        $table->create();
+        $this->workerIdsSubscriber();
+
+    }
+
+    function workerIdsSubscriber()
+    {
+        $this->dispatcher->addListener('worker.starting', function (GenericEvent $event) {
+            static::$workerIds->set($event['workerid'], ['id' => $event['workerid'], 'pid' => getmypid()]);
+        });
+        $this->dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
+            static::$workerIds->del($event['workerid']);
+        });
+    }
+
+    protected function prepareTinker(&$options)
     {
 
-        if ($options['tinker'] ?? false) {
+        if (empty($options['tinker'])) return;
 
-            if ($options['daemonize'] == true) {
-                $options['daemonize'] = false;
-                echo '[INFO] daemonize is disabled to let tinker run normally', PHP_EOL;
-            }
-
-            if ($options['worker_num'] == 1) {
-                echo '[INFO] worker_num is 1, your server can not response any other requests when using shell', PHP_EOL;
-            }
-
-            $this->tinkerSubscriber();
+        if ($options['daemonize'] == true) {
+            $options['daemonize'] = false;
+            echo '[INFO] daemonize is disabled to let tinker run normally', PHP_EOL;
         }
-
-    }
-
-    protected function parseDispatchByQuery(&$options)
-    {
-        if (empty($options['dispatch_by_query'])) return;
 
         if ($options['worker_num'] == 1) {
-            echo '[INFO] worker_num is 1, dispatch_by_query is useless', PHP_EOL;
-            return;
+            echo '[INFO] worker_num is 1, your server can not response any other requests when using shell', PHP_EOL;
         }
 
-        if (isset($options['dispatch_func'])) {
-            echo '[INFO] dispatch_func is set, dispatch_by_query is disabled', PHP_EOL;
-            return;
-        }
-
-        $options['dispatch_func'] = function ($serv, $fd, $type, $data) {
-            if (preg_match('/worker-(id|pid)=(\d+)/i', $data, $matches)) {
-                if ($matches[1] == 'id') {
-                    return intval($matches[2]) % $serv->setting['worker_num'];
-                } else {
-//                var_dump($serv->fly->getWorkerIds());
-//                $id = array_search(intval($matches[2]), $serv->fly->getWorkerIds());
-//                if ($id === false) {}
-                }
-                return $fd % $serv->setting['worker_num'];
-            }
-        };
+        $this->tinkerSubscriber();
 
     }
 
@@ -183,15 +173,35 @@ Trait Common
 
     }
 
-    function workerIdsSubscriber()
+    protected function dispatchByQuery(&$options)
     {
-        $this->dispatcher->addListener('worker.starting', function (GenericEvent $event) {
-            static::$workerIds[$event['workerid']] = getmypid();
-//            var_dump($event['server']->getWorkerIds());
-        });
-        $this->dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
-            unset(static::$workerIds[$event['workerid']]);
-        });
+        if (empty($options['dispatch_by_query'])) return;
+
+        if ($options['worker_num'] == 1) {
+            echo '[INFO] worker_num is 1, dispatch_by_query is useless', PHP_EOL;
+            return;
+        }
+
+        if (isset($options['dispatch_func'])) {
+            echo '[INFO] dispatch_func is set, dispatch_by_query is disabled', PHP_EOL;
+            return;
+        }
+
+        $options['dispatch_func'] = function ($serv, $fd, $type, $data) {
+            if (preg_match('/worker-(id|pid)=(\d+)/i', $data, $matches)) {
+                if ($matches[1] == 'id') {
+                    return intval($matches[2]) % $serv->setting['worker_num'];
+                } else {
+                    foreach ($serv->fly->getWorkerIds() as $row) {
+                        if ($row['pid'] == $matches[2]) {
+                            return $row['id'];
+                        }
+                    }
+                }
+                return $fd % $serv->setting['worker_num'];
+            }
+        };
+
     }
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
