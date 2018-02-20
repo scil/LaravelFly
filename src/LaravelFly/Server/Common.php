@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 Trait Common
 {
-    use DispatchByQuery;
+    use DispatchRequestByQuery;
 
     /**
      * @var array
@@ -62,24 +62,26 @@ Trait Common
     protected $kernel;
 
 
-    public function __construct(array $options, $dispatcher = null)
+    public function __construct($dispatcher = null)
     {
+        $this->dispatcher = $dispatcher ?: new EventDispatcher();
+    }
 
+    public function config(array $options)
+    {
         $this->options = $options;
 
-        $this->dispatcher = $dispatcher ?: new EventDispatcher();
+        $this->parseOptions($options);
+
+        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
+        $this->dispatcher->dispatch('server.config', $event);
+        // then listeners can change options
+        $this->options = $event['options'];
     }
 
     public function create()
     {
         $options = $this->options;
-
-        $this->parseOptions($options);
-
-        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
-        $this->dispatcher->dispatch('server.creating', $event);
-        // then listeners can change options
-        $options = $this->options = $event['options'];
 
         $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
@@ -111,10 +113,9 @@ Trait Common
 
         $this->kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
 
-
         $this->prepareTinker($options);
 
-        $this->dispatchByQuery($options);
+        $this->dispatchRequestByQuery($options);
     }
 
     protected function prepareTinker(&$options)

@@ -7,7 +7,7 @@ use LaravelFly\Exception\LaravelFlyException as Exception;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-Trait DispatchByQuery
+Trait DispatchRequestByQuery
 {
 
     /**
@@ -15,7 +15,7 @@ Trait DispatchByQuery
      */
     protected static $workerIds;
 
-    protected function dispatchByQuery(&$options)
+    protected function dispatchRequestByQuery(&$options)
     {
         if (empty($options['dispatch_by_query'])) return;
 
