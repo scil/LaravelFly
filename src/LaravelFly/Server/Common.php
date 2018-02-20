@@ -95,11 +95,6 @@ Trait Common
         $this->dispatcher->dispatch('server.created', $event);
     }
 
-    public function getSwooleServer(): \swoole_server
-    {
-        return $this->swoole;
-    }
-
     protected function parseOptions(array &$options)
     {
 
@@ -118,11 +113,19 @@ Trait Common
 
         $this->kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
 
+        $this->parseTinker($options);
+
+        $this->parseDispatchByQuery($options);
+    }
+
+    protected function parseTinker(&$options)
+    {
+
         if ($options['tinker'] ?? false) {
 
             if ($options['daemonize'] == true) {
                 $options['daemonize'] = false;
-                echo '[INFO] daemonize is disabled in Mode FpmLike.', PHP_EOL;
+                echo '[INFO] daemonize is disabled to let tinker run normally', PHP_EOL;
             }
 
             if ($options['worker_num'] == 1) {
@@ -132,7 +135,6 @@ Trait Common
             $this->tinkerSubscriber();
         }
 
-        $this->parseDispatchByQuery($options);
     }
 
     protected function parseDispatchByQuery(&$options)
@@ -152,9 +154,6 @@ Trait Common
         $options['dispatch_func'] = function ($serv, $fd, $type, $data) {
             if (preg_match('/worker-(id|pid)=(\d+)/i', $data, $matches)) {
                 if ($matches[1] == 'id') {
-                    var_dump(
-                        intval($matches[2]) % $serv->setting['worker_num']
-                    );
                     return intval($matches[2]) % $serv->setting['worker_num'];
                 } else {
 //                var_dump($serv->fly->getWorkerIds());
@@ -165,33 +164,6 @@ Trait Common
             }
         };
 
-    }
-
-    public function onWorkerStart(\swoole_server $server, int $worker_id)
-    {
-        opcache_reset();
-
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
-        $this->dispatcher->dispatch('worker.starting', $event);
-    }
-
-    public function onWorkerStop(\swoole_server $server, int $worker_id)
-    {
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
-        $this->dispatcher->dispatch('worker.stopped', $event);
-    }
-
-    /**
-     * @return \LaravelFly\Dict\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
-     */
-    public function getApp()
-    {
-        return $this->app;
-    }
-
-    public function getAppType()
-    {
-        return $this::APP_TYPE;
     }
 
     function tinkerSubscriber()
@@ -220,6 +192,38 @@ Trait Common
         $this->dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
             unset(static::$workerIds[$event['workerid']]);
         });
+    }
+
+    public function onWorkerStart(\swoole_server $server, int $worker_id)
+    {
+        opcache_reset();
+
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $this->dispatcher->dispatch('worker.starting', $event);
+    }
+
+    public function onWorkerStop(\swoole_server $server, int $worker_id)
+    {
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $this->dispatcher->dispatch('worker.stopped', $event);
+    }
+
+    public function getSwooleServer(): \swoole_server
+    {
+        return $this->swoole;
+    }
+
+    /**
+     * @return \LaravelFly\Dict\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
+     */
+    public function getApp()
+    {
+        return $this->app;
+    }
+
+    public function getAppType()
+    {
+        return $this::APP_TYPE;
     }
 
     function getWorkerIds()

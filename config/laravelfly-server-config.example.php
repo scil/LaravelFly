@@ -86,12 +86,16 @@ return [
     'worker_num' => 4,
 
     /**
-     * if you use more than one workers, you can control which worker handle a request by sending worker-id
+     * if you use more than one workers, you can control which worker handle a request
+     * by sending query parameter 'worker-id'
      *
-     * curl zhenc.test/hi?worker-id=0   will use worker 1
-     * curl zhenc.test/hi?worker-id=1   will use worker 2
+     * curl zhenc.test/hi?worker-id=0   will use worker 0
+     * curl zhenc.test/hi?worker-id=1   will use worker 1
      *
-     * it's useful if you want to use eval(tinker()) in different worker process.
+     * It's useful if you want to use eval(tinker()) in different worker process.
+     * All vars available in a tinker shell are almost only objects in the worker process which the tinker is running
+     *
+     * Please do not enalbe it in production env.
      */
     'dispatch_by_query'=>false,
 

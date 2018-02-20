@@ -50,13 +50,4 @@ class WhereamiCommand extends \Psy\Command\WhereamiCommand
             ($class === null && $function === 'tinker');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        parent::execute($input, $output);
-        // It's not good for these lines to put here, but handy.
-        $output->startPaging();
-        $output->writeln(sprintf('Tip <info>%s.%s</info>:', 'All info available in this shell are about only objects in current worker process', 'PID:' . getmypid()));
-        $output->writeln('');
-        $output->stopPaging();
-    }
 }
