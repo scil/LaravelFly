@@ -131,6 +131,9 @@ return [
      */
     //'pid_file' => '/run/laravelfly/pid',
 
+    /**
+     * if the kernel not extends any kernels in LaravelFly, \LaravelFly\Kernel::class is used auto.
+     */
     'kernel' => \App\Http\Kernel::class,
 
 ];

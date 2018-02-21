@@ -111,7 +111,13 @@ Trait Common
 
         $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
 
-        $this->kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
+        $kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
+        if (!(
+            is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class) ||
+            is_subclass_of($kernelClass, \LaravelFly\Dict\Kernel::class))) {
+            $kernelClass = \LaravelFly\Kernel::class;
+        }
+        $this->kernelClass = $kernelClass;
 
         $this->prepareTinker($options);
 

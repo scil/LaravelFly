@@ -2,9 +2,20 @@ LaravelFly runs Laravel much faster, and make Tinker to be used online(use tinke
 
 Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
+## Quick Start
+
+1.`pecl install swoole`   
+Make sure `extension=swoole.so` in config file for php cli.
+
+2.`composer require "scil/laravel-fly":"dev-master"`
+
+3.`php vendor/scil/laravel-fly/bin/fly start`  
+
+Now, your project is flying. Enjoy yourself.
+
 ## Doc
 
-[Install & Config](doc/install.md)
+[Config](doc/config.md)
 
 [Start, Reload & Debug](doc/server.md)
 
@@ -77,13 +88,11 @@ The tinker() demo to read/write vars, use Log::info.
 ```php
 // visit private members
 sudo app()->booted
+sudo $url= app()->corDict[1]['instances']['url']
 
 // use Model or Controller without writing namespace, thanks to ClassAliasAutoloader
 // and the instance is printed beautifully, thanks to casters provided by laravel
 $user = User::first()
-
-// which class aliases are defined in tinker
-sudo app('tinker')->loader->classes
 
 // like dir() in Python
 ls -la $user
@@ -94,14 +103,22 @@ doc $user->save
 // check code
 show $user->query
 
-// check server pid and pidfile
-LaravelFly::getServer()
-
-// run shell commands
-`pwd && ls `
+// use xdebug
+xdebug_debug_zval('user')
+xdebug_debug_zval('url->routes')
+xdebug_call_class()
 
 // magic var
 $__file
+
+// check server pid and pidfile
+LaravelFly::getServer()
+
+// which class aliases are defined in tinker
+sudo app('tinker')->loader->classes
+
+// run shell commands
+`pwd && ls `
 
 ```
 

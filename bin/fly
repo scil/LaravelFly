@@ -15,6 +15,9 @@ $root = realpath(__DIR__ . '/../../../..');
 $config_file = $argc == 3 ? $argv[2] : $root . '/laravelfly.php';
 
 try {
+    if(!is_file($config_file)){
+        $config_file = __DIR__.'/../config/laravelfly-server-config.example.php';
+    }
     $options = require $config_file;
 } catch (Exception $e) {
     exit("config file not be loaded: $config_file");
