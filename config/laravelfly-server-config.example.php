@@ -108,7 +108,7 @@ return [
 
     // set it to false when debug, otherwise true
     // if you use tinker(), daemonize is disabled always.
-    'daemonize' => true,
+    'daemonize' => false,
 
     // like pm.max_requests in php-fpm
     'max_request' => 1000,

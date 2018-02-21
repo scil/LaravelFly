@@ -11,7 +11,7 @@ Make sure `extension=swoole.so` in config file for php cli.
 
 3.`php vendor/scil/laravel-fly/bin/fly start`  
 
-Now, your project is flying. Enjoy yourself.
+Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 ## Doc
 
