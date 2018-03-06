@@ -29,6 +29,11 @@
       "LaravelFly\\": "src/LaravelFly/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "LaravelFly\\Tests\\": "tests/"
+    }
+  },
   "extra": {
     "laravel": {
       "providers": [
