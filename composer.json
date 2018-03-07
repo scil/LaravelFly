@@ -19,7 +19,8 @@
   },
   "require-dev": {
     "eaglewu/swoole-ide-helper": "dev-master",
-    "nunomaduro/collision": "^1.1"
+    "nunomaduro/collision": "^1.1",
+    "phpunit/phpunit": "^7.0"
   },
   "autoload": {
     "files": [

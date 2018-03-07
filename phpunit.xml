@@ -9,11 +9,11 @@
          processIsolation="false"
          stopOnFailure="true">
     <testsuites>
-        <testsuite name="LaravelFly Feature Test Suit">
+        <testsuite name="LaravelFly_Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
 
-        <testsuite name="LaravelFly Unit Test Suit">
+        <testsuite name="LaravelFly_Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
     </testsuites>

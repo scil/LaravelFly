@@ -34,16 +34,21 @@ class HackFilesTestk extends BaseTestCase
         $backDir = __DIR__ . '/../offcial_files/';
         $diffOPtions = '--ignore-all-space --ignore-blank-lines';
 
+        $same =true;
+
         foreach ($this->map as $back => $offcial) {
             $back = $backDir . $back;
-            $offcial = $this->root . $offcial;
+            $offcial = $this->laravelApp->basePath() . $offcial;
             $cmdArguments = "$diffOPtions $back $offcial ";
 
             exec("diff --brief $cmdArguments > /dev/null", $a, $r);
             if ($r !== 0) {
-                echo "diff $cmdArguments\n";
+                $same=false;
+                echo "\ndiff $cmdArguments\n";
             }
         }
+
+        self::assertEquals(true,$same);
 
     }
 }

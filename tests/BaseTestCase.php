@@ -1,9 +1,15 @@
 <?php
 namespace LaravelFly\Tests;
 
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
-class BaseTestCase extends TestCase
+/**
+ * Class Base
+ * @package LaravelFly\Tests
+ *
+ * why abstract? stop phpunit to use this testcase
+ */
+abstract class BaseTestCase extends TestCase
 {
     /**
      * @var \Illuminate\Foundation\Application
@@ -12,6 +18,7 @@ class BaseTestCase extends TestCase
 
     protected function setUp()
     {
+
         $root =  realpath(__DIR__ . '/../../../..');
 
         $this->laravelApp = require_once $root.'/bootstrap/app.php';
