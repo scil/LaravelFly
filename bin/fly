@@ -22,6 +22,7 @@ try {
 } catch (Exception $e) {
     exit("config file not be loaded: $config_file");
 }
+echo "[INFO] use config: $config_file\n";
 
 if ($argv[1] == 'start') {
     goto start;
@@ -89,7 +90,7 @@ if(empty($options['tinker'])){
     function tinker(){}
 }
 
-require $root . '/vendor/scil/laravel-fly/src/functions.php';
+//require $root . '/vendor/scil/laravel-fly/src/functions.php';
 
 unset($root, $config_file, $pid_file, $pid);
 \LaravelFly\LaravelFly::getInstance($options)->start();

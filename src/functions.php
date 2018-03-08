@@ -1,5 +1,7 @@
 <?php
 
+const WORKER_COROUTINE_ID = 1;
+
 if (!function_exists('tinker')) {
     /**
      * Command to return the eval-able code to startup PsySH.
