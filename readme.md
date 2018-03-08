@@ -9,7 +9,8 @@ Make sure `extension=swoole.so` in config file for php cli.
 
 2.`composer require "scil/laravel-fly":"dev-master"`
 
-3.`php vendor/scil/laravel-fly/bin/fly start`  
+3.`php vendor/scil/laravel-fly/bin/fly start`   
+If you enable `eval(tinker())` and see an error about mkdir, please start LaravelFly using sudo.
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
 
@@ -35,11 +36,19 @@ Time taken ≈ | 325 | 195  | 30
   80%  |   3213|  383   | 187
   99%   | 38584| 33720  | 3903
 
-* A visit to http://zhenc.test/green relates to 5 Models and 5 db query.
+<details>
+<summary>Test Env</summary>
+<div>
+
+
+* A visit to http://zc.test/green relates to 5 Models and 5 db query.
 * env:   
 ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
 php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
 * Test date : 2018/02
+
+</div>
+</details>
 
 ## Tinker online: use tinker when laravel is working
 
@@ -69,7 +78,10 @@ Route::get('hi', function () {
 @endforeach
 ```
 
-The response may be:
+<details>
+<summary>The response can be changed to anything by you.</summary>
+<div>
+
 ```
 Hello, Tinker!
 
@@ -78,13 +90,20 @@ Hello, PsySh!
 Hello, World!
 ```
 
+</div>
+</details>
+
 Visit 'http://server.name/hi' from localhost, enter tinker shell and do like this: 
 
 [![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
 
 The tinker() demo to read/write vars, use Log::info. 
 
-### You can try these commands in tinker:
+<details>
+<summary>You can try many wonderful commands in tinker.</summary>
+<div>
+
+
 ```php
 // visit private members
 sudo app()->booted
@@ -122,10 +141,14 @@ sudo app('tinker')->loader->classes
 
 ```
 
+</div>
+</details>
+
 `eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly server, but LaravelFly applies the opportunity to use shell online.
 
 There may be a problem with tabcompletion. see [tabcompletion only works "the second time](https://github.com/bobthecow/psysh/issues/435)
 
+If you see an error about mkdir, please start LaravelFly using sudo.
 
 ## Usability 
 
@@ -153,10 +176,16 @@ coroutine| no  | yes (conditional*)
 
 ### Todo
 
-- [ ] Laravel5.5, like package auto-detection
-- [ ] add tests
+- [x] Laravel5.5 package auto-detection
+- [x] mysql coroutine
+- [ ] mysql connection pool
+- [ ] handle php config and laravel config like Zend in Mode Simple?
+- [ ] handle php config and laravel config in Mode Dict?
+- [ ] websocket
+- [ ] add more tests
 - [ ] send file
-- [ ] try to add Providers with concurrent services, like mysql , redis;  add cache to Log
+- [ ] log fly: improve log on swoole
+- [ ] cache fly
 
 ## Similar projects that use swoole and laravel
 

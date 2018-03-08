@@ -5,6 +5,8 @@ if (!defined('LARAVELFLY_MODE')) return [];
 return [
     /**
      * Not For Mode FpmLike
+     *
+     * @todo support Mode Dict
      */
     'config_changed_in_requests' => [
         /** depends

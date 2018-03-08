@@ -70,6 +70,8 @@ return [
 
     /**
      * true if you use eval(tinker())
+     *
+     * If see an error about mkdir, please start LaravelFly using sudo.
      */
     'tinker' => false,
 
