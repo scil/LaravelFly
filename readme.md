@@ -98,13 +98,9 @@ Hello, World!
 
 ### demo
 
-The tinker() demo to read/write vars, use Log::info, visit private members and so on. 
-
-[![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
-
 
 <details>
-<summary>You can try many wonderful commands in tinker.</summary>
+<summary>You can try many wonderful commands to read/write vars, use laravel services, visit private members and so on. .</summary>
 <div>
 
 
@@ -147,6 +143,11 @@ sudo app('tinker')->loader->classes
 
 </div>
 </details>
+
+  
+
+
+[![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
 
 
 ### Tips
