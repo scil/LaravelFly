@@ -96,11 +96,12 @@ Hello, World!
 
 
 
-### demo
+### tinker abilities
 
+visit private members, read/write vars, use laravel services and so on.
 
 <details>
-<summary>You can try many wonderful commands to read/write vars, use laravel services, visit private members and so on. .</summary>
+<summary>tinker use examples.</summary>
 <div>
 
 
@@ -144,13 +145,13 @@ sudo app('tinker')->loader->classes
 </div>
 </details>
 
-  
 
+### tinker demo
 
 [![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
 
 
-### Tips
+### Tinker Tips
 
 `eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly server, but LaravelFly applies the opportunity to use shell online.
 
