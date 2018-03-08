@@ -159,7 +159,7 @@ There may be a problem with tabcompletion. see [tabcompletion only works "the se
 
 If you see an error about mkdir, please start LaravelFly using sudo.
 
-## Usability 
+## LaravelFly Usability 
 
 It can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run the same laravel project.
 
@@ -169,12 +169,12 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 ## Tips for use
 
-### php functions not fit Swoole/LaravelFly
+### php functions not LaravelFly
 
 name | replacement
 ------------ | ------------ 
-header | Laravel api: $response->header
-setcookie | Laravel api: $response->cookie
+header | Laravel Api: $response->header
+setcookie | Laravel Api: $response->cookie
 
 ### Mode Simple vs Mode Dict
 
@@ -183,19 +183,21 @@ features  |  Mode Simple | Mode Dict
 global vars like $_GET, $_POST | yes  | no
 coroutine| no  | yes (conditional*)
 
-### Todo
+## Todo
 
 - [x] Laravel5.5 package auto-detection
 - [x] mysql coroutine
 - [ ] mysql connection pool
+- [ ] add events
 - [ ] handle php config and laravel config like Zend in Mode Simple?
 - [ ] handle php config and laravel config in Mode Dict?
 - [ ] websocket
 - [ ] add more tests
 - [ ] send file
+- [ ] change tinker to go away from sudo
 - [ ] log fly: improve log on swoole
 - [ ] cache fly
 
-## Similar projects that use swoole and laravel
+## Similar projects that mix swoole and laravel
 
-* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as event registering.
+* [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .

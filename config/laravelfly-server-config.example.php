@@ -9,8 +9,6 @@
 const LARAVELFLY_MODE = 'Simple';
 
 
-const WORKER_COROUTINE_ID = 1;
-
 /**
  * honest that application is running in cli mode.
  *

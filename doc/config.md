@@ -3,7 +3,7 @@
 1. Publish server config file  
 `php artisan vendor:publish --tag=fly-server`  .  
 2. Edit server config file  
-`<project_root_dir>/laravelfly.php`.
+`<project_root_dir>/fly.conf.php`.
 
 ## Optional Config
 

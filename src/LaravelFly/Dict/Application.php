@@ -13,6 +13,8 @@ use Illuminate\Filesystem\Filesystem;
 use LaravelFly\Simple\ProviderRepository;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
+const WORKER_COROUTINE_ID = 1;
+
 class Application extends \Illuminate\Foundation\Application
 {
 

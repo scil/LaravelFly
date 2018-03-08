@@ -5,7 +5,7 @@ Execute
 ```
 php vendor/scil/laravel-fly/bin/fly start [$server_config_file]
 ```
-Argument `$server_config_file` is optional, default is `<project_root_dir>/laravelfly..php`.
+Argument `$server_config_file` is optional, default is `<project_root_dir>/fly.conf.php`.
 
 You can make multiple config files which have different listen_port, then you can run multiple server.
 
