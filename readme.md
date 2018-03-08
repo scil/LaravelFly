@@ -96,11 +96,12 @@ Hello, World!
 
 
 
-Visit 'http://server.name/hi' from localhost, enter tinker shell and do like this: 
+### demo
+
+The tinker() demo to read/write vars, use Log::info, visit private members and so on. 
 
 [![tinker()](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD.png)](https://asciinema.org/a/zq5HDcGf2Fp5HcMtRw0ZOSXXD?t=3)
 
-The tinker() demo to read/write vars, use Log::info. 
 
 <details>
 <summary>You can try many wonderful commands in tinker.</summary>
@@ -147,6 +148,8 @@ sudo app('tinker')->loader->classes
 </div>
 </details>
 
+
+### Tips
 
 `eval(tinker())` is a `eval(\Psy\sh())` with extra support for Laravel. It can be used independently without LaravelFly server, but LaravelFly applies the opportunity to use shell online.
 
