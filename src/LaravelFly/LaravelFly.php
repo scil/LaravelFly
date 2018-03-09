@@ -49,6 +49,8 @@ class LaravelFly
 
         $class = LARAVELFLY_MODE == 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
+        echo "[INFO] use server: $class \n";
+
         self::$server = new $class($dispatcher);
 
         self::$server->config($options);

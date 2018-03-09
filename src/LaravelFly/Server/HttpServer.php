@@ -78,7 +78,7 @@ class HttpServer implements ServerInterface
 
             $cid = \Swoole\Coroutine::getuid();
 
-            $laravel_request = (new \LaravelFly\Dict\IlluminateBase\Request())->createFromSwoole($request);
+            $laravel_request = (new \LaravelFly\Hash\IlluminateBase\Request())->createFromSwoole($request);
 
             $this->app->initForCorontine($cid);
 

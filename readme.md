@@ -28,7 +28,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
  `ab -k -n 1000 -c 10 http://zc.test/green `
 
-.   | fpm |  Fly Mode Simple | Fly Mode Dict
+.   | fpm |  Fly Mode Simple | Fly Mode Hash
 ------------ | ------------ | ------------- | ------------- 
 Requests per second   | 3 |  5  | 34
 Time taken ≈ | 325 | 195  | 30
@@ -176,9 +176,9 @@ name | replacement
 header | Laravel Api: $response->header
 setcookie | Laravel Api: $response->cookie
 
-### Mode Simple vs Mode Dict
+### Mode Simple vs Mode Hash
 
-features  |  Mode Simple | Mode Dict 
+features  |  Mode Simple | Mode Hash 
 ------------ | ------------ | ------------- 
 global vars like $_GET, $_POST | yes  | no
 coroutine| no  | yes (conditional*)
@@ -190,7 +190,7 @@ coroutine| no  | yes (conditional*)
 - [ ] mysql connection pool
 - [ ] add events
 - [ ] handle php config and laravel config like Zend in Mode Simple?
-- [ ] handle php config and laravel config in Mode Dict?
+- [ ] handle php config and laravel config in Mode Hash?
 - [ ] websocket
 - [ ] add more tests
 - [ ] send file

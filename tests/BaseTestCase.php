@@ -1,4 +1,5 @@
 <?php
+
 namespace LaravelFly\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -14,14 +15,22 @@ abstract class BaseTestCase extends TestCase
     /**
      * @var \Illuminate\Foundation\Application
      */
-    protected $laravelApp;
+    private $laravelApp;
+    protected $root;
 
     protected function setUp()
     {
 
-        $root =  realpath(__DIR__ . '/../../../..');
+        $this->root = realpath(__DIR__ . '/../../../..');
 
-        $this->laravelApp = require_once $root.'/bootstrap/app.php';
+    }
+
+    protected function getLaravelApp()
+    {
+        if(!$this->laravelApp)
+            $this->laravelApp = require_once $this->root . '/bootstrap/app.php';
+
+        return $this->laravelApp;
     }
 
 }

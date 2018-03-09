@@ -4,7 +4,7 @@ namespace Illuminate\View;
 
 use InvalidArgumentException;
 use Illuminate\Filesystem\Filesystem;
-use LaravelFly\Dict\Util\Dict;
+use LaravelFly\Hash\Util\Dict;
 
 class FileViewFinder implements ViewFinderInterface
 {

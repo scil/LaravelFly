@@ -24,8 +24,8 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Router implements RegistrarContract, BindingRegistrar
 {
-    use \LaravelFly\Dict\Util\Dict{
-        \LaravelFly\Dict\Util\Dict::initForCorontine as init;
+    use \LaravelFly\Hash\Util\Dict{
+        \LaravelFly\Hash\Util\Dict::initForCorontine as init;
     }
     use Macroable {
         __call as macroCall;
@@ -34,7 +34,7 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * The IoC container instance.
      *
-     * @var \LaravelFly\Dict\Application
+     * @var \LaravelFly\Hash\Application
      */
     protected $container;
 

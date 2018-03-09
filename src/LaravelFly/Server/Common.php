@@ -50,14 +50,14 @@ Trait Common
      * because most of Dict-Friendly Services are made only by \Swoole\Coroutine::getuid()
      * without using swoole_server::$worker_id, they can not distinguish coroutines in different workers.
      *
-     * @var \LaravelFly\Dict\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application
+     * @var \LaravelFly\Hash\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application
      */
     protected $app;
 
     /**
      * An laravel kernel instance living always with a worker.
      *
-     * @var \LaravelFly\Dict\Kernel|\LaravelFly\Simple\Kernel|\LaravelFly\Greedy\Kernel
+     * @var \LaravelFly\Hash\Kernel|\LaravelFly\Simple\Kernel|\LaravelFly\Greedy\Kernel
      */
     protected $kernel;
 
@@ -114,7 +114,7 @@ Trait Common
         $kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
         if (!(
             is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class) ||
-            is_subclass_of($kernelClass, \LaravelFly\Dict\Kernel::class))) {
+            is_subclass_of($kernelClass, \LaravelFly\Hash\Kernel::class))) {
             $kernelClass = \LaravelFly\Kernel::class;
         }
         $this->kernelClass = $kernelClass;
@@ -131,7 +131,7 @@ Trait Common
 
         if ($options['daemonize'] == true) {
             $options['daemonize'] = false;
-            echo '[INFO] daemonize is disabled to let tinker run normally', PHP_EOL;
+            echo '[INFO] disable daemonize to let tinker run normally', PHP_EOL;
         }
 
         if ($options['worker_num'] == 1) {
@@ -180,7 +180,7 @@ Trait Common
     }
 
     /**
-     * @return \LaravelFly\Dict\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
+     * @return \LaravelFly\Hash\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
      */
     public function getApp()
     {

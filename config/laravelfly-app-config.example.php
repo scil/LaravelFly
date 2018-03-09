@@ -6,7 +6,7 @@ return [
     /**
      * Not For Mode FpmLike
      *
-     * @todo support Mode Dict
+     * @todo support Mode Hash
      */
     'config_changed_in_requests' => [
         /** depends
@@ -37,7 +37,7 @@ return [
     ],
 
     /**
-     * providers to reg and boot on worker, before any request. only for Dict mode
+     * providers to reg and boot on worker, before any request. only for Hash mode
      *
      * format:
      *      proverder_name => [],
@@ -66,7 +66,7 @@ return [
         Illuminate\Log\LogServiceProvider::class => [
             'log' => true,
         ],
-        LaravelFly\Dict\Illuminate\Auth\AuthServiceProvider::class => [
+        LaravelFly\Hash\Illuminate\Auth\AuthServiceProvider::class => [
             '_replace' => Illuminate\Auth\AuthServiceProvider::class,
         ],
         Illuminate\Broadcasting\BroadcastServiceProvider::class =>
@@ -83,10 +83,10 @@ return [
             // 'memcached.connector' => true,
 
         ],
-        LaravelFly\Dict\Illuminate\Cookie\CookieServiceProvider::class => [
+        LaravelFly\Hash\Illuminate\Cookie\CookieServiceProvider::class => [
             '_replace' => Illuminate\Cookie\CookieServiceProvider::class,
         ],
-        LaravelFly\Dict\Illuminate\Database\DatabaseServiceProvider::class => [
+        LaravelFly\Hash\Illuminate\Database\DatabaseServiceProvider::class => [
             '_replace' => Illuminate\Database\DatabaseServiceProvider::class,
         ],
         Illuminate\Encryption\EncryptionServiceProvider::class => [
@@ -114,7 +114,7 @@ return [
             'redis' => LARAVELFLY_CF_SERVICES['redis'],
         ],
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
-        LaravelFly\Dict\Illuminate\Session\SessionServiceProvider::class => [
+        LaravelFly\Hash\Illuminate\Session\SessionServiceProvider::class => [
             '_replace' => Illuminate\Session\SessionServiceProvider::class,
         ],
         Illuminate\Translation\TranslationServiceProvider::class => [
@@ -125,7 +125,7 @@ return [
             'validator' => true,
             'validation.presence' => true,
         ],
-        \LaravelFly\Dict\Illuminate\View\ViewServiceProvider::class => [
+        \LaravelFly\Hash\Illuminate\View\ViewServiceProvider::class => [
             '_replace' => Illuminate\View\ViewServiceProvider::class,
         ],
         /*

@@ -11,7 +11,7 @@ if (defined('LARAVELFLY_MODE')) {
     if (LARAVELFLY_MODE == 'Simple') {
         class WhichKernel extends \LaravelFly\Simple\Kernel{}
     } elseif (LARAVELFLY_MODE == 'Dict') {
-        class WhichKernel extends \LaravelFly\Dict\Kernel{}
+        class WhichKernel extends \LaravelFly\Hash\Kernel{}
     } elseif (LARAVELFLY_MODE == 'FpmLike') {
         class WhichKernel extends HttpKernel{}
     } else {
