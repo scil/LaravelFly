@@ -16,7 +16,7 @@ trait ManagesLoops
      */
     public function addLoop($data)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
 
         $length = is_array($data) || $data instanceof Countable ? count($data) : null;
 
@@ -41,7 +41,7 @@ trait ManagesLoops
      */
     public function incrementLoopIndices()
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
 
         $loop = static::$corDict[$cid]['loopsStack'][$index = count(static::$corDict[$cid]['loopsStack']) - 1];
 
@@ -61,7 +61,7 @@ trait ManagesLoops
      */
     public function popLoop()
     {
-        array_pop(static::$corDict[\Swoole\Coroutine::getuid()]['loopsStack']);
+        array_pop(static::$corDict[\co::getUid()]['loopsStack']);
     }
 
     /**
@@ -71,7 +71,7 @@ trait ManagesLoops
      */
     public function getLastLoop()
     {
-        if ($last = Arr::last(static::$corDict[\Swoole\Coroutine::getuid()]['loopsStack'])) {
+        if ($last = Arr::last(static::$corDict[\co::getUid()]['loopsStack'])) {
             return (object) $last;
         }
     }
@@ -83,6 +83,6 @@ trait ManagesLoops
      */
     public function getLoopStack()
     {
-        return static::$corDict[\Swoole\Coroutine::getuid()]['loopsStack'];
+        return static::$corDict[\co::getUid()]['loopsStack'];
     }
 }

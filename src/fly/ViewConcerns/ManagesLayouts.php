@@ -26,7 +26,7 @@ trait ManagesLayouts
     {
         if ($content === null) {
             if (ob_start()) {
-                static::$corDict[\Swoole\Coroutine::getuid()]['sectionStack'][] = $section;
+                static::$corDict[\co::getUid()]['sectionStack'][] = $section;
             }
         } else {
             $this->extendSection($section, $content instanceof View ? $content : e($content), \Swoole\Coroutine::getuid());
@@ -52,7 +52,7 @@ trait ManagesLayouts
      */
     public function yieldSection()
     {
-        if (empty(static::$corDict[\Swoole\Coroutine::getuid()]['sectionStack'])) {
+        if (empty(static::$corDict[\co::getUid()]['sectionStack'])) {
             return '';
         }
 
@@ -68,7 +68,7 @@ trait ManagesLayouts
      */
     public function stopSection($overwrite = false)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         if (empty(static::$corDict[$cid]['sectionStack'])) {
             throw new InvalidArgumentException('Cannot end a section without first starting one.');
         }
@@ -92,7 +92,7 @@ trait ManagesLayouts
      */
     public function appendSection()
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         if (empty(static::$corDict[$cid]['sectionStack'])) {
             throw new InvalidArgumentException('Cannot end a section without first starting one.');
         }
@@ -135,7 +135,7 @@ trait ManagesLayouts
     {
         $sectionContent = $default instanceof View ? $default : e($default);
 
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
 
         if (isset(static::$corDict[$cid]['sections'][$section])) {
             $sectionContent = static::$corDict[$cid]['sections'][$section];
@@ -156,7 +156,7 @@ trait ManagesLayouts
      */
     public static function parentPlaceholder($section = '')
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
 
         if (! isset(static::$corStaticDict[$cid]['parentPlaceholder'][$section])) {
             static::$corStaticDict[$cid]['parentPlaceholder'][$section] = '##parent-placeholder-'.sha1($section).'##';
@@ -173,7 +173,7 @@ trait ManagesLayouts
      */
     public function hasSection($name)
     {
-        return array_key_exists($name, static::$corDict[\Swoole\Coroutine::getuid()]['sections']);
+        return array_key_exists($name, static::$corDict[\co::getUid()]['sections']);
     }
 
     /**
@@ -195,7 +195,7 @@ trait ManagesLayouts
      */
     public function getSections()
     {
-        return static::$corDict[\Swoole\Coroutine::getuid()]['sections'];
+        return static::$corDict[\co::getUid()]['sections'];
     }
 
     /**
@@ -205,7 +205,7 @@ trait ManagesLayouts
      */
     public function flushSections()
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         static::$corDict[$cid]['sections'] = [];
         static::$corDict[$cid]['sectionStack'] = [];
     }

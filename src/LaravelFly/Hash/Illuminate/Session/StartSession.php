@@ -25,7 +25,7 @@ class StartSession extends \Illuminate\Session\Middleware\StartSession
     }
     public function handle($request, Closure $next)
     {
-        static::$corDict[\Swoole\Coroutine::getuid()]['sessionHandled'] = true;
+        static::$corDict[\co::getUid()]['sessionHandled'] = true;
 
         // If a session driver has been configured, we will need to start the session here
         // so that the data is ready for an application. Note that the Laravel sessions
@@ -61,7 +61,7 @@ class StartSession extends \Illuminate\Session\Middleware\StartSession
      */
     public function terminate($request, $response)
     {
-        if (static::$corDict[\Swoole\Coroutine::getuid()]['sessionHandled'] && $this->sessionConfigured() && ! $this->usingCookieSessions()) {
+        if (static::$corDict[\co::getUid()]['sessionHandled'] && $this->sessionConfigured() && ! $this->usingCookieSessions()) {
             $this->manager->driver()->save();
         }
     }

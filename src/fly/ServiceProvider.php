@@ -161,7 +161,7 @@ abstract class ServiceProvider
     {
         $this->ensurePublishArrayInitialized($class = static::class);
 
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         static::$publishes[$cid][$class] = array_merge(static::$publishes[$cid][$class], $paths);
 
         if ($group) {
@@ -177,7 +177,7 @@ abstract class ServiceProvider
      */
     protected function ensurePublishArrayInitialized($class)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         if (! array_key_exists($class, static::$publishes[$cid])) {
             static::$publishes[$cid][$class] = [];
         }
@@ -192,7 +192,7 @@ abstract class ServiceProvider
      */
     protected function addPublishGroup($group, $paths)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         if (! array_key_exists($group, static::$publishGroups[$cid])) {
             static::$publishGroups[$cid][$group] = [];
         }
@@ -215,7 +215,7 @@ abstract class ServiceProvider
             return $paths;
         }
 
-        return collect(static::$publishes[\Swoole\Coroutine::getuid()])->reduce(function ($paths, $p) {
+        return collect(static::$publishes[\co::getUid()])->reduce(function ($paths, $p) {
             return array_merge($paths, $p);
         }, []);
     }
@@ -229,7 +229,7 @@ abstract class ServiceProvider
      */
     protected static function pathsForProviderOrGroup($provider, $group)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         if ($provider && $group) {
             return static::pathsForProviderAndGroup($provider, $group);
         } elseif ($group && array_key_exists($group, static::$publishGroups[$cid])) {
@@ -250,7 +250,7 @@ abstract class ServiceProvider
      */
     protected static function pathsForProviderAndGroup($provider, $group)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         if (! empty(static::$publishes[$cid][$provider]) && ! empty(static::$publishGroups[$cid][$group])) {
             return array_intersect_key(static::$publishes[$cid][$provider], static::$publishGroups[$cid][$group]);
         }
@@ -265,7 +265,7 @@ abstract class ServiceProvider
      */
     public static function publishableProviders()
     {
-        return array_keys(static::$publishes[\Swoole\Coroutine::getuid()]);
+        return array_keys(static::$publishes[\co::getUid()]);
     }
 
     /**
@@ -275,7 +275,7 @@ abstract class ServiceProvider
      */
     public static function publishableGroups()
     {
-        return array_keys(static::$publishGroups[\Swoole\Coroutine::getuid()]);
+        return array_keys(static::$publishGroups[\co::getUid()]);
     }
 
     /**

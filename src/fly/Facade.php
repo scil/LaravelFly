@@ -63,7 +63,7 @@ abstract class Facade
     {
         $name = static::getFacadeAccessor();
 
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
 
         $mock = static::isMock($cid)
             ? static::$resolvedInstance[$cid][$name]
@@ -131,7 +131,7 @@ abstract class Facade
      */
     public static function swap($instance)
     {
-        static::$resolvedInstance[\Swoole\Coroutine::getuid()][static::getFacadeAccessor()] = $instance;
+        static::$resolvedInstance[\co::getUid()][static::getFacadeAccessor()] = $instance;
 
         if (isset(static::$app)) {
             static::$app->instance(static::getFacadeAccessor(), $instance);
@@ -172,7 +172,7 @@ abstract class Facade
             return $name;
         }
 
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
 
         if (isset(static::$resolvedInstance[$cid][$name])) {
             return static::$resolvedInstance[$cid][$name];
@@ -189,7 +189,7 @@ abstract class Facade
      */
     public static function clearResolvedInstance($name)
     {
-        unset(static::$resolvedInstance[\Swoole\Coroutine::getuid()][$name]);
+        unset(static::$resolvedInstance[\co::getUid()][$name]);
     }
 
     /**
@@ -199,7 +199,7 @@ abstract class Facade
      */
     public static function clearResolvedInstances()
     {
-        static::$resolvedInstance[\Swoole\Coroutine::getuid()] = [];
+        static::$resolvedInstance[\co::getUid()] = [];
     }
 
     /**

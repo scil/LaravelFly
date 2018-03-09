@@ -47,7 +47,7 @@ Trait Common
      * For APP_TYPE=='worker', an laravel application instance living always with a worker, not the server.
      *
      * In Mode Hash, it can't be made living always with the server,
-     * because most of Coroutine-Friendly Services are made only by \Swoole\Coroutine::getuid()
+     * because most of Coroutine-Friendly Services are made only by \co::getUid()
      * without using swoole_server::$worker_id, they can not distinguish coroutines in different workers.
      *
      * @var \LaravelFly\Hash\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application

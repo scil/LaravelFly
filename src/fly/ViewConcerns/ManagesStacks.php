@@ -17,7 +17,7 @@ trait ManagesStacks
     {
         if ($content === '') {
             if (ob_start()) {
-                static::$corDict[\Swoole\Coroutine::getuid()]['pushStack'][] = $section;
+                static::$corDict[\co::getUid()]['pushStack'][] = $section;
             }
         } else {
             $this->extendPush($section, $content);
@@ -32,7 +32,7 @@ trait ManagesStacks
      */
     public function stopPush()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
 
         if (empty(static::$corDict[$cid]['pushStack'])) {
             throw new InvalidArgumentException('Cannot end a push stack without first starting one.');
@@ -52,7 +52,7 @@ trait ManagesStacks
      */
     protected function extendPush($section, $content)
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
 
         if (!isset(static::$corDict[$cid]['pushes'][$section])) {
             static::$corDict[$cid]['pushes'][$section] = [];
@@ -76,7 +76,7 @@ trait ManagesStacks
     {
         if ($content === '') {
             if (ob_start()) {
-                static::$corDict[\Swoole\Coroutine::getuid()]['pushStack'][] = $section;
+                static::$corDict[\co::getUid()]['pushStack'][] = $section;
             }
         } else {
             $this->extendPrepend($section, $content);
@@ -91,7 +91,7 @@ trait ManagesStacks
      */
     public function stopPrepend()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
 
         if (empty(static::$corDict[$cid]['pushStack'])) {
             throw new InvalidArgumentException('Cannot end a prepend operation without first starting one.');
@@ -111,7 +111,7 @@ trait ManagesStacks
      */
     protected function extendPrepend($section, $content)
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
 
         if (!isset(static::$corDict[$cid]['prepends'][$section])) {
             static::$corDict[$cid]['prepends'][$section] = [];
@@ -133,7 +133,7 @@ trait ManagesStacks
      */
     public function yieldPushContent($section, $default = '')
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
 
         if (!isset(static::$corDict[$cid]['pushes'][$section]) && !isset($this->prepends[$section])) {
             return $default;
@@ -159,7 +159,7 @@ trait ManagesStacks
      */
     public function flushStacks()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
         static::$corDict[$cid]['pushes'] = [];
         static::$corDict[$cid]['prepends'] = [];
         static::$corDict[$cid]['pushStack'] = [];

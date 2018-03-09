@@ -78,7 +78,7 @@ class HttpServer implements ServerInterface
 
         if (LARAVELFLY_MODE == 'Hash') {
 
-            $cid = \Swoole\Coroutine::getuid();
+            $cid = \co::getUid();
 
             $laravel_request = (new \LaravelFly\Hash\IlluminateBase\Request())->createFromSwoole($request);
 

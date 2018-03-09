@@ -35,7 +35,7 @@ class AuthManager extends \Illuminate\Auth\AuthManager
     {
         $name = $name ?: $this->getDefaultDriver();
 
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
         return static::$corDict[$cid]['guards'][$name] ??
             (static::$corDict[$cid]['guards'][$name] = $this->resolve($name));
     }
@@ -46,17 +46,17 @@ class AuthManager extends \Illuminate\Auth\AuthManager
 
         $this->setDefaultDriver($name);
 
-        static::$corDict[\Swoole\Coroutine::getuid()]['userResolver'] = function ($name = null) {
+        static::$corDict[\co::getUid()]['userResolver'] = function ($name = null) {
             return $this->guard($name)->user();
         };
     }
     public function userResolver()
     {
-        return static::$corDict[\Swoole\Coroutine::getuid()]['userResolver'];
+        return static::$corDict[\co::getUid()]['userResolver'];
     }
     public function resolveUsersUsing(Closure $userResolver)
     {
-        static::$corDict[\Swoole\Coroutine::getuid()]['userResolver'] = $userResolver;
+        static::$corDict[\co::getUid()]['userResolver'] = $userResolver;
 
         return $this;
     }

@@ -170,7 +170,7 @@ class Application extends \Illuminate\Foundation\Application
     public function bootOnWorker()
     {
 
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
         if ($this->bootedOnWorker) {
             return;
         }
@@ -208,12 +208,12 @@ class Application extends \Illuminate\Foundation\Application
 
     public function resetServiceProviders()
     {
-        static::$corDict[\Swoole\Coroutine::getuid()]['serviceProviders'] = [];
+        static::$corDict[\co::getUid()]['serviceProviders'] = [];
     }
 
     public function bootInRequest()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
         if (static::$corDict[$cid]['bootedInRequest']) {
             return;
         }
@@ -248,7 +248,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function addDeferredServices(array $services)
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = \co::getUid();
         static::$corDict[$cid]['deferredServices'] = array_merge(static::$corDict[$cid]['deferredServices'], $services);
     }
 }

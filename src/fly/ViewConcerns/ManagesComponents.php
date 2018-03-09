@@ -44,7 +44,7 @@ trait ManagesComponents
     public function startComponent($name, array $data = [])
     {
         if (ob_start()) {
-            $cid = \Swoole\Coroutine::getuid();
+            $cid = \co::getUid();
             static::$corDict[$cid]['componentStack'][] = $name;
 
             static::$corDict[$cid]['componentData'][$this->currentComponent()] = $data;
@@ -60,7 +60,7 @@ trait ManagesComponents
      */
     public function renderComponent()
     {
-        $name = array_pop(static::$corDict[\Swoole\Coroutine::getuid()]['componentStack']);
+        $name = array_pop(static::$corDict[\co::getUid()]['componentStack']);
 
         return $this->make($name, $this->componentData($name))->render();
     }
@@ -73,7 +73,7 @@ trait ManagesComponents
      */
     protected function componentData($name)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         return array_merge(
             static::$corDict[$cid]['componentData'][count(static::$corDict[$cid]['componentStack'])],
             ['slot' => new HtmlString(trim(ob_get_clean()))],
@@ -90,7 +90,7 @@ trait ManagesComponents
      */
     public function slot($name, $content = null)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         if (count(func_get_args()) == 2) {
             static::$corDict[$cid]['slots'][$this->currentComponent()][$name] = $content;
         } else {
@@ -109,7 +109,7 @@ trait ManagesComponents
      */
     public function endSlot()
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $cid=\co::getUid();
         last(static::$corDict[$cid]['componentStack']);
 
         $currentSlot = array_pop(
@@ -127,6 +127,6 @@ trait ManagesComponents
      */
     protected function currentComponent()
     {
-        return count(static::$corDict[\Swoole\Coroutine::getuid()]['componentStack']) - 1;
+        return count(static::$corDict[\co::getUid()]['componentStack']) - 1;
     }
 }

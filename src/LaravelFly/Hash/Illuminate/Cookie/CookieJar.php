@@ -20,7 +20,7 @@ class CookieJar extends \Illuminate\Cookie\CookieJar
 
     public function queued($key, $default = null)
     {
-        return Arr::get(static::$corDict[\Swoole\Coroutine::getuid()]['queued'], $key, $default);
+        return Arr::get(static::$corDict[\co::getUid()]['queued'], $key, $default);
     }
 
     public function queue(...$parameters)
@@ -31,16 +31,16 @@ class CookieJar extends \Illuminate\Cookie\CookieJar
             $cookie = call_user_func_array([$this, 'make'], $parameters);
         }
 
-        static::$corDict[\Swoole\Coroutine::getuid()]['queued'][$cookie->getName()] = $cookie;
+        static::$corDict[\co::getUid()]['queued'][$cookie->getName()] = $cookie;
     }
 
     public function unqueue($name)
     {
-        unset(static::$corDict[\Swoole\Coroutine::getuid()]['queued'][$name]);
+        unset(static::$corDict[\co::getUid()]['queued'][$name]);
     }
 
     public function getQueuedCookies()
     {
-        return static::$corDict[\Swoole\Coroutine::getuid()]['queued'];
+        return static::$corDict[\co::getUid()]['queued'];
     }
 }
