@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Dict;
+namespace LaravelFly\Hash;
 
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
@@ -85,7 +85,7 @@ class Application extends \Illuminate\Foundation\Application
         /**
          *
          * url is not needed to implement __clone() method, because it's  attributes will updated auto.
-         * so it should be before routes which is cloned by {@link \LaravelFly\Dict\Illuminate\Router::initOnWorker } .
+         * so it should be before routes which is cloned by {@link \LaravelFly\Hash\Illuminate\Router::initOnWorker } .
          *
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test

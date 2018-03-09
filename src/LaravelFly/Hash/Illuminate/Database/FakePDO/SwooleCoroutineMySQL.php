@@ -7,7 +7,7 @@ use Mockery\Exception;
  * a layer between swoole coroutine mysql and PDO
  * using PDO API
  *
- * @package LaravelFly\Dict\Illuminate\Database
+ * @package LaravelFly\Hash\Illuminate\Database
  */
 class SwooleCoroutineMySQL
 {

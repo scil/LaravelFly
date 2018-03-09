@@ -36,6 +36,6 @@
   
 
 
-## A Worker Flow in Mode Dict
+## A Worker Flow in Mode Hash
 
 todo

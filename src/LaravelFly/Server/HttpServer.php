@@ -34,6 +34,7 @@ class HttpServer implements ServerInterface
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
+        printf("[INFO] worker starting in pid %u \n", getmypid()) ;
 
         $this->_onWorkerStart($server,$worker_id);
 
@@ -69,12 +70,13 @@ class HttpServer implements ServerInterface
 
         $this->app->forgetInstance('request');
 
+        printf("[INFO] worker ready in pid %u \n", getmypid()) ;
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
-        if (LARAVELFLY_MODE == 'Dict') {
+        if (LARAVELFLY_MODE == 'Hash') {
 
             $cid = \Swoole\Coroutine::getuid();
 
@@ -111,7 +113,7 @@ class HttpServer implements ServerInterface
         $this->swooleResponse($response, $laravel_response);
 
 
-        if (LARAVELFLY_MODE == 'Dict') {
+        if (LARAVELFLY_MODE == 'Hash') {
 
             $requestKernel->terminate($laravel_request, $laravel_response);
 

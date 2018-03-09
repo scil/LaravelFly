@@ -10,7 +10,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 if (defined('LARAVELFLY_MODE')) {
     if (LARAVELFLY_MODE == 'Simple') {
         class WhichKernel extends \LaravelFly\Simple\Kernel{}
-    } elseif (LARAVELFLY_MODE == 'Dict') {
+    } elseif (LARAVELFLY_MODE == 'Hash') {
         class WhichKernel extends \LaravelFly\Hash\Kernel{}
     } elseif (LARAVELFLY_MODE == 'FpmLike') {
         class WhichKernel extends HttpKernel{}

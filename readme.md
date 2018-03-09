@@ -108,7 +108,7 @@ visit private members, read/write vars, use laravel services and so on.
 ```php
 // visit private members
 sudo app()->booted
-sudo $url= app()->corDict[1]['instances']['url']
+sudo $view= app()::$corDict[1]['instances']['view']
 
 // use Model or Controller without writing namespace, thanks to ClassAliasAutoloader
 // and the instance is printed beautifully, thanks to casters provided by laravel
