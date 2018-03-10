@@ -70,7 +70,10 @@ class HttpServer implements ServerInterface
 
         $this->app->forgetInstance('request');
 
-        event('worker.ready', [$this]);
+        // disable app dispatcher
+        // event('worker.ready', [$this]);
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $this->dispatcher->dispatch('worker.ready', $event);
 
         printf("[INFO] worker ready in pid %u \n", getmypid());
     }
