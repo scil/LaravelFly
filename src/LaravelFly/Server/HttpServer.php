@@ -43,7 +43,7 @@ class HttpServer implements ServerInterface
          * instance a fake request then bootstrap
          *
          * new UrlGenerator need a request.
-         * In Mode One, no worry about it's fake, because
+         * In Mode Simple, no worry about it's fake, because
          * app['url']->request will update when app['request'] changes, as rebinding is used
          * <code>
          * <?php
@@ -74,7 +74,7 @@ class HttpServer implements ServerInterface
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
         $this->dispatcher->dispatch('worker.ready', $event);
 
-        printf("[INFO] pid %u: worker ready\n", getmypid());
+        printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
