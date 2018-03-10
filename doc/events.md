@@ -25,9 +25,24 @@ $dispatcher->addListener('app.created', function (GenericEvent $event) {
     $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
 });
 ```
-$dispatcher can also be accessed in a new server class which extends LaravelFly\Server\HttpServer or LaravelFly\Server\FpmHttpServer. Just put the new class in a server config file.
+$dispatcher can also be accessed in a new server class which extends LaravelFly\Server\HttpServer or LaravelFly\Server\FpmHttpServer. 
 ```
-    'server' => \LaravelFly\Server\HttpServer::class,
+class MyServer extends \LaravelFly\Server\HttpServer
+{
+    public function start()
+    {
+        $this->dispatcher->addListener('app.created', function (GenericEvent $event) {
+            $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
+        });
+
+        parent::start();
+    }
+
+}
+```
+Put the new class in a server config file.
+```
+    'server' => MyServer::class,
 ```
 
 
