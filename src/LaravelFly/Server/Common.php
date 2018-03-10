@@ -76,6 +76,9 @@ Trait Common
         $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
         $this->dispatcher->dispatch('server.config', $event);
         // then listeners can change options
+
+        echo '[INFO] server options ready', PHP_EOL;
+
         $this->options = $event['options'];
     }
 
@@ -93,6 +96,8 @@ Trait Common
 
         $event = new GenericEvent(null, ['server' => $this, 'swoole' => $swoole, 'options' => $options]);
         $this->dispatcher->dispatch('server.created', $event);
+
+        printf("[INFO] server %s created\n",static::class) ;
     }
 
     protected function parseOptions(array &$options)
@@ -131,11 +136,11 @@ Trait Common
 
         if ($options['daemonize'] == true) {
             $options['daemonize'] = false;
-            echo '[INFO] disable daemonize to let tinker run normally', PHP_EOL;
+            echo '[NOTICE] daemonize disabled to allow tinker run normally', PHP_EOL;
         }
 
         if ($options['worker_num'] == 1) {
-            echo '[INFO] worker_num is 1, your server can not response any other requests when using shell', PHP_EOL;
+            echo '[NOTICE] worker_num is 1, your server can not response any other requests when using tinker', PHP_EOL;
         }
 
         $this->tinkerSubscriber();
@@ -149,7 +154,7 @@ Trait Common
             \LaravelFly\Tinker\Shell::make($event['server']);
 
             \LaravelFly\Tinker\Shell::addAlias([
-                \LaravelFly\LaravelFly::class,
+                \LaravelFly\Fly::class,
             ]);
         });
 
@@ -222,7 +227,7 @@ Trait Common
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
-        printf("[INFO] made app: $this->appClass in pid %u \n", getmypid()) ;
+        printf("[INFO] app $this->appClass made in pid %u \n", getmypid()) ;
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);

@@ -93,4 +93,4 @@ if(empty($options['tinker'])){
 //require $root . '/vendor/scil/laravel-fly/src/functions.php';
 
 unset($root, $config_file, $pid_file, $pid);
-\LaravelFly\LaravelFly::getInstance($options)->start();
+\LaravelFly\Fly::getInstance($options)->start();

@@ -34,9 +34,9 @@ class HttpServer implements ServerInterface
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
-        printf("[INFO] worker starting in pid %u \n", getmypid()) ;
+        printf("[INFO] worker starting in pid %u \n", getmypid());
 
-        $this->_onWorkerStart($server,$worker_id);
+        $this->_onWorkerStart($server, $worker_id);
 
         $this->startLaravel();
 
@@ -70,7 +70,9 @@ class HttpServer implements ServerInterface
 
         $this->app->forgetInstance('request');
 
-        printf("[INFO] worker ready in pid %u \n", getmypid()) ;
+        event('worker.ready', [$this]);
+
+        printf("[INFO] worker ready in pid %u \n", getmypid());
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
