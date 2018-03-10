@@ -31,12 +31,13 @@ class Fly
     {
         if (self::$instance) return;
 
+        static::load();
+
         if (null === static::$dispatcher) {
             if (null === $dispatcher)
-                static::setDispatcher(new EventDispatcher());
+                $dispatcher = new EventDispatcher();
             self::$dispatcher = $dispatcher;
         }
-
 
         printf("[INFO] server events ready\n");
 
@@ -51,6 +52,32 @@ class Fly
         self::$server->config($options);
 
         self::$server->create();
+
+    }
+
+    protected function load()
+    {
+
+        if (class_exists('NunoMaduro\Collision\Provider'))
+            (new \NunoMaduro\Collision\Provider)->register();
+
+        if (LARAVELFLY_MODE == 'Hash') {
+            require __DIR__ . "/../fly/Container.php";
+            require __DIR__ . "/../fly/Application.php";
+            require __DIR__ . "/../fly/ServiceProvider.php";
+            require __DIR__ . "/../fly/Router.php";
+            require __DIR__ . "/../fly/ViewConcerns/ManagesComponents.php";
+            require __DIR__ . "/../fly/ViewConcerns/ManagesLayouts.php";
+            require __DIR__ . "/../fly/ViewConcerns/ManagesLoops.php";
+            require __DIR__ . "/../fly/ViewConcerns/ManagesStacks.php";
+            require __DIR__ . "/../fly/ViewConcerns/ManagesTranslations.php";
+            require __DIR__ . "/../fly/Facade.php";
+
+            //blackhole
+            require __DIR__ . "/../fly/Controller.php";
+            require __DIR__ . "/../fly/Relation.php";
+            require __DIR__ . "/../fly/Collection.php";
+        }
 
     }
 
@@ -70,7 +97,7 @@ class Fly
 
     static function getDispatcher()
     {
-        if (null=== self::$dispatcher) {
+        if (null === self::$dispatcher) {
             static::$dispatcher = new EventDispatcher();
         }
         return self::$dispatcher;

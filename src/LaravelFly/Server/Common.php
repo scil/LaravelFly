@@ -169,14 +169,20 @@ Trait Common
     {
         opcache_reset();
 
+        printf("[INFO] pid %u: worker %u starting\n", getmypid(), $worker_id);
+
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
         $this->dispatcher->dispatch('worker.starting', $event);
     }
 
     public function onWorkerStop(\swoole_server $server, int $worker_id)
     {
+        printf("[INFO] pid %u: worker %u stopping\n", getmypid(), $worker_id);
+
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
         $this->dispatcher->dispatch('worker.stopped', $event);
+
+        printf("[INFO] pid %u: worker %u stopped\n", getmypid(), $worker_id);
     }
 
     public function getSwooleServer(): \swoole_server
@@ -227,7 +233,7 @@ Trait Common
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
-        printf("[INFO] app $this->appClass made in pid %u \n", getmypid()) ;
+        printf("[INFO] pid %u: $this->appClass instanced\n", getmypid()) ;
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);

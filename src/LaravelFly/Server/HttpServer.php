@@ -34,7 +34,6 @@ class HttpServer implements ServerInterface
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
-        printf("[INFO] worker starting in pid %u \n", getmypid());
 
         $this->_onWorkerStart($server, $worker_id);
 
@@ -75,7 +74,7 @@ class HttpServer implements ServerInterface
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
         $this->dispatcher->dispatch('worker.ready', $event);
 
-        printf("[INFO] worker ready in pid %u \n", getmypid());
+        printf("[INFO] pid %u: worker ready\n", getmypid());
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)

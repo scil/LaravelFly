@@ -65,27 +65,7 @@ exit();
 start:
 include $root . '/vendor/autoload.php';
 
-if (class_exists('NunoMaduro\Collision\Provider'))
-    (new \NunoMaduro\Collision\Provider)->register();
-
-if (LARAVELFLY_MODE == 'Hash') {
-    require __DIR__ . "/../src/fly/Container.php";
-    require __DIR__ . "/../src/fly/Application.php";
-    require __DIR__ . "/../src/fly/ServiceProvider.php";
-    require __DIR__ . "/../src/fly/Router.php";
-    require __DIR__ . "/../src/fly/ViewConcerns/ManagesComponents.php";
-    require __DIR__ . "/../src/fly/ViewConcerns/ManagesLayouts.php";
-    require __DIR__ . "/../src/fly/ViewConcerns/ManagesLoops.php";
-    require __DIR__ . "/../src/fly/ViewConcerns/ManagesStacks.php";
-    require __DIR__ . "/../src/fly/ViewConcerns/ManagesTranslations.php";
-    require __DIR__ . "/../src/fly/Facade.php";
-
-    //blackhole
-    require __DIR__ . "/../src/fly/Controller.php";
-    require __DIR__ . "/../src/fly/Relation.php";
-    require __DIR__ . "/../src/fly/Collection.php";
-}
-
+// prevent errors if eval(tinker()); left in project code
 if(empty($options['tinker'])){
     function tinker(){}
 }
