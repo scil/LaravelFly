@@ -6,7 +6,9 @@
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  * Greedy: only for study
  */
-if(!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE','Simple');
+if(!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
+    'Simple'
+);
 
 /**
  * honest that application is running in cli mode.
@@ -17,7 +19,9 @@ if(!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE','Simple');
  * Set it true, Application::runningInConsole() return true, and DebugBar can not start.
  * If you use FpmLike, must keep it false.
  */
-if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',false);
+if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
+    false
+);
 
 /**
  * make some services on worker, before any requests, to save memory

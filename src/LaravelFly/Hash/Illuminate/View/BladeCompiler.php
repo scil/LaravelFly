@@ -22,7 +22,7 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
             $compiled = $this->getCompiledPath($this->getPath());
 
             if (false !== $this->files->put($compiled, $contents)) {
-                static::$map[$path][1] = $this->files->lastModified($compiled);
+                static::$mapFly[$path][1] = $this->files->lastModified($compiled);
             }
 
         }

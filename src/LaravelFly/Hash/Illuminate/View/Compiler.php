@@ -21,12 +21,12 @@ trait Compiler
      * ]
      * @var array
      */
-    protected static $map = [];
+    protected static $mapFly = [];
 
     public function getCompiledPath($path)
     {
-        if (isset(static::$map[$path])) {
-            return static::$map[$path][0];
+        if (isset(static::$mapFly[$path])) {
+            return static::$mapFly[$path][0];
         }
         return $this->saveInfo($path)[0];
     }
@@ -37,7 +37,7 @@ trait Compiler
 
         // If the compiled file doesn't exist we will indicate that the time is 0 ,so the compiled is expired
         // so that it can be re-compiled.
-        return static::$map[$path] = [
+        return static::$mapFly[$path] = [
             $compiled,
             $this->files->exists($compiled) ? $this->files->lastModified($compiled) : 0];
 
@@ -45,11 +45,11 @@ trait Compiler
 
     public function isExpired($path)
     {
-        if (!isset(static::$map[$path])) {
+        if (!isset(static::$mapFly[$path])) {
             return true;
         }
 
         return $this->files->lastModified($path) >=
-            static::$map[$path][1];
+            static::$mapFly[$path][1];
     }
 }

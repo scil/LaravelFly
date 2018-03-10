@@ -14,6 +14,7 @@ class FpmHttpServer implements ServerInterface
 
     use Common {
         create as _create;
+        onWorkerStart as _onWorkerStart;
     }
 
     function setListeners()
@@ -23,6 +24,15 @@ class FpmHttpServer implements ServerInterface
         $this->swoole->on('request', array($this, 'onRequest'));
     }
 
+    public function onWorkerStart(\swoole_server $server, int $worker_id)
+    {
+        $this->_onWorkerStart($server, $worker_id);
+
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app'=>null]);
+        $this->dispatcher->dispatch('worker.ready', $event);
+
+        printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);
+    }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
@@ -31,6 +41,7 @@ class FpmHttpServer implements ServerInterface
 
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => $request]);
         $this->dispatcher->dispatch('app.created', $event);
+        printf("[INFO] pid %u: $this->appClass instanced\n", getmypid());
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,

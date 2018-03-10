@@ -75,11 +75,10 @@ Trait Common
 
         $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
         $this->dispatcher->dispatch('server.config', $event);
-        // then listeners can change options
-
-        echo '[INFO] server options ready', PHP_EOL;
 
         $this->options = $event['options'];
+
+        echo '[INFO] server options ready', PHP_EOL;
     }
 
     public function create()
@@ -94,10 +93,15 @@ Trait Common
 
         $swoole->fly = $this;
 
-        $event = new GenericEvent(null, ['server' => $this, 'swoole' => $swoole, 'options' => $options]);
+        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
         $this->dispatcher->dispatch('server.created', $event);
 
-        printf("[INFO] server %s created\n",static::class) ;
+        printf("[INFO] server %s created\n", static::class);
+    }
+
+    function getSwoole():\swoole_http_server
+    {
+        return $this->swoole;
     }
 
     protected function parseOptions(array &$options)
@@ -179,7 +183,7 @@ Trait Common
     {
         printf("[INFO] pid %u: worker %u stopping\n", getmypid(), $worker_id);
 
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]);
         $this->dispatcher->dispatch('worker.stopped', $event);
 
         printf("[INFO] pid %u: worker %u stopped\n", getmypid(), $worker_id);
@@ -233,7 +237,7 @@ Trait Common
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
-        printf("[INFO] pid %u: $this->appClass instanced\n", getmypid()) ;
+        printf("[INFO] pid %u: $this->appClass instanced\n", getmypid());
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);

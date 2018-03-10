@@ -71,7 +71,7 @@ class HttpServer implements ServerInterface
 
         // disable app dispatcher
         // event('worker.ready', [$this]);
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app'=>$this->app]);
         $this->dispatcher->dispatch('worker.ready', $event);
 
         printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);

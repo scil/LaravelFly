@@ -16,6 +16,15 @@
         <testsuite name="LaravelFly_Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
+
+        <!--
+        hacked files are included, so theses tests can not be run with other tests
+
+        vendor/bin/phpunit - -testsuit LaravelFly_HackedFiles_Feature  - -stop-on-failure vendor/scil/laravel-fly/phpunit.xml
+         -->
+        <testsuite name="LaravelFly_HackedFiles_Feature">
+            <directory suffix="Test.php">./tests/HackedFiles/Feature</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

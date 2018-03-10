@@ -27,9 +27,9 @@ class Fly
      * @param array $options
      * @param EventDispatcher $dispatcher
      */
-    static function init($options, EventDispatcher $dispatcher = null)
+    static function init($options, EventDispatcher $dispatcher = null):self
     {
-        if (self::$instance) return;
+        if (self::$instance) return self::$instance;
 
         static::load();
 
@@ -53,6 +53,7 @@ class Fly
 
         self::$server->create();
 
+        return self::$instance;
     }
 
     protected function load()

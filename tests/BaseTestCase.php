@@ -3,6 +3,7 @@
 namespace LaravelFly\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class Base
@@ -15,23 +16,53 @@ abstract class BaseTestCase extends TestCase
     /**
      * @var \Illuminate\Foundation\Application
      */
-    private $laravelApp;
-    protected $root;
+    static private $laravelApp;
 
-    protected function setUp()
+    /**
+     * @var EventDispatcher
+     */
+    static protected $dispatcher;
+
+    /**
+     * @var \LaravelFly\Server\ServerInterface
+     */
+    static protected $server;
+
+    /**
+     * @var string
+     */
+    static protected $root;
+
+    static function setUpBeforeClass()
     {
-
-        $this->root = realpath(__DIR__ . '/../../../..');
-
+        static::$root = realpath(__DIR__ . '/../../../..');
     }
 
-    protected function getLaravelApp()
+    static protected function getLaravelApp()
     {
-        if(!$this->laravelApp)
-            $this->laravelApp = require_once $this->root . '/bootstrap/app.php';
+        if (!static::$laravelApp)
+            static::$laravelApp = require_once static::$root . '/bootstrap/app.php';
 
-        return $this->laravelApp;
+        return static::$laravelApp;
     }
+
+    static protected function makeServer( $constances = [], $options=[], $config_file =  __DIR__ . '/../config/laravelfly-server-config.example.php')
+    {
+        foreach ($constances as $name=>$val){
+            define($name, $val);
+        }
+
+        $file_options = require $config_file;
+
+        $options = array_merge($file_options, $options);
+
+        $fly= \LaravelFly\Fly::init($options);
+
+        static::$dispatcher = $fly::getDispatcher();
+
+        return static::$server = $fly::getServer();
+    }
+
 
 }
 
