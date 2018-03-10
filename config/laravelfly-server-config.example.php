@@ -29,7 +29,7 @@ if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',false);
  * 2. its vars will not changed in any requests
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
-const LARAVELFLY_CF_SERVICES = [
+if(!defined('LARAVELFLY_CF_SERVICES')) define('LARAVELFLY_CF_SERVICES',[
     /**
      * make the corresponding service to be true if you use it.
      */
@@ -47,7 +47,7 @@ const LARAVELFLY_CF_SERVICES = [
      *      while to 'admin_location/home.blade.php' for an admin
      */
     'view.finder' => true,
-];
+]);
 
 /**
  * this array is used for swoole server,
