@@ -1,6 +1,6 @@
 <?php
 /**
- * hack to make Container to work in LaravelFly Mode Dict
+ * hack to make Container to work in LaravelFly Mode Dict and define a base function coroutineFriendlyServices()
  *
  */
 

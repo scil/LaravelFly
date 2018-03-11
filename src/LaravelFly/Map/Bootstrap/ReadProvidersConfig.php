@@ -23,6 +23,8 @@ class ReadProvidersConfig
 
             if ($providerConfig === false || is_null($providerConfig)) continue;
 
+            if(!class_exists($provider)) continue;
+
             $providersOnWork[] = $provider;
 
             if (!is_array($providerConfig)) continue;
@@ -33,6 +35,7 @@ class ReadProvidersConfig
             }
 
             $officalCFServices = $provider::coroutineFriendlyServices();
+            eval(tinker());
             // $officalCFServices is base
             $curCFServices = $officalCFServices;
 

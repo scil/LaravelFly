@@ -130,7 +130,7 @@ Trait Common
             $kernelClass = \LaravelFly\Kernel::class;
         }
         $this->kernelClass = $kernelClass;
-        echo '[INFO] select kernel \LaravelFly\Kernel', PHP_EOL;
+        echo "[INFO] select kernel $kernelClass", PHP_EOL;
 
         $this->prepareTinker($options);
 
