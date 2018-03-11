@@ -28,7 +28,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
  `ab -k -n 1000 -c 10 http://zc.test/green `
 
-.   | fpm |  Fly Mode Simple | Fly Mode Hash
+.   | fpm |  Fly Mode Simple | Fly Mode Map
 ------------ | ------------ | ------------- | ------------- 
 Requests per second   | 3 |  5  | 34
 Time taken ≈ | 325 | 195  | 30
@@ -186,9 +186,9 @@ name | replacement
 header | Laravel Api: $response->header
 setcookie | Laravel Api: $response->cookie
 
-### Mode Hash
+### Mode Map
 
-Mode Hash uses coroutine, so different requests can be handled by server concurrently. Suppose the server is handling a request, meet `co::sleep(3)` , then it goes to handle another request, later go back to the first request.
+Mode Map uses coroutine, so different requests can be handled by server concurrently. Suppose the server is handling a request, meet `co::sleep(3)` , then it goes to handle another request, later go back to the first request.
 
 The basic services have been converted to be Coroutine Friendly and some tests have added to make sure the converted files can follow Laravel's new releases.  
 
@@ -203,11 +203,12 @@ There are some tips:
 - [ ] mysql connection pool
 - [ ] add events
 - [ ] handle php config and laravel config like Zend in Mode Simple?
-- [ ] handle php config and laravel config in Mode Hash?
+- [ ] handle php config and laravel config in Mode Map?
 - [ ] websocket
 - [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
 - [ ] send file
+- [ ] travis, static analyze like phan, phpstan or https://github.com/exakat/php-static-analysis-tools
 - [ ] change tinker to go away from sudo
 - [ ] log fly: improve log on swoole
 - [ ] cache fly

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Simple, Hash, FpmLike or Greedy
+ * Simple, Map, FpmLike or Greedy
  *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  * Greedy: only for study
@@ -26,7 +26,7 @@ if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
 /**
  * make some services on worker, before any requests, to save memory
  *
- * only for Mode Hash and advanced users
+ * only for Mode Map and advanced users
  *
  * A COROUTINE-FRIENDLY SERVICE must satisfy folling conditions:
  * 1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }
@@ -41,7 +41,7 @@ if(!defined('LARAVELFLY_CF_SERVICES')) define('LARAVELFLY_CF_SERVICES',[
     'filesystem.cloud' => false,
     'broadcast' => false,
 
-    // to false if app('hash')->setRounds may be called in a request
+    // to false if app('hash')->setRounds may be called in a request. If we want to make 'hash' COROUTINE-FRIENDLY, it should be always same.
     'hash' => true,
 
     /**
@@ -86,7 +86,17 @@ return [
     'listen_port' => 9501,
 
     // like pm.start_servers in php-fpm, but there's no option like pm.max_children
-    'worker_num' => 4,
+    'worker_num' => 5,
+
+    // max number of coroutines handled by a worker in the same time
+    'max_coro_num' => 3000,
+
+    // set it to false when debug, otherwise true
+    // if you use tinker(), daemonize is disabled always.
+    'daemonize' => false,
+
+    // like pm.max_requests in php-fpm
+    'max_request' => 1000,
 
     /**
      * if you use more than one workers, you can control which worker handle a request
@@ -105,16 +115,6 @@ return [
      * Please do not enalbe it in production env.
      */
     'dispatch_by_query'=>false,
-
-    // max number of coroutines handled by a worker in the same time
-    'max_coro_num' => 3000,
-
-    // set it to false when debug, otherwise true
-    // if you use tinker(), daemonize is disabled always.
-    'daemonize' => false,
-
-    // like pm.max_requests in php-fpm
-    'max_request' => 1000,
 
     //'group' => 'www-data',
 

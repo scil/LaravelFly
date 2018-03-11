@@ -36,6 +36,6 @@
   
 
 
-## A Worker Flow in Mode Hash
+## A Worker Flow in Mode Map
 
 todo

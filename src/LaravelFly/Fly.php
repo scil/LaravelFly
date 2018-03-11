@@ -62,7 +62,7 @@ class Fly
         if (class_exists('NunoMaduro\Collision\Provider'))
             (new \NunoMaduro\Collision\Provider)->register();
 
-        if (LARAVELFLY_MODE == 'Hash') {
+        if (LARAVELFLY_MODE == 'Map') {
             require __DIR__ . "/../fly/Container.php";
             require __DIR__ . "/../fly/Application.php";
             require __DIR__ . "/../fly/ServiceProvider.php";

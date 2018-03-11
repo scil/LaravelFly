@@ -18,7 +18,7 @@
     PDO::ATTR_PERSISTENT => true,
 ],
 ```
-* In Mode Hash, MySql coroutine can be used. Add `'coroutine' => true,` to config/database. This feature is still under dev.And you must disable xdebug or similar library.
+* In Mode Map, MySql coroutine can be used. Add `'coroutine' => true,` to config/database. This feature is still under dev.And you must disable xdebug or similar library.
 ```
 'mysql' => [
     'driver' => 'mysql',
@@ -35,8 +35,8 @@ Note: items prefixed with "/** depends " deverve your consideration.
 1. Edit `<project_root_dir>/app/Http/Kernel.php`, change `class Kernel extends HttpKernel ` to
 ```
 if (defined('LARAVELFLY_MODE')) {
-    if (LARAVELFLY_MODE == 'Hash') {
-        class WhichKernel extends \LaravelFly\Hash\Kernel { }
+    if (LARAVELFLY_MODE == 'Map') {
+        class WhichKernel extends \LaravelFly\Map\Kernel { }
     }elseif (LARAVELFLY_MODE == 'Simple') {
         class WhichKernel extends \LaravelFly\Simple\Kernel { }
     } elseif (LARAVELFLY_MODE == 'FpmLike') {

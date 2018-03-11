@@ -46,18 +46,18 @@ Trait Common
     /**
      * For APP_TYPE=='worker', an laravel application instance living always with a worker, not the server.
      *
-     * In Mode Hash, it can't be made living always with the server,
+     * In Mode Map, it can't be made living always with the server,
      * because most of Coroutine-Friendly Services are made only by \co::getUid()
      * without using swoole_server::$worker_id, they can not distinguish coroutines in different workers.
      *
-     * @var \LaravelFly\Hash\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application
+     * @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application
      */
     protected $app;
 
     /**
      * An laravel kernel instance living always with a worker.
      *
-     * @var \LaravelFly\Hash\Kernel|\LaravelFly\Simple\Kernel|\LaravelFly\Greedy\Kernel
+     * @var \LaravelFly\Map\Kernel|\LaravelFly\Simple\Kernel|\LaravelFly\Greedy\Kernel
      */
     protected $kernel;
 
@@ -109,7 +109,7 @@ Trait Common
 
         $this->root = realpath(__DIR__ . '/../../../../../..');
         if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
-            die("This doc root is not for a Laravel app: {$this->root} ");
+            die("This doc root is not for a Laravel app: {$this->root} \n");
         }
 
         if (isset($options['pid_file'])) {
@@ -119,14 +119,18 @@ Trait Common
         }
 
         $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
+        if(!class_exists($this->appClass)){
+            die("Mode set in config file not valid\n");
+        }
 
         $kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
         if (!(
             is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class) ||
-            is_subclass_of($kernelClass, \LaravelFly\Hash\Kernel::class))) {
+            is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))) {
             $kernelClass = \LaravelFly\Kernel::class;
         }
         $this->kernelClass = $kernelClass;
+        echo '[INFO] select kernel \LaravelFly\Kernel', PHP_EOL;
 
         $this->prepareTinker($options);
 
@@ -195,7 +199,7 @@ Trait Common
     }
 
     /**
-     * @return \LaravelFly\Hash\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
+     * @return \LaravelFly\Map\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
      */
     public function getApp()
     {

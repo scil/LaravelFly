@@ -80,11 +80,11 @@ class HttpServer implements ServerInterface
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
-        if (LARAVELFLY_MODE == 'Hash') {
+        if (LARAVELFLY_MODE == 'Map') {
 
             $cid = \co::getUid();
 
-            $laravel_request = (new \LaravelFly\Hash\IlluminateBase\Request())->createFromSwoole($request);
+            $laravel_request = (new \LaravelFly\Map\IlluminateBase\Request())->createFromSwoole($request);
 
             $this->app->initForCorontine($cid);
 
@@ -117,7 +117,7 @@ class HttpServer implements ServerInterface
         $this->swooleResponse($response, $laravel_response);
 
 
-        if (LARAVELFLY_MODE == 'Hash') {
+        if (LARAVELFLY_MODE == 'Map') {
 
             $requestKernel->terminate($laravel_request, $laravel_response);
 

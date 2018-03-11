@@ -12,7 +12,7 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 
 class Container implements ArrayAccess, ContainerContract
 {
-    use \LaravelFly\Hash\Util\Dict;
+    use \LaravelFly\Map\Util\Dict;
     /**
      * The current globally available container (if any).
      *

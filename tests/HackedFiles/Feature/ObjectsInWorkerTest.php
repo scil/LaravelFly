@@ -73,7 +73,7 @@ class ObjectsInWorkerTestk extends BaseTestCase
     {
         parent::setUpBeforeClass();
 
-        static::makeServer(['LARAVELFLY_MODE' => 'Hash'], ['worker_num' => 1]);
+        static::makeServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
