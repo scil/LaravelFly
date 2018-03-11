@@ -39,6 +39,11 @@ $this->dispatcher->addListener('server.config', function (GenericEvent $event)  
     $event['options'] = $options;
 });
 
+$dispatcher->addListener('worker.starting', function (GenericEvent $event) {
+    echo "There files can not be hot reloaded, because they are included before worker starting\n";
+    var_dump(get_included_files())
+});
+
 $dispatcher->addListener('app.created', function (GenericEvent $event) {
     $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
 });

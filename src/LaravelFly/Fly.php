@@ -31,7 +31,7 @@ class Fly
     {
         if (self::$instance) return self::$instance;
 
-        static::load();
+        static::initEnv();
 
         if (null === static::$dispatcher) {
             if (null === $dispatcher)
@@ -56,7 +56,7 @@ class Fly
         return self::$instance;
     }
 
-    protected function load()
+    static protected function initEnv()
     {
 
         if (class_exists('NunoMaduro\Collision\Provider'))
@@ -78,6 +78,7 @@ class Fly
             require __DIR__ . "/../fly/Controller.php";
             require __DIR__ . "/../fly/Relation.php";
             require __DIR__ . "/../fly/Collection.php";
+
         }
 
     }

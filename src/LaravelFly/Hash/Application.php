@@ -4,7 +4,6 @@ namespace LaravelFly\Hash;
 
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
-use LaravelFly\Application as App;
 use LaravelFly\Hash\IlluminateBase\EventServiceProvider;
 use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
@@ -146,7 +145,7 @@ class Application extends \Illuminate\Foundation\Application
 
     }
 
-    public function getCachedServicesPathAcross()
+    public function getCachedServicesPathAcross(): string
     {
         return $this->bootstrapPath() . '/cache/laravelfly_services_across.json';
     }
@@ -162,7 +161,7 @@ class Application extends \Illuminate\Foundation\Application
         $this->loadDeferredProviders();
     }
 
-    public function getCachedServicesPathBootOnWorker()
+    public function getCachedServicesPathBootOnWorker(): string
     {
         return $this->bootstrapPath() . '/cache/laravelfly_services_on_worker.json';
     }
@@ -196,7 +195,7 @@ class Application extends \Illuminate\Foundation\Application
         }
     }
 
-    public function instanceResolvedOnWorker($abstract)
+    public function instanceResolvedOnWorker($abstract): bool
     {
         if ($this->isAlias($abstract)) {
             $abstract = $this->getAlias($abstract);

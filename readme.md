@@ -169,6 +169,16 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 ## Tips for use
 
+### global vars are not global any more
+
+Global vars are only global in single swoole worker.
+
+Swoole workers run in different process, vars are not shared by different workers. 
+
+Methods to share vars between workers:
+* Swoole tools like Table, Channel, ...
+* Yac, Redis, Memcached, ...
+
 ### php functions not fit LaravelFly
 
 name | replacement
@@ -176,7 +186,7 @@ name | replacement
 header | Laravel Api: $response->header
 setcookie | Laravel Api: $response->cookie
 
-### Tips about Mode Hash
+### Mode Hash
 
 Mode Hash uses coroutine, so different requests can be handled by server concurrently. Suppose the server is handling a request, meet `co::sleep(3)` , then it goes to handle another request, later go back to the first request.
 
@@ -195,7 +205,8 @@ There are some tips:
 - [ ] handle php config and laravel config like Zend in Mode Simple?
 - [ ] handle php config and laravel config in Mode Hash?
 - [ ] websocket
-- [ ] add more tests
+- [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
+- [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
 - [ ] send file
 - [ ] change tinker to go away from sudo
 - [ ] log fly: improve log on swoole

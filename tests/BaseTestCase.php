@@ -16,7 +16,7 @@ abstract class BaseTestCase extends TestCase
     /**
      * @var \Illuminate\Foundation\Application
      */
-    static private $laravelApp;
+    static protected $laravelApp;
 
     /**
      * @var EventDispatcher
@@ -41,7 +41,7 @@ abstract class BaseTestCase extends TestCase
     static protected function getLaravelApp()
     {
         if (!static::$laravelApp)
-            static::$laravelApp = require_once static::$root . '/bootstrap/app.php';
+            static::$laravelApp = require static::$root . '/bootstrap/app.php';
 
         return static::$laravelApp;
     }
