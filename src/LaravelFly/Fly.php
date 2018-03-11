@@ -59,6 +59,8 @@ class Fly
     static protected function initEnv()
     {
 
+        require_once __DIR__. '/../functions.php';
+
         if (class_exists('NunoMaduro\Collision\Provider'))
             (new \NunoMaduro\Collision\Provider)->register();
 

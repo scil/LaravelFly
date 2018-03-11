@@ -66,11 +66,9 @@ start:
 include $root . '/vendor/autoload.php';
 
 // prevent errors if eval(tinker()); left in project code
-if(empty($options['tinker'])){
+if(empty($options['tinker']) && !function_exists('tinker') ){
     function tinker(){}
 }
-
-//require $root . '/vendor/scil/laravel-fly/src/functions.php';
 
 unset($root, $config_file, $pid_file, $pid);
 \LaravelFly\Fly::getInstance($options)->start();
