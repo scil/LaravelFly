@@ -6,7 +6,7 @@ There is  another server dispatcher (Symfony\Component\EventDispatcher).
 
 The app dispatcher objects does not created until the Laravel app created.
 
-## server events
+## events and callbacks before the first request or after the last request
 
 1. server.config  
 available args: $event['server'], $event['config']
@@ -18,9 +18,12 @@ available args: $event['server'], $event['workerid']
 1. app.created  
 available args: $event['server'], $event['app'], $event['request']  
 the $event['request'] is null unless FpmLike is used.
+1. events 'bootstrapping' and events 'bootstrapped' of multiple Bootstrap classes listed in your kernel class  
+In Mode Map, callbacks bootingCallbacks are called after the event 'bootstrapping: LaravelFly\Map\Bootstrap\RegisterAndBootProvidersOnWork', before the event 'bootstrapped: LaravelFly\Map\Bootstrap\RegisterAndBootProvidersOnWork'
 1. worker.ready  
 available args: $event['server'], $event['workerid'], $event['app']  
-the $event['app'] is null with Mode FpmLike.
+the $event['app'] is null with Mode FpmLike.  
+In Mode Simple or Map, this event may look like 'PHP_MINIT_FUNCTION' in php ext, or 'before_first_request' in python Flask.
 1. worker.stopped  
 available args: $event['server'] ,$event['workerid'], $event['app']
 
@@ -28,8 +31,8 @@ These events are instances of Symfony\Component\EventDispatcher\GenericEvent, th
 ```
 $dispatcher = \Laravel\Fly::getDispatcher();
 
-// adding listeners for 'server.config' must be before the server is created.
-$this->dispatcher->addListener('server.config', function (GenericEvent $event)  {
+// adding listeners for 'server.config' must be before the server is created if you want to change the config.
+$dispatcher->addListener('server.config', function (GenericEvent $event)  {
     /*
      * if use `$event['options']['worker_num'] =1`,   error:
      *       Indirect modification of overloaded element 
@@ -48,7 +51,7 @@ $dispatcher->addListener('app.created', function (GenericEvent $event) {
     $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
 });
 ```
-$dispatcher can also be availableed in a new server class which extends LaravelFly\Server\HttpServer or LaravelFly\Server\FpmHttpServer. 
+$dispatcher can also be available in a new server class which extends LaravelFly\Server\HttpServer or LaravelFly\Server\FpmHttpServer. 
 ```
 class MyServer extends \LaravelFly\Server\HttpServer
 {
@@ -69,5 +72,23 @@ Put the new class in a server config file.
 ```
 
 
-## app events
-//todo
+## some events and callbacks in a request in Mode Map
+
+1. request.corinit  
+1. bootedCallbacks (callbacks provided by laravel)  
+register a callback: app()->booted($callback)
+1. Illuminate\Routing\Events\RouteMatched  (provided by laravel)
+1. Illuminate\Foundation\Http\Events\RequestHandled  (provided by laravel)
+1. terminatingCallbacks (callbacks provided by laravel)  
+register a callback: app()->terminating($callback)
+1. request.corunset
+
+
+##  some events and callbacks in a request in Mode Simple
+
+1. bootingCallbacks (callbacks provided by laravel)  
+1. bootedCallbacks (callbacks provided by laravel)  
+1. Illuminate\Routing\Events\RouteMatched
+1. Illuminate\Foundation\Http\Events\RequestHandled
+1. terminatingCallbacks (callbacks provided by laravel)  
+ 
