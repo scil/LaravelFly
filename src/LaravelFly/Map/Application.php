@@ -69,9 +69,9 @@ class Application extends \Illuminate\Foundation\Application
         $this->register(new RoutingServiceProvider($this));
     }
 
-    public function initForCorontine($cid)
+    public function initForRequestCorontine($cid)
     {
-        parent::initForCorontine($cid);
+        parent::initForRequestCorontine($cid);
 
         /**
          * replace $this->register(new RoutingServiceProvider($this));
@@ -89,31 +89,31 @@ class Application extends \Illuminate\Foundation\Application
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test
          */
-        ServiceProvider::initForCorontine($cid);
-        Facade::initForCorontine($cid);
-        $this->make('events')->initForCorontine($cid);
+        ServiceProvider::initForRequestCorontine($cid);
+        Facade::initForRequestCorontine($cid);
+        $this->make('events')->initForRequestCorontine($cid);
         $this->instance('url', clone $this->make('url'));
-        $this->make('router')->initForCorontine($cid);
+        $this->make('router')->initForRequestCorontine($cid);
 
-        $this->make('events')->dispatch('cor.start', [$cid]);
+        $this->make('events')->dispatch('request.corinit', [$cid]);
     }
 
-    function delForCoroutine(int $cid)
+    function unsetForRequestCorontine(int $cid)
     {
 
-        $this->make('events')->dispatch('cor.end', [$cid]);
+        $this->make('events')->dispatch('request.corunset', [$cid]);
 
-        $this->make('router')->delForCoroutine($cid);
+        $this->make('router')->unsetForRequestCorontine($cid);
 
-        ServiceProvider::delForCoroutine($cid);
+        ServiceProvider::unsetForRequestCorontine($cid);
 
-        Facade::delForCoroutine($cid);
+        Facade::unsetForRequestCorontine($cid);
 
-        //this should be the last second, events maybe used by anything, like dispatch 'cor.end'
-        $this->make('events')->delForCoroutine($cid);
+        //this should be the last second, events maybe used by anything, like dispatch 'request.corunset'
+        $this->make('events')->unsetForRequestCorontine($cid);
 
         //this should be the last line, otherwise $this->make('events') can not work
-        parent::delForCoroutine($cid);
+        parent::unsetForRequestCorontine($cid);
     }
 
     public function setProvidersToBootOnWorker($providers)

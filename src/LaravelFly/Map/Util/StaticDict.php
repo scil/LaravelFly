@@ -39,11 +39,11 @@ trait StaticDict
             }
 
             if ($listen) {
-                Container::getInstance()->make('events')->listen('cor.start', function ($cid) {
+                Container::getInstance()->make('events')->listen('request.corinit', function ($cid) {
                     static::initStaticForCorontine($cid);
                 });
 
-                Container::getInstance()->make('events')->listen('cor.end', function ($cid) {
+                Container::getInstance()->make('events')->listen('request.corunset', function ($cid) {
                     static::delStaticForCoroutine($cid);
                 });
             }

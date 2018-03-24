@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 class Router implements RegistrarContract, BindingRegistrar
 {
     use \LaravelFly\Map\Util\Dict{
-        \LaravelFly\Map\Util\Dict::initForCorontine as init;
+        \LaravelFly\Map\Util\Dict::initForRequestCorontine as init;
     }
     use Macroable {
         __call as macroCall;
@@ -58,7 +58,7 @@ class Router implements RegistrarContract, BindingRegistrar
             }];
         $this->initOnWorker(false);
     }
-    public function initForCorontine($cid )
+    public function initForRequestCorontine($cid )
     {
         $this->init($cid);
         $newRoutes = clone static::$corDict[WORKER_COROUTINE_ID]['routes'];

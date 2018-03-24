@@ -22,12 +22,12 @@ abstract class Facade
      */
     protected static $resolvedInstance = [];
 
-    static function initForCorontine(int $cid)
+    static function initForRequestCorontine(int $cid)
     {
         static::$resolvedInstance[$cid] = static::$resolvedInstance[WORKER_COROUTINE_ID];
     }
 
-    static function delForCoroutine(int $cid)
+    static function unsetForRequestCorontine(int $cid)
     {
         unset(static::$resolvedInstance[$cid]);
     }

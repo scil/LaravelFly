@@ -86,9 +86,9 @@ class HttpServer implements ServerInterface
 
             $laravel_request = (new \LaravelFly\Map\IlluminateBase\Request())->createFromSwoole($request);
 
-            $this->app->initForCorontine($cid);
+            $this->app->initForRequestCorontine($cid);
 
-            // why use clone for kernel, because there's a \App\Http\Kernel
+            // why use clone for kernel, because there's a \App\Http\Kernel which is controlled by users
             $requestKernel = clone $this->kernel;
 
             $laravel_response = $requestKernel->handle($laravel_request);
@@ -121,7 +121,7 @@ class HttpServer implements ServerInterface
 
             $requestKernel->terminate($laravel_request, $laravel_response);
 
-            $this->app->delForCoroutine($cid);
+            $this->app->unsetForRequestCorontine($cid);
 
         } else {
 

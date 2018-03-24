@@ -30,24 +30,24 @@ trait Dict
         }
 
         if ($listen) {
-            Container::getInstance()->make('events')->listen('cor.start', function ($cid) {
-                $this->initForCorontine($cid);
+            Container::getInstance()->make('events')->listen('request.corinit', function ($cid) {
+                $this->initForRequestCorontine($cid);
             });
 
-            Container::getInstance()->make('events')->listen('cor.end', function ($cid) {
-                $this->delForCoroutine($cid);
+            Container::getInstance()->make('events')->listen('request.corunset', function ($cid) {
+                $this->unsetForRequestCorontine($cid);
             });
         }
 
 
     }
 
-    public function initForCorontine($cid)
+    public function initForRequestCorontine($cid)
     {
         static::$corDict[$cid] = static::$corDict[WORKER_COROUTINE_ID];
     }
 
-    function delForCoroutine(int $cid)
+    function unsetForRequestCorontine(int $cid)
     {
         unset(static::$corDict[$cid]);
     }

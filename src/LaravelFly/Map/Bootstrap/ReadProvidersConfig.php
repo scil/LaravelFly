@@ -35,7 +35,6 @@ class ReadProvidersConfig
             }
 
             $officalCFServices = $provider::coroutineFriendlyServices();
-            eval(tinker());
             // $officalCFServices is base
             $curCFServices = $officalCFServices;
 
