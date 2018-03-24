@@ -157,7 +157,7 @@ sudo app('tinker')->loader->classes
 
 There may be a problem with tabcompletion. see [tabcompletion only works "the second time](https://github.com/bobthecow/psysh/issues/435)
 
-If you see an error about mkdir, please start LaravelFly using sudo.
+If you see an error about permission, please `sudo chmod -R 0777 ~/.config/psysh`
 
 ## LaravelFly Usability 
 
@@ -209,7 +209,7 @@ There are some tips:
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
 - [ ] send file
 - [ ] travis, static analyze like phan, phpstan or https://github.com/exakat/php-static-analysis-tools
-- [ ] change tinker to go away from sudo
+- [ ] decrease worker ready time
 - [ ] log fly: improve log on swoole
 - [ ] cache fly
 

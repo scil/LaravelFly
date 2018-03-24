@@ -116,7 +116,16 @@ return [
      */
     'dispatch_by_query'=>false,
 
-    //'group' => 'www-data',
+    /**
+     * only works when running LaravelFly as root:
+     *      sudo php vendor/scil/laravel-fly/bin/fly start
+     *
+     *
+     * ensure the user or the group can read/write the Laravel project.
+     * It's not appropriate that the user/group can read a dir/file such as '/www/app/some',but can not read the the root /www
+     * /
+    // 'user' => 'www-data',
+    // 'group' => 'www-data',
 
     //'log_file' => '/data/log/swoole.log',
 
