@@ -236,15 +236,6 @@ class Application extends \Illuminate\Foundation\Application
         $this->fireAppCallbacks(static::$corDict[$cid]['bootedCallbacks']);
     }
 
-    public function make($abstract, array $parameters = [])
-    {
-        if (in_array($abstract, ['app', \Illuminate\Foundation\Application::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class])) {
-            return static::getInstance();
-        }
-
-        return parent::make($abstract, $parameters);
-    }
-
     public function addDeferredServices(array $services)
     {
         $cid = \co::getUid();
