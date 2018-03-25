@@ -11,6 +11,7 @@ class Application  extends \Illuminate\Foundation\Application
 {
     use \LaravelFly\ApplicationTrait\ProvidersInRequest;
     use \LaravelFly\ApplicationTrait\InConsole;
+    use \LaravelFly\ApplicationTrait\Server;
 
     protected $needBackUpAppAttributes = [
         'resolved',

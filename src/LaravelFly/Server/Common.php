@@ -26,6 +26,10 @@ Trait Common
      */
     var $swoole;
 
+    /**
+     * @var array save any shared info across processes
+     */
+    var $memory = [];
 
     /**
      * where laravel app located
@@ -99,7 +103,7 @@ Trait Common
         printf("[INFO] server %s created\n", static::class);
     }
 
-    function getSwoole():\swoole_http_server
+    function getSwoole(): \swoole_http_server
     {
         return $this->swoole;
     }
@@ -119,7 +123,7 @@ Trait Common
         }
 
         $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
-        if(!class_exists($this->appClass)){
+        if (!class_exists($this->appClass)) {
             die("Mode set in config file not valid\n");
         }
 
@@ -219,16 +223,37 @@ Trait Common
     public function start()
     {
         try {
+
+            $this->setIsDown();
+
             $this->swoole->start();
+
         } catch (\Throwable $e) {
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * use a Atomic vars to save if app is down,
+     * \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class is a little bit faster
+     */
+    protected function setIsDown()
+    {
+        $this->memory['isDown'] = new \swoole_atomic(0);
+        $checkDown= function () {
+            swoole_timer_tick(1000, function () {
+                $this->memory['isDown']->set((bool)file_exists($this->path('storage/framework/down')));
+            });
+        };
+        (new \Swoole\Process($checkDown))->start();
     }
 
     public function startLaravel()
     {
 
         $this->app = $app = new $this->appClass($this->root);
+
+        $this->app->setServer($this);
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,

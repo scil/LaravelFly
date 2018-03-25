@@ -17,6 +17,7 @@ class Application extends \Illuminate\Foundation\Application
 
     use \LaravelFly\ApplicationTrait\ProvidersInRequest;
     use \LaravelFly\ApplicationTrait\InConsole;
+    use \LaravelFly\ApplicationTrait\Server;
 
     /**
      * @var bool
