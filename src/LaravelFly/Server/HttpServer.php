@@ -23,7 +23,11 @@ class HttpServer implements ServerInterface
 
         $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
 
-        $this->swoole->on('request', array($this, 'onRequest'));
+        if (LARAVELFLY_MODE == 'Map') {
+            $this->swoole->on('request', array($this, 'onMapRequest'));
+        } else {
+            $this->swoole->on('request', array($this, 'onRequest'));
+        }
     }
 
     public function start()
@@ -71,65 +75,74 @@ class HttpServer implements ServerInterface
 
         // disable app dispatcher
         // event('worker.ready', [$this]);
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app'=>$this->app]);
+        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]);
         $this->dispatcher->dispatch('worker.ready', $event);
 
         printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);
     }
 
+    /**
+     * handle request for Mode Simple or Greedy
+     *
+     * @param \swoole_http_request $request
+     * @param \swoole_http_response $response
+     *
+     */
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
-        if (LARAVELFLY_MODE == 'Map') {
+        /**
+         * @see \Symfony\Component\HttpFoundation\Request::createFromGlobals() use global vars, and
+         * this static method is alse used by {@link \Illuminate\Auth\SessionGuard }
+         */
+        $this->setGlobal($request);
 
-            $cid = \co::getUid();
+        /**
+         * @var \Illuminate\Http\Request
+         * @see \Illuminate\Http\Request::capture
+         */
+        $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
 
-            $laravel_request = (new \LaravelFly\Map\IlluminateBase\Request())->createFromSwoole($request);
 
-            $this->app->initForRequestCorontine($cid);
+        /**
+         * @var \Illuminate\Http\Response
+         * @see \Illuminate\Foundation\Http\Kernel::handle
+         */
+        $laravel_response = $this->kernel->handle($laravel_request);
 
-            // why use clone for kernel, because there's a \App\Http\Kernel which is controlled by users
-            $requestKernel = clone $this->kernel;
-
-            $laravel_response = $requestKernel->handle($laravel_request);
-
-        } else {
-
-            /**
-             * @see \Symfony\Component\HttpFoundation\Request::createFromGlobals() use global vars, and
-             * this static method is alse used by {@link \Illuminate\Auth\SessionGuard }
-             */
-            $this->setGlobal($request);
-
-            /**
-             * @var \Illuminate\Http\Request
-             * @see \Illuminate\Http\Request::capture
-             */
-            $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
-
-            /**
-             * @var \Illuminate\Http\Response
-             * @see \Illuminate\Foundation\Http\Kernel::handle
-             */
-            $laravel_response = $this->kernel->handle($laravel_request);
-        }
 
         $this->swooleResponse($response, $laravel_response);
 
 
-        if (LARAVELFLY_MODE == 'Map') {
+        $this->kernel->terminate($laravel_request, $laravel_response);
 
-            $requestKernel->terminate($laravel_request, $laravel_response);
+        $this->app->restoreAfterRequest();
 
-            $this->app->unsetForRequestCorontine($cid);
 
-        } else {
+    }
 
-            $this->kernel->terminate($laravel_request, $laravel_response);
+    public function onMapRequest(\swoole_http_request $request, \swoole_http_response $response)
+    {
 
-            $this->app->restoreAfterRequest();
+        $laravel_request = (new \LaravelFly\Map\IlluminateBase\Request())->createFromSwoole($request);
 
-        }
+        $cid = \co::getUid();
+
+        $this->app->initForRequestCorontine($cid);
+
+        // why use clone for kernel, because there's a \App\Http\Kernel which is controlled by users
+        $requestKernel = clone $this->kernel;
+
+        $laravel_response = $requestKernel->handle($laravel_request);
+
+
+        $this->swooleResponse($response, $laravel_response);
+
+
+        $requestKernel->terminate($laravel_request, $laravel_response);
+
+        $this->app->unsetForRequestCorontine($cid);
+
     }
 
 
