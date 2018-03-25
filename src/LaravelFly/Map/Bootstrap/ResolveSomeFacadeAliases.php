@@ -16,8 +16,32 @@ class ResolveSomeFacadeAliases
         'URL',
     ];
 
-    public function bootstrap(Application $app)
+    /**
+     * use cache for aliases
+     *
+     * it's handy to debug and a little faster. in a test using microtime(true): 0.06 vs 0.26
+     *
+     * @param $app
+     * @return string
+     */
+    public function getCachedAliasesPath($app)
     {
+        return $app->bootstrapPath() . '/cache/laravelfly_aliases.php';
+    }
+
+    protected function getAliases($app)
+    {
+        $cacheFile = $this->getCachedAliasesPath($app);
+
+        if (is_file($cacheFile)) {
+            $cacheTime = filemtime($cacheFile);
+            if ($cacheTime >= filemtime($app->configPath('app.php')) && $cacheTime >= filemtime($app->basePath('composer.lock'))) {
+                return require $cacheFile;
+            }
+        }
+
+
+        $aliases = [];
 
         $all = array_keys(array_merge(
             $app->make('config')->get('app.aliases'),
@@ -41,13 +65,25 @@ class ResolveSomeFacadeAliases
 
             if (is_object($facadeAccessor)) {
                 // such as \Illuminate\Support\Facades\Blade
+                // todo
                 continue;
             }
 
             if ($app->instanceResolvedOnWorker($facadeAccessor)) {
-                $staticClass::getFacadeRoot();
+                $aliases[] = $staticClass;
             }
         }
 
+        file_put_contents($cacheFile, '<?php return ' . var_export($aliases, true) . ';' . PHP_EOL);
+
+        return $aliases;
+
+    }
+
+    public function bootstrap(Application $app)
+    {
+        foreach ($this->getAliases($app) as $staticClass) {
+            $staticClass::getFacadeRoot();
+        }
     }
 }

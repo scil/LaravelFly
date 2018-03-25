@@ -679,9 +679,10 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function make($abstract, array $parameters = [])
     {
-        $cid=\co::getUid();
         $abstract = $this->getAlias($abstract);
 
+        //todo remove deferredServices?
+        $cid=\co::getUid();
         if (isset(static::$corDict[$cid]['deferredServices'][$abstract]) && ! isset(static::$corDict[$cid]['instances'][$abstract])) {
             $this->loadDeferredProvider($abstract);
         }

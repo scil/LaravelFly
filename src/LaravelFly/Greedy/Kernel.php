@@ -8,7 +8,8 @@ class Kernel extends \LaravelFly\Simple\Kernel
 
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+//        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \LaravelFly\Map\Bootstrap\LoadConfiguration::class,
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
         \LaravelFly\Simple\Bootstrap\CleanProviders::class,
