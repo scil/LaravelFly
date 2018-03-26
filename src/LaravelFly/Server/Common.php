@@ -205,7 +205,7 @@ Trait Common
 
         $fd = inotify_init();
 
-        $adapter = Storage::getDriver()->getAdapter();
+        $adapter = Storage::disk('local')->getAdapter();
 
         // local path prefix is app()->storagePath()
         $oldPathPrefix = $adapter->getPathPrefix();
@@ -215,7 +215,7 @@ Trait Common
             inotify_add_watch($fd, $item, IN_CREATE | IN_DELETE | IN_MODIFY);
 
             if (is_dir($item)) {
-                foreach (Storage::allDirectories($item) as $cItem) {
+                foreach (Storage::disk('local')->allDirectories($item) as $cItem) {
                     inotify_add_watch($fd, "/$cItem", IN_CREATE | IN_DELETE | IN_MODIFY);
                 }
             }
