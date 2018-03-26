@@ -99,14 +99,15 @@ return [
     'max_request' => 1000,
 
     /**
-     *  watch files or dirs for hot reload.
+     *  watch files or dirs for server hot reload.
      *
      * When any of the files or dirs change,all of the workers would finish their work and quit,
      * then new workers are created. All of the files loaded in a worker would load again.
      *
      * This featue is equivalent to `php vendor/scil/laravel-fly/bin/fly reload`, but requires:
      *  1. absolute path.
-     *  2. `pecl install inotify`
+     *  2. run LaravelFly as root: `sudo php vendor/scil/laravel-fly/bin/fly start` and ensure the 'user' configed here is a member of root group
+     *  3. `pecl install inotify`
      *
      * note: inotify not support files mounted in virtualbox machines.
      * (see:https://github.com/moby/moby/issues/18246)
@@ -118,6 +119,11 @@ return [
 //        __DIR__.'/resources/views',
 //        __DIR__.'/routes/web.php',
     ],
+    /**
+     * how long after code changes the server hot reload
+     * default is 1500ms
+     */
+    'watch_delay'=> 1500,
 
     /**
      * if you use more than one workers, you can control which worker handle a request
@@ -144,6 +150,8 @@ return [
      *
      * ensure the user or the group can read/write the Laravel project.
      * It's not appropriate that the user/group can read a dir/file such as '/www/app/some',but can not read the the root /www
+     *
+     * If you use watch, disable these, or ensure the user here is a member of group root
      * /
     // 'user' => 'www-data',
     // 'group' => 'www-data',

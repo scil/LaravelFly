@@ -148,7 +148,7 @@ Trait Common
         }
 
         if ($options['worker_num'] == 1) {
-            echo '[NOTICE] worker_num is 1, your server can not response any other requests when using tinker', PHP_EOL;
+            echo '[NOTICE] worker_num is 1, the server can not response any other requests when using tinker', PHP_EOL;
         }
 
         $this->tinkerSubscriber();
@@ -223,11 +223,20 @@ Trait Common
 
         $adapter->setPathPrefix($oldPathPrefix);
 
-        swoole_event_add($fd, function () use ($fd, $swoole_server) {
-            $events = inotify_read($fd);
-            if (!empty($events)) {
-                print_r($events);
-                $swoole_server->reload();
+        $delay = $this->options['watch_delay'] ?? 1500;
+
+        swoole_event_add($fd, function () use ($fd, $swoole_server, $delay) {
+            static $timer = null;
+
+            if (inotify_read($fd)) {
+
+                if ($timer !== null) $swoole_server->clearTimer($timer);
+
+                $timer = $swoole_server->after($delay, function () use ($swoole_server) {
+                    echo "[INFO] hot reload\n";
+                    $swoole_server->reload();
+                });
+
             }
         });
 
