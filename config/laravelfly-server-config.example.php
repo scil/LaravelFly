@@ -99,6 +99,27 @@ return [
     'max_request' => 1000,
 
     /**
+     *  watch files or dirs for hot reload.
+     *
+     * When any of the files or dirs change,all of the workers would finish their work and quit,
+     * then new workers are created. All of the files loaded in a worker would load again.
+     *
+     * This featue is equivalent to `php vendor/scil/laravel-fly/bin/fly reload`, but requires:
+     *  1. absolute path.
+     *  2. `pecl install inotify`
+     *
+     * note: inotify not support files mounted in virtualbox machines.
+     * (see:https://github.com/moby/moby/issues/18246)
+     * A solution is to watch a file like `/home/vagrant/.watch`, and modify it when your codes change.
+     */
+    'watch'=>[
+//        __DIR__.'/app',
+//        __DIR__.'/config',
+//        __DIR__.'/resources/views',
+//        __DIR__.'/routes/web.php',
+    ],
+
+    /**
      * if you use more than one workers, you can control which worker handle a request
      * by sending query parameter 'worker-id' or 'worker-pid'
      *

@@ -53,15 +53,22 @@ Swoole server has a main process, a manager process and one or more worker proce
 
 Swoole server reloading has no matter with the main process or the manager process. Swoole server reloading is killing worker processes gracefully and start new.
 
-Gracefully is that: worker willl finish its work before die.
+Gracefully: worker willl finish its work before die.
 
 ### Two methods to reload
+
 * Execute 
 ```
 php vendor/scil/laravel-fly/bin/fly reload [$server_config_file]
 ```
 
-* in php , you can make your own swoole http server by extending 'LaravelFly\Server\HttpServer', and use `$this->server->reload();` under some conditions like some files changed.
+* Edit fly.conf.php
+```
+'watch'=>[
+    __DIR__.'/app',
+    __DIR__.'/routes/web.php',
+],
+```
 
 ## Hot Reload On Code Change
 
@@ -72,13 +79,3 @@ Note, files required or included before 'WorkerStart' will keep in memory, even 
 So it's better to include/require files which change rarely before 'WorkerStart' to save memory, to include/require files which change often in 'WorkerStart' callback to hot reload.
 
 You could moniter some files and reload server(two methods above) , just make sure there files are required/included in 'WorkerStart' callback.
-
-If you use APC/OpCache, you could use one of these measures
-* edit php.ini and make APC/OpCache to hot reload opcode
-* edit swoole server code:
-```
-  function onWorkerStop($serv, $worker_id) {
-       opcache_reset(); // opcache reset function, use similar function if you use APC
-  }
-```
-

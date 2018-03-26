@@ -4,6 +4,7 @@ namespace LaravelFly\Server;
 
 use function foo\func;
 use LaravelFly\Exception\LaravelFlyException as Exception;
+use Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -103,11 +104,6 @@ Trait Common
         printf("[INFO] server %s created\n", static::class);
     }
 
-    function getSwoole(): \swoole_http_server
-    {
-        return $this->swoole;
-    }
-
     protected function parseOptions(array &$options)
     {
 
@@ -195,27 +191,67 @@ Trait Common
      */
     protected function worker0StartTail(\swoole_server $swoole_server, array $config)
     {
-        $this->monitorDownFile($config['downDir']);
+        $this->watchDownFile($config['downDir']);
+
+        $this->watchForHotReload($swoole_server);
+    }
+
+    protected function watchForHotReload($swoole_server)
+    {
+
+        if (!function_exists('inotify_init') || empty($this->options['watch'])) return;
+
+        echo "[INFO] watch for hot reload.\n";
+
+        $fd = inotify_init();
+
+        $adapter = Storage::getDriver()->getAdapter();
+
+        // local path prefix is app()->storagePath()
+        $oldPathPrefix = $adapter->getPathPrefix();
+        $adapter->setPathPrefix('/');
+
+        foreach ($this->options['watch'] as $item) {
+            inotify_add_watch($fd, $item, IN_CREATE | IN_DELETE | IN_MODIFY);
+
+            if (is_dir($item)) {
+                foreach (Storage::allDirectories($item) as $cItem) {
+                    inotify_add_watch($fd, "/$cItem", IN_CREATE | IN_DELETE | IN_MODIFY);
+                }
+            }
+        }
+
+        $adapter->setPathPrefix($oldPathPrefix);
+
+        swoole_event_add($fd, function () use ($fd, $swoole_server) {
+            $events = inotify_read($fd);
+            if (!empty($events)) {
+                print_r($events);
+                $swoole_server->reload();
+            }
+        });
+
+
     }
 
     /**
      * use a Atomic vars to save if app is down,
      * \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class is a little bit faster
      */
-    protected function monitorDownFile(string $dir)
+    protected function watchDownFile(string $dir)
     {
-        echo "[INFO] monitor down\n";
+        echo "[INFO] watch maintenance mode.\n";
 
         $downFile = $dir . '/down';
 
         if (function_exists('inotify_init')) {
 
-            $notify = inotify_init();
-            inotify_add_watch($notify, $dir, IN_CREATE | IN_DELETE);
+            $fd = inotify_init();
+            inotify_add_watch($fd, $dir, IN_CREATE | IN_DELETE);
 
-            swoole_event_add($notify, function () use ($notify, $downFile) {
-                $events = inotify_read($notify);
-                if ($events  && $events[0]['name'] === 'down') {
+            swoole_event_add($fd, function () use ($fd, $downFile) {
+                $events = inotify_read($fd);
+                if ($events && $events[0]['name'] === 'down') {
                     $this->memory['isDown']->set((bool)file_exists($downFile));
                 }
             });

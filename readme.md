@@ -200,9 +200,12 @@ There are some tips:
 ## Todo
 
 - [x] Laravel5.5 package auto-detection
+- [x] add events
+- [x] aliases cache in ResolveSomeFacadeAliases
+- [x] watch code changes and hot reload
+- [x] watch maintenance mode using swoole_event_add
 - [x] mysql coroutine
 - [ ] mysql connection pool
-- [ ] add events
 - [ ] handle php config and laravel config like Zend in Mode Simple?
 - [ ] handle php config and laravel config in Mode Map?
 - [ ] websocket
