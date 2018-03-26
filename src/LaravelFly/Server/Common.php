@@ -193,22 +193,37 @@ Trait Common
      *
      * @param \swoole_server $swoole_server
      */
-    protected function worker0StartTail(\swoole_server $swoole_server)
+    protected function worker0StartTail(\swoole_server $swoole_server, array $config)
     {
-        $this->monitorDownFile();
+        $this->monitorDownFile($config['downDir']);
     }
+
     /**
      * use a Atomic vars to save if app is down,
      * \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class is a little bit faster
      */
-    protected function monitorDownFile()
+    protected function monitorDownFile(string $dir)
     {
-        if(function_exists('inotify_init')) {
+        echo "[INFO] monitor down\n";
 
-        }else{
+        $downFile = $dir . '/down';
 
-            swoole_timer_tick(1000, function () {
-                $this->memory['isDown']->set((bool)file_exists($this->path('storage/framework/down')));
+        if (function_exists('inotify_init')) {
+
+            $notify = inotify_init();
+            inotify_add_watch($notify, $dir, IN_CREATE | IN_DELETE);
+
+            swoole_event_add($notify, function () use ($notify, $downFile) {
+                $events = inotify_read($notify);
+                if ($events  && $events[0]['name'] === 'down') {
+                    $this->memory['isDown']->set((bool)file_exists($downFile));
+                }
+            });
+
+        } else {
+
+            swoole_timer_tick(1000, function () use ($downFile) {
+                $this->memory['isDown']->set((bool)file_exists($downFile));
             });
         }
     }

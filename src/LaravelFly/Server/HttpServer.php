@@ -80,7 +80,7 @@ class HttpServer implements ServerInterface
         printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);
 
          if ($worker_id == 0) {
-             $this->worker0StartTail($server);
+             $this->worker0StartTail($server,['downDir'=>$this->app->storagePath() . '/framework/']);
          }
     }
 
