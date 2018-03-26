@@ -177,15 +177,42 @@ Trait Common
     }
 
 
-    public function onWorkerStart(\swoole_server $server, int $worker_id)
+    public function workerStartHead(\swoole_server $server, int $worker_id)
     {
-        opcache_reset();
-
         printf("[INFO] pid %u: worker %u starting\n", getmypid(), $worker_id);
 
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
         $this->dispatcher->dispatch('worker.starting', $event);
     }
+
+    /**
+     * do something only in one worker, escape something work in each worker
+     *
+     * there's alway a worker with id 0.
+     * do not worry about if current worker 0 is killed, worker id is in range [0, worker_num)
+     *
+     * @param \swoole_server $swoole_server
+     */
+    protected function worker0StartTail(\swoole_server $swoole_server)
+    {
+        $this->monitorDownFile();
+    }
+    /**
+     * use a Atomic vars to save if app is down,
+     * \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class is a little bit faster
+     */
+    protected function monitorDownFile()
+    {
+        if(function_exists('inotify_init')) {
+
+        }else{
+
+            swoole_timer_tick(1000, function () {
+                $this->memory['isDown']->set((bool)file_exists($this->path('storage/framework/down')));
+            });
+        }
+    }
+
 
     public function onWorkerStop(\swoole_server $server, int $worker_id)
     {
@@ -193,6 +220,8 @@ Trait Common
 
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]);
         $this->dispatcher->dispatch('worker.stopped', $event);
+
+        opcache_reset();
 
         printf("[INFO] pid %u: worker %u stopped\n", getmypid(), $worker_id);
     }
@@ -224,28 +253,13 @@ Trait Common
     {
         try {
 
-            $this->setIsDown();
+            $this->memory['isDown'] = new \swoole_atomic(0);
 
             $this->swoole->start();
 
         } catch (\Throwable $e) {
             throw new Exception($e->getMessage());
         }
-    }
-
-    /**
-     * use a Atomic vars to save if app is down,
-     * \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class is a little bit faster
-     */
-    protected function setIsDown()
-    {
-        $this->memory['isDown'] = new \swoole_atomic(0);
-        $checkDown= function () {
-            swoole_timer_tick(1000, function () {
-                $this->memory['isDown']->set((bool)file_exists($this->path('storage/framework/down')));
-            });
-        };
-        (new \Swoole\Process($checkDown))->start();
     }
 
     public function startLaravel()

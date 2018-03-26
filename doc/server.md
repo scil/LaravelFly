@@ -9,7 +9,7 @@ Argument `$server_config_file` is optional, default is `<project_root_dir>/fly.c
 
 You can make multiple config files which have different listen_port, then you can run multiple server.
 
-Note: LaravelFly will not supply an artisan command to run server, for the sake of less memory usage.
+Note: LaravelFly will not supply an artisan command to run server, for the sake of less memory usage and the hot reload control (files loaded by artisan can't be hot reloaded).
 
 ## Stop
 

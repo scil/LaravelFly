@@ -9,7 +9,6 @@ class HttpServer implements ServerInterface
 {
     use Common {
         start as _start;
-        onWorkerStart as _onWorkerStart;
     }
 
     /**
@@ -39,7 +38,7 @@ class HttpServer implements ServerInterface
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
 
-        $this->_onWorkerStart($server, $worker_id);
+        $this->workerStartHead($server, $worker_id);
 
         $this->startLaravel();
 
@@ -68,7 +67,7 @@ class HttpServer implements ServerInterface
             $this->kernel->bootstrap();
         } catch (\Throwable $e) {
             echo $e;
-            $this->swoole->shutdown();
+            $server->shutdown();
         }
 
         $this->app->forgetInstance('request');
@@ -79,6 +78,10 @@ class HttpServer implements ServerInterface
         $this->dispatcher->dispatch('worker.ready', $event);
 
         printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);
+
+         if ($worker_id == 0) {
+             $this->worker0StartTail($server);
+         }
     }
 
     /**

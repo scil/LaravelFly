@@ -14,7 +14,6 @@ class FpmHttpServer implements ServerInterface
 
     use Common {
         create as _create;
-        onWorkerStart as _onWorkerStart;
     }
 
     function setListeners()
@@ -26,7 +25,7 @@ class FpmHttpServer implements ServerInterface
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
-        $this->_onWorkerStart($server, $worker_id);
+        $this->workerStartHead($server, $worker_id);
 
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app'=>null]);
         $this->dispatcher->dispatch('worker.ready', $event);
