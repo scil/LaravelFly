@@ -17,6 +17,9 @@
     "laravel/framework": "5.5.*",
     "ext-swoole": "^1.9.23 || >=2.1.1"
   },
+  "suggest": {
+    "ext-inotify": ">=2.0.0"
+  },
   "require-dev": {
     "eaglewu/swoole-ide-helper": "dev-master",
     "nunomaduro/collision": "^1.1",

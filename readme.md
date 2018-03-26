@@ -5,7 +5,8 @@ Thanks to [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://git
 ## Quick Start
 
 1.`pecl install swoole`   
-Make sure `extension=swoole.so` in config file for php cli.
+Make sure `extension=swoole.so` in config file for php cli.   
+Suggest: `pecl install inotify`   
 
 2.`composer require "scil/laravel-fly":"dev-master"`
 
