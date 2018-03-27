@@ -14,5 +14,4 @@ interface ServerInterface
 
     public function path($path = null);
 
-    public function getAppType();
 }

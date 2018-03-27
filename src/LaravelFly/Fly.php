@@ -14,7 +14,7 @@ class Fly
     protected static $dispatcher;
 
     /**
-     * @var \LaravelFly\Server\ServerInterface
+     * @var \LaravelFly\Server\ServerInterface | \LaravelFly\Server\HttpServer
      */
     protected static $server;
 
@@ -45,11 +45,13 @@ class Fly
 
         $dispatcher = static::$dispatcher;
 
-        $class = LARAVELFLY_MODE == 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
+        $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
         self::$server = new $class($dispatcher);
 
         self::$server->config($options);
+
+        //self::$server->loadCachedCompileFile();
 
         self::$server->create();
 
@@ -64,7 +66,7 @@ class Fly
         if (class_exists('NunoMaduro\Collision\Provider'))
             (new \NunoMaduro\Collision\Provider)->register();
 
-        if (LARAVELFLY_MODE == 'Map') {
+        if (LARAVELFLY_MODE === 'Map') {
             require __DIR__ . "/../fly/Container.php";
             require __DIR__ . "/../fly/Application.php";
             require __DIR__ . "/../fly/ServiceProvider.php";

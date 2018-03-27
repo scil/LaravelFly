@@ -15,6 +15,7 @@
   ],
   "require": {
     "laravel/framework": "5.5.*",
+    "classpreloader/classpreloader": "^3.2",
     "ext-swoole": "^1.9.23 || >=2.1.1"
   },
   "suggest": {
