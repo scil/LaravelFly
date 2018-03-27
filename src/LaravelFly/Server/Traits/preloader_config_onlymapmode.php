@@ -2,16 +2,17 @@
 /**
  * from:
 https://github.com/laravel/framework/blob/98d01781bf76de817bf15b7f2fed5ba87e0e6f15/src/Illuminate/Foundation/Console/Optimize/config.php
- * the maintain of this file relates the change of laravel
+ * the maintain of this file relates two things:
+ * 1. the change of laravel
+ * 2. the change of \LaravelFly\Fly::$flyMap
+
 
  */
 
 
 $basePath = $this->root;
 return [
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Container/Container.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Container/ContextualBindingBuilder.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Foundation/Application.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Bus/Dispatcher.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Bus/QueueingDispatcher.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Pipeline/Pipeline.php',
@@ -20,13 +21,10 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Debug/ExceptionHandler.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Config/Repository.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Events/Dispatcher.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/Arrayable.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/Jsonable.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Cookie/Factory.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Cookie/QueueingFactory.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Encryption/Encrypter.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Queue/QueueableEntity.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Routing/Registrar.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Routing/ResponseFactory.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Routing/UrlGenerator.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Routing/UrlRoutable.php',
@@ -35,7 +33,6 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/MessageProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/MessageBag.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/View/View.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Http/Kernel.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Auth/Guard.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Auth/Access/Gate.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Hashing/Hasher.php',
@@ -43,17 +40,11 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Auth/Access/Gate.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Auth/UserProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Auth/EloquentUserProvider.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Container/Container.php',
-    $basePath.'/vendor/symfony/http-kernel/HttpKernelInterface.php',
     $basePath.'/vendor/symfony/http-kernel/TerminableInterface.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/EnvironmentDetector.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterProviders.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RedirectsUsers.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php',
@@ -75,7 +66,6 @@ return [
     $basePath.'/vendor/symfony/http-foundation/AcceptHeaderItem.php',
     $basePath.'/vendor/symfony/http-foundation/AcceptHeader.php',
     $basePath.'/vendor/symfony/debug/ExceptionHandler.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/AggregateServiceProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/RoutingServiceProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Events/EventServiceProvider.php',
@@ -97,8 +87,6 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Pagination/Paginator.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Pagination/AbstractPaginator.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Pagination/Paginator.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Traits/Macroable.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Arr.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Str.php',
     $basePath.'/vendor/symfony/debug/ErrorHandler.php',
@@ -114,14 +102,12 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Session/SessionServiceProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/RouteDependencyResolverTrait.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/Router.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/Route.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/RouteCollection.php',
     $basePath.'/vendor/symfony/routing/CompiledRoute.php',
     $basePath.'/vendor/symfony/routing/RouteCompilerInterface.php',
     $basePath.'/vendor/symfony/routing/RouteCompiler.php',
     $basePath.'/vendor/symfony/routing/Route.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/Controller.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Bus/BusServiceProvider.php',
@@ -141,12 +127,12 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Session/Store.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Session/SessionManager.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Manager.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Collection.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Cookie/CookieJar.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Encryption/Encrypter.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Facades/Log.php',
+    $basePath.'/vendor/laravel/framework/src/Illuminate/Log/LogServiceProvider.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Log/Writer.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php',
     $basePath.'/vendor/monolog/monolog/src/Monolog/Logger.php',
@@ -162,8 +148,6 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Facades/App.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/Facades/Route.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/View/Engines/EngineResolver.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/View/ViewFinderInterface.php',
-    $basePath.'/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/View/Factory.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/ViewErrorBag.php',
     $basePath.'/vendor/laravel/framework/src/Illuminate/Support/MessageBag.php',

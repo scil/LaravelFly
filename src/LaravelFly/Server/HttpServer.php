@@ -82,6 +82,7 @@ class HttpServer implements ServerInterface
          if ($worker_id == 0) {
              $this->workerZeroStartTail($server,['downDir'=>$this->app->storagePath() . '/framework/']);
          }
+
     }
 
     /**

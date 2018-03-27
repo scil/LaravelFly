@@ -29,7 +29,7 @@ Trait Preloader
 
     public function loadCachedCompileFile()
     {
-        if ($this->options['compile']==='force' ||
+        if ($this->options['compile'] === 'force' ||
             !is_file($this->getCachedCompilePath()) ||
             filemtime($this->getCachedCompilePath()) < filemtime($this->path('composer.lock'))) {
             $this->compileClasses();
@@ -68,9 +68,11 @@ Trait Preloader
      */
     protected function getClassFiles()
     {
-        $core = require __DIR__ . (LARAVELFLY_MODE === 'Map' ?
-                '/preloader_config_mapmode.php' :
-                '/preloader_config.php');
+        $core = require __DIR__ . '/preloader_config_onlymapmode.php';
+        // Map mode has loaded fly files and related files
+        if (LARAVELFLY_MODE !== 'Map') {
+            $core = array_merge($core, __DIR__ . '/preloader_config_more.php');
+        }
         $files = array_merge($core, $this->options['compile_files'] ?? []);
         return array_map('realpath', $files);
     }
