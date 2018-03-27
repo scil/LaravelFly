@@ -29,12 +29,14 @@ Trait Preloader
 
     public function loadCachedCompileFile()
     {
-        if (!is_file($this->getCachedCompilePath()) ||
-            filemtime($this->getCachedCompilePath()) < filemtime($this->path('composer.json'))) {
+        if ($this->options['compile']==='force' ||
+            !is_file($this->getCachedCompilePath()) ||
+            filemtime($this->getCachedCompilePath()) < filemtime($this->path('composer.lock'))) {
             $this->compileClasses();
         }
 
-        //require $this->preloadFile;
+        echo "[INFO] include: {$this->preloadFile}", PHP_EOL;
+        include $this->preloadFile;
     }
 
     /**
@@ -44,10 +46,13 @@ Trait Preloader
      */
     protected function compileClasses()
     {
+        echo "[INFO] compile preloaded classes", PHP_EOL;
+
         $preloader = (new Factory)->create(['skip' => true]);
         $handle = $preloader->prepareOutput($this->getCachedCompilePath());
         foreach ($this->getClassFiles() as $file) {
             try {
+                // echo "$file\n";
                 fwrite($handle, $preloader->getCode($file, false) . "\n");
             } catch (VisitorExceptionInterface $e) {
                 //
@@ -63,49 +68,13 @@ Trait Preloader
      */
     protected function getClassFiles()
     {
-
-        $autoload_classmap_file= $this->root . '/vendor/composer/autoload_classmap.php';
-
-        if(empty($this->options['preload_classes']) || !is_file($autoload_classmap_file)) return [];
-
-        $preload=[];
-        $forbid=[];
-        foreach ( $this->options['preload_classes'] as $k=>$v){
-            if(is_string($k)){
-                $preload[]=$k;
-                $forbid[]= array_merge($forbid,$v);
-            }else{
-                $preload[]=$v;
-            }
-        }
-        print_r($preload);
-        print_r($forbid);
-
-        $classFiles=[];
-        $swooleClassFiles=[];
-
-        foreach (require $autoload_classmap_file as $class=>$path){
-            foreach ($forbid as $f){
-                if(substr($class, 0, strlen($f)) === $f){
-                    continue;
-                }
-            }
-
-            if(substr($class,0,strlen('LaravelFly'))==='LaravelFly'){
-                include $class;
-                continue;
-            }
-
-            foreach ($preload as $p){
-                if(substr($class, 0, strlen($p)) === $p){
-                    $classFiles[]=$path;
-                }
-            }
-
-        }
-
-        return $classFiles;
+        $core = require __DIR__ . (LARAVELFLY_MODE === 'Map' ?
+                '/preloader_config_mapmode.php' :
+                '/preloader_config.php');
+        $files = array_merge($core, $this->options['compile_files'] ?? []);
+        return array_map('realpath', $files);
     }
+
 
 }
 

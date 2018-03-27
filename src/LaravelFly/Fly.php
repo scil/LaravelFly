@@ -23,11 +23,30 @@ class Fly
      */
     protected static $instance;
 
+    static $flyMap = [
+        'Container.php' => '/vendor/laravel/framework/src/Illuminate/Container/Container.php',
+        'Application.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
+        'ServiceProvider.php' => '/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php',
+        'FileViewFinder.php' => '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
+        'Router.php' => '/vendor/laravel/framework/src/Illuminate/Routing/Router.php',
+        'ViewConcerns/ManagesComponents.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesComponents.php',
+        'ViewConcerns/ManagesLayouts.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLayouts.php',
+        'ViewConcerns/ManagesLoops.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLoops.php',
+        'ViewConcerns/ManagesStacks.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesStacks.php',
+        'ViewConcerns/ManagesTranslations.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesTranslations.php',
+        'Facade.php' => '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
+
+        //blackhole
+        'Collection.php' => '/vendor/laravel/framework/src/Illuminate/Support/Collection.php',
+        'Controller.php' => '/vendor/laravel/framework/src/Illuminate/Routing/Controller.php',
+        'Relation.php' => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/Relation.php',
+    ];
+
     /**
      * @param array $options
      * @param EventDispatcher $dispatcher
      */
-    static function init($options, EventDispatcher $dispatcher = null):self
+    static function init($options, EventDispatcher $dispatcher = null): self
     {
         if (self::$instance) return self::$instance;
 
@@ -51,8 +70,6 @@ class Fly
 
         self::$server->config($options);
 
-        //self::$server->loadCachedCompileFile();
-
         self::$server->create();
 
         return self::$instance;
@@ -61,28 +78,15 @@ class Fly
     static protected function initEnv()
     {
 
-        require_once __DIR__. '/../functions.php';
+        require_once __DIR__ . '/../functions.php';
 
         if (class_exists('NunoMaduro\Collision\Provider'))
             (new \NunoMaduro\Collision\Provider)->register();
 
         if (LARAVELFLY_MODE === 'Map') {
-            require __DIR__ . "/../fly/Container.php";
-            require __DIR__ . "/../fly/Application.php";
-            require __DIR__ . "/../fly/ServiceProvider.php";
-            require __DIR__ . "/../fly/Router.php";
-            require __DIR__ . "/../fly/ViewConcerns/ManagesComponents.php";
-            require __DIR__ . "/../fly/ViewConcerns/ManagesLayouts.php";
-            require __DIR__ . "/../fly/ViewConcerns/ManagesLoops.php";
-            require __DIR__ . "/../fly/ViewConcerns/ManagesStacks.php";
-            require __DIR__ . "/../fly/ViewConcerns/ManagesTranslations.php";
-            require __DIR__ . "/../fly/Facade.php";
-
-            //blackhole
-            require __DIR__ . "/../fly/Controller.php";
-            require __DIR__ . "/../fly/Relation.php";
-            require __DIR__ . "/../fly/Collection.php";
-
+            foreach (static::$flyMap as $f => $offical) {
+                require __DIR__ . "/../fly/" . $f;
+            }
         }
 
     }

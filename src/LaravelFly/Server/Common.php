@@ -54,6 +54,13 @@ Trait Common
     public function __construct($dispatcher = null)
     {
         $this->dispatcher = $dispatcher ?: new EventDispatcher();
+
+        $this->root = realpath(__DIR__ . '/../../../../../..');
+
+        if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
+            die("This doc root is not for a Laravel app: {$this->root} \n");
+        }
+
     }
 
     public function config(array $options)
@@ -90,11 +97,9 @@ Trait Common
 
     protected function parseOptions(array &$options)
     {
-
-        $this->root = realpath(__DIR__ . '/../../../../../..');
-        if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
-            die("This doc root is not for a Laravel app: {$this->root} \n");
-        }
+        // as earlier as possible
+        if ($options['compile'] !== false)
+            $this->loadCachedCompileFile();
 
         if (isset($options['pid_file'])) {
             $options['pid_file'] .= '-' . $options['listen_port'];

@@ -8,22 +8,6 @@ class OfficialFilesTest extends BaseTestCase
 {
     protected $lastCheckedVersion = '5.5.33';
 
-    protected $map = [
-        'ViewConcerns/ManagesComponents.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesComponents.php',
-        'ViewConcerns/ManagesLayouts.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLayouts.php',
-        'ViewConcerns/ManagesLoops.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLoops.php',
-        'ViewConcerns/ManagesStacks.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesStacks.php',
-        'ViewConcerns/ManagesTranslations.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesTranslations.php',
-        'Application.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
-        'Collection.php' => '/vendor/laravel/framework/src/Illuminate/Support/Collection.php',
-        'Container.php' => '/vendor/laravel/framework/src/Illuminate/Container/Container.php',
-        'Controller.php' => '/vendor/laravel/framework/src/Illuminate/Routing/Controller.php',
-        'Facade.php' => '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
-        'FileViewFinder.php' => '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
-        'Relation.php' => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/Relation.php',
-        'Router.php' => '/vendor/laravel/framework/src/Illuminate/Routing/Router.php',
-        'ServiceProvider.php' => '/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php',
-    ];
 
     function testCompareFiles()
     {
@@ -36,7 +20,7 @@ class OfficialFilesTest extends BaseTestCase
 
         $same =true;
 
-        foreach ($this->map as $back => $offcial) {
+        foreach (\LaravelFly\Fly::$flyMap as $back => $offcial) {
             $back = $backDir . $back;
             $offcial = $this->getLaravelApp()->basePath() . $offcial;
             $cmdArguments = "$diffOPtions $back $offcial ";
