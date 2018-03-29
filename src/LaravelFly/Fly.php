@@ -116,7 +116,7 @@ class Fly
     static function getServer()
     {
         if (!self::$instance) {
-            throw new Exception('LaravelFly is not ready');
+            throw new Exception('Run \LaravelFly\Fly::init first');
         }
         return self::$server;
     }

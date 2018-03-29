@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelFly\Tests\HackedFiles\Feature;
+namespace LaravelFly\Tests\Map\Feature;
 
 use LaravelFly\Tests\BaseTestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class ObjectsInWorkerTestk extends BaseTestCase
+class ObjectsInWorkerTest extends BaseTestCase
 {
     /**
      * @var \Swoole\Channel

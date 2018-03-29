@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Tests\Feature;
+namespace LaravelFly\Tests\Map\Feature;
 
 
 use LaravelFly\Tests\BaseTestCase;
