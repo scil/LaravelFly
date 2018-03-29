@@ -16,12 +16,13 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Pipeline/Pipeline.php',
 
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Support/Renderable.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Support/Arrayable.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Support/Htmlable.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Support/Jsonable.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Support/MessageBag.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Support/MessageProvider.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Support/Responsable.php',
+    //have loaed by fly file Collection.php
+    //$basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/Arrayable.php',
+    //$basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/Jsonable.php',
 
 
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Logging/Log.php',
@@ -165,12 +166,7 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithFlashData.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithInput.php',
 
-    $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesComponents.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesEvents.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLayouts.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLoops.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesStacks.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesTranslations.php',
 
 
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Compilers/Concerns/CompilesAuthorizations.php',

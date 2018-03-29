@@ -13,6 +13,11 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
 
+        <!--
+        autoload-dev (root only)
+
+        cdzc &&  vendor/bin/phpunit - -testsuit LaravelFly_Unit  - -stop-on-failure  -c vendor/scil/laravel-fly/phpunit.xml
+        -->
         <testsuite name="LaravelFly_Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>

@@ -83,7 +83,7 @@ class Fly
         if (class_exists('NunoMaduro\Collision\Provider'))
             (new \NunoMaduro\Collision\Provider)->register();
 
-        if (LARAVELFLY_MODE === 'Map') {
+        if (defined('LARAVELFLY_MODE') && LARAVELFLY_MODE === 'Map') {
             foreach (static::$flyMap as $f => $offical) {
                 require __DIR__ . "/../fly/" . $f;
             }
