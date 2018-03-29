@@ -11,10 +11,6 @@ class HttpServer implements ServerInterface
         start as _start;
     }
 
-    /**
-     * every worker has an app
-     */
-    const APP_TYPE = 'worker';
 
     function setListeners()
     {
@@ -77,7 +73,7 @@ class HttpServer implements ServerInterface
         $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]);
         $this->dispatcher->dispatch('worker.ready', $event);
 
-        printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);
+        echo "[INFO] worker $worker_id ready\n";
 
          if ($worker_id == 0) {
              $this->workerZeroStartTail($server,['downDir'=>$this->app->storagePath() . '/framework/']);

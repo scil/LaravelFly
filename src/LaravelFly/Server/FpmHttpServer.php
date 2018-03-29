@@ -7,10 +7,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class FpmHttpServer implements ServerInterface
 {
-    /**
-     * every request has an app
-     */
-    const APP_TYPE = 'request';
 
     use Common {
         create as _create;

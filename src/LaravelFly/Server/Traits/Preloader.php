@@ -46,7 +46,7 @@ Trait Preloader
      */
     protected function compileClasses()
     {
-        echo "[INFO] compile preloaded classes", PHP_EOL;
+        echo "[INFO] compile classes to preload, please wait a moment", PHP_EOL;
 
         $preloader = (new Factory)->create(['skip' => true]);
         $handle = $preloader->prepareOutput($this->getCachedCompilePath());

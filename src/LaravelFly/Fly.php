@@ -58,7 +58,7 @@ class Fly
             self::$dispatcher = $dispatcher;
         }
 
-        printf("[INFO] server events ready\n");
+        printf("[INFO] server dispatcher created\n");
 
         self::$instance = new static();
 
