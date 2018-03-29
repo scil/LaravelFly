@@ -72,7 +72,9 @@ return [
     /**
      * true if you use eval(tinker())
      *
-     * If see an error about mkdir, please start LaravelFly using sudo.
+     * note:
+     * 1. this tinker ignores config('tinker.dont_alias', []), because it starts before app created
+     * 2. If see an error about mkdir, please start LaravelFly using sudo.
      */
     'tinker' => false,
 
