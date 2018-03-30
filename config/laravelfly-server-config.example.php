@@ -82,8 +82,8 @@ return [
      * this is not for \LaravelFly\Server\WebSocketServer which always uses '0.0.0.0'
      * extend it and overwrite its __construct() if you need different listen_ip,
      */
-    // 'listen_ip' => '0.0.0.0',// listen to any address
-    'listen_ip' => '127.0.0.1',// listen only to localhost
+    // 'listen_ip' => '127.0.0.1',// listen only to localhost
+     'listen_ip' => '0.0.0.0',// listen to any address
 
     'listen_port' => 9501,
 

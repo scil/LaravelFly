@@ -26,6 +26,27 @@ Trait Common
     protected $options;
 
     /**
+     * @var array
+     */
+    protected $defaultOptions = [
+        'server' => 'LaravelFly\\Server\\HttpServer',
+        'daemonize' => false,
+        'tinker' => false,
+        'dispatch_by_query' => false,
+        'listen_ip' => '0.0.0.0',
+        'listen_port' => 9501,
+        'worker_num' => 5,
+        'max_request' => 1000,
+        'max_coro_num' => 3000,
+        'daemonize' => false,
+        'watch' => [],
+        'watch_delay' => 3500,
+        'compile' => true,
+        'compile_files' => [],
+        'kernel' => \LaravelFly\Kernel::class,
+    ];
+
+    /**
      * @var EventDispatcher
      */
     protected $dispatcher;
@@ -65,7 +86,7 @@ Trait Common
 
     public function config(array $options)
     {
-        $this->options = $options;
+        $this->options = $options = array_merge($this->defaultOptions, $options);
 
         $this->parseOptions($options);
 

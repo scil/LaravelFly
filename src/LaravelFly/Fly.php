@@ -57,11 +57,11 @@ class Fly
 
         $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
-        static::$server = $server = new $class($dispatcher);
+        static::$server = new $class($dispatcher);
 
-        $server->config($options);
+        static::$server->config($options);
 
-        $server->create();
+        static::$server->create();
 
         return self::$instance;
     }
