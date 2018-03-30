@@ -34,7 +34,7 @@ Trait Worker
     protected function watchForHotReload($swoole_server)
     {
 
-        if (!function_exists('inotify_init') || empty($this->options['watch'])) return;
+        if (!function_exists('inotify_init') || empty($this->getConfig('watch'))) return;
 
         echo "[INFO] watch for hot reload.\n";
 
@@ -46,7 +46,7 @@ Trait Worker
         $oldPathPrefix = $adapter->getPathPrefix();
         $adapter->setPathPrefix('/');
 
-        foreach ($this->options['watch'] as $item) {
+        foreach ($this->getConfig('watch') as $item) {
             inotify_add_watch($fd, $item, IN_CREATE | IN_DELETE | IN_MODIFY);
 
             if (is_dir($item)) {
@@ -58,7 +58,7 @@ Trait Worker
 
         $adapter->setPathPrefix($oldPathPrefix);
 
-        $delay = $this->options['watch_delay'] ?? 1500;
+        $delay = $this->getConfig('watch_delay') ?? 1500;
 
         swoole_event_add($fd, function () use ($fd, $swoole_server, $delay) {
             static $timer = null;

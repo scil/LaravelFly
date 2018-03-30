@@ -15,4 +15,8 @@ class CommonTest extends BaseTestCase
        $root->setAccessible(true);
        self::assertEquals(static::$root, $root->getValue($server));
     }
+
+    function testDefaultOptions(){
+
+    }
 }

@@ -29,7 +29,7 @@ Trait Preloader
 
     public function loadCachedCompileFile()
     {
-        if ($this->options['compile'] === 'force' ||
+        if ($this->getConfig('compile') === 'force' ||
             !is_file($this->getCachedCompilePath()) ||
             filemtime($this->getCachedCompilePath()) < filemtime($this->path('composer.lock'))) {
             $this->compileClasses();
@@ -73,7 +73,7 @@ Trait Preloader
         if (LARAVELFLY_MODE !== 'Map') {
             $core = array_merge($core, __DIR__ . '/preloader_config_more.php');
         }
-        $files = array_merge($core, $this->options['compile_files'] ?? []);
+        $files = array_merge($core, $this->getConfig('compile_files') ?? []);
         return array_map('realpath', $files);
     }
 

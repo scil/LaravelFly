@@ -85,16 +85,26 @@ class Common
 
     public function config(array $options)
     {
-        $this->options = $options = array_merge($this->defaultOptions, $options);
+        $this->options = array_merge($this->defaultOptions, $options);
 
-        $this->parseOptions($options);
-
-        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
+        $event = new GenericEvent(null, ['server' => $this, 'options' => $this->options]);
         $this->dispatcher->dispatch('server.config', $event);
 
+        // so options can be changed by event handler
         $this->options = $event['options'];
 
-        echo '[INFO] server options ready', PHP_EOL;
+        $this->parseOptions($this->options);
+
+        echo '[INFO] server options parsed', PHP_EOL;
+    }
+
+    public function getConfig($name = null)
+    {
+        if (is_string($name)) {
+            return $this->options[$name] ?? null;
+        }
+        return $this->options;
+
     }
 
     protected function parseOptions(array &$options)

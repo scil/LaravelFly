@@ -53,7 +53,7 @@ php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  p
 
 ## Tinker online: use tinker when laravel is working
 
-### used in router
+### use in router
 
 ```php
 Route::get('hi', function () {
@@ -67,7 +67,7 @@ Route::get('hi', function () {
 });
 ```
 
-### used in view file
+### use in view file
 
 ```blade.php
 @php(eval(tinker()))
@@ -121,7 +121,7 @@ ls -la $user
 // read doc
 doc $user->save
 
-// check code
+// check source code
 show $user->query
 
 // use xdebug
@@ -133,7 +133,7 @@ xdebug_call_class()
 $__file
 
 // check server pid and pidfile
-LaravelFly::getServer()
+LaravelFly::getInstance->getServer()
 
 // which class aliases are defined in tinker
 sudo app('tinker')->loader->classes
@@ -158,7 +158,7 @@ sudo app('tinker')->loader->classes
 
 There may be a problem with tabcompletion. see [tabcompletion only works "the second time](https://github.com/bobthecow/psysh/issues/435)
 
-If you see an error about permission, please `sudo chmod -R 0777 ~/.config/psysh`
+If you see an error about permission, please try `sudo chmod -R 0777 ~/.config/psysh`
 
 ## LaravelFly Usability 
 

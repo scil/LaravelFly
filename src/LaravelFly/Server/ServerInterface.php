@@ -9,6 +9,8 @@ interface ServerInterface
 
     public function config(array $options);
 
+    public function getConfig($name = null);
+
     public function create();
 
     public function setListeners();
