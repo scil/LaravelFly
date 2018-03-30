@@ -2,15 +2,10 @@
 
 namespace LaravelFly\Server;
 
-
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class FpmHttpServer implements ServerInterface
+class FpmHttpServer extends Common implements ServerInterface
 {
-
-    use Common {
-        create as _create;
-    }
 
     function setListeners()
     {

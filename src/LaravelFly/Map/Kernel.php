@@ -2,7 +2,6 @@
 
 namespace LaravelFly\Map;
 
-use Illuminate\Container\Container;
 use Exception;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
@@ -10,9 +9,6 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Foundation\Http\Events;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-
-use Illuminate\Routing\Router;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 
 class Kernel extends HttpKernel
 {

@@ -2,11 +2,10 @@
 
 namespace LaravelFly\Server;
 
-use LaravelFly\Exception\LaravelFlyException as Exception;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-Trait Common
+class Common
 {
     use Traits\DispatchRequestByQuery;
     use Traits\Preloader;
@@ -98,24 +97,6 @@ Trait Common
         echo '[INFO] server options ready', PHP_EOL;
     }
 
-    public function create()
-    {
-        $options = $this->options;
-
-        $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
-
-        $swoole->set($options);
-
-        $this->setListeners();
-
-        $swoole->fly = $this;
-
-        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
-        $this->dispatcher->dispatch('server.created', $event);
-
-        printf("[INFO] server %s created\n", static::class);
-    }
-
     protected function parseOptions(array &$options)
     {
         // as earlier as possible
@@ -147,15 +128,24 @@ Trait Common
         $this->dispatchRequestByQuery($options);
     }
 
-    public function getSwooleServer(): \swoole_server
+    public function create()
     {
-        return $this->swoole;
+        $options = $this->options;
+
+        $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
+
+        $swoole->set($options);
+
+        $this->setListeners();
+
+        $swoole->fly = $this;
+
+        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
+        $this->dispatcher->dispatch('server.created', $event);
+
+        printf("[INFO] server %s created\n", static::class);
     }
 
-    public function path($path = null)
-    {
-        return $path ? "{$this->root}/$path" : $this->root;
-    }
 
     public function start()
     {
@@ -178,5 +168,14 @@ Trait Common
         return $this->dispatcher;
     }
 
+    public function getSwooleServer(): \swoole_server
+    {
+        return $this->swoole;
+    }
+
+    public function path($path = null)
+    {
+        return $path ? "{$this->root}/$path" : $this->root;
+    }
 
 }

@@ -34,7 +34,12 @@
         cdzc && vendor/bin/phpunit - -testsuit LaravelFly_Map_Unit  - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml
         -->
         <testsuite name="LaravelFly_Map_Unit">
-            <directory suffix="Test.php">./tests/Map/Unit</directory>
+            <!--<directory suffix="Test.php">./tests/Map/Unit</directory>-->
+            <!--
+            ensure order
+            -->
+            <file>./tests/Map/Unit/FlyTest.php</file>
+            <directory suffix="Test.php">./tests/Map/Unit/Server</directory>
         </testsuite>
     </testsuites>
     <filter>

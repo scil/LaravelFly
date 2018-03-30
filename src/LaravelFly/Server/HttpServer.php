@@ -5,12 +5,8 @@ namespace LaravelFly\Server;
 use LaravelFly\Server\Event\WorkerStarted;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class HttpServer implements ServerInterface
+class HttpServer extends Common implements ServerInterface
 {
-    use Common {
-        start as _start;
-    }
-
 
     function setListeners()
     {
@@ -27,7 +23,7 @@ class HttpServer implements ServerInterface
 
     public function start()
     {
-        $this->_start();
+        parent::start();
         \Illuminate\Http\Request::enableHttpMethodParameterOverride();
     }
 

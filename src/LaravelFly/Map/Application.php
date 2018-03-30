@@ -10,7 +10,6 @@ use Illuminate\Log\LogServiceProvider;
 
 use Illuminate\Filesystem\Filesystem;
 use LaravelFly\Simple\ProviderRepository;
-use Illuminate\Contracts\Container\Container as ContainerContract;
 
 class Application extends \Illuminate\Foundation\Application
 {
@@ -42,10 +41,17 @@ class Application extends \Illuminate\Foundation\Application
     protected $CFServices = [];
 
     protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
-        'bootingCallbacks', 'bootedCallbacks', 'terminatingCallbacks', 'serviceProviders', 'loadedProviders', 'deferredServices'
+
+        'bootingCallbacks',
+        'bootedCallbacks',
+        'terminatingCallbacks',
+        'serviceProviders',
+        'loadedProviders',
+        'deferredServices'
     ];
     protected static $normalAttriForObj = [
-        'hasBeenBootstrapped' => false, 'booted' => false,
+        'hasBeenBootstrapped' => false,
+        'booted' => false,
         'bootedInRequest' => false,
     ];
 
