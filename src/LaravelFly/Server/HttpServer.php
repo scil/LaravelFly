@@ -14,7 +14,7 @@ class HttpServer extends Common implements ServerInterface
 
         $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
 
-        if (LARAVELFLY_MODE == 'Map') {
+        if ($this->getConfig('mode') === 'Map') {
             $this->swoole->on('request', array($this, 'onMapRequest'));
         } else {
             $this->swoole->on('request', array($this, 'onRequest'));

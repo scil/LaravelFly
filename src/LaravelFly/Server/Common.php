@@ -28,6 +28,7 @@ class Common
      * @var array
      */
     protected $defaultOptions = [
+        'mode'=>'Map',
         'server' => 'LaravelFly\\Server\\HttpServer',
         'daemonize' => false,
         'tinker' => false,
@@ -85,6 +86,8 @@ class Common
 
     public function config(array $options)
     {
+        if(defined('LARAVELFLY_MODE')) $options['mode']=LARAVELFLY_MODE;
+
         $this->options = array_merge($this->defaultOptions, $options);
 
         $event = new GenericEvent(null, ['server' => $this, 'options' => $this->options]);
@@ -119,7 +122,7 @@ class Common
             $options['pid_file'] = $this->root . '/bootstrap/laravel-fly-' . $options['listen_port'] . '.pid';
         }
 
-        $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
+        $this->appClass = '\LaravelFly\\' . $options['mode'] . '\Application';
         if (!class_exists($this->appClass)) {
             die("[ERROR] Mode set in config file not valid\n");
         }

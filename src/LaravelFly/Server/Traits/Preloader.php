@@ -69,10 +69,12 @@ Trait Preloader
     protected function getClassFiles()
     {
         $core = require __DIR__ . '/preloader_config_onlymapmode.php';
-        // Map mode has loaded fly files and related files
-        if (LARAVELFLY_MODE !== 'Map') {
-            $core = array_merge($core, __DIR__ . '/preloader_config_more.php');
+
+        // Map mode has loaded fly files and related files, so non-Map mode can load more files now
+        if ($this->getConfig('mode') !== 'Map') {
+            $core = array_merge($core, require __DIR__ . '/preloader_config_more.php');
         }
+
         $files = array_merge($core, $this->getConfig('compile_files') ?? []);
         return array_map('realpath', $files);
     }
