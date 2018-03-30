@@ -8,10 +8,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Fly
 {
-    /**
-     * @var EventDispatcher
-     */
-    protected static $dispatcher;
 
     /**
      * @var \LaravelFly\Server\ServerInterface | \LaravelFly\Server\HttpServer
@@ -52,25 +48,20 @@ class Fly
 
         static::initEnv();
 
-        if (null === static::$dispatcher) {
-            if (null === $dispatcher)
-                $dispatcher = new EventDispatcher();
-            self::$dispatcher = $dispatcher;
-        }
+        if (null === $dispatcher)
+            $dispatcher = new EventDispatcher();
 
         printf("[INFO] server dispatcher created\n");
 
-        self::$instance = new static();
-
-        $dispatcher = static::$dispatcher;
+        static::$instance = new static();
 
         $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
-        self::$server = new $class($dispatcher);
+        static::$server = $server = new $class($dispatcher);
 
-        self::$server->config($options);
+        $server->config($options);
 
-        self::$server->create();
+        $server->create();
 
         return self::$instance;
     }
@@ -91,11 +82,6 @@ class Fly
 
     }
 
-    function start()
-    {
-        static::getServer()->start();
-    }
-
     public static function getInstance($options = null)
     {
 
@@ -105,20 +91,20 @@ class Fly
         return self::$instance;
     }
 
-    static function getDispatcher()
+    function start()
     {
-        if (null === self::$dispatcher) {
-            static::$dispatcher = new EventDispatcher();
-        }
-        return self::$dispatcher;
+        static::$server->start();
     }
 
-    static function getServer()
+
+    function getDispatcher()
     {
-        if (!self::$instance) {
-            throw new Exception('Run \LaravelFly\Fly::init first');
-        }
-        return self::$server;
+        return static::$server->getDispatcher();
+    }
+
+    function getServer()
+    {
+        return static::$server;
     }
 
 }

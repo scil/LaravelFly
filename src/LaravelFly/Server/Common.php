@@ -149,5 +149,13 @@ Trait Common
         }
     }
 
+    /**
+     * @return EventDispatcher
+     */
+    public function getDispatcher(): EventDispatcher
+    {
+        return $this->dispatcher;
+    }
+
 
 }

@@ -4,6 +4,9 @@ namespace LaravelFly\Server;
 
 interface ServerInterface
 {
+
+    public function getDispatcher();
+
     public function config(array $options);
 
     public function create();

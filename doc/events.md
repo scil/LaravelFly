@@ -29,7 +29,7 @@ available args: $event['server'] ,$event['workerid'], $event['app']
 
 These events are instances of Symfony\Component\EventDispatcher\GenericEvent, they can be used like
 ```
-$dispatcher = \Laravel\Fly::getDispatcher();
+$dispatcher = \Laravel\Fly::getInstance->getDispatcher();
 
 // adding listeners for 'server.config' must be before the server is created if you want to change the config.
 $dispatcher->addListener('server.config', function (GenericEvent $event)  {
