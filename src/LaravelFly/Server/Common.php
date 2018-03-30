@@ -43,7 +43,6 @@ class Common
         'watch_delay' => 3500,
         'compile' => true,
         'compile_files' => [],
-        'kernel' => \LaravelFly\Kernel::class,
     ];
 
     /**
@@ -127,14 +126,14 @@ class Common
             die("[ERROR] Mode set in config file not valid\n");
         }
 
-        $kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
+        $kernelClass = $options['kernel'] ?? 'App\Http\Kernel';
         if (!(
             is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class) ||
             is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))) {
             $kernelClass = \LaravelFly\Kernel::class;
+            echo "[WARN] kernel: $kernelClass", PHP_EOL;
         }
         $this->kernelClass = $kernelClass;
-        echo "[INFO] kernel: $kernelClass", PHP_EOL;
 
         $this->prepareTinker($options);
 
