@@ -130,7 +130,7 @@ Trait Common
 
         $this->appClass = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
         if (!class_exists($this->appClass)) {
-            die("Mode set in config file not valid\n");
+            die("[ERROR] Mode set in config file not valid\n");
         }
 
         $kernelClass = $options['kernel'] ?? \App\Http\Kernel::class;
@@ -159,14 +159,14 @@ Trait Common
 
     public function start()
     {
-        try {
+        $this->memory['isDown'] = new \swoole_atomic(0);
 
-            $this->memory['isDown'] = new \swoole_atomic(0);
+        try {
 
             $this->swoole->start();
 
         } catch (\Throwable $e) {
-            throw new Exception($e->getMessage());
+            die("[ERROR] swoole server started failed: {$e->getMessage()} \n");
         }
     }
 

@@ -46,21 +46,22 @@ abstract class BaseTestCase extends TestCase
         return static::$laravelApp;
     }
 
-    static protected function makeServer( $constances = [], $options=[], $config_file =  __DIR__ . '/../config/laravelfly-server-config.example.php')
+    static protected function makeServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
     {
-        foreach ($constances as $name=>$val){
-            define($name, $val);
+        foreach ($constances as $name => $val) {
+            if (!defined($name))
+                define($name, $val);
         }
 
         $file_options = require $config_file;
 
         $options = array_merge($file_options, $options);
 
-        $fly= \LaravelFly\Fly::init($options);
+        $fly = \LaravelFly\Fly::init($options);
 
-        static::$dispatcher = $fly::getDispatcher();
+        static::$dispatcher = $fly->getDispatcher();
 
-        return static::$server = $fly::getServer();
+        return static::$server = $fly->getServer();
     }
 
 
