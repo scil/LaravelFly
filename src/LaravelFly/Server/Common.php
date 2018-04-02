@@ -140,7 +140,7 @@ class Common
         $this->dispatchRequestByQuery($options);
     }
 
-    public function create()
+    public function createSwooleServer():\swoole_http_server
     {
         $options = $this->options;
 

@@ -61,7 +61,7 @@ class Fly
 
         static::$server->config($options);
 
-        static::$server->create();
+        static::$server->createSwooleServer();
 
         return self::$instance;
     }

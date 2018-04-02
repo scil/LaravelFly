@@ -11,7 +11,7 @@ interface ServerInterface
 
     public function getConfig($name = null);
 
-    public function create();
+    public function createSwooleServer();
 
     public function setListeners();
 
