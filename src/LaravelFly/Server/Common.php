@@ -169,11 +169,6 @@ class Common
         $this->swoole->on('Request', array($this, 'onRequest'));
 
     }
-    public function onWorkerStart(\swoole_server $server, int $worker_id)
-    {
-        $this->workerStartHead($server, $worker_id);
-        $this->workerStartTail($server, $worker_id);
-    }
     function onRequest(\swoole_http_request $request, \swoole_http_response $response){}
 
     public function start()

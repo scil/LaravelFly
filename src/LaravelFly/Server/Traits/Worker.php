@@ -7,6 +7,20 @@ use Storage;
 
 Trait Worker
 {
+    public function onWorkerStart(\swoole_server $server, int $worker_id)
+    {
+        $this->workerStartHead($server, $worker_id);
+        $this->workerStartTail($server, $worker_id);
+    }
+
+    public function onWorkerStop(\swoole_server $server, int $worker_id)
+    {
+        echo "[INFO] worker $worker_id stopping\n";
+
+        $this->dispatcher->dispatch('worker.stopped',
+            new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
+
+    }
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
     {
@@ -121,15 +135,6 @@ Trait Worker
         }
     }
 
-
-    public function onWorkerStop(\swoole_server $server, int $worker_id)
-    {
-        echo "[INFO] worker $worker_id stopping\n";
-
-        $this->dispatcher->dispatch('worker.stopped',
-            new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
-
-    }
 
 }
 
