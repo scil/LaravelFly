@@ -34,7 +34,7 @@ trait Server
 
     public function isDownForMaintenance()
     {
-        return $this->server->memory['isDown']->get();
+        return $this->server->getMemory('isDown')->get();
     }
 
 }

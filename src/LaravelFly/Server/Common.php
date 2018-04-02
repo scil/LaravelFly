@@ -161,7 +161,7 @@ class Common
 
     public function start()
     {
-        $this->memory['isDown'] = new \swoole_atomic(0);
+        $this->setMemory('isDown',new \swoole_atomic(0));
 
         try {
 
@@ -188,6 +188,19 @@ class Common
     public function path($path = null):string
     {
         return $path ? "{$this->root}/$path" : $this->root;
+    }
+
+    public function getMemory(string $name)
+    {
+        return $this->memory[$name] ?? null;
+    }
+
+    /**
+     * @param array $memory
+     */
+    public function setMemory($name, $value)
+    {
+        $this->memory[$name] = $value;
     }
 
 }
