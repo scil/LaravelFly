@@ -121,4 +121,15 @@ class CommonTest extends BaseTestCase
         static::$commonServer->config([ 'compile' => false]);
         self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
     }
+
+    function testPath()
+    {
+        self::assertEquals(static::$root, static::$commonServer->path());
+
+        self::assertEquals(static::$root.'/bootstrap/', static::$commonServer->path('bootstrap/'));
+    }
+    function testGetMemory()
+    {
+        self::assertEquals(null, static::$commonServer->getMemory('no-exist'));
+    }
 }
