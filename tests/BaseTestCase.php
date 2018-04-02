@@ -4,6 +4,7 @@
 /**
  *
  * cdzc && vendor/bin/phpunit --testsuit LaravelFly_Unit  --stop-on-failure  -c vendor/scil/laravel-fly/phpunit.xml
+ * Map
  * cdzc && vendor/bin/phpunit --testsuit LaravelFly_Map_Unit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml
  *
  */

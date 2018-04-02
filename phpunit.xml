@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    composer autoload-dev? (root dir only)
+-->
+
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
          bootstrap="tests/bootstrap.php"
@@ -14,22 +19,27 @@
         </testsuite>
 
         <!--
-        autoload-dev (root only)
-
         cdzc &&  vendor/bin/phpunit - -testsuit LaravelFly_Unit  - -stop-on-failure  -c vendor/scil/laravel-fly/phpunit.xml
         -->
         <testsuite name="LaravelFly_Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
+            <!--<directory suffix="Test.php">./tests/Unit</directory>-->
+
+            <!--<file>./tests/Unit/FlyTest.php</file>-->
+            <!--<file>./tests/Unit/Server/CommonTest.php</file>-->
+            <file>./tests/Unit/Server/DispatchRequestByQueryTest.php</file>
         </testsuite>
 
+
         <!--
-        hacked files are included, so theses tests can not be run with other tests
+        hacked files are included, and there's a kernel fife controlled by LARAVELFLY_MODE so theses tests can not be run with other tests
 
         cdzc && vendor/bin/phpunit - -testsuit LaravelFly_Map_Feature  - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml
          -->
         <testsuite name="LaravelFly_Map_Feature">
             <directory suffix="Test.php">./tests/Map/Feature</directory>
         </testsuite>
+
+
         <!--
         cdzc && vendor/bin/phpunit - -testsuit LaravelFly_Map_Unit  - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml
         -->
@@ -41,6 +51,8 @@
             <file>./tests/Map/Unit/FlyTest.php</file>
             <directory suffix="Test.php">./tests/Map/Unit/Server</directory>
         </testsuite>
+
+
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

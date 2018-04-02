@@ -2,38 +2,10 @@
 
 namespace LaravelFly\Tests\Unit\Server;
 
-use LaravelFly\Tests\BaseTestCase;
+//use LaravelFly\Tests\BaseTestCase;
 
 class CommonTest extends BaseTestCase
 {
-    /**
-     * @var \LaravelFly\Server\Common;
-     */
-    static $commonServer;
-
-    static $default = [];
-
-    /**
-     * This method is called before each test.
-     */
-    static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-
-        static::$commonServer = new \LaravelFly\Server\Common();
-
-        $d = new \ReflectionProperty(static::$commonServer, 'defaultOptions');
-        $d->setAccessible(true);
-        static::$default = $d->getValue(static::$commonServer);
-    }
-
-    function resetConfig()
-    {
-        $c = new \ReflectionProperty(static::$commonServer, 'options');
-        $c->setAccessible(true);
-        $c->setValue(static::$commonServer,[]);
-
-    }
 
     function testInit()
     {
@@ -46,7 +18,7 @@ class CommonTest extends BaseTestCase
 
     function testDefaultOptions()
     {
-        $this->resetConfig();
+        $this->resetConfigAndDispatcher();
 
         $server = static::$commonServer;
 
@@ -66,7 +38,7 @@ class CommonTest extends BaseTestCase
 
     function testMergeOptions()
     {
-        $this->resetConfig();
+        $this->resetConfigAndDispatcher();
 
         $server = static::$commonServer;
 
@@ -108,7 +80,7 @@ class CommonTest extends BaseTestCase
     }
 
     function testAppClass(){
-        $this->resetConfig();
+        $this->resetConfigAndDispatcher();
 
         $a= new \ReflectionProperty(static::$commonServer,'appClass');
         $a->setAccessible(true);
@@ -134,7 +106,7 @@ class CommonTest extends BaseTestCase
     function testKernalClass()
     {
 
-        $this->resetConfig();
+        $this->resetConfigAndDispatcher();
 
         $k= new \ReflectionProperty(static::$commonServer,'kernelClass');
         $k->setAccessible(true);
@@ -144,7 +116,7 @@ class CommonTest extends BaseTestCase
         static::$commonServer->config([ 'compile' => false]);
         self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
 
-        $this->resetConfig();
+        $this->resetConfigAndDispatcher();
         define('LARAVELFLY_MODE','Simple');
         static::$commonServer->config([ 'compile' => false]);
         self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
