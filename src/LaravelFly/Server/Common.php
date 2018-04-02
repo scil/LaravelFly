@@ -185,7 +185,7 @@ class Common
         return $this->swoole;
     }
 
-    public function path($path = null)
+    public function path($path = null):string
     {
         return $path ? "{$this->root}/$path" : $this->root;
     }

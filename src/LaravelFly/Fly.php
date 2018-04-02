@@ -42,7 +42,7 @@ class Fly
      * @param array $options
      * @param EventDispatcher $dispatcher
      */
-    static function init($options, EventDispatcher $dispatcher = null): self
+    static function init(array $options, EventDispatcher $dispatcher = null): self
     {
         if (self::$instance) return self::$instance;
 
@@ -82,7 +82,7 @@ class Fly
 
     }
 
-    public static function getInstance($options = null)
+    public static function getInstance($options = null):self
     {
 
         if (!self::$instance) {

@@ -41,7 +41,7 @@ abstract class ServiceProvider
     /**
      * Create a new service provider instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  \Illuminate\Contracts\Foundation\Application $app
      * @return void
      */
     public function __construct($app)
@@ -50,26 +50,29 @@ abstract class ServiceProvider
         static::initForRequestCorontine(WORKER_COROUTINE_ID);
     }
 
-    static function initForRequestCorontine(int $cid )
+    static function initForRequestCorontine(int $cid)
     {
         //todo test
-        foreach (['publishes','publishGroups'] as $attri){
-            static::$$attri[$cid] = $cid==WORKER_COROUTINE_ID? []: static::$$attri[WORKER_COROUTINE_ID];
+        foreach (['publishes', 'publishGroups'] as $attri) {
+            static::$$attri[$cid] = $cid == WORKER_COROUTINE_ID ? [] : static::$$attri[WORKER_COROUTINE_ID];
         }
     }
-    static function unsetForRequestCorontine(int $cid )
+
+    static function unsetForRequestCorontine(int $cid)
     {
-        unset(static::$publishes[$cid],static::$publishGroups[$cid]);
+        unset(static::$publishes[$cid], static::$publishGroups[$cid]);
     }
-    static public function coroutineFriendlyServices()
+
+    static public function coroutineFriendlyServices(): array
     {
         return [];
     }
+
     /**
      * Merge the given configuration with the existing configuration.
      *
-     * @param  string  $path
-     * @param  string  $key
+     * @param  string $path
+     * @param  string $key
      * @return void
      */
     protected function mergeConfigFrom($path, $key)
@@ -82,12 +85,12 @@ abstract class ServiceProvider
     /**
      * Load the given routes file if routes are not already cached.
      *
-     * @param  string  $path
+     * @param  string $path
      * @return void
      */
     protected function loadRoutesFrom($path)
     {
-        if (! $this->app->routesAreCached()) {
+        if (!$this->app->routesAreCached()) {
             require $path;
         }
     }
@@ -95,15 +98,15 @@ abstract class ServiceProvider
     /**
      * Register a view file namespace.
      *
-     * @param  string  $path
-     * @param  string  $namespace
+     * @param  string $path
+     * @param  string $namespace
      * @return void
      */
     protected function loadViewsFrom($path, $namespace)
     {
         if (is_array($this->app->config['view']['paths'])) {
             foreach ($this->app->config['view']['paths'] as $viewPath) {
-                if (is_dir($appPath = $viewPath.'/vendor/'.$namespace)) {
+                if (is_dir($appPath = $viewPath . '/vendor/' . $namespace)) {
                     $this->app['view']->addNamespace($namespace, $appPath);
                 }
             }
@@ -115,8 +118,8 @@ abstract class ServiceProvider
     /**
      * Register a translation file namespace.
      *
-     * @param  string  $path
-     * @param  string  $namespace
+     * @param  string $path
+     * @param  string $namespace
      * @return void
      */
     protected function loadTranslationsFrom($path, $namespace)
@@ -127,7 +130,7 @@ abstract class ServiceProvider
     /**
      * Register a JSON translation file path.
      *
-     * @param  string  $path
+     * @param  string $path
      * @return void
      */
     protected function loadJsonTranslationsFrom($path)
@@ -138,13 +141,13 @@ abstract class ServiceProvider
     /**
      * Register a database migration path.
      *
-     * @param  array|string  $paths
+     * @param  array|string $paths
      * @return void
      */
     protected function loadMigrationsFrom($paths)
     {
         $this->app->afterResolving('migrator', function ($migrator) use ($paths) {
-            foreach ((array) $paths as $path) {
+            foreach ((array)$paths as $path) {
                 $migrator->path($path);
             }
         });
@@ -153,15 +156,15 @@ abstract class ServiceProvider
     /**
      * Register paths to be published by the publish command.
      *
-     * @param  array  $paths
-     * @param  string  $group
+     * @param  array $paths
+     * @param  string $group
      * @return void
      */
     protected function publishes(array $paths, $group = null)
     {
         $this->ensurePublishArrayInitialized($class = static::class);
 
-        $cid=\co::getUid();
+        $cid = \co::getUid();
         static::$publishes[$cid][$class] = array_merge(static::$publishes[$cid][$class], $paths);
 
         if ($group) {
@@ -172,13 +175,13 @@ abstract class ServiceProvider
     /**
      * Ensure the publish array for the service provider is initialized.
      *
-     * @param  string  $class
+     * @param  string $class
      * @return void
      */
     protected function ensurePublishArrayInitialized($class)
     {
-        $cid=\co::getUid();
-        if (! array_key_exists($class, static::$publishes[$cid])) {
+        $cid = \co::getUid();
+        if (!array_key_exists($class, static::$publishes[$cid])) {
             static::$publishes[$cid][$class] = [];
         }
     }
@@ -186,14 +189,14 @@ abstract class ServiceProvider
     /**
      * Add a publish group / tag to the service provider.
      *
-     * @param  string  $group
-     * @param  array  $paths
+     * @param  string $group
+     * @param  array $paths
      * @return void
      */
     protected function addPublishGroup($group, $paths)
     {
-        $cid=\co::getUid();
-        if (! array_key_exists($group, static::$publishGroups[$cid])) {
+        $cid = \co::getUid();
+        if (!array_key_exists($group, static::$publishGroups[$cid])) {
             static::$publishGroups[$cid][$group] = [];
         }
 
@@ -205,13 +208,13 @@ abstract class ServiceProvider
     /**
      * Get the paths to publish.
      *
-     * @param  string  $provider
-     * @param  string  $group
+     * @param  string $provider
+     * @param  string $group
      * @return array
      */
     public static function pathsToPublish($provider = null, $group = null)
     {
-        if (! is_null($paths = static::pathsForProviderOrGroup($provider, $group))) {
+        if (!is_null($paths = static::pathsForProviderOrGroup($provider, $group))) {
             return $paths;
         }
 
@@ -223,13 +226,13 @@ abstract class ServiceProvider
     /**
      * Get the paths for the provider or group (or both).
      *
-     * @param  string|null  $provider
-     * @param  string|null  $group
+     * @param  string|null $provider
+     * @param  string|null $group
      * @return array
      */
     protected static function pathsForProviderOrGroup($provider, $group)
     {
-        $cid=\co::getUid();
+        $cid = \co::getUid();
         if ($provider && $group) {
             return static::pathsForProviderAndGroup($provider, $group);
         } elseif ($group && array_key_exists($group, static::$publishGroups[$cid])) {
@@ -244,14 +247,14 @@ abstract class ServiceProvider
     /**
      * Get the paths for the provider and group.
      *
-     * @param  string  $provider
-     * @param  string  $group
+     * @param  string $provider
+     * @param  string $group
      * @return array
      */
     protected static function pathsForProviderAndGroup($provider, $group)
     {
-        $cid=\co::getUid();
-        if (! empty(static::$publishes[$cid][$provider]) && ! empty(static::$publishGroups[$cid][$group])) {
+        $cid = \co::getUid();
+        if (!empty(static::$publishes[$cid][$provider]) && !empty(static::$publishGroups[$cid][$group])) {
             return array_intersect_key(static::$publishes[$cid][$provider], static::$publishGroups[$cid][$group]);
         }
 
@@ -281,7 +284,7 @@ abstract class ServiceProvider
     /**
      * Register the package's custom Artisan commands.
      *
-     * @param  array|mixed  $commands
+     * @param  array|mixed $commands
      * @return void
      */
     public function commands($commands)

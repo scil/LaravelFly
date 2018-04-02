@@ -3,7 +3,6 @@
 namespace LaravelFly\Server\Traits;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Storage;
 
 Trait Laravel
 {
@@ -36,9 +35,10 @@ Trait Laravel
 
     public function startLaravel()
     {
-
+        /** @var \LaravelFly\Map\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application $app */
         $this->app = $app = new $this->appClass($this->root);
 
+        /** @var \LaravelFly\Server\ServerInterface|\LaravelFly\Server\HttpServer|\LaravelFly\Server\FpmHttpServer $this */
         $this->app->setServer($this);
 
         $app->singleton(
@@ -94,7 +94,7 @@ Trait Laravel
      * @param \swoole_http_response $response
      * @param $laravel_response
      */
-    protected function swooleResponse(\swoole_http_response $response, $laravel_response): void
+    protected function swooleResponse(\swoole_http_response $response,\Symfony\Component\HttpFoundation\Response $laravel_response): void
     {
         foreach ($laravel_response->headers->allPreserveCase() as $name => $values) {
             foreach ($values as $value) {
@@ -102,6 +102,7 @@ Trait Laravel
             }
         }
 
+        /** @var  \Symfony\Component\HttpFoundation\Cookie $cookie */
         foreach ($laravel_response->headers->getCookies() as $cookie) {
             $response->cookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
         }

@@ -27,6 +27,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
     {
         parent::bootstrap($app);
 
+        /** @var \Illuminate\Config\Repository $config */
         $config = $app->make('config');
 
         if (empty($config['laravelfly'])) {
@@ -43,7 +44,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
      *
      * from: getConfigurationFiles()
      *
-     * @param Application $app
+     * @param Application|\LaravelFly\Map\Application $app
      * @return array
      */
     protected function getFlyConfigurationFiles(Application $app)
@@ -52,6 +53,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         $configPath = realpath($app->configPath());
 
+        /** @var \Symfony\Component\HttpFoundation\File\File $file */
         foreach (Finder::create()->files()->name('laravelfly.php')->in($configPath) as $file) {
             $directory = $this->getNestedDirectory($file, $configPath);
 

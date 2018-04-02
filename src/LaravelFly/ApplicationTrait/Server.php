@@ -12,12 +12,12 @@ trait Server
 {
 
     /**
-     * @var \LaravelFly\Server|\LaravelFly\Server\HttpServer|\LaravelFly\Server\FpmHttpServer
+     * @var \LaravelFly\Server\ServerInterface|\LaravelFly\Server\HttpServer|\LaravelFly\Server\FpmHttpServer
      */
     protected $server;
 
     /**
-     * @return \LaravelFly\Server|\LaravelFly\Server\FpmHttpServer|\LaravelFly\Server\HttpServer
+     * @return \LaravelFly\Server\ServerInterface|\LaravelFly\Server\FpmHttpServer|\LaravelFly\Server\HttpServer
      */
     public function getServer()
     {
@@ -25,7 +25,7 @@ trait Server
     }
 
     /**
-     * @param \LaravelFly\Server|\LaravelFly\Server\FpmHttpServer|\LaravelFly\Server\HttpServer $server
+     * @param \LaravelFly\Server\ServerInterface|\LaravelFly\Server\FpmHttpServer|\LaravelFly\Server\HttpServer $server
      */
     public function setServer($server)
     {

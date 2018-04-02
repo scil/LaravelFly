@@ -10,6 +10,7 @@ class ReadProvidersConfig
 
     public function bootstrap(Application $app)
     {
+        //todo add cache
 
         $appConfig = $app->make('config');
 
@@ -21,9 +22,9 @@ class ReadProvidersConfig
         $providersOnWork = [];
         foreach ($worker_providers as $provider => $providerConfig) {
 
-            if ($providerConfig === false || is_null($providerConfig)) continue;
+            if ($providerConfig === false || $providerConfig === null) continue;
 
-            if(!class_exists($provider)) continue;
+            if (!class_exists($provider)) continue;
 
             $providersOnWork[] = $provider;
 
@@ -34,6 +35,8 @@ class ReadProvidersConfig
                 unset($providerConfig['_replace']);
             }
 
+            /** @var string[] $officalCFServices */
+            /** @var \Illuminate\Support\ServiceProvider $provider */
             $officalCFServices = $provider::coroutineFriendlyServices();
             // $officalCFServices is base
             $curCFServices = $officalCFServices;

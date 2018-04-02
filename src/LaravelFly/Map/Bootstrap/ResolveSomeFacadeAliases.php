@@ -21,15 +21,15 @@ class ResolveSomeFacadeAliases
      *
      * it's handy to debug and a little faster. in a test using microtime(true): 0.06 vs 0.26
      *
-     * @param $app
+     * @param \LaravelFly\Map\Application $app
      * @return string
      */
-    public function getCachedAliasesPath($app)
+    public function getCachedAliasesPath(Application $app)
     {
         return $app->bootstrapPath() . '/cache/laravelfly_aliases.php';
     }
 
-    protected function getAliases($app)
+    protected function getAliases(Application $app):array
     {
         $cacheFile = $this->getCachedAliasesPath($app);
 
