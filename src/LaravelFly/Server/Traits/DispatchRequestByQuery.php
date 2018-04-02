@@ -29,22 +29,37 @@ Trait DispatchRequestByQuery
             return;
         }
 
-        $options['dispatch_func'] = function ($serv, $fd, $type, $data) {
-            if (preg_match('/worker-(id|pid)=(\d+)/i', $data, $matches)) {
-                if ($matches[1] == 'id') {
-                    return (int) ($matches[2]) % $serv->setting['worker_num'];
-                } else {
-                    foreach ($serv->fly->getWorkerIds() as $row) {
-                        if ($row['pid'] == $matches[2]) {
-                            return $row['id'];
-                        }
-                    }
-                }
-                return $fd % $serv->setting['worker_num'];
-            }
-        };
+        $options['dispatch_func'] = [$this, 'dispatch'];
 
         $this->createWorkerIds($options);
+    }
+
+    // must be public
+    public function dispatch($swoole_server, $fd, $type, $data)
+    {
+
+        if (preg_match('/worker-(id|pid)(?:=|:\s+)(\d+)/i', $data, $matches)) {
+            print_r($matches);
+
+            // 'id' or 'Id', neither 'pid' or 'Pid'
+            if (strlen($matches[1]) === 2) {
+                $id = (int)($matches[2]) % $swoole_server->setting['worker_num'];
+                echo "[INFO] dispatch worker $id by worker-id={$matches[2]}\n";
+                return $id;
+            }
+
+            foreach ($swoole_server->fly->getWorkerIds() as $row) {
+                if ($row['pid'] == $matches[2]) {
+                    $id = $row['id'];
+                    echo "[INFO] dispatch worker $id by worker-pid={$matches[2]}\n";
+                    return $id;
+                }
+            }
+
+        }
+
+        echo "[INFO] dispatch worker by $fd % {$swoole_server->setting['worker_num']}\n";
+        return $fd % $swoole_server->setting['worker_num'];
     }
 
     protected function createWorkerIds($options)

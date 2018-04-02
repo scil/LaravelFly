@@ -154,14 +154,19 @@ return [
 
     /**
      * if you use more than one workers, you can control which worker handle a request
-     * by sending query parameter 'worker-id' or 'worker-pid'
+     * by sending query parameter or header
      *
      * by worker id // range: [0, worker_num)
-     * curl zhenc.test/hi?worker-id=0   will use worker 0
-     * curl zhenc.test/hi?worker-id=1   will use worker 1
+     * use worker 0:
+     *      curl zhenc.test/hi?worker-id=0
+     *      curl zhenc.test/hi  --header "Worker-Id: 0"
+     * use worker 1
+     *      curl zhenc.test/hi?worker-id=1
+     *      curl zhenc.test/hi  --header "Worker-Id: 1"
      *
      * by worker process id
-     * curl zhenc.test/fly?worker-pid=14791
+     *      curl zhenc.test/fly?worker-pid=14791
+     *      curl zhenc.test/hi  --header "Worker-Pid: 14791"
      *
      * It's useful if you want to use eval(tinker()) in different worker process.
      * All vars available in a tinker shell are almost only objects in the worker process which the tinker is running
