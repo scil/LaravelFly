@@ -37,9 +37,7 @@ Trait DispatchRequestByQuery
     // must be public
     public function dispatch($swoole_server, $fd, $type, $data)
     {
-
         if (preg_match('/worker-(id|pid)(?:=|:\s+)(\d+)/i', $data, $matches)) {
-            print_r($matches);
 
             // 'id' or 'Id', neither 'pid' or 'Pid'
             if (strlen($matches[1]) === 2) {

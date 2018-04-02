@@ -12,8 +12,21 @@ Trait Worker
     {
         printf("[INFO] worker %u starting (pid %u)\n", $worker_id, getmypid());
 
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]);
-        $this->dispatcher->dispatch('worker.starting', $event);
+        $this->dispatcher->dispatch('worker.starting',
+            new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]));
+    }
+
+    public function workerStartTail(\swoole_server $server, int $worker_id)
+    {
+        // disable laravel dispatcher, only use server dispatcher
+        // event('worker.ready', [$this]);
+
+        // 'app' is null for FpmHttpServer
+        $this->dispatcher->dispatch('worker.ready',
+            new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
+
+        echo "[INFO] worker $worker_id ready\n";
+
     }
 
     /**
@@ -113,10 +126,8 @@ Trait Worker
     {
         echo "[INFO] worker $worker_id stopping\n";
 
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]);
-        $this->dispatcher->dispatch('worker.stopped', $event);
-
-        opcache_reset();
+        $this->dispatcher->dispatch('worker.stopped',
+            new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
     }
 

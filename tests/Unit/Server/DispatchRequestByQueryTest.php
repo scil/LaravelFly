@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class DispatchRequestByQueryTest extends BaseTestCase
 {
-    private function testDispatchCallbackByWorkerId()
+    function testDispatchCallbackByWorkerId()
     {
 
         $server = static::$commonServer;
@@ -37,10 +37,10 @@ class DispatchRequestByQueryTest extends BaseTestCase
         $server = static::$commonServer;
 
         // todo
-        // only one is allowed, or : eventLoop has already been created. unable to create swoole_server
+        // now only one is allowed to test , otherwise : eventLoop has already been created. unable to create swoole_server
         // https://github.com/swoole/swoole-src/blob/master/swoole_async.c
         $data = [
-            ['worker_num' => 5, 'raw' => 'GET /fly?worker-pid=%d HTTP/1.1', 'fd' => 99],
+//            ['worker_num' => 5, 'raw' => 'GET /fly?worker-pid=%d HTTP/1.1', 'fd' => 99],
             ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Pid: %d", 'fd' => 99],
         ];
 

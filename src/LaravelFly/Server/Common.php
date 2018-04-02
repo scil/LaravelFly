@@ -152,12 +152,29 @@ class Common
 
         $swoole->fly = $this;
 
-        $event = new GenericEvent(null, ['server' => $this, 'options' => $options]);
-        $this->dispatcher->dispatch('server.created', $event);
+        $this->dispatcher->dispatch('server.created',
+            new GenericEvent(null, ['server' => $this, 'options' => $options]));
 
         printf("[INFO] server %s created\n", static::class);
+
+        return $swoole;
     }
 
+    public function setListeners()
+    {
+        $this->swoole->on('WorkerStart', array($this, 'onWorkerStart'));
+
+        $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
+
+        $this->swoole->on('Request', array($this, 'onRequest'));
+
+    }
+    public function onWorkerStart(\swoole_server $server, int $worker_id)
+    {
+        $this->workerStartHead($server, $worker_id);
+        $this->workerStartTail($server, $worker_id);
+    }
+    function onRequest(\swoole_http_request $request, \swoole_http_response $response){}
 
     public function start()
     {
@@ -202,5 +219,6 @@ class Common
     {
         $this->memory[$name] = $value;
     }
+
 
 }

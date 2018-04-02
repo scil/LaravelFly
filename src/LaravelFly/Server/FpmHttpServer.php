@@ -11,18 +11,11 @@ class FpmHttpServer extends Common implements ServerInterface
     {
         $this->swoole->on('WorkerStart', array($this, 'onWorkerStart'));
 
+        $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
+
         $this->swoole->on('request', array($this, 'onRequest'));
     }
 
-    public function onWorkerStart(\swoole_server $server, int $worker_id)
-    {
-        $this->workerStartHead($server, $worker_id);
-
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app'=>null]);
-        $this->dispatcher->dispatch('worker.ready', $event);
-
-        printf("[INFO] pid %u: worker %u ready\n", getmypid(), $worker_id);
-    }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {

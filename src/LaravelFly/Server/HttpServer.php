@@ -64,16 +64,20 @@ class HttpServer extends Common implements ServerInterface
 
         $this->app->forgetInstance('request');
 
-        // disable app dispatcher
-        // event('worker.ready', [$this]);
-        $event = new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]);
-        $this->dispatcher->dispatch('worker.ready', $event);
 
-        echo "[INFO] worker $worker_id ready\n";
+        $this->workerStartTail($server, $worker_id);
 
          if ($worker_id == 0) {
              $this->workerZeroStartTail($server,['downDir'=>$this->app->storagePath() . '/framework/']);
          }
+
+    }
+
+    public function onWorkerStop(\swoole_server $server, int $worker_id)
+    {
+        parent::onWorkerStop($server,$worker_id);
+
+        opcache_reset();
 
     }
 
