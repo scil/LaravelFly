@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 class CookieServiceProvider extends ServiceProvider
 {
-    static public function coroutineFriendlyServices()
+    static public function coroutineFriendlyServices():array
     {
         /**
          * CookieJar's path, domain, secure and sameSite  are not rewriten to be a full COROUTINE-FRIENDLY SERVICE.

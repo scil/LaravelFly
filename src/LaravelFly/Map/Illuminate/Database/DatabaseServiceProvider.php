@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvider
 {
 
-    static public function coroutineFriendlyServices()
+    static public function coroutineFriendlyServices():array
     {
         return ['db.factory','db'];
     }

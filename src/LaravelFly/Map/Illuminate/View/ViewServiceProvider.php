@@ -16,7 +16,7 @@ use Illuminate\View\FileViewFinder;
 class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 {
 
-    static public function coroutineFriendlyServices()
+    static public function coroutineFriendlyServices():array
     {
         /**
          * Illuminate\View\Engines not rewriten to be A COROUTINE-FRIENDLY SERVICE.

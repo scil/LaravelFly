@@ -5,7 +5,7 @@ namespace LaravelFly\Map\Illuminate\Session;
 
 class SessionServiceProvider extends \Illuminate\Session\SessionServiceProvider
 {
-    static public function coroutineFriendlyServices()
+    static public function coroutineFriendlyServices():array
     {
         return ['session', 'session.store', \Illuminate\Session\Middleware\StartSession::class];
     }

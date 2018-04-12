@@ -5,7 +5,7 @@ namespace LaravelFly\Map\Illuminate\Auth;
 
 class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
 {
-    static public function coroutineFriendlyServices()
+    static public function coroutineFriendlyServices():array
     {
         return ['auth'];
     }
