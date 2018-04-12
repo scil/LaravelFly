@@ -181,14 +181,17 @@ class Common
         $this->addMemory('isDown', new swoole_atomic(0));
 
         if (!method_exists('\co', 'getUid'))
-            die("[ERROR] ext-swoole version 2 not installed or swoole.use_shortname not enabled.\n");
+            die("[ERROR] pecl install swoole or enable swoole.use_shortname.\n");
+
 
         try {
 
             $this->swoole->start();
 
         } catch (\Throwable $e) {
+            
             die("[ERROR] swoole server started failed: {$e->getMessage()} \n");
+
         }
     }
 
