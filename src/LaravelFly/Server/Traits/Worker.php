@@ -11,20 +11,15 @@ Trait Worker
     {
         $this->workerStartHead($server, $worker_id);
         $this->workerStartTail($server, $worker_id);
-    }
 
-    public function onWorkerStop(\swoole_server $server, int $worker_id)
-    {
-        echo "[INFO] worker $worker_id stopping\n";
-
-        $this->dispatcher->dispatch('worker.stopped',
-            new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
-
+        if ($worker_id == 0) {
+            $this->workerZeroStartTail($server, ['downDir' => $this->path('storage/framework/')]);
+        }
     }
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
     {
-        printf("[INFO] worker %u starting (pid %u)\n", $worker_id, getmypid());
+        printf("[INFO] worker.starting for %u (pid %u)\n", $worker_id, getmypid());
 
         $this->dispatcher->dispatch('worker.starting',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]));
@@ -39,12 +34,12 @@ Trait Worker
         $this->dispatcher->dispatch('worker.ready',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
-        echo "[INFO] worker $worker_id ready\n";
+        echo "[INFO] worker.ready for $worker_id\n";
 
     }
 
     /**
-     * do something only in one worker, escape something work in each worker
+     * do something only in one worker, not in each worker
      *
      * there's alway a worker with id 0.
      * do not worry about if current worker 0 is killed, worker id is in range [0, worker_num)
@@ -107,7 +102,7 @@ Trait Worker
 
     /**
      * use a Atomic vars to save if app is down,
-     * \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class is a little bit faster
+     * allow \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class a little bit faster
      */
     protected function watchDownFile(string $dir)
     {
@@ -135,6 +130,14 @@ Trait Worker
         }
     }
 
+    public function onWorkerStop(\swoole_server $server, int $worker_id)
+    {
+        echo "[INFO] worker.stopped for $worker_id\n";
+
+        $this->dispatcher->dispatch('worker.stopped',
+            new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
+
+    }
 
 }
 

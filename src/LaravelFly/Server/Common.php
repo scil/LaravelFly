@@ -89,6 +89,8 @@ class Common
 
         $this->options = array_merge($this->defaultOptions, $options);
 
+        echo '[INFO] server.config', PHP_EOL;
+
         $event = new GenericEvent(null, ['server' => $this, 'options' => $this->options]);
         $this->dispatcher->dispatch('server.config', $event);
 
@@ -97,7 +99,6 @@ class Common
 
         $this->parseOptions($this->options);
 
-        echo '[INFO] server options parsed', PHP_EOL;
     }
 
     public function getConfig($name = null)
@@ -155,7 +156,7 @@ class Common
         $this->dispatcher->dispatch('server.created',
             new GenericEvent(null, ['server' => $this, 'options' => $options]));
 
-        printf("[INFO] server %s created\n", static::class);
+        printf("[INFO] server.created %s\n", static::class);
 
         return $swoole;
     }

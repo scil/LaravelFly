@@ -58,7 +58,7 @@ class HttpServer extends Common implements ServerInterface
         try {
             $this->kernel->bootstrap();
         } catch (\Throwable $e) {
-            echo $e;
+            echo "[ERROR] bootstrap: $e\n";
             $server->shutdown();
         }
 
@@ -68,7 +68,7 @@ class HttpServer extends Common implements ServerInterface
         $this->workerStartTail($server, $worker_id);
 
          if ($worker_id == 0) {
-             $this->workerZeroStartTail($server,['downDir'=>$this->app->storagePath() . '/framework/']);
+             $this->workerZeroStartTail($server,['downDir'=>$this->path( 'storage/framework/')]);
          }
 
     }
