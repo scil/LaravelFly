@@ -36,6 +36,9 @@ class Fly
         'Collection.php' => '/vendor/laravel/framework/src/Illuminate/Support/Collection.php',
         'Controller.php' => '/vendor/laravel/framework/src/Illuminate/Routing/Controller.php',
         'Relation.php' => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/Relation.php',
+
+        // log_cache
+        'StreamHandler.php'=>'/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php',
     ];
 
     /**

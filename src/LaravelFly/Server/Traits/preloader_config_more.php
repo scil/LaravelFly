@@ -22,6 +22,10 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Container/Container.php',
     $basePath.'/vendor/symfony/http-kernel/HttpKernelInterface.php',
 
+    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php',
+    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php',
+    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php',
+    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php',
 
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesComponents.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLayouts.php',

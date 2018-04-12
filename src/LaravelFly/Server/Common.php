@@ -189,7 +189,7 @@ class Common
             $this->swoole->start();
 
         } catch (\Throwable $e) {
-            
+
             die("[ERROR] swoole server started failed: {$e->getMessage()} \n");
 
         }

@@ -149,16 +149,14 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Log/LogServiceProvider.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Log/Writer.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php',
+
     $basePath . '/vendor/monolog/monolog/src/Monolog/Logger.php',
     $basePath . '/vendor/psr/log/Psr/Log/LoggerInterface.php',
-    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php',
-    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php',
-    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php',
     $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/RotatingFileHandler.php',
-    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php',
     $basePath . '/vendor/monolog/monolog/src/Monolog/Formatter/FormatterInterface.php',
     $basePath . '/vendor/monolog/monolog/src/Monolog/Formatter/NormalizerFormatter.php',
     $basePath . '/vendor/monolog/monolog/src/Monolog/Formatter/LineFormatter.php',
+
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Facades/App.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Facades/Route.php',
 

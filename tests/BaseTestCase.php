@@ -47,6 +47,7 @@ abstract class BaseTestCase extends TestCase
         static::$root = realpath(__DIR__ . '/../../../..');
     }
 
+
     static protected function getLaravelApp()
     {
         if (!self::$laravelApp)
@@ -73,6 +74,13 @@ abstract class BaseTestCase extends TestCase
         return static::$server = $fly->getServer();
     }
 
+    /**
+     * @return \LaravelFly\Server\ServerInterface
+     */
+    public static function getServer(): \LaravelFly\Server\ServerInterface
+    {
+        return self::$server;
+    }
 
 }
 
