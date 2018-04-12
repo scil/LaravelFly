@@ -113,11 +113,12 @@ Trait Worker
      */
     protected function watchDownFile()
     {
-        echo "[INFO] watch maintenance mode.\n";
 
         $dir = $this->getDownFileDir();
 
         $downFile = $dir . '/down';
+
+        echo "[INFO] watch $downFile.\n";
 
         if (function_exists('inotify_init')) {
 
