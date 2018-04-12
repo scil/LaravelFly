@@ -3,10 +3,10 @@
 namespace LaravelFly\Tests\Unit\Server\Traits;
 
 use Illuminate\Support\Facades\Artisan;
-use LaravelFly\Tests\Unit\Server\BaseTestCase;
+use LaravelFly\Tests\Unit\Server\CommonServerTestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class WorkerTest extends BaseTestCase
+class WorkerTest extends CommonServerTestCase
 {
 
     function testDownFile()

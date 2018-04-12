@@ -4,7 +4,7 @@ namespace LaravelFly\Tests\Unit\Server;
 
 //use LaravelFly\Tests\BaseTestCase;
 
-class CommonTest extends BaseTestCase
+class CommonTest extends CommonServerTestCase
 {
 
     function testInit()

@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelFly\Tests\Unit\Server;
+namespace LaravelFly\Tests\Unit\Server\Traits;
 
-//use LaravelFly\Tests\BaseTestCase;
+use LaravelFly\Tests\Unit\Server\CommonServerTestCase;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class DispatchRequestByQueryTest extends BaseTestCase
+class DispatchRequestByQueryTest extends CommonServerTestCase
 {
     function testDispatchCallbackByWorkerId()
     {

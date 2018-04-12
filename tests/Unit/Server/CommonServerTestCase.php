@@ -5,7 +5,7 @@ namespace LaravelFly\Tests\Unit\Server;
 use LaravelFly\Tests\BaseTestCase as Base;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-abstract class BaseTestCase extends Base
+abstract class CommonServerTestCase extends Base
 {
     /**
      * @var \LaravelFly\Server\Common;
