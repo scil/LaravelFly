@@ -65,17 +65,17 @@ class HttpServer extends Common implements ServerInterface
         $this->app->forgetInstance('request');
 
 
-        $this->workerStartTail($server, $worker_id);
+        if ($worker_id == 0) {
+            $this->workerZeroStartTail($server, ['downDir' => $this->path('storage/framework/')]);
+        }
 
-         if ($worker_id == 0) {
-             $this->workerZeroStartTail($server,['downDir'=>$this->path( 'storage/framework/')]);
-         }
+        $this->workerStartTail($server, $worker_id);
 
     }
 
     public function onWorkerStop(\swoole_server $server, int $worker_id)
     {
-        parent::onWorkerStop($server,$worker_id);
+        parent::onWorkerStop($server, $worker_id);
 
         opcache_reset();
 

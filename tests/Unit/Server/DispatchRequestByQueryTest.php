@@ -11,7 +11,7 @@ class DispatchRequestByQueryTest extends BaseTestCase
     function testDispatchCallbackByWorkerId()
     {
 
-        $server = static::$commonServer;
+        $server = static::getCommonServer();
 
         $data = [
             ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=0 HTTP/1.1', 'fd' => 99, 'selected' => 0],
@@ -22,10 +22,13 @@ class DispatchRequestByQueryTest extends BaseTestCase
         ];
 
         foreach ($data as $one) {
-            $this->resetConfigAndDispatcher();
-            $options = array_merge(self::$default, ['worker_num' => $one['worker_num'], 'compile' => false]);
+            $this->resetConfigAndResetDispatcher();
+
+            $options = ['worker_num' => $one['worker_num'], 'compile' => false];
             $server->config($options);
+
             $swoole_server = $this->setSwooleServer($options);
+
             self::assertEquals($one['selected'], $server->dispatch($swoole_server, $one['fd'], '', $one['raw']));
 
         }
@@ -34,10 +37,10 @@ class DispatchRequestByQueryTest extends BaseTestCase
     function testDispatchCallbackByWorkerPid()
     {
 
-        $server = static::$commonServer;
+        $server = static::getCommonServer();
 
         // todo
-        // now only one is allowed to test , otherwise : eventLoop has already been created. unable to create swoole_server
+        // only one is allowed to test , otherwise : eventLoop has already been created. unable to create swoole_server
         // https://github.com/swoole/swoole-src/blob/master/swoole_async.c
         $data = [
 //            ['worker_num' => 5, 'raw' => 'GET /fly?worker-pid=%d HTTP/1.1', 'fd' => 99],
@@ -47,9 +50,9 @@ class DispatchRequestByQueryTest extends BaseTestCase
 
         foreach ($data as $one) {
 
-            $this->resetConfigAndDispatcher();
+            $this->resetConfigAndResetDispatcher();
 
-            $options = array_merge(self::$default, ['dispatch_by_query' => true, 'worker_num' => $one['worker_num'], 'compile' => false]);
+            $options = ['dispatch_by_query' => true, 'worker_num' => $one['worker_num'], 'compile' => false];
 
             $server->config($options);
 
@@ -60,9 +63,9 @@ class DispatchRequestByQueryTest extends BaseTestCase
              */
             $dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
                 $event->stopPropagation();
-            },9);
+            }, 9);
 
-            $swoole_server = $server->createSwooleServer();
+            $swoole_server = $this->setSwooleServer($options);
 
             $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server) {
 
@@ -78,7 +81,7 @@ class DispatchRequestByQueryTest extends BaseTestCase
 
             $ids = $server->getWorkerIds();
 
-            $selected_worker_id = random_int(0,$one['worker_num']-1);
+            $selected_worker_id = random_int(0, $one['worker_num'] - 1);
 
             $a_line = $ids->get($selected_worker_id);
 

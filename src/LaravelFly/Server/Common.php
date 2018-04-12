@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Server;
 
+use swoole_atomic;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -28,7 +29,7 @@ class Common
      * @var array
      */
     protected $defaultOptions = [
-        'mode'=>'Map',
+        'mode' => 'Map',
         'server' => 'LaravelFly\\Server\\HttpServer',
         'daemonize' => false,
         'tinker' => false,
@@ -56,9 +57,9 @@ class Common
     var $swoole;
 
     /**
-     * @var array save any shared info across processes
+     * @var [\swoole_atomic] save shared actomic info across processes
      */
-    var $memory = [];
+    var $atomicMemory = [];
 
     /**
      * @var string
@@ -85,7 +86,7 @@ class Common
 
     public function config(array $options)
     {
-        if(defined('LARAVELFLY_MODE')) $options['mode']=LARAVELFLY_MODE;
+        if (defined('LARAVELFLY_MODE')) $options['mode'] = LARAVELFLY_MODE;
 
         $this->options = array_merge($this->defaultOptions, $options);
 
@@ -141,7 +142,7 @@ class Common
         $this->dispatchRequestByQuery($options);
     }
 
-    public function createSwooleServer():\swoole_http_server
+    public function createSwooleServer(): \swoole_http_server
     {
         $options = $this->options;
 
@@ -170,13 +171,16 @@ class Common
         $this->swoole->on('Request', array($this, 'onRequest'));
 
     }
-    function onRequest(\swoole_http_request $request, \swoole_http_response $response){}
+
+    function onRequest(\swoole_http_request $request, \swoole_http_response $response)
+    {
+    }
 
     public function start()
     {
-        $this->setMemory('isDown',new \swoole_atomic(0));
+        $this->addMemory('isDown', new swoole_atomic(0));
 
-        if(!method_exists('\co','getUid'))
+        if (!method_exists('\co', 'getUid'))
             die("[ERROR] ext-swoole version 2 not installed or swoole.use_shortname not enabled.\n");
 
         try {
@@ -201,22 +205,25 @@ class Common
         return $this->swoole;
     }
 
-    public function path($path = null):string
+    public function path($path = null): string
     {
         return $path ? "{$this->root}/$path" : $this->root;
     }
 
-    public function getMemory(string $name)
+    public function getMemory(string $name): int
     {
-        return $this->memory[$name] ?? null;
+        if ($this->atomicMemory[$name] ?? null) {
+            return $this->atomicMemory[$name]->get();
+        }
+        return null;
     }
 
     /**
      * @param array $memory
      */
-    public function setMemory($name, $value)
+    public function addMemory(string $name, swoole_atomic $value)
     {
-        $this->memory[$name] = $value;
+        $this->atomicMemory[$name] = $value;
     }
 
 

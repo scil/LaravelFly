@@ -7,14 +7,16 @@ use Storage;
 
 Trait Worker
 {
+
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
         $this->workerStartHead($server, $worker_id);
-        $this->workerStartTail($server, $worker_id);
 
         if ($worker_id == 0) {
-            $this->workerZeroStartTail($server, ['downDir' => $this->path('storage/framework/')]);
+            $this->workerZeroStartTail($server);
         }
+
+        $this->workerStartTail($server, $worker_id);
     }
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
@@ -46,9 +48,9 @@ Trait Worker
      *
      * @param \swoole_server $swoole_server
      */
-    protected function workerZeroStartTail(\swoole_server $swoole_server, array $config)
+    protected function workerZeroStartTail(\swoole_server $swoole_server)
     {
-        $this->watchDownFile($config['downDir']);
+        $this->watchDownFile();
 
         $this->watchForHotReload($swoole_server);
     }
@@ -100,13 +102,20 @@ Trait Worker
 
     }
 
+    public function getDownFileDir()
+    {
+        return $this->path('storage/framework');
+    }
+
     /**
      * use a Atomic vars to save if app is down,
      * allow \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class a little bit faster
      */
-    protected function watchDownFile(string $dir)
+    protected function watchDownFile()
     {
         echo "[INFO] watch maintenance mode.\n";
+
+        $dir = $this->getDownFileDir();
 
         $downFile = $dir . '/down';
 
@@ -118,14 +127,14 @@ Trait Worker
             swoole_event_add($fd, function () use ($fd, $downFile) {
                 $events = inotify_read($fd);
                 if ($events && $events[0]['name'] === 'down') {
-                    $this->memory['isDown']->set((bool)file_exists($downFile));
+                    $this->atomicMemory['isDown']->set((int)file_exists($downFile));
                 }
             });
 
         } else {
 
             swoole_timer_tick(1000, function () use ($downFile) {
-                $this->memory['isDown']->set((bool)file_exists($downFile));
+                $this->atomicMemory['isDown']->set((int)file_exists($downFile));
             });
         }
     }

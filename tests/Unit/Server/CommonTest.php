@@ -18,7 +18,7 @@ class CommonTest extends BaseTestCase
 
     function testDefaultOptions()
     {
-        $this->resetConfigAndDispatcher();
+        $this->resetConfigAndResetDispatcher();
 
         $server = static::$commonServer;
 
@@ -38,7 +38,7 @@ class CommonTest extends BaseTestCase
 
     function testMergeOptions()
     {
-        $this->resetConfigAndDispatcher();
+        $this->resetConfigAndResetDispatcher();
 
         $server = static::$commonServer;
 
@@ -80,7 +80,7 @@ class CommonTest extends BaseTestCase
     }
 
     function testAppClass(){
-        $this->resetConfigAndDispatcher();
+        $this->resetConfigAndResetDispatcher();
 
         $a= new \ReflectionProperty(static::$commonServer,'appClass');
         $a->setAccessible(true);
@@ -106,7 +106,7 @@ class CommonTest extends BaseTestCase
     function testKernalClass()
     {
 
-        $this->resetConfigAndDispatcher();
+        $this->resetConfigAndResetDispatcher();
 
         $k= new \ReflectionProperty(static::$commonServer,'kernelClass');
         $k->setAccessible(true);
@@ -116,7 +116,7 @@ class CommonTest extends BaseTestCase
         static::$commonServer->config([ 'compile' => false]);
         self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
 
-        $this->resetConfigAndDispatcher();
+        $this->resetConfigAndResetDispatcher();
         define('LARAVELFLY_MODE','Simple');
         static::$commonServer->config([ 'compile' => false]);
         self::assertEquals($flyKernel, $k->getValue(static::$commonServer));

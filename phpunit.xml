@@ -25,8 +25,9 @@
             <!--<directory suffix="Test.php">./tests/Unit</directory>-->
 
             <!--<file>./tests/Unit/FlyTest.php</file>-->
-            <file>./tests/Unit/Server/CommonTest.php</file>
-            <file>./tests/Unit/Server/DispatchRequestByQueryTest.php</file>
+            <!--<file>./tests/Unit/Server/CommonTest.php</file>-->
+            <!--<file>./tests/Unit/Server/DispatchRequestByQueryTest.php</file>-->
+            <file>./tests/Unit/Server/Traits/WorkerTest.php</file>
         </testsuite>
 
 

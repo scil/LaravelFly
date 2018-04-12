@@ -32,9 +32,12 @@ trait Server
         $this->server = $server;
     }
 
-    public function isDownForMaintenance()
+    /**
+     * @return int 0 or 1
+     */
+    public function isDownForMaintenance():int
     {
-        return $this->server->getMemory('isDown')->get();
+        return $this->server->getMemory('isDown');
     }
 
 }

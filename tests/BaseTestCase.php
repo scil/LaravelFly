@@ -25,7 +25,7 @@ abstract class BaseTestCase extends TestCase
     /**
      * @var \Illuminate\Foundation\Application
      */
-    static protected $laravelApp;
+    static private $laravelApp;
 
     /**
      * @var EventDispatcher
@@ -49,10 +49,10 @@ abstract class BaseTestCase extends TestCase
 
     static protected function getLaravelApp()
     {
-        if (!static::$laravelApp)
-            static::$laravelApp = require static::$root . '/bootstrap/app.php';
+        if (!self::$laravelApp)
+            self::$laravelApp = require static::$root . '/bootstrap/app.php';
 
-        return static::$laravelApp;
+        return self::$laravelApp;
     }
 
     static protected function makeServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
