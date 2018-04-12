@@ -34,6 +34,7 @@ if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
 if(!defined('LARAVELFLY_CF_SERVICES')) define('LARAVELFLY_CF_SERVICES',[
+
     /**
      * make the corresponding service to be true if you use it.
      */

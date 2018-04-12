@@ -2,15 +2,11 @@
 
 namespace LaravelFly\Tests\Map\Feature;
 
-use LaravelFly\Tests\BaseTestCase;
+use LaravelFly\Tests\Map\BaseTestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ObjectsInWorkerTest extends BaseTestCase
 {
-    /**
-     * @var \Swoole\Channel
-     */
-    static protected $chan;
 
     protected $instances = [
         'path',
@@ -38,6 +34,7 @@ class ObjectsInWorkerTest extends BaseTestCase
         'routes',
         'url',
         'Illuminate\Contracts\Debug\ExceptionHandler',
+        'blade.compiler',
         'translation.loader',
         'translator',
         'validation.presence',
@@ -54,7 +51,6 @@ class ObjectsInWorkerTest extends BaseTestCase
         'cache.store',
         'auth',
         'log',
-        'blade.compiler',
     ];
 
     protected $allStaticProperties = [
@@ -103,7 +99,7 @@ class ObjectsInWorkerTest extends BaseTestCase
             $chan->push($allStaticProperties);
 
             sleep(3);
-            $event['server']->getSwoole()->shutdown();
+            $event['server']->getSwooleServer()->shutdown();
         });
 
         static::$server->start();

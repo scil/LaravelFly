@@ -10,6 +10,10 @@ define('LARAVELFLY_MODE', 'Map');
 
 class BaseTestCase extends Base
 {
+    /**
+     * @var \Swoole\Channel
+     */
+    static protected $chan;
 
 
 }

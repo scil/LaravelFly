@@ -16,7 +16,7 @@ use Illuminate\View\FileViewFinder;
 class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 {
 
-    static public function coroutineFriendlyServices():array
+    static public function coroutineFriendlyServices(): array
     {
         /**
          * Illuminate\View\Engines not rewriten to be A COROUTINE-FRIENDLY SERVICE.
@@ -26,7 +26,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
          * @See: Illuminate\View\Engines::register()
          */
 
-        return ['view'];
+        return ['view', 'view.engine.resolver', 'blade.compiler'];
     }
 
     protected function createFactory($resolver, $finder, $events)
