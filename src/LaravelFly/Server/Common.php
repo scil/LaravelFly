@@ -176,6 +176,9 @@ class Common
     {
         $this->setMemory('isDown',new \swoole_atomic(0));
 
+        if(!method_exists('\co','getUid'))
+            die("[ERROR] ext-swoole version 2 not installed or swoole.use_shortname not enabled.\n");
+
         try {
 
             $this->swoole->start();
