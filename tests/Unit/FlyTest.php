@@ -11,7 +11,6 @@ class FlyTest extends BaseTestCase
 
     function testInitEnv()
     {
-        self::assertEquals(false, class_exists('Illuminate\Foundation\Application ', false));
         self::assertEquals(false, defined('WORKER_COROUTINE_ID '));
 
         $initEnv = new \ReflectionMethod('\LaravelFly\Fly', 'initEnv');
@@ -21,7 +20,6 @@ class FlyTest extends BaseTestCase
         self::assertEquals(true, defined('WORKER_COROUTINE_ID'));
         self::assertEquals(true, function_exists('tinker'));
 
-        self::assertEquals(false, class_exists('Illuminate\Foundation\Application', false));
 
     }
 

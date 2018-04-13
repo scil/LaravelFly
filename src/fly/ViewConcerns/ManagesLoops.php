@@ -16,9 +16,16 @@ trait ManagesLoops
      */
     public function addLoop($data)
     {
-        $cid=\co::getUid();
 
-        $length = is_array($data) || $data instanceof Countable ? count($data) : null;
+        $length = null;
+
+        if (is_array($data) || $data instanceof Countable) {
+            $length = count($data);
+        } elseif ($data instanceof Traversable) {
+            $length = iterator_count($data);
+        }
+
+        $cid=\co::getUid();
 
         $parent = Arr::last(static::$corDict[$cid]['loopsStack']);
 

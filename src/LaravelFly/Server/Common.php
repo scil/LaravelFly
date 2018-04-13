@@ -46,6 +46,49 @@ class Common
         'compile_files' => [],
     ];
 
+    protected static $mapFlyFiles = [
+        'Container.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Container/Container.php',
+        'Application.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
+        'ServiceProvider.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php',
+        'Router.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Routing/Router.php',
+        'ViewConcerns/ManagesComponents.php' =>
+            '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesComponents.php',
+        'ViewConcerns/ManagesLayouts.php' =>
+            '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLayouts.php',
+        'ViewConcerns/ManagesLoops.php' =>
+            '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLoops.php',
+        'ViewConcerns/ManagesStacks.php' =>
+            '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesStacks.php',
+        'ViewConcerns/ManagesTranslations.php' =>
+            '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesTranslations.php',
+        'Facade.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
+
+        //blackhole
+        'Collection.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Support/Collection.php',
+        'Controller.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Routing/Controller.php',
+        'Relation.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/Relation.php',
+
+    ];
+    protected static $conditionFlyFiles = [
+        'log_cache' => [
+            'StreamHandler.php' =>
+                '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php',
+        ],
+        '!view.finder' => [
+            'FileViewFinder.php' =>
+                '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
+        ],
+    ];
+
+
     /**
      * @var EventDispatcher
      */
@@ -113,6 +156,8 @@ class Common
 
     protected function parseOptions(array &$options)
     {
+        static::includeFlyFiles($options);
+
         // as earlier as possible
         if ($options['compile'] !== false)
             $this->loadCachedCompileFile();
@@ -140,6 +185,27 @@ class Common
         $this->prepareTinker($options);
 
         $this->dispatchRequestByQuery($options);
+    }
+
+    static function includeFlyFiles($options){
+
+        if ($options['mode'] === 'Map') {
+            foreach (static::$mapFlyFiles as $f => $offical) {
+                require __DIR__ . "/../../fly/" . $f;
+            }
+
+            if (!defined('LARAVELFLY_CF_SERVICES') || !LARAVELFLY_CF_SERVICES['view.finder'])
+                include __DIR__ . '/../../fly/FileViewFinder.php';
+
+        }
+
+        if($options['log_cache']??false){
+            foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
+                require __DIR__ . "/../../fly/" . $f;
+            }
+
+        }
+
     }
 
     public function createSwooleServer(): \swoole_http_server
@@ -201,6 +267,16 @@ class Common
     public function getDispatcher(): EventDispatcher
     {
         return $this->dispatcher;
+    }
+
+    static function getAllFlyMap()
+    {
+        $r = static::$mapFlyFiles;
+
+        foreach (static::$conditionFlyFiles as $map) {
+            $r = array_merge($r, $map);
+        }
+        return $r;
     }
 
     public function getSwooleServer(): \swoole_server

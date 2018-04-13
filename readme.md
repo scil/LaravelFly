@@ -202,6 +202,7 @@ There are some tips:
 - [x] Laravel5.5 package auto-detection
 - [x] add events
 - [x] aliases cache in ResolveSomeFacadeAliases
+- [x] add cache to log 
 - [x] watch code changes and hot reload
 - [x] watch maintenance mode using swoole_event_add
 - [x] mysql coroutine
@@ -214,7 +215,6 @@ There are some tips:
 - [ ] send file
 - [ ] travis, static analyze like phan, phpstan or https://github.com/exakat/php-static-analysis-tools
 - [ ] decrease worker ready time
-- [ ] log fly: improve log on swoole
 - [ ] cache fly
 
 ## Similar projects that mix swoole and laravel

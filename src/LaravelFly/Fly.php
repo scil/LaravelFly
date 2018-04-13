@@ -2,8 +2,6 @@
 
 namespace LaravelFly;
 
-use LaravelFly\Exception\LaravelFlyException as Exception;
-use LaravelFly\Exception\LaravelFlyException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Fly
@@ -18,28 +16,6 @@ class Fly
      * @var Fly
      */
     protected static $instance;
-
-    static $flyMap = [
-        'Container.php' => '/vendor/laravel/framework/src/Illuminate/Container/Container.php',
-        'Application.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
-        'ServiceProvider.php' => '/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php',
-        'FileViewFinder.php' => '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
-        'Router.php' => '/vendor/laravel/framework/src/Illuminate/Routing/Router.php',
-        'ViewConcerns/ManagesComponents.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesComponents.php',
-        'ViewConcerns/ManagesLayouts.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLayouts.php',
-        'ViewConcerns/ManagesLoops.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesLoops.php',
-        'ViewConcerns/ManagesStacks.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesStacks.php',
-        'ViewConcerns/ManagesTranslations.php' => '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesTranslations.php',
-        'Facade.php' => '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
-
-        //blackhole
-        'Collection.php' => '/vendor/laravel/framework/src/Illuminate/Support/Collection.php',
-        'Controller.php' => '/vendor/laravel/framework/src/Illuminate/Routing/Controller.php',
-        'Relation.php' => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/Relation.php',
-
-        // log_cache
-        'StreamHandler.php'=>'/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php',
-    ];
 
     /**
      * @param array $options
@@ -77,15 +53,10 @@ class Fly
         if (class_exists('NunoMaduro\Collision\Provider'))
             (new \NunoMaduro\Collision\Provider)->register();
 
-        if (defined('LARAVELFLY_MODE') && LARAVELFLY_MODE === 'Map') {
-            foreach (static::$flyMap as $f => $offical) {
-                require __DIR__ . "/../fly/" . $f;
-            }
-        }
 
     }
 
-    public static function getInstance($options = null):self
+    public static function getInstance($options = null): self
     {
 
         if (!self::$instance) {

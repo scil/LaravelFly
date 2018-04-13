@@ -27,7 +27,7 @@
             <!--<file>./tests/Unit/FlyTest.php</file>-->
             <!--<file>./tests/Unit/Server/CommonTest.php</file>-->
             <!--<file>./tests/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>-->
-            <file>./tests/Unit/Server/Traits/WorkerTest.php</file>
+            <!--<file>./tests/Unit/Server/Traits/WorkerTest.php</file>-->
         </testsuite>
 
 
@@ -53,8 +53,9 @@
             <!--
             ensure order
             -->
-            <file>./tests/Map/Unit/FlyTest.php</file>
-            <directory suffix="Test.php">./tests/Map/Unit/Server</directory>
+            <!--<directory suffix="Test.php">./tests/Map/Unit/Server</directory>-->
+            <!--<file>./tests/Map/Unit/Server/CommonTest.php</file>-->
+            <file>./tests/Map/Unit/Server/FlyFilesTest.php</file>
         </testsuite>
 
 
