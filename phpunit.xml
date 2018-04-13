@@ -34,7 +34,7 @@
         <!--
         hacked files are included, and there's a kernel fife controlled by LARAVELFLY_MODE so theses tests can not be run with other tests
 
-        cdzc && vendor/bin/phpunit - -testsuit LaravelFly_Map_Feature  - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml
+        cdzc && vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml - -testsuit LaravelFly_Map_Feature
          -->
         <testsuite name="LaravelFly_Map_Feature">
             <!--<directory suffix="Test.php">./tests/Map/Feature</directory>-->

@@ -83,7 +83,7 @@ class StreamHandlerTest extends BaseTestCase
         $logFile = static::getServer()->path('storage/logs/laravel.log');
 
         // after reload
-        self::assertEquals("12345\n678910\n11\n", $this->stripLogRecord($logFile));
+        self::assertEquals("12345\n678910\n11\n", $this->stripLogRecord($logFile),'after shutdown');
 
     }
 
