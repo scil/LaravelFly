@@ -154,6 +154,21 @@ return [
     'compile_files' => [],
 
     /**
+     * In each worker process, Larave log will not write log files until the number of log records reach 'log_cache'
+     *
+     * only for "single" or "daily" log.
+     *
+     * the max of log cache recoders in the server is:  log_cache * worker_num.
+     *
+     * no worry log lost, the cache will be written through event 'worker.stopped' when server stop or reload,
+     *
+     * related source code file: vendor/scil/laravel-fly/src/fly/StreamHandler.php
+     *
+     * 0, 1 or false to disable it
+     */
+    'log_cache' => 5,
+
+    /**
      * if you use more than one workers, you can control which worker handle a request
      * by sending query parameter or header
      *

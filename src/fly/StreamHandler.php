@@ -64,6 +64,8 @@ class StreamHandler extends AbstractProcessingHandler
         $this->useLocking = $useLocking;
 
 
+        $this->flyCacheMax = \LaravelFly\Fly::getInstance()->getServer()->getOption('log_cache') ?? 5;
+
         $dispatcher = \LaravelFly\Fly::getInstance()->getDispatcher();
         $dispatcher->addListener('worker.stopped', function (GenericEvent $event)  {
             $this->cacheWrite();

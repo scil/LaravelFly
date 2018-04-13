@@ -44,6 +44,7 @@ class Common
         'watch_delay' => 3500,
         'compile' => true,
         'compile_files' => [],
+        'log_cache' => 5,
     ];
 
     protected static $mapFlyFiles = [
@@ -187,7 +188,8 @@ class Common
         $this->dispatchRequestByQuery($options);
     }
 
-    static function includeFlyFiles($options){
+    static function includeFlyFiles($options)
+    {
 
         if ($options['mode'] === 'Map') {
             foreach (static::$mapFlyFiles as $f => $offical) {
@@ -199,7 +201,7 @@ class Common
 
         }
 
-        if($options['log_cache']??false){
+        if ($options['log_cache'] && $options['log_cache'] > 1) {
             foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
                 require __DIR__ . "/../../fly/" . $f;
             }
@@ -268,6 +270,12 @@ class Common
     {
         return $this->dispatcher;
     }
+
+    public function getOption($key)
+    {
+        return $this->options[$key] ?? null;
+    }
+
 
     static function getAllFlyMap()
     {

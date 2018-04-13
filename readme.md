@@ -202,7 +202,7 @@ There are some tips:
 - [x] Laravel5.5 package auto-detection
 - [x] add events
 - [x] aliases cache in ResolveSomeFacadeAliases
-- [x] add cache to log 
+- [x] add log cache
 - [x] watch code changes and hot reload
 - [x] watch maintenance mode using swoole_event_add
 - [x] mysql coroutine

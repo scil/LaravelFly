@@ -36,7 +36,7 @@ Trait Worker
         $this->dispatcher->dispatch('worker.ready',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
-        echo "[INFO] worker.ready for $worker_id\n";
+        echo "[INFO] worker.ready for id $worker_id\n";
 
     }
 
@@ -142,7 +142,7 @@ Trait Worker
 
     public function onWorkerStop(\swoole_server $server, int $worker_id)
     {
-        echo "[INFO] worker.stopped for $worker_id\n";
+        echo "[INFO] worker.stopped for id $worker_id\n";
 
         $this->dispatcher->dispatch('worker.stopped',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
