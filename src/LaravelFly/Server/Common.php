@@ -271,12 +271,6 @@ class Common
         return $this->dispatcher;
     }
 
-    public function getOption($key)
-    {
-        return $this->options[$key] ?? null;
-    }
-
-
     static function getAllFlyMap()
     {
         $r = static::$mapFlyFiles;
