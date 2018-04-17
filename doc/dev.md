@@ -1,12 +1,28 @@
-# Key concept: swoole worker.
+## Dev starter
+
+1. git clone https://github.com/scil/LaravelFly.git <fly_dev_dir>
+
+2. add following to the composer.json of a project with Laravel
+```
+  "repositories": [
+    {
+      "type": "path",
+      "url": "<fly_dev_dir>"
+    }
+  ]
+```
+
+3. `composer update` your project. If the project is in a VirtualBox shared dir, it may failed to symlinking to <fly_dev_dir>, the solution is https://www.virtualbox.org/ticket/10085#comment:32
+
+## Key concept: swoole worker.
 
 [Swoole](https://github.com/swoole/swoole-src) is an event-based tool. The memory allocated in Swoole worker will not be free'd after a request. A swoole worker is like a php-fpm worker, every swoole worker is an independent process. When a fatal php error occurs, or a worker is killed by someone, or 'max_request' is handled, the worker would first finish its work then die, and a new worker will be created.
 
 Laravel's services/resources can be loaed following the start of swoole server or swoole worker.
 
-# Design
+## Design
 
-## 1. Laravel application is created `onWorkerStart`
+### 1. Laravel application is created `onWorkerStart`
 
 This means: There's an application in each worker process. When a new worker starts, a new application is made.
 
@@ -16,7 +32,7 @@ Goods:
 
 BTW, in Mode FpmLike, all objects are loaded onRequest, like php-fpm. Mode FpmLike does nothing except converting swoole request to laravel request and laravel reponse to swoole response.It just provides a opportunity to use tinker() or similar shells online.
 
-## 2. Load services `onWorkerStart` as many as possbile?
+### 2. Load services `onWorkerStart` as many as possbile?
 
 Before handling a request, laravel does much work.
 
@@ -51,7 +67,7 @@ Note, Mode Greedy is still experimental and only for study.
 
 Mode Map is under dev and is future.
 
-## Challenge: data pollution
+### Challenge: data pollution
 
 Objects which created before request may be changed during a request, and the changes maybe not right for subsequent requests.For example, a event registered in a request will persist in subsequent requests. Second example, `app('view')` has a protected property "shared", which sometime is not appropriate to share this property across different requests.
 
@@ -69,4 +85,8 @@ The second is to clone or create new objects such as app/event/.. for each reque
 
 The third is to refactor laravel's services, moving related members to a new associative array with coroutine id as keys. This method is called Mode Map as it uses swoole coroutine.This mode is under dev.
 
-#  Minor improvement
+## Minor improvement
+
+- compile. Server configs  'compile' and 'compile_files'.
+- log cache. Server config 'log_cache'.
+- watch maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.

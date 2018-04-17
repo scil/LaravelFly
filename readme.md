@@ -21,7 +21,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 [Start, Reload & Debug](doc/server.md)
 
-[How LaravelFly Works](doc/design.md)
+[For Dev](doc/dev.md)
 
 ## Speed Test
 
