@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-    composer autoload-dev? (root dir only)
--->
-
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
          bootstrap="tests/bootstrap.php"
@@ -18,12 +14,7 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
 
-        <!--
-        cdzc &&  vendor/bin/phpunit - -testsuit LaravelFly_Unit  - -stop-on-failure  -c vendor/scil/laravel-fly/phpunit.xml
-        -->
         <testsuite name="LaravelFly_Unit">
-            <!--<directory suffix="Test.php">./tests/Unit</directory>-->
-
             <!--<file>./tests/Unit/FlyTest.php</file>-->
             <!--<file>./tests/Unit/Server/CommonTest.php</file>-->
             <!--<file>./tests/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>-->
@@ -33,12 +24,9 @@
 
         <!--
         hacked files are included, and there's a kernel fife controlled by LARAVELFLY_MODE so theses tests can not be run with other tests
-
-        cdzc && vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml - -testsuit LaravelFly_Map_Feature
+        vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml - -testsuit LaravelFly_Map_Feature
          -->
         <testsuite name="LaravelFly_Map_Feature">
-            <!--<directory suffix="Test.php">./tests/Map/Feature</directory>-->
-
             <!--<file>./tests/Map/Feature/SuperGlobalVarsTest.php</file>-->
             <!--<file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>-->
             <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
@@ -46,13 +34,9 @@
 
 
         <!--
-        cdzc && vendor/bin/phpunit - -testsuit LaravelFly_Map_Unit  - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml
+        vendor/bin/phpunit - -testsuit LaravelFly_Map_Unit  - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml
         -->
         <testsuite name="LaravelFly_Map_Unit">
-            <!--<directory suffix="Test.php">./tests/Map/Unit</directory>-->
-            <!--
-            ensure order
-            -->
             <!--<directory suffix="Test.php">./tests/Map/Unit/Server</directory>-->
             <!--<file>./tests/Map/Unit/Server/CommonTest.php</file>-->
             <file>./tests/Map/Unit/Server/FlyFilesTest.php</file>
