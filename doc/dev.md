@@ -92,3 +92,8 @@ The third is to refactor laravel's services, moving related members to a new ass
 - compile. Server configs  'compile' and 'compile_files'.
 - log cache. Server config 'log_cache'.
 - watch maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
+
+
+## Bridge between Laravel and LaravelFly
+
+- overwrite artisan command 'config.cache' which could load laravelfly.php in config dir. code: LaravelFly\Providers\ConfigCacheCommand 

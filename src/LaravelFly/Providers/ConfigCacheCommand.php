@@ -3,14 +3,11 @@
 
 namespace LaravelFly\Providers;
 
-use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
-
 class ConfigCacheCommand extends \Illuminate\Foundation\Console\ConfigCacheCommand
 {
 
-
+    protected $signature = 'config:cache 
+                        {serverConfigFile? : (optional) The config file of LaravelFly server}';
 
     /**
      * Execute the console command.
@@ -23,8 +20,21 @@ class ConfigCacheCommand extends \Illuminate\Foundation\Console\ConfigCacheComma
 
         $config = $this->getFreshConfiguration();
 
+        $serverConfigFile = $this->argument('serverConfigFile') ?: $this->laravel->basePath() . '/fly.conf.php';
+
+        if (!is_file($serverConfigFile))
+            $this->error("LaravelFly server config file not exists: $serverConfigFile");
+
+        include $serverConfigFile;
+
+        $allConfig = $this->getFreshConfiguration();
+
         $this->files->put(
-            $this->laravel->getCachedConfigPath(), '<?php return '.var_export($config, true).';'.PHP_EOL
+            $this->laravel->getCachedConfigPath(), '<?php return defined("LARAVELFLY_MODE")? ' .
+            var_export($allConfig, true) .
+            ':'.
+            var_export($config, true) .
+            ';' . PHP_EOL
         );
 
         $this->info('Configuration cached successfully!');
