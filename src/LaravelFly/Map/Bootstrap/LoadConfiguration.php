@@ -30,6 +30,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         /** @var \Illuminate\Config\Repository $config */
         $config = $app->make('config');
 
+        // when config:cache is used
         if (empty($config['laravelfly'])) {
 
             $files = $this->getFlyConfigurationFiles($app);
@@ -53,6 +54,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         $configPath = realpath($app->configPath());
 
+        // todo support more env?
         /** @var \Symfony\Component\HttpFoundation\File\File $file */
         foreach (Finder::create()->files()->name('laravelfly.php')->in($configPath) as $file) {
             $directory = $this->getNestedDirectory($file, $configPath);

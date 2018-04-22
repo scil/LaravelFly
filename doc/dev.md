@@ -12,7 +12,9 @@
   ]
 ```
 
-3. `composer update` your project. If the project is in a VirtualBox shared dir, it may failed to symlinking to <fly_dev_dir>, the solution is https://www.virtualbox.org/ticket/10085#comment:32
+3. `cd <fly_dev_dir> && composer install  --prefer-source ` .   
+If the project is in a VirtualBox shared dir, it may failed to symlinking to <fly_dev_dir>, the solution is https://www.virtualbox.org/ticket/10085#comment:32  
+`--prefer-source` to load laravel/framework/tests ( [How to download excluded paths via composer?](https://stackoverflow.com/questions/28169938/how-to-download-excluded-paths-via-composer) )
 
 ## Key concept: swoole worker.
 

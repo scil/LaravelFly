@@ -4,7 +4,7 @@ namespace LaravelFly\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class PublishServiceProvider extends ServiceProvider
+class CommandServiceProvider extends ServiceProvider
 {
     public function boot()
     {
