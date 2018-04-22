@@ -16,10 +16,11 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
     {
         parent::bootstrap($app);
 
-        if (file_exists($cacheFile = $app->bootstrapPath() . '/cache/laravelfly_config.php') &&
+        if (file_exists($cacheFile = $app->bootstrapPath('/cache/laravelfly_config.php')  ) &&
             ($mtime = filemtime($cacheFile)) > filemtime($app->getServer()->getConfig('conf')) &&
             $mtime > filemtime($app->configPath('laravelfly.php')) &&
             $mtime > filemtime($app->configPath('app.php')) &&
+            $mtime > filemtime($app->basePath('composer.lock')) &&   // because PackageManifest::class
             (
             file_exists($envFlyFile = $app->configPath($app['env'] . '/laravelfly.php')) ?
                 $mtime > filemtime($envFlyFile) : true)
@@ -82,6 +83,9 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             file_put_contents($cacheFile, '<?php return ' .
                 var_export([$CFServices, $psInRequest, $psOnWork, $left, ], true) .
                 ';' . PHP_EOL);
+
+            // ensure aliases cache file not outdated
+            @unlink( $app->bootstrapPath('/cache/laravelfly_aliases.php'));
 
         }
 

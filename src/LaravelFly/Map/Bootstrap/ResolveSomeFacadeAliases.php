@@ -22,22 +22,19 @@ class ResolveSomeFacadeAliases
      * it's handy to debug and a little faster. in a test using microtime(true): 0.06 vs 0.26
      *
      * @param \LaravelFly\Map\Application $app
-     * @return string
+     * @return array
      */
-    public function getCachedAliasesPath(Application $app)
+    protected function getAliases(Application $app): array
     {
-        return $app->bootstrapPath() . '/cache/laravelfly_aliases.php';
-    }
-
-    protected function getAliases(Application $app):array
-    {
-        $cacheFile = $this->getCachedAliasesPath($app);
+        $cacheFile = $app->bootstrapPath('/cache/laravelfly_aliases.php');
 
         if (is_file($cacheFile)) {
-            $cacheTime = filemtime($cacheFile);
-            if ($cacheTime >= filemtime($app->configPath('app.php')) && $cacheTime >= filemtime($app->basePath('composer.lock'))) {
-                return require $cacheFile;
-            }
+            /**
+             * not needed to check filemtime
+             * @see:\LaravelFly\Map\Bootstrap\LoadConfiguration @unlink( $app->bootstrapPath('/cache/laravelfly_aliases.php'));
+             * mtime of this file is always > '/cache/laravelfly_config.php' whose mtime > app.php or composer.lock
+             */
+            return require $cacheFile;
         }
 
 
