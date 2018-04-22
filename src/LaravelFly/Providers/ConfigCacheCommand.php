@@ -23,9 +23,10 @@ class ConfigCacheCommand extends \Illuminate\Foundation\Console\ConfigCacheComma
         $serverConfigFile = $this->argument('serverConfigFile') ?: $this->laravel->basePath() . '/fly.conf.php';
 
         if (!is_file($serverConfigFile))
-            $this->error("LaravelFly server config file not exists: $serverConfigFile");
+            $this->error("LaravelFly server conf file not exists: $serverConfigFile");
 
         include $serverConfigFile;
+        $this->info("LaravelFly server conf file $serverConfigFile included.");
 
         $allConfig = $this->getFreshConfiguration();
 

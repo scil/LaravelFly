@@ -16,10 +16,11 @@ $root = realpath(__DIR__ . '/../../../..');
 $config_file = $argc == 3 ? $argv[2] : $root . '/fly.conf.php';
 
 try {
-    if(!is_file($config_file)){
-        $config_file = __DIR__.'/../config/laravelfly-server-config.example.php';
+    if (!is_file($config_file)) {
+        $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php';
     }
     $options = require $config_file;
+    $options['conf'] = $config_file;
 } catch (Exception $e) {
     exit("config file not be loaded: $config_file");
 }
@@ -67,8 +68,10 @@ start:
 include $root . '/vendor/autoload.php';
 
 // prevent errors if eval(tinker()); left in project code
-if(empty($options['tinker']) && !function_exists('tinker') ){
-    function tinker(){}
+if (empty($options['tinker']) && !function_exists('tinker')) {
+    function tinker()
+    {
+    }
 }
 
 unset($root, $config_file, $pid_file, $pid);

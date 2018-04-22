@@ -45,6 +45,7 @@ class Common
         'compile' => true,
         'compile_files' => [],
         'log_cache' => 5,
+        'conf'=>null, // server config file
     ];
 
     protected static $mapFlyFiles = [

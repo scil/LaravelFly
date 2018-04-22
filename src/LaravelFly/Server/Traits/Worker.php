@@ -147,6 +147,8 @@ Trait Worker
         $this->dispatcher->dispatch('worker.stopped',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
+        clearstatcache();
+        opcache_reset();
     }
 
 }

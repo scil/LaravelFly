@@ -1,0 +1,100 @@
+<?php
+
+namespace LaravelFly\Map\Bootstrap;
+
+use Illuminate\Foundation\PackageManifest;
+use Illuminate\Contracts\Foundation\Application;
+
+class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfiguration
+{
+
+
+    /**
+     * @param \LaravelFly\Map\Application $app
+     */
+    public function bootstrap(Application $app)
+    {
+        parent::bootstrap($app);
+
+        if (file_exists($cacheFile = $app->bootstrapPath() . '/cache/laravelfly_config.php') &&
+            ($mtime = filemtime($cacheFile)) > filemtime($app->getServer()->getConfig('conf')) &&
+            $mtime > filemtime($app->configPath('laravelfly.php')) &&
+            $mtime > filemtime($app->configPath('app.php')) &&
+            (
+            file_exists($envFlyFile = $app->configPath($app['env'] . '/laravelfly.php')) ?
+                $mtime > filemtime($envFlyFile) : true)
+        ) {
+            list($CFServices, $psInRequest, $psOnWork, $left ) = require $cacheFile;
+
+        } else {
+
+            $appConfig = $app->make('config');
+
+            $psInRequest = $appConfig['laravelfly.providers_in_request'];
+
+            $CFServices = [];
+            $providersReplaced = [];
+            $psOnWork = [];
+            foreach ($app['config']['laravelfly.providers_on_worker'] as $provider => $providerConfig) {
+
+                if ($providerConfig === false || $providerConfig === null) continue;
+
+                if (!class_exists($provider)) continue;
+
+                $psOnWork[] = $provider;
+
+                if (!is_array($providerConfig)) continue;
+
+                if (isset($providerConfig['_replace'])) {
+                    $providersReplaced[] = $providerConfig['_replace'];
+                    unset($providerConfig['_replace']);
+                }
+
+                /** @var string[] $officalCFServices */
+                /** @var \Illuminate\Support\ServiceProvider $provider */
+                $officalCFServices = $provider::coroutineFriendlyServices();
+                // $officalCFServices is base
+                $curCFServices = $officalCFServices;
+
+                foreach ($providerConfig as $CFS_name => $config) {
+                    // true $config only works when empty $officalCFServices
+                    if ($config === true && !$officalCFServices) {
+                        $curCFServices[] = $CFS_name;
+                    } elseif ($config === false && in_array($CFS_name, $officalCFServices)) {
+                        $curCFServices = array_diff($curCFServices, [$CFS_name]);
+                    }
+                }
+
+
+                if ($curCFServices) {
+                    $CFServices = array_unique(array_merge($curCFServices, $CFServices));
+                }
+            }
+
+            $left = array_diff(
+                array_merge($appConfig['app.providers'], $app->make(PackageManifest::class)->providers()),
+                $providersReplaced,
+                $psOnWork,
+                $psInRequest,
+                $appConfig['laravelfly.providers_ignore']
+            );
+
+            file_put_contents($cacheFile, '<?php return ' .
+                var_export([$CFServices, $psInRequest, $psOnWork, $left, ], true) .
+                ';' . PHP_EOL);
+
+        }
+
+
+        // 'app.providers' only providers across
+        $appConfig['app.providers'] = $left;
+
+        $app->makeManifestForProvidersInRequest($psInRequest);
+
+        $app->setProvidersToBootOnWorker($psOnWork);
+
+        $app->setCFServices($CFServices);
+
+    }
+
+}

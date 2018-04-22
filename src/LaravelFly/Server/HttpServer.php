@@ -73,14 +73,6 @@ class HttpServer extends Common implements ServerInterface
 
     }
 
-    public function onWorkerStop(\swoole_server $server, int $worker_id)
-    {
-        parent::onWorkerStop($server, $worker_id);
-
-        opcache_reset();
-
-    }
-
     /**
      * handle request for Mode Simple or Greedy
      *
