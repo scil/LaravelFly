@@ -3,9 +3,9 @@
 
 namespace LaravelFly\Tests\Map\Unit;
 
-use LaravelFly\Tests\Map\BaseTestCase;
+use LaravelFly\Tests\Map\MapTestCase;
 
-class FlyFilesTest extends BaseTestCase
+class FlyFilesTest extends MapTestCase
 {
 
     protected $flyDir = __DIR__ . '/../../../../src/fly/';

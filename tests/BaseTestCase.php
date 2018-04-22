@@ -44,9 +44,8 @@ abstract class BaseTestCase extends TestCase
 
     static function setUpBeforeClass()
     {
-        static::$root = realpath(__DIR__ . '/../../../..');
+        static::$root = AS_ROOT ? realpath(__DIR__ . '/..') : realpath(__DIR__ . '/../../../..');
     }
-
 
     static protected function getLaravelApp()
     {

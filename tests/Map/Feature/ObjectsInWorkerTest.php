@@ -2,10 +2,10 @@
 
 namespace LaravelFly\Tests\Map\Feature;
 
-use LaravelFly\Tests\Map\BaseTestCase;
+use LaravelFly\Tests\Map\MapTestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class ObjectsInWorkerTest extends BaseTestCase
+class ObjectsInWorkerTest extends MapTestCase
 {
 
     protected $instances = [

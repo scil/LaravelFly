@@ -3,9 +3,9 @@
 namespace LaravelFly\Tests\Map\Feature;
 
 
-use LaravelFly\Tests\Map\BaseTestCase;
+use LaravelFly\Tests\Map\MapTestCase;
 
-class SuperGlobalVarsTest extends BaseTestCase
+class SuperGlobalVarsTest extends MapTestCase
 {
 
     function testExceptMonoLogAndSymfony()

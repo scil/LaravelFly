@@ -42,6 +42,14 @@
             <file>./tests/Map/Unit/Server/FlyFilesTest.php</file>
         </testsuite>
 
+        <!--
+        vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml   - -testsuit LaravelFly_Map_L
+        -->
+        <testsuite name="LaravelFly_Map_L">
+            <!--<directory suffix="Test.php">./tests/Map/Unit/Server</directory>-->
+            <!--<file>./tests/Map/Unit/Server/CommonTest.php</file>-->
+            <file>./tests/Map/LaravelTests/TestCase.php</file>
+        </testsuite>
 
     </testsuites>
     <filter>

@@ -2,9 +2,9 @@
 
 namespace LaravelFly\Tests\Map\Unit\Server;
 
-use LaravelFly\Tests\Map\BaseTestCase;
+use LaravelFly\Tests\Map\MapTestCase;
 
-class CommonTest extends BaseTestCase
+class CommonTest extends MapTestCase
 {
     /**
      * @var \LaravelFly\Server\Common;

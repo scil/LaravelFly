@@ -8,7 +8,7 @@ use LaravelFly\Tests\BaseTestCase as Base;
 
 define('LARAVELFLY_MODE', 'Map');
 
-class BaseTestCase extends Base
+class MapTestCase extends Base
 {
     /**
      * @var \Swoole\Channel
