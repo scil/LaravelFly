@@ -14,11 +14,11 @@ Trait Tinker
 
         if ($options['daemonize'] == true) {
             $options['daemonize'] = false;
-            echo '[NOTICE] daemonize disabled to allow tinker run normally', PHP_EOL;
+            echo '[NOTE] daemonize disabled to allow tinker run normally', PHP_EOL;
         }
 
         if ($options['worker_num'] == 1) {
-            echo '[NOTICE] worker_num is 1, the server can not response any other requests when using tinker', PHP_EOL;
+            echo '[NOTE] worker_num is 1, the server can not response any other requests when using tinker', PHP_EOL;
         }
 
         $this->tinkerSubscriber();

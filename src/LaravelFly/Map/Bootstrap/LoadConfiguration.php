@@ -26,7 +26,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $mtime > filemtime($envFlyFile) : true)
         ) {
             list($CFServices, $psOnWork, $psAcross, $psInRequest) = require $cacheFile;
-            echo "[INFO] cache loaded: $cacheFile\n";
+            echo "[INFO] include: $cacheFile\n";
         } else {
 
             $appConfig = $app->make('config');
@@ -90,7 +90,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             @unlink($app->bootstrapPath('/cache/laravelfly_aliases.php'));
 
             if (file_exists($cached = $app->getCachedConfigPath())) {
-                echo "[NOTICE] config cache $cached used, 
+                echo "[NOTE] include config cache $cached, 
                if it's outdated please re-run 'php artisan config:cache'\n";
             }
         }

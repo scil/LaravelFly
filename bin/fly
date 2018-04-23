@@ -24,7 +24,7 @@ try {
 } catch (Exception $e) {
     exit("config file not be loaded: $config_file");
 }
-echo "[INFO] config: $config_file\n";
+echo "[INFO] conf: $config_file\n";
 
 if ($argv[1] == 'start') {
     goto start;

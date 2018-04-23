@@ -30,7 +30,7 @@ class Fly
         if (null === $dispatcher)
             $dispatcher = new EventDispatcher();
 
-        printf("[INFO] server dispatcher created\n");
+        echo "[INFO] server dispatcher created\n";
 
         static::$instance = new static();
 
