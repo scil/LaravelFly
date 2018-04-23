@@ -303,9 +303,14 @@ class Common
     /**
      * @param array $memory
      */
-    public function addMemory(string $name, swoole_atomic $value)
+    public function addMemory(string $name, swoole_atomic $atom)
     {
-        $this->atomicMemory[$name] = $value;
+        $this->atomicMemory[$name] = $atom;
+    }
+
+    function setMemory(string $name, $value){
+        $this->atomicMemory[$name]->set((int)$value);
+        eval(tinker());
     }
 
 

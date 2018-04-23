@@ -16,7 +16,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
     {
         parent::bootstrap($app);
 
-        if (file_exists($cacheFile = $app->bootstrapPath('/cache/laravelfly_config.php')  ) &&
+        if (file_exists($cacheFile = $app->bootstrapPath('/cache/laravelfly_config.php')) &&
             ($mtime = filemtime($cacheFile)) > filemtime($app->getServer()->getConfig('conf')) &&
             $mtime > filemtime($app->configPath('laravelfly.php')) &&
             $mtime > filemtime($app->configPath('app.php')) &&
@@ -25,7 +25,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             file_exists($envFlyFile = $app->configPath($app['env'] . '/laravelfly.php')) ?
                 $mtime > filemtime($envFlyFile) : true)
         ) {
-            list($CFServices, $psInRequest, $psOnWork, $left ) = require $cacheFile;
+            list($CFServices, $psOnWork, $psAcross, $psInRequest) = require $cacheFile;
 
         } else {
 
@@ -72,7 +72,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 }
             }
 
-            $left = array_diff(
+            $psAcross = array_diff(
                 array_merge($appConfig['app.providers'], $app->make(PackageManifest::class)->providers()),
                 $providersReplaced,
                 $psOnWork,
@@ -81,17 +81,21 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             );
 
             file_put_contents($cacheFile, '<?php return ' .
-                var_export([$CFServices, $psInRequest, $psOnWork, $left, ], true) .
+                var_export([$CFServices, $psOnWork, $psAcross, $psInRequest,], true) .
                 ';' . PHP_EOL);
 
             // ensure aliases cache file not outdated
-            @unlink( $app->bootstrapPath('/cache/laravelfly_aliases.php'));
+            @unlink($app->bootstrapPath('/cache/laravelfly_aliases.php'));
 
+            if (file_exists($cached = $app->getCachedConfigPath())) {
+               echo "[NOTICE] config cache $cached used, 
+               if it's outdated please re-run 'php artisan config:cache'\n";
+            }
         }
 
 
         // 'app.providers' only providers across
-        $appConfig['app.providers'] = $left;
+        $appConfig['app.providers'] = $psAcross;
 
         $app->makeManifestForProvidersInRequest($psInRequest);
 
