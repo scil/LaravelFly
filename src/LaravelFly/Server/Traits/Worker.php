@@ -21,7 +21,7 @@ Trait Worker
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
     {
-        printf("[INFO] worker.starting for %u (pid %u)\n", $worker_id, getmypid());
+        printf("[INFO] event worker.starting for %u (pid %u)\n", $worker_id, getmypid());
 
         $this->dispatcher->dispatch('worker.starting',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]));
@@ -36,7 +36,7 @@ Trait Worker
         $this->dispatcher->dispatch('worker.ready',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
-        echo "[INFO] worker.ready for id $worker_id\n";
+        echo "[INFO] event worker.ready for id $worker_id\n";
 
     }
 

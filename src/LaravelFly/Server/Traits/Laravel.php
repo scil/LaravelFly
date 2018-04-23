@@ -52,7 +52,7 @@ Trait Laravel
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
-        printf("[INFO] app.created for $this->appClass (pid %u)\n", getmypid());
+        printf("[INFO] event app.created for $this->appClass (pid %u)\n", getmypid());
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);

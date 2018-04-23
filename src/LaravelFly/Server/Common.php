@@ -135,7 +135,7 @@ class Common
 
         $this->options = array_merge($this->defaultOptions, $options);
 
-        echo '[INFO] server.config', PHP_EOL;
+        echo '[INFO] event server.config', PHP_EOL;
 
         $event = new GenericEvent(null, ['server' => $this, 'options' => $this->options]);
         $this->dispatcher->dispatch('server.config', $event);
@@ -226,7 +226,7 @@ class Common
         $this->dispatcher->dispatch('server.created',
             new GenericEvent(null, ['server' => $this, 'options' => $options]));
 
-        printf("[INFO] server.created %s\n", static::class);
+        printf("[INFO] event server.created for %s\n", static::class);
 
         return $swoole;
     }
@@ -310,7 +310,6 @@ class Common
 
     function setMemory(string $name, $value){
         $this->atomicMemory[$name]->set((int)$value);
-        eval(tinker());
     }
 
 

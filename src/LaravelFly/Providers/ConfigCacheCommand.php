@@ -39,7 +39,7 @@ class ConfigCacheCommand extends \Illuminate\Foundation\Console\ConfigCacheComma
         );
 
 
-        if (file_exists($cacheFile = $this->laravel->bootstrapPath('/cache/laravelfly_config.php'))){
+        if (file_exists($cacheFile = $this->laravel->bootstrapPath('cache/laravelfly_config.php'))){
             unlink($cacheFile);
             $this->info("[LaravelFly] Providers configuration deleted successfully!");
         }
