@@ -45,7 +45,7 @@ class Common
         'compile' => true,
         'compile_files' => [],
         'log_cache' => 5,
-        'conf'=>null, // server config file
+        'conf' => null, // server config file
     ];
 
     protected static $mapFlyFiles = [
@@ -193,14 +193,13 @@ class Common
 
     static function includeFlyFiles($options)
     {
-        static $loaded=false;
-        if($loaded){
-            echo "[WARN] LaravelFly\Server\Common::includeFlyFiles not allowe again.\n";
-            return;
-        }
-        $loaded=true;
+        static $mapLoaded = false;
+        static $logLoaded = false;
 
-        if ($options['mode'] === 'Map') {
+        if ($options['mode'] === 'Map' && !$mapLoaded) {
+
+            $mapLoaded = true;
+
             foreach (static::$mapFlyFiles as $f => $offical) {
                 require __DIR__ . "/../../fly/" . $f;
             }
@@ -210,7 +209,10 @@ class Common
 
         }
 
-        if ($options['log_cache'] && $options['log_cache'] > 1) {
+        if ($options['log_cache'] && $options['log_cache'] > 1 && !$logLoaded) {
+
+            $logLoaded = true;
+
             foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
                 require __DIR__ . "/../../fly/" . $f;
             }
@@ -316,7 +318,8 @@ class Common
         $this->atomicMemory[$name] = $atom;
     }
 
-    function setMemory(string $name, $value){
+    function setMemory(string $name, $value)
+    {
         $this->atomicMemory[$name]->set((int)$value);
     }
 

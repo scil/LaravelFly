@@ -142,7 +142,7 @@ Trait Worker
 
     public function onWorkerStop(\swoole_server $server, int $worker_id)
     {
-        echo "[INFO] worker.stopped for id $worker_id\n";
+        echo "[INFO] event worker.stopped for id $worker_id\n";
 
         $this->dispatcher->dispatch('worker.stopped',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));

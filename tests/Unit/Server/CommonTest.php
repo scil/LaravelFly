@@ -22,10 +22,6 @@ class CommonTest extends CommonServerTestCase
         $a= new \ReflectionProperty(static::$commonServer,'appClass');
         $a->setAccessible(true);
 
-        static::$commonServer->config([ 'compile' => false]);
-        $appClass = $a->getValue(static::$commonServer);
-        self::assertEquals('\LaravelFly\Map\Application',$appClass);
-
         foreach (['Map','Simple','FpmLike'] as $mode){
             static::$commonServer->config(['mode'=>$mode, 'compile' => false]);
             $appClass = $a->getValue(static::$commonServer);

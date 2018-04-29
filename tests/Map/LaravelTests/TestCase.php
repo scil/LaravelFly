@@ -13,6 +13,11 @@ class TestCase extends Base
 {
     static $laravelTestsDir = __DIR__ . '/../../../vendor/laravel/framework/tests';
 
+    function testDir()
+    {
+        self::assertTrue(is_dir(static::$laravelTestsDir),' or git clone -b 5.5 https://github.com/laravel/framework.git ');
+    }
+
     function testView()
     {
 
@@ -29,7 +34,7 @@ class TestCase extends Base
             ob_start();
             $testRunner = new TestRunner();
             $test = $testRunner->getTest(static::$laravelTestsDir . '/View', '', 'Test.php');
-            $testRunner->dorun($test);
+            $testRunner->dorun($test, ['stopOnError' => true], false);
             $result = ob_get_clean();
             $chan->push($result);
 
@@ -40,7 +45,7 @@ class TestCase extends Base
 
         static::$server->start();
 
-        echo '[test result]', $chan->pop();
+        echo "\n[TEST RESULT]\n", $chan->pop();
 
 
     }
