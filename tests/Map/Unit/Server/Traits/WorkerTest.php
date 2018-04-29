@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Tests\Unit\Server\Traits;
+namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
 use Illuminate\Support\Facades\Artisan;
 use LaravelFly\Tests\Unit\Server\CommonServerTestCase;
@@ -12,7 +12,7 @@ class WorkerTest extends CommonServerTestCase
     function testDownFile()
     {
         $server = static::getCommonServer();
-        $this->resetConfigAndResetDispatcher();
+        $this->resetServerConfigAndDispatcher();
 
         $app = static::getLaravelApp();
 
@@ -66,7 +66,7 @@ class WorkerTest extends CommonServerTestCase
             $server->getSwooleServer()->shutdown();
         });
 
-        $swoole_server = $this->setSwooleServer($options);
+        $swoole_server = $this->setSwooleForServer($options);
 
         $server->start();
 

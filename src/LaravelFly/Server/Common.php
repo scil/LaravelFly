@@ -179,8 +179,10 @@ class Common
         if (!(
             is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class) ||
             is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))) {
+
             $kernelClass = \LaravelFly\Kernel::class;
             echo "[WARN] kernel: $kernelClass", PHP_EOL;
+
         }
         $this->kernelClass = $kernelClass;
 
@@ -191,6 +193,12 @@ class Common
 
     static function includeFlyFiles($options)
     {
+        static $loaded=false;
+        if($loaded){
+            echo "[WARN] LaravelFly\Server\Common::includeFlyFiles not allowe again.\n";
+            return;
+        }
+        $loaded=true;
 
         if ($options['mode'] === 'Map') {
             foreach (static::$mapFlyFiles as $f => $offical) {
@@ -292,7 +300,7 @@ class Common
         return $path ? "{$this->root}/$path" : $this->root;
     }
 
-    public function getMemory(string $name): int
+    public function getMemory(string $name): ?int
     {
         if ($this->atomicMemory[$name] ?? null) {
             return $this->atomicMemory[$name]->get();

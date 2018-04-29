@@ -28,7 +28,7 @@ class SuperGlobalVarsTest extends MapTestCase
         // $cmd = 'grep  --exclude=_ide_helper.php --exclude=PHPConsoleHandler.php  --exclude=*.{js,css,md,txt} --exclude-dir=node_modules --exclude-dir=storage --exclude-dir=whoops --exclude-dir=eaglewu --exclude-dir=debugbar --exclude-dir=phpunit --exclude-dir=examples  --exclude-dir=laravel-fly --exclude-dir=global-state --exclude-dir=Tests --exclude-dir=symfony  -E "\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r ' . static::$root;
 
         // -l let grep ouput filename
-       $cmd = 'cd '. static::$root .' && find . -path ./node_modules -prune -o  \
+       $cmd = 'cd '. static::$laravelAppRoot .' && find . -path ./node_modules -prune -o  \
        -path ./resources -prune -o  \
        -path ./bootstrap/cache/laravelfly_preload.php -prune -o    \
        -path ./storage -prune -o   \
@@ -38,6 +38,7 @@ class SuperGlobalVarsTest extends MapTestCase
        -path ./vendor/phpunit/phpunit -prune -o   \
        -path ./vendor/predis/predis/examples  -prune -o   \
        -path ./vendor/scil/laravel-fly -prune -o   \
+       -path ./vendor/scil/laravel-fly-local -prune -o   \
        -path ./vendor/sebastian/global-state -prune -o   \
        -path  ./vendor/symfony/http-foundation/Tests  -prune -o  \
        -path ./vendor/symfony/http-foundation  -prune -o  \
@@ -57,7 +58,7 @@ class SuperGlobalVarsTest extends MapTestCase
 
     function testMonolog()
     {
-        $cmd =  'cd '. static::$root .'/vendor/monolog/monolog   && grep -E "\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md    . ';
+        $cmd =  'cd '. static::$workingRoot .'/vendor/monolog/monolog   && grep -E "\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md    . ';
 
         ob_start();
         passthru($cmd);
@@ -73,7 +74,7 @@ F;
     function testSymfony()
     {
         // grep re explanation: starting  with [[:space:]] which not followed by / or * which are signs for comments
-        $cmd =  'cd '. static::$root .'/vendor/symfony/http-foundation  &&  grep -E "^[[:space:]]+[^/*[:space:]].*\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md  --exclude-dir=Tests -n  . ';
+        $cmd =  'cd '. static::$workingRoot .'/vendor/symfony/http-foundation  &&  grep -E "^[[:space:]]+[^/*[:space:]].*\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md  --exclude-dir=Tests -n  . ';
 
         ob_start();
         passthru($cmd);
@@ -101,11 +102,12 @@ F;
 
 
 
-         $cmd = 'cd '. static::$root .' && find .  \
+         $cmd = 'cd '. static::$laravelAppRoot .' && find .  \
          -path ./node_modules -prune -o   \
          -path ./storage -prune -o   \
          -path  ./vendor/phpunit/phpunit -prune -o   \
          -path  ./vendor/scil/laravel-fly -prune -o    \
+         -path  ./vendor/scil/laravel-fly-local -prune -o    \
          -path  ./vendor/symfony/http-foundation/Tests  -prune  -o   \
          -type f  \
          -exec grep -E "\bcreateFromGlobals\b"  \

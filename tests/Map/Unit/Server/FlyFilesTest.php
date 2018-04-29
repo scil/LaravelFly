@@ -28,7 +28,7 @@ class FlyFilesTest extends MapTestCase
         foreach ($map as $f => $originLocation) {
             self::assertEquals(true, is_file($this->flyDir . $f), "{$this->flyDir}.$f");
             self::assertEquals(true, is_file($this->backOfficalDir . $f));
-            self::assertEquals(true, is_file(static::$root . $originLocation));
+            self::assertEquals(true, is_file(static::$workingRoot . $originLocation));
         }
     }
 
@@ -41,7 +41,7 @@ class FlyFilesTest extends MapTestCase
 
         foreach (\LaravelFly\Server\Common::getAllFlyMap() as $back => $offcial) {
             $back = $this->backOfficalDir . $back;
-            $offcial = static::$root . $offcial;
+            $offcial = static::$laravelAppRoot . $offcial;
             $cmdArguments = "$diffOPtions $back $offcial ";
 
             unset($a);
@@ -66,7 +66,7 @@ class FlyFilesTest extends MapTestCase
 
         $initEnv = new \ReflectionMethod('\LaravelFly\Server\Common', 'includeFlyFiles');
         $initEnv->setAccessible(true);
-        $initEnv->invoke(null,['mode'=>'Map',]);
+        $initEnv->invoke(null,['mode'=>'Map','log_cache'=>2]);
 
 
         self::assertEquals(true, class_exists('Illuminate\Foundation\Application', false));

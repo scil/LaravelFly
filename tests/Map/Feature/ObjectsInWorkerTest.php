@@ -25,11 +25,13 @@ class ObjectsInWorkerTest extends MapTestCase
         'router',
         'Illuminate\Contracts\Http\Kernel',
         'config',
+
+        'files',
+        'view.engine.resolver',
+        'view',
         'db.factory',
         'db',
-        'view.engine.resolver',
-        'files',
-        'view',
+
         'Illuminate\Contracts\Auth\Access\Gate',
         'routes',
         'url',
@@ -69,7 +71,7 @@ class ObjectsInWorkerTest extends MapTestCase
     {
         parent::setUpBeforeClass();
 
-        static::makeServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
+        static::makeNewServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 

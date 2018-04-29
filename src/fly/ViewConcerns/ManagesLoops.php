@@ -17,13 +17,7 @@ trait ManagesLoops
     public function addLoop($data)
     {
 
-        $length = null;
-
-        if (is_array($data) || $data instanceof Countable) {
-            $length = count($data);
-        } elseif ($data instanceof Traversable) {
-            $length = iterator_count($data);
-        }
+        $length = is_array($data) || $data instanceof Countable ? count($data) : null;
 
         $cid=\co::getUid();
 

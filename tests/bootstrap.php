@@ -1,4 +1,5 @@
 <?php
+
 if (is_file(__DIR__ . '/../vendor/autoload.php')) {
     define('AS_ROOT',true);
     echo "LaravelFly dir as root\n";

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Tests\Unit\Server\Traits;
+namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
 use LaravelFly\Tests\Unit\Server\CommonServerTestCase;
 
@@ -22,12 +22,12 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
         ];
 
         foreach ($data as $one) {
-            $this->resetConfigAndResetDispatcher();
+            $this->resetServerConfigAndDispatcher();
 
             $options = ['worker_num' => $one['worker_num'], 'compile' => false];
             $server->config($options);
 
-            $swoole_server = $this->setSwooleServer($options);
+            $swoole_server = $this->setSwooleForServer($options);
 
             self::assertEquals($one['selected'], $server->dispatch($swoole_server, $one['fd'], '', $one['raw']));
 
@@ -50,7 +50,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
 
         foreach ($data as $one) {
 
-            $this->resetConfigAndResetDispatcher();
+            $this->resetServerConfigAndDispatcher();
 
             $options = ['dispatch_by_query' => true, 'worker_num' => $one['worker_num'], 'compile' => false];
 
@@ -65,7 +65,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
                 $event->stopPropagation();
             }, 9);
 
-            $swoole_server = $this->setSwooleServer($options);
+            $swoole_server = $this->setSwooleForServer($options);
 
             $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server) {
 
