@@ -57,13 +57,16 @@ abstract class BaseTestCase extends TestCase
 
     static function setUpBeforeClass()
     {
-        if(AS_ROOT){
-            static::$workingRoot =  realpath(__DIR__ . '/..') ;
-            $r=static::$laravelAppRoot  = realpath(static::$workingRoot.'/../../..');
-            echo "[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n";
-        }else{
+        if (!AS_ROOT) {
             static::$laravelAppRoot = static::$workingRoot = realpath(__DIR__ . '/../../../..');
+            return;
+        }
 
+        static::$workingRoot = realpath(__DIR__ . '/..');
+        $r = static::$laravelAppRoot = realpath(static::$workingRoot . '/../../..');
+
+        if (!is_dir($r . '/app')) {
+            exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
         }
     }
 
@@ -101,6 +104,9 @@ abstract class BaseTestCase extends TestCase
 
         $options = array_merge($file_options, $options);
 
+        if (!isset($options['compile']))
+            $options['compile'] = false;
+
         $fly = \LaravelFly\Fly::init($options);
 
         static::$dispatcher = $fly->getDispatcher();
@@ -124,7 +130,7 @@ abstract class BaseTestCase extends TestCase
         return self::$commonServer;
     }
 
-    function resetServerConfigAndDispatcher($server=null)
+    function resetServerConfigAndDispatcher($server = null)
     {
         $server = $server ?: static::$commonServer;
         $c = new \ReflectionProperty($server, 'options');
