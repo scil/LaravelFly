@@ -191,7 +191,7 @@ class Common
         $this->dispatchRequestByQuery($options);
     }
 
-    static function includeFlyFiles($options)
+    static function includeFlyFiles(&$options)
     {
         static $mapLoaded = false;
         static $logLoaded = false;
@@ -209,14 +209,21 @@ class Common
 
         }
 
-        if ($options['log_cache'] && $options['log_cache'] > 1 && !$logLoaded) {
+        if ($logLoaded) return;
 
-            $logLoaded = true;
+        $logLoaded = true;
+
+        if ($options['log_cache'] && $options['log_cache'] > 1) {
+
+            $options['log_cache'] = true;
 
             foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
                 require __DIR__ . "/../../fly/" . $f;
             }
 
+        } else {
+
+            $options['log_cache'] = false;
         }
 
     }
