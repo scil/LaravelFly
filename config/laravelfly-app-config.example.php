@@ -36,6 +36,70 @@ return [
     'providers_in_request' => [
     ],
 
+
+    /**
+     * Which properties of base services need to backup. Only for Mode Simple or Greedy
+     *
+     * See: Illuminate\Foundation\Application::registerBaseServiceProviders
+     */
+    'BaseServices' => [
+
+        /* Illuminate\Events\EventServiceProvider::class : */
+        'events' => [
+            'listeners', 'wildcards', 'queueResolver',
+        ],
+
+        /* Illuminate\Routing\RoutingServiceProvider::class : */
+        'router' => [
+            /** depends
+             * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
+             */
+            // 'middleware','middlewareGroups','middlewarePriority',
+
+            /** not necessary to backup,
+             * it will be changed during next request
+             * // 'current',
+             */
+
+            /** not necessary to backup,
+             * the ref to app('request') will be released during next request
+             * //'currentRequest',
+             */
+
+            'obj.routes' => [
+                /** depends
+                 *
+                 * Uncomment them if some of your routes are created during any request.
+                 * Besides, because values of these four properties are associate arrays,
+                 * if names of routes created during request are sometime different , please uncomment them ,
+                 */
+                // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
+            ],
+        ], /* end 'router' */
+
+        'url' => [
+            /* depends */
+            // 'forcedRoot', 'forceSchema',
+            // 'cachedRoot', 'cachedSchema',
+
+            /** not necessary to backup,
+             *
+             * the ref to app('request') will be released during next request;
+             * and no need set request for `url' on every request , because there is a $app->rebinding for request:
+             *      $app->rebinding( 'request', $this->requestRebinder() )
+             * //'request'
+             */
+        ],
+
+
+        /** nothing need to backup
+         *
+         * // 'redirect' => false,
+         * // 'routes' => false,
+         * // 'log' => false,
+         */
+    ],
+
     /**
      * providers to reg and boot on worker, before any request. only for Map mode
      *
@@ -62,7 +126,7 @@ return [
      *      proverder5=> null,           // this provider will not be booted on worker too.
      */
     'providers_on_worker' => [
-        // this is not in config('app.providers') and has once registered in Application:;registerBaseServiceProviders
+        // this is not in config('app.providers') and registered in Application:;registerBaseServiceProviders
         Illuminate\Log\LogServiceProvider::class => [
             'log' => true,
         ],
@@ -140,73 +204,11 @@ return [
         App\Providers\RouteServiceProvider::class => [],
 
         // Collision is an error handler framework for console/command-line PHP applications such as laravelfly
-        NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class =>[
-            Illuminate\Contracts\Debug\ExceptionHandler::class=>true,
+        NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class => [
+            Illuminate\Contracts\Debug\ExceptionHandler::class => true,
         ],
 
     ],
 
-    /**
-     * Which properties of base services need to backup. Only for Mode One or Greedy
-     *
-     * See: Illuminate\Foundation\Application::registerBaseServiceProviders
-     */
-    'BaseServices' => [
-
-        /* Illuminate\Events\EventServiceProvider::class : */
-        'events' => [
-            'listeners', 'wildcards', 'queueResolver',
-        ],
-
-        /* Illuminate\Routing\RoutingServiceProvider::class : */
-        'router' => [
-            /** depends
-             * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
-             */
-            // 'middleware','middlewareGroups','middlewarePriority',
-
-            /** not necessary to backup,
-             * it will be changed during next request
-             * // 'current',
-             */
-
-            /** not necessary to backup,
-             * the ref to app('request') will be released during next request
-             * //'currentRequest',
-             */
-
-            'obj.routes' => [
-                /** depends
-                 *
-                 * Uncomment them if some of your routes are created during any request.
-                 * Besides, because values of these four properties are associate arrays,
-                 * if names of routes created during request are sometime different , please uncomment them ,
-                 */
-                // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
-            ],
-        ], /* end 'router' */
-
-        'url' => [
-            /* depends */
-            // 'forcedRoot', 'forceSchema',
-            // 'cachedRoot', 'cachedSchema',
-
-            /** not necessary to backup,
-             *
-             * the ref to app('request') will be released during next request;
-             * and no need set request for `url' on every request , because there is a $app->rebinding for request:
-             *      $app->rebinding( 'request', $this->requestRebinder() )
-             * //'request'
-             */
-        ],
-
-
-        /** nothing need to backup
-         *
-         * // 'redirect' => false,
-         * // 'routes' => false,
-         * // 'log' => false,
-         */
-    ],
 ];
 
