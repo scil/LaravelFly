@@ -73,6 +73,12 @@ Trait Preloader
         // Map mode has loaded fly files and related files, so non-Map mode can load more files now
         if ($this->getConfig('mode') !== 'Map') {
             $core = array_merge($core, require __DIR__ . '/preloader_config_more.php');
+            if(!$this->getConfig('log_cache')){
+                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php';
+                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php';
+                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php';
+                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php';
+            }
         }
 
         $files = array_merge($core, $this->getConfig('compile_files') ?? []);
