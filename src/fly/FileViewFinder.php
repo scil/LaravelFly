@@ -11,7 +11,7 @@ class FileViewFinder implements ViewFinderInterface
 
     use Dict;
     protected static $arrayAttriForObj = ['paths', 'views', 'hints'];
-    protected static $normalAttriForObj=[];
+    protected static $normalAttriForObj = [];
 
 
     protected $files;
@@ -19,7 +19,7 @@ class FileViewFinder implements ViewFinderInterface
 
     public function __construct(Filesystem $files, array $paths, array $extensions = null)
     {
-        $this->initOnWorker( true);
+        $this->initOnWorker(true);
 
         static::$corDict[WORKER_COROUTINE_ID]['paths'] = $paths;
         $this->files = $files;
@@ -30,14 +30,14 @@ class FileViewFinder implements ViewFinderInterface
 
     public function find($name)
     {
-        $cid=\co::getUid();
+        $cid = \co::getUid();
 
         if (isset(static::$corDict[$cid]['views'][$name])) {
             return static::$corDict[$cid]['views'][$name];
         }
 
         if ($this->hasHintInformation($name = trim($name))) {
-            return static::$corDict[$cid]['views'][$name] = $this->findNamespacedView($name,$cid);
+            return static::$corDict[$cid]['views'][$name] = $this->findNamespacedView($name, $cid);
         }
 
         return static::$corDict[$cid]['views'][$name] = $this->findInPaths($name, static::$corDict[$cid]['paths']);
@@ -49,9 +49,9 @@ class FileViewFinder implements ViewFinderInterface
      * @param  string $name
      * @return string
      */
-    protected function findNamespacedView($name,$cid)
+    protected function findNamespacedView($name, $cid)
     {
-        list($namespace, $view) = $this->parseNamespaceSegments($name,$cid);
+        list($namespace, $view) = $this->parseNamespaceSegments($name, $cid);
 
         return $this->findInPaths($view, static::$corDict[$cid]['hints'][$namespace]);
     }
@@ -64,12 +64,12 @@ class FileViewFinder implements ViewFinderInterface
      *
      * @throws \InvalidArgumentException
      */
-    protected function parseNamespaceSegments($name,$cid)
+    protected function parseNamespaceSegments($name, $cid)
     {
         $segments = explode(static::HINT_PATH_DELIMITER, $name);
 
         if (count($segments) != 2) {
-            throw new InvalidArgumentException("View [$name] has an invalid name.");
+            throw new InvalidArgumentException("View [{$name}] has an invalid name.");
         }
 
         if (!isset(static::$corDict[$cid]['hints'][$segments[0]])) {
@@ -97,8 +97,7 @@ class FileViewFinder implements ViewFinderInterface
                 }
             }
         }
-
-        throw new InvalidArgumentException("View [$name] not found.");
+        throw new InvalidArgumentException("View [{$name}] not found.");
     }
 
     /**
@@ -147,7 +146,7 @@ class FileViewFinder implements ViewFinderInterface
     {
         $hints = (array)$hints;
 
-        $cid=\co::getUid();
+        $cid = \co::getUid();
 
         if (isset(static::$corDict[$cid]['hints'][$namespace])) {
             $hints = array_merge(static::$corDict[$cid]['hints'][$namespace], $hints);
@@ -167,7 +166,7 @@ class FileViewFinder implements ViewFinderInterface
     {
         $hints = (array)$hints;
 
-        $cid=\co::getUid();
+        $cid = \co::getUid();
 
         if (isset(static::$corDict[$cid]['hints'][$namespace])) {
             $hints = array_merge($hints, static::$corDict[$cid]['hints'][$namespace]);
@@ -221,7 +220,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function flush()
     {
-        var_dump('flush',static::$corDict[\co::getUid()]['views'] );
+        var_dump('flush', static::$corDict[\co::getUid()]['views']);
         static::$corDict[\co::getUid()]['views'] = [];
     }
 

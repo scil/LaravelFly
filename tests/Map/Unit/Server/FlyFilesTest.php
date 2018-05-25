@@ -64,9 +64,8 @@ class FlyFilesTest extends MapTestCase
         self::assertEquals(false, class_exists('Illuminate\Container\Container', false));
         self::assertEquals(false, class_exists('Illuminate\Foundation\Application ', false));
 
-        $initEnv = new \ReflectionMethod('\LaravelFly\Server\Common', 'includeFlyFiles');
-        $initEnv->setAccessible(true);
-        $initEnv->invoke(null,['mode'=>'Map','log_cache'=>2]);
+        $options= ['mode'=>'Map','log_cache'=>2];
+        \LaravelFly\Server\Common::includeFlyFiles($options);
 
 
         self::assertEquals(true, class_exists('Illuminate\Foundation\Application', false));

@@ -15,43 +15,30 @@
         </testsuite>
 
         <testsuite name="LaravelFly_Unit">
-            <file>./tests/Unit/FlyTest.php</file>
-            <file>./tests/Unit/Server/CommonTest.php</file>
-            <file>./tests/Unit/Server/Traits/WorkerTest.php</file>
+            <!--<file>./tests/Unit/FlyTest.php</file>-->
+            <!--<file>./tests/Unit/Server/CommonTest.php</file>-->
+            <!--<file>./tests/Unit/Server/Traits/WorkerTest.php</file>-->
+            <file>./tests/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
         </testsuite>
 
 
-        <!--
-        hacked files are included, and there's a kernel fife controlled by LARAVELFLY_MODE so theses tests can not be run with other tests
 
-        vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml - -testsuit LaravelFly_Map_Feature
-        vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml - -testsuit LaravelFly_Map_Feature2
+        <testsuite name="LaravelFly_Map_Unit">
+            <file>./tests/Map/Unit/Server/CommonTest.php</file>
+        </testsuite>
 
-        error:  swServer_create (ERROR 9001): The swoole_server must create before client    if two testsuite are merged
+        <testsuite name="LaravelFly_Map_Unit2">
+            <file>./tests/Map/Unit/Server/FlyFilesTest.php</file>
+        </testsuite>
 
-       -->
         <testsuite name="LaravelFly_Map_Feature">
             <file>./tests/Map/Feature/SuperGlobalVarsTest.php</file>
             <file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>
         </testsuite>
-        <testsuite name="LaravelFly_Map_Feature_2">
+        <testsuite name="LaravelFly_Map_Feature2">
             <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
         </testsuite>
 
-
-        <!--
-        vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml - -testsuit LaravelFly_Map_Unit
-        -->
-        <testsuite name="LaravelFly_Map_Unit">
-            <file>./tests/Map/Unit/Server/CommonTest.php</file>
-            <!--<file>./tests/Map/Unit/Server/FlyFilesTest.php</file>-->
-            <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
-            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
-        </testsuite>
-
-        <!--
-        vendor/bin/phpunit   - -stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml   - -testsuit LaravelFly_Map_LaravelTests
-        -->
         <testsuite name="LaravelFly_Map_LaravelTests">
             <!--<directory suffix="Test.php">./tests/Map/Unit/Server</directory>-->
             <!--<file>./tests/Map/Unit/Server/CommonTest.php</file>-->

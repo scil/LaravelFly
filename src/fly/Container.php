@@ -30,7 +30,7 @@ class Container implements ArrayAccess, ContainerContract
 //    public $contextual = [];
 
 //    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'];
-    
+
 
     function __construct()
     {
@@ -182,13 +182,28 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Bind a callback to resolve with Container::call.
      *
-     * @param  string $method
+     * @param  array|string $method
      * @param  \Closure $callback
      * @return void
      */
     public function bindMethod($method, $callback)
     {
-        static::$corDict[\co::getUid()]['methodBindings'][$method] = $callback;
+        static::$corDict[\co::getUid()]['methodBindings'][$this->parseBindMethod($method)] = $callback;
+    }
+
+    /**
+     * Get the method to be bound in class@method format.
+     *
+     * @param  array|string $method
+     * @return string
+     */
+    protected function parseBindMethod($method)
+    {
+        if (is_array($method)) {
+            return $method[0] . '@' . $method[1];
+        }
+
+        return $method;
     }
 
     /**
@@ -1099,7 +1114,7 @@ class Container implements ArrayAccess, ContainerContract
      * Set the shared instance of the container.
      *
      * @param  \Illuminate\Contracts\Container\Container|null $container
-     * @return static
+     * @return \Illuminate\Contracts\Container\Container|static
      */
     public static function setInstance(ContainerContract $container = null)
     {

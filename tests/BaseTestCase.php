@@ -7,6 +7,7 @@
  *
  * Map
  * cdzc && vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit
+ * cdzc && vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit2
  * cdzc && vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature
  * cdzc && vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature2
  * cdzc && vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
@@ -57,6 +58,7 @@ abstract class BaseTestCase extends TestCase
 
     static function setUpBeforeClass()
     {
+
         if (!AS_ROOT) {
             static::$laravelAppRoot = static::$workingRoot = realpath(__DIR__ . '/../../../..');
             return;

@@ -24,7 +24,11 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
         foreach ($data as $one) {
             $this->resetServerConfigAndDispatcher();
 
-            $options = ['worker_num' => $one['worker_num'], 'compile' => false];
+            $options = [
+                'worker_num' => $one['worker_num'],
+                'compile' => false,
+                'mode'=>'Simple'
+            ];
             $server->config($options);
 
             $swoole_server = $this->setSwooleForServer($options);
@@ -52,7 +56,12 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
 
             $this->resetServerConfigAndDispatcher();
 
-            $options = ['dispatch_by_query' => true, 'worker_num' => $one['worker_num'], 'compile' => false];
+            $options = [
+                'dispatch_by_query' => true,
+                'worker_num' => $one['worker_num'],
+                'compile' => false,
+                'mode'=>'Simple'
+            ];
 
             $server->config($options);
 

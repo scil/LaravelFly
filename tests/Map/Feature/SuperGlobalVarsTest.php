@@ -74,28 +74,31 @@ F;
     function testSymfony()
     {
         // grep re explanation: starting  with [[:space:]] which not followed by / or * which are signs for comments
-        $cmd =  'cd '. static::$workingRoot .'/vendor/symfony/http-foundation  &&  grep -E "^[[:space:]]+[^/*[:space:]].*\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md  --exclude-dir=Tests -n  . ';
+        $cmd =  'cd '. static::$workingRoot .'/vendor/symfony/http-foundation  &&  grep -E "^[[:space:]]+[^/*[:space:]].*\b_(SERVER|GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md  --exclude-dir=Tests -n  . ';
 
         ob_start();
         passthru($cmd);
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./Request.php:314:        $request = self::createRequestFromFactory($_GET, $_POST, array(), $_COOKIE, $_FILES, $server);
-./Request.php:562:        $_GET = $this->query->all();
-./Request.php:563:        $_POST = $this->request->all();
-./Request.php:565:        $_COOKIE = $this->cookies->all();
-./Request.php:576:        $request = array('g' => $_GET, 'p' => $_POST, 'c' => $_COOKIE);
-./Request.php:581:        $_REQUEST = array();
-./Request.php:583:            $_REQUEST = array_merge($_REQUEST, $request[$order]);
-./Session/Storage/NativeSessionStorage.php:222:        $session = $_SESSION;
-./Session/Storage/NativeSessionStorage.php:225:            if (empty($_SESSION[$key = $bag->getStorageKey()])) {
-./Session/Storage/NativeSessionStorage.php:226:                unset($_SESSION[$key]);
-./Session/Storage/NativeSessionStorage.php:229:        if (array($key = $this->metadataBag->getStorageKey()) === array_keys($_SESSION)) {
-./Session/Storage/NativeSessionStorage.php:230:            unset($_SESSION[$key]);
-./Session/Storage/NativeSessionStorage.php:244:            $_SESSION = $session;
-./Session/Storage/NativeSessionStorage.php:272:        $_SESSION = array();
-./Session/Storage/NativeSessionStorage.php:431:            $session = &$_SESSION;
+./Request.php:281:        $request = self::createRequestFromFactory($_GET, $_POST, array(), $_COOKIE, $_FILES, $_SERVER);
+./Request.php:529:        $_GET = $this->query->all();
+./Request.php:530:        $_POST = $this->request->all();
+./Request.php:531:        $_SERVER = $this->server->all();
+./Request.php:532:        $_COOKIE = $this->cookies->all();
+./Request.php:537:                $_SERVER[$key] = implode(', ', $value);
+./Request.php:539:                $_SERVER['HTTP_'.$key] = implode(', ', $value);
+./Request.php:543:        $request = array('g' => $_GET, 'p' => $_POST, 'c' => $_COOKIE);
+./Request.php:548:        $_REQUEST = array();
+./Request.php:550:            $_REQUEST = array_merge($_REQUEST, $request[$order]);
+./Session/Storage/NativeSessionStorage.php:219:        $session = $_SESSION;
+./Session/Storage/NativeSessionStorage.php:222:            if (empty($_SESSION[$key = $bag->getStorageKey()])) {
+./Session/Storage/NativeSessionStorage.php:223:                unset($_SESSION[$key]);
+./Session/Storage/NativeSessionStorage.php:226:        if (array($key = $this->metadataBag->getStorageKey()) === array_keys($_SESSION)) {
+./Session/Storage/NativeSessionStorage.php:227:            unset($_SESSION[$key]);
+./Session/Storage/NativeSessionStorage.php:241:            $_SESSION = $session;
+./Session/Storage/NativeSessionStorage.php:269:        $_SESSION = array();
+./Session/Storage/NativeSessionStorage.php:427:            $session = &$_SESSION;
 
 F;
         self::assertEquals($respect, $output);
@@ -120,9 +123,9 @@ F;
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:738:        return $this->request ?: Request::createFromGlobals();
+./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:759:        return $this->request ?: Request::createFromGlobals();
 ./vendor/laravel/framework/src/Illuminate/Http/Request.php:59:        return static::createFromBase(SymfonyRequest::createFromGlobals());
-./vendor/symfony/http-foundation/Request.php:299:    public static function createFromGlobals()
+./vendor/symfony/http-foundation/Request.php:279:    public static function createFromGlobals()
 
 F;
 

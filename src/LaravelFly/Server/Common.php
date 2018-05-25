@@ -213,9 +213,7 @@ class Common
 
         $logLoaded = true;
 
-        if ($options['log_cache'] && $options['log_cache'] > 1) {
-
-            $options['log_cache'] = true;
+        if (is_int($options['log_cache']) && $options['log_cache'] > 1) {
 
             foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
                 require __DIR__ . "/../../fly/" . $f;

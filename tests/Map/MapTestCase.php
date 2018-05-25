@@ -15,5 +15,14 @@ class MapTestCase extends Base
      */
     static protected $chan;
 
+    /**
+     * forbidden this function, as it will load official Illuminate\Container\Container
+     * which conflict with src\fly\Container.php
+     * @return \Illuminate\Foundation\Application|void
+     */
+    static protected function getLaravelApp()
+    {
+
+    }
 
 }

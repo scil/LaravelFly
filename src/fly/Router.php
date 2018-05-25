@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Router implements RegistrarContract, BindingRegistrar
 {
-    use \LaravelFly\Map\Util\Dict{
+    use \LaravelFly\Map\Util\Dict {
         \LaravelFly\Map\Util\Dict::initForRequestCorontine as init;
     }
     use Macroable {
@@ -58,11 +59,12 @@ class Router implements RegistrarContract, BindingRegistrar
             }];
         $this->initOnWorker(false);
     }
-    public function initForRequestCorontine($cid )
+
+    public function initForRequestCorontine($cid)
     {
         $this->init($cid);
         $newRoutes = clone static::$corDict[WORKER_COROUTINE_ID]['routes'];
-        static::$corDict[$cid]['routes']= $newRoutes;
+        static::$corDict[$cid]['routes'] = $newRoutes;
         $this->container->instance('routes', $newRoutes);
     }
 
@@ -74,8 +76,8 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new POST route with the router.
      *
-     * @param  string  $uri
-     * @param  \Closure|array|string|null  $action
+     * @param  string $uri
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function post($uri, $action = null)
@@ -86,8 +88,8 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new PUT route with the router.
      *
-     * @param  string  $uri
-     * @param  \Closure|array|string|null  $action
+     * @param  string $uri
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function put($uri, $action = null)
@@ -98,8 +100,8 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new PATCH route with the router.
      *
-     * @param  string  $uri
-     * @param  \Closure|array|string|null  $action
+     * @param  string $uri
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function patch($uri, $action = null)
@@ -110,8 +112,8 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new DELETE route with the router.
      *
-     * @param  string  $uri
-     * @param  \Closure|array|string|null  $action
+     * @param  string $uri
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function delete($uri, $action = null)
@@ -122,8 +124,8 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new OPTIONS route with the router.
      *
-     * @param  string  $uri
-     * @param  \Closure|array|string|null  $action
+     * @param  string $uri
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function options($uri, $action = null)
@@ -134,8 +136,8 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new route responding to all verbs.
      *
-     * @param  string  $uri
-     * @param  \Closure|array|string|null  $action
+     * @param  string $uri
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function any($uri, $action = null)
@@ -146,7 +148,7 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new Fallback route with the router.
      *
-     * @param  \Closure|array|string|null  $action
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function fallback($action)
@@ -161,9 +163,9 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Create a redirect from one URI to another.
      *
-     * @param  string  $uri
-     * @param  string  $destination
-     * @param  int  $status
+     * @param  string $uri
+     * @param  string $destination
+     * @param  int $status
      * @return \Illuminate\Routing\Route
      */
     public function redirect($uri, $destination, $status = 301)
@@ -176,9 +178,9 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new route that returns a view.
      *
-     * @param  string  $uri
-     * @param  string  $view
-     * @param  array  $data
+     * @param  string $uri
+     * @param  string $view
+     * @param  array $data
      * @return \Illuminate\Routing\Route
      */
     public function view($uri, $view, $data = [])
@@ -191,20 +193,20 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register a new route with the given verbs.
      *
-     * @param  array|string  $methods
-     * @param  string  $uri
-     * @param  \Closure|array|string|null  $action
+     * @param  array|string $methods
+     * @param  string $uri
+     * @param  \Closure|array|string|null $action
      * @return \Illuminate\Routing\Route
      */
     public function match($methods, $uri, $action = null)
     {
-        return $this->addRoute(array_map('strtoupper', (array) $methods), $uri, $action);
+        return $this->addRoute(array_map('strtoupper', (array)$methods), $uri, $action);
     }
 
     /**
      * Register an array of resource controllers.
      *
-     * @param  array  $resources
+     * @param  array $resources
      * @return void
      */
     public function resources(array $resources)
@@ -217,9 +219,9 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Route a resource to a controller.
      *
-     * @param  string  $name
-     * @param  string  $controller
-     * @param  array  $options
+     * @param  string $name
+     * @param  string $controller
+     * @param  array $options
      * @return \Illuminate\Routing\PendingResourceRegistration
      */
     public function resource($name, $controller, array $options = [])
@@ -238,7 +240,7 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Register an array of API resource controllers.
      *
-     * @param  array  $resources
+     * @param  array $resources
      * @return void
      */
     public function apiResources(array $resources)
@@ -251,9 +253,9 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Route an API resource to a controller.
      *
-     * @param  string  $name
-     * @param  string  $controller
-     * @param  array  $options
+     * @param  string $name
+     * @param  string $controller
+     * @param  array $options
      * @return \Illuminate\Routing\PendingResourceRegistration
      */
     public function apiResource($name, $controller, array $options = [])
@@ -307,6 +309,7 @@ class Router implements RegistrarContract, BindingRegistrar
             require $routes;
         }
     }
+
     public function getLastGroupPrefix()
     {
         $cid = \co::getUid();
@@ -349,9 +352,10 @@ class Router implements RegistrarContract, BindingRegistrar
 
         return $route;
     }
+
     protected function actionReferencesController($action)
     {
-        if (! $action instanceof Closure) {
+        if (!$action instanceof Closure) {
             return is_string($action) || (isset($action['uses']) && is_string($action['uses']));
         }
 
@@ -386,6 +390,7 @@ class Router implements RegistrarContract, BindingRegistrar
         return isset($group['namespace']) && strpos($class, '\\') !== 0
             ? $group['namespace'] . '\\' . $class : $class;
     }
+
     protected function newRoute($methods, $uri, $action)
     {
         return (new Route($methods, $uri, $action))
@@ -396,12 +401,12 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Prefix the given URI with the last prefix.
      *
-     * @param  string  $uri
+     * @param  string $uri
      * @return string
      */
     protected function prefix($uri)
     {
-        return trim(trim($this->getLastGroupPrefix(), '/').'/'.trim($uri, '/'), '/') ?: '/';
+        return trim(trim($this->getLastGroupPrefix(), '/') . '/' . trim($uri, '/'), '/') ?: '/';
     }
 
     protected function addWhereClausesToRoute($route, $cid)
@@ -417,6 +422,7 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         $route->setAction($this->mergeWithLastGroup($route->getAction()));
     }
+
     public function respondWithRoute($name)
     {
         $cid = \co::getUid();
@@ -443,6 +449,7 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         return $this->runRoute($request, $this->findRoute($request));
     }
+
     protected function findRoute($request)
     {
         $cid = \co::getUid();
@@ -453,6 +460,14 @@ class Router implements RegistrarContract, BindingRegistrar
 
         return $route;
     }
+
+    /**
+     * Return the response for the given route.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Routing\Route $route
+     * @return mixed
+     */
     protected function runRoute(Request $request, Route $route)
     {
 
@@ -466,6 +481,7 @@ class Router implements RegistrarContract, BindingRegistrar
             $this->runRouteWithinStack($route, $request)
         );
     }
+
     protected function runRouteWithinStack(Route $route, Request $request)
     {
         $shouldSkipMiddleware = $this->container->bound('middleware.disable') &&
@@ -497,6 +513,7 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         return (new SortedMiddleware(static::$corDict[\co::getUid()]['middlewarePriority'], $middlewares))->all();
     }
+
     public function prepareResponse($request, $response)
     {
         return static::toResponse($request, $response);
@@ -505,8 +522,8 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * Static version of prepareResponse.
      *
-     * @param  \Symfony\Component\HttpFoundation\Request  $request
-     * @param  mixed  $response
+     * @param  \Symfony\Component\HttpFoundation\Request $request
+     * @param  mixed $response
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
     public static function toResponse($request, $response)
@@ -517,14 +534,16 @@ class Router implements RegistrarContract, BindingRegistrar
 
         if ($response instanceof PsrResponseInterface) {
             $response = (new HttpFoundationFactory)->createResponse($response);
-        } elseif (! $response instanceof SymfonyResponse &&
+        } elseif ($response instanceof Model && $response->wasRecentlyCreated) {
+            $response = new JsonResponse($response, 201);
+        } elseif (!$response instanceof SymfonyResponse &&
             ($response instanceof Arrayable ||
                 $response instanceof Jsonable ||
                 $response instanceof ArrayObject ||
                 $response instanceof JsonSerializable ||
                 is_array($response))) {
             $response = new JsonResponse($response);
-        } elseif (! $response instanceof SymfonyResponse) {
+        } elseif (!$response instanceof SymfonyResponse) {
             $response = new Response($response);
         }
 
@@ -547,10 +566,12 @@ class Router implements RegistrarContract, BindingRegistrar
 
         return $route;
     }
-public function substituteImplicitBindings($route)
+
+    public function substituteImplicitBindings($route)
     {
         ImplicitRouteBinding::resolveForRoute($this->container, $route);
     }
+
     protected function performBinding($key, $value, $route, $cid)
     {
         return call_user_func(static::$corDict[$cid]['binders'][$key], $value, $route);
@@ -560,6 +581,7 @@ public function substituteImplicitBindings($route)
     {
         $this->events->listen(Events\RouteMatched::class, $callback);
     }
+
     public function getMiddleware()
     {
         return static::$corDict[\co::getUid()]['middleware'];
@@ -652,6 +674,7 @@ public function substituteImplicitBindings($route)
             $this->container, $binder
         );
     }
+
     public function model($key, $class, Closure $callback = null)
     {
         $this->bind($key, RouteBinding::forModel($this->container, $class, $callback));
@@ -711,6 +734,7 @@ public function substituteImplicitBindings($route)
     {
         return $this->current()->parameter($key, $default);
     }
+
     public function getCurrentRequest()
     {
         return static::$corDict[\co::getUid()]['currentRequest'];
@@ -720,6 +744,7 @@ public function substituteImplicitBindings($route)
     {
         return $this->current();
     }
+
     public function current()
     {
         return static::$corDict[\co::getUid()]['current'];
@@ -737,6 +762,7 @@ public function substituteImplicitBindings($route)
 
         return true;
     }
+
     public function currentRouteName()
     {
         return $this->current() ? $this->current()->getName() : null;
@@ -745,7 +771,7 @@ public function substituteImplicitBindings($route)
     /**
      * Alias for the "currentRouteNamed" method.
      *
-     * @param  dynamic  $patterns
+     * @param  dynamic $patterns
      * @return bool
      */
     public function is(...$patterns)
@@ -756,7 +782,7 @@ public function substituteImplicitBindings($route)
     /**
      * Determine if the current route matches a pattern.
      *
-     * @param  dynamic  $patterns
+     * @param  dynamic $patterns
      * @return bool
      */
     public function currentRouteNamed(...$patterns)
@@ -779,7 +805,7 @@ public function substituteImplicitBindings($route)
     /**
      * Alias for the "currentRouteUses" method.
      *
-     * @param  array  ...$patterns
+     * @param  array ...$patterns
      * @return bool
      */
     public function uses(...$patterns)
@@ -796,7 +822,7 @@ public function substituteImplicitBindings($route)
     /**
      * Determine if the current route action matches a given action.
      *
-     * @param  string  $action
+     * @param  string $action
      * @return bool
      */
     public function currentRouteUses($action)
@@ -882,6 +908,7 @@ public function substituteImplicitBindings($route)
 
         $this->container->instance('routes', static::$corDict[$cid]['routes']);
     }
+
     public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
