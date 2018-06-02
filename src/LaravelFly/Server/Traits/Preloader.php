@@ -17,48 +17,29 @@ use ClassPreloader\Exceptions\VisitorExceptionInterface;
 
 Trait Preloader
 {
-    protected $preloadFile;
 
-    protected function getCachedCompilePath()
+    protected function preInclude()
     {
-        if ($this->preloadFile === null)
-            $this->preloadFile = $this->path('bootstrap/cache/laravelfly_preload.php');
+        echo "[INFO] include pre-files", PHP_EOL;
 
-        return $this->preloadFile;
-    }
-
-    public function loadCachedCompileFile()
-    {
-        if ($this->getConfig('compile') === 'force' ||
-            !is_file($this->getCachedCompilePath()) ||
-            filemtime($this->getCachedCompilePath()) < filemtime($this->path('composer.lock'))) {
-            $this->compileClasses();
-        }
-
-        echo "[INFO] include: {$this->preloadFile}", PHP_EOL;
-        include $this->preloadFile;
-    }
-
-    /**
-     * Generate the compiled class file.
-     *
-     * @return void
-     */
-    protected function compileClasses()
-    {
-        echo "[INFO] compile classes to preload, please wait a moment", PHP_EOL;
-
-        $preloader = (new Factory)->create(['skip' => true]);
-        $handle = $preloader->prepareOutput($this->getCachedCompilePath());
-        foreach ($this->getClassFiles() as $file) {
+        foreach ($this->getClassFiles() as $f) {
             try {
-                // echo "$file\n";
-                fwrite($handle, $preloader->getCode($file, false) . "\n");
+                $file = realpath($f);
+                if (!is_string($file) || empty($file)) {
+                    echo "..[WARN] Invalid pre-include filename $f provided.\n";
+                    continue;
+                }
+
+                if (!is_readable($file)) {
+                    echo "..[WARN] Cannot open pre-include $f for reading.\n";
+                    continue;
+                }
+
+                include $file;
             } catch (VisitorExceptionInterface $e) {
                 //
             }
         }
-        fclose($handle);
     }
 
     /**
@@ -72,17 +53,16 @@ Trait Preloader
 
         // Map mode has loaded fly files and related files, so non-Map mode can load more files now
         if ($this->getConfig('mode') !== 'Map') {
-            $core = array_merge($core, require __DIR__ . '/preloader_config_more.php');
-            if(!$this->getConfig('log_cache')){
-                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php';
-                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php';
-                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php';
-                $core[]= $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php';
+            $core = $core + (require __DIR__ . '/preloader_config_more.php');
+            if (!$this->getConfig('log_cache')) {
+                $core[] = $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php';
+                $core[] = $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php';
+                $core[] = $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php';
+                $core[] = $this->root . '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php';
             }
         }
 
-        $files = array_merge($core, $this->getConfig('compile_files') ?? []);
-        return array_map('realpath', $files);
+        return $core + ( $this->getConfig('pre_files') ?: []);
     }
 
 

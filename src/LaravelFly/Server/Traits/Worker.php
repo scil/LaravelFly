@@ -71,6 +71,12 @@ Trait Worker
         $adapter->setPathPrefix('/');
 
         foreach ($this->getConfig('watch') as $item) {
+
+            if(!file_exists($item)) {
+                echo "[WARN] not exists: $item.\n";
+                continue;
+            }
+
             inotify_add_watch($fd, $item, IN_CREATE | IN_DELETE | IN_MODIFY);
 
             if (is_dir($item)) {

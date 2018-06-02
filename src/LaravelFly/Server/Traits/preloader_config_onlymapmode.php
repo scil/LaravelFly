@@ -24,8 +24,6 @@ return [
     //$basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/Arrayable.php',
     //$basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/Jsonable.php',
 
-
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Logging/Log.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Debug/ExceptionHandler.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Config/Repository.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Events/Dispatcher.php',
@@ -59,15 +57,20 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/ThrottlesLogins.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RedirectsUsers.php',
+
+//Fatal error: Cannot declare
+    //$basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/ThrottlesLogins.php',
+//    $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RedirectsUsers.php',
+
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/ResetsPasswords.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Request.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Middleware/FrameGuard.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/CheckForMaintenanceMode.php',
-    $basePath . '/vendor/symfony/http-foundation/Request.php',
+
+//Fatal error: Cannot declare
+//    $basePath . '/vendor/symfony/http-foundation/Request.php',
     $basePath . '/vendor/symfony/http-foundation/ParameterBag.php',
     $basePath . '/vendor/symfony/http-foundation/FileBag.php',
     $basePath . '/vendor/symfony/http-foundation/ServerBag.php',
@@ -135,23 +138,26 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Events/Dispatcher.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Database/ConnectionResolverInterface.php',
+
+//Fatal error: Cannot declare
+//    $basePath . '/vendor/laravel/framework/src/Illuminate/Database/ConnectionResolverInterface.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Session/Store.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Session/SessionManager.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Manager.php',
+//Fatal error: Cannot declare
+//    $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Manager.php',
+
     $basePath . '/vendor/laravel/framework/src/Illuminate/Cookie/CookieJar.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Encryption/Encrypter.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Facades/Log.php',
+    $basePath . '/vendor/psr/log/Psr/Log/LoggerInterface.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Log/LogServiceProvider.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Log/Writer.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php',
 
     $basePath . '/vendor/monolog/monolog/src/Monolog/Logger.php',
-    $basePath . '/vendor/psr/log/Psr/Log/LoggerInterface.php',
     $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/RotatingFileHandler.php',
     $basePath . '/vendor/monolog/monolog/src/Monolog/Formatter/FormatterInterface.php',
     $basePath . '/vendor/monolog/monolog/src/Monolog/Formatter/NormalizerFormatter.php',
@@ -160,9 +166,10 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Facades/App.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Facades/Route.php',
 
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithContentTypes.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithFlashData.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithInput.php',
+//Fatal error: Cannot declare
+//    $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithContentTypes.php',
+//    $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithFlashData.php',
+//    $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithInput.php',
 
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesEvents.php',
 
@@ -198,7 +205,6 @@ return [
     $basePath . '/vendor/symfony/http-foundation/ResponseHeaderBag.php',
     $basePath . '/vendor/symfony/http-foundation/Cookie.php',
     $basePath . '/vendor/symfony/finder/SplFileInfo.php',
-    $basePath . '/vendor/symfony/finder/Iterator/FilterIterator.php',
     $basePath . '/vendor/symfony/finder/Iterator/MultiplePcreFilterIterator.php',
     $basePath . '/vendor/symfony/finder/Iterator/PathFilterIterator.php',
     $basePath . '/vendor/symfony/finder/Iterator/ExcludeDirectoryFilterIterator.php',

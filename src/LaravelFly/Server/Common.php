@@ -42,8 +42,8 @@ class Common
         'daemonize' => false,
         'watch' => [],
         'watch_delay' => 3500,
-        'compile' => true,
-        'compile_files' => [],
+        'pre_include' => true,
+        'pre_files' => [],
         'log_cache' => 5,
         'conf' => null, // server config file
     ];
@@ -161,8 +161,8 @@ class Common
         static::includeFlyFiles($options);
 
         // as earlier as possible
-        if ($options['compile'] !== false)
-            $this->loadCachedCompileFile();
+        if ($options['pre_include'])
+            $this->preInclude();
 
         if (isset($options['pid_file'])) {
             $options['pid_file'] .= '-' . $options['listen_port'];
