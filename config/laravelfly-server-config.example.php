@@ -213,7 +213,12 @@ return [
     //'pid_file' => '/run/laravelfly/pid',
 
     /**
-     * if the kernel not extends any kernels in LaravelFly, \LaravelFly\Kernel::class is used auto.
+     * make sure this kernel class extends \LaravelFly\Simple\Kernel or
+     * \LaravelFly\Map\Kernel,
+     * otherwise \LaravelFly\Kernel::class is used.
+     *
+     * A simple way it to edit app/Http/Kernel.php like the guide in
+     * https://github.com/scil/LaravelFly/blob/master/doc/config.md
      */
     'kernel' => \App\Http\Kernel::class,
 

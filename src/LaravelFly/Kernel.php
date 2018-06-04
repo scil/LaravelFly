@@ -1,6 +1,6 @@
 <?php
 /**
- * thie file is used only when \App\Http\Kernel not changed.
+ * thie file is used only when \App\Http\Kernel not edited.
  */
 
 namespace LaravelFly;
@@ -8,11 +8,11 @@ namespace LaravelFly;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 if (defined('LARAVELFLY_MODE')) {
-    if (LARAVELFLY_MODE == 'Simple') {
+    if (LARAVELFLY_MODE === 'Simple') {
         class WhichKernel extends \LaravelFly\Simple\Kernel{}
-    } elseif (LARAVELFLY_MODE == 'Map') {
+    } elseif (LARAVELFLY_MODE === 'Map') {
         class WhichKernel extends \LaravelFly\Map\Kernel{}
-    } elseif (LARAVELFLY_MODE == 'FpmLike') {
+    } elseif (LARAVELFLY_MODE === 'FpmLike') {
         class WhichKernel extends HttpKernel{}
     } else {
         class WhichKernel extends \LaravelFly\Greedy\Kernel{}
