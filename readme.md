@@ -10,7 +10,8 @@ Suggest: `pecl install inotify`
 
 2.`composer require "scil/laravel-fly":"dev-master"`
 
-3.Publish app config file `php artisan vendor:publish --tag=fly-app` 
+3.`php artisan vendor:publish --tag=fly-app`   
+This is publishing an app config file 
 
 4.`php vendor/scil/laravel-fly/bin/fly start`   
 If you enable `eval(tinker())` and see an error about mkdir, please start LaravelFly using sudo.
@@ -19,9 +20,13 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 ## Doc
 
-[Config](doc/config.md)
+[Configuration](doc/config.md)
 
 [Start, Reload & Debug](doc/server.md)
+
+[Flow](doc/flow.md)
+
+[Events about LaravelFly](doc/events.md)
 
 [For Dev](doc/dev.md)
 
