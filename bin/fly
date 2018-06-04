@@ -1,11 +1,16 @@
 #!/usr/bin/env php
 <?php
+/**
+ * LaravelFly server script
+ *
+ * doc: https://github.com/scil/LaravelFly/blob/master/doc/server.md
+ */
 
 if ($argc == 1) {
     $msg = <<<U
 USAGE:  laravelfly-server [ACTION] [CONFIG_FILE]
     ACTION: start|stop|reload|restart
-    CONFIG_FILE: optional, default is <project_root>/laravelfly.server.config.php. 
+    CONFIG_FILE: optional, default is <project_root>/fly.conf.php. 
     <project_root> is the root of the project which LaravelFly is installed.
 
 U;
