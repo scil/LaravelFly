@@ -1,9 +1,14 @@
 ## Config
 
-1. Publish server config file  
+1. Edit app config file `<project_root_dir>/config/laravelfly.php`. (produced by `php artisan vendor:publish --tag=fly-app`)  
+Note: items prefixed with "/** depends " deverve your consideration.
+
+2. Publish server config file  
 `php artisan vendor:publish --tag=fly-server`  .  
-2. Edit server config file  
+
+3. Edit server config file  
 `<project_root_dir>/fly.conf.php`.
+
 
 ## Optional Config
 
@@ -25,9 +30,6 @@
     'coroutine' => true,
 ],
 ```
-
-* Execute `php artisan vendor:publish --tag=fly-app`  and edit `<project_root_dir>/config/laravelfly.php`.   
-Note: items prefixed with "/** depends " deverve your consideration.
 
 
 ## Two optional steps to allow you use same code for LaravelFly and PHP-FPM

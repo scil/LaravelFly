@@ -16,7 +16,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
     {
         parent::bootstrap($app);
 
-        if (file_exists($cacheFile = $app->bootstrapPath('cache/laravelfly_config.php')) &&
+        if (file_exists($cacheFile = $app->bootstrapPath('cache/laravelfly_config_map.php')) &&
             ($mtime = filemtime($cacheFile)) > filemtime($app->getServer()->getConfig('conf')) &&
             $mtime > filemtime($app->configPath('laravelfly.php')) &&
             $mtime > filemtime($app->configPath('app.php')) &&
@@ -30,6 +30,10 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         } else {
 
             $appConfig = $app->make('config');
+
+            if(!$appConfig['laravelfly']){
+                die("no file config/laravelfly.php, please run `php artisan vendor:publish --tag=fly-app`");
+            }
 
             $psInRequest = $appConfig['laravelfly.providers_in_request'];
 

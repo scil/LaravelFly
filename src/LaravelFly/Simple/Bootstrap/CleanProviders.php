@@ -15,8 +15,8 @@ class CleanProviders
 
         $appConfig['app.providers'] = array_diff(
             $appConfig['app.providers'],
-            $ps,
-            $appConfig->get('laravelfly.providers_ignore')
+            $ps?:[],
+            $appConfig['laravelfly.providers_ignore']?:[]
         );
 
         if ($ps) {
