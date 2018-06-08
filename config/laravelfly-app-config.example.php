@@ -18,7 +18,7 @@ return [
     /**
      * useless providers. Not For Mode FpmLike
      *
-     * There providers will be removed from app('config')['app.providers'] on worker, before any requets
+     * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
     'providers_ignore' => [
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
@@ -31,7 +31,7 @@ return [
     /**
      * Providers to reg and boot in each request. Not For Mode FpmLike
      *
-     * There providers will be removed from app('config')['app.providers'] on worker, before any requets
+     * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
     'providers_in_request' => [
     ],
@@ -52,7 +52,7 @@ return [
         /* Illuminate\Routing\RoutingServiceProvider::class : */
         'router' => [
             /** depends
-             * Uncomment them if it's not same on each requests. They may be changed by Route::middleware
+             * Uncomment them if it's not same on each request. They may be changed by Route::middleware
              */
             // 'middleware','middlewareGroups','middlewarePriority',
 
