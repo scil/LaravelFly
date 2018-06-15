@@ -89,8 +89,9 @@ The third is to refactor laravel's services, moving related members to a new ass
 
 ## Minor improvement
 
-- compile. Server configs  'compile' and 'compile_files'.
+- pre-include. Server configs  'pre_include' and 'pre_files'.
 - log cache. Server config 'log_cache'.
+- cache for view compiled path. App config 'view_compile_1'
 - watch maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
 
 

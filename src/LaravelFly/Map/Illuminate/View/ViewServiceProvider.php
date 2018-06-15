@@ -7,9 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Engines\FileEngine;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
-
-// switch for BladeCompiler, use offical or laravelfly
-//use Illuminate\View\Compilers\BladeCompiler;
+use Illuminate\View\Compilers\BladeCompiler;
 
 use Illuminate\View\FileViewFinder;
 
@@ -34,14 +32,6 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
         return new Factory($resolver, $finder, $events);
     }
 
-    public function registerViewFinder()
-    {
-
-
-        $this->app->bind('view.finder', function ($app) {
-            return new FileViewFinder($app['files'], $app['config']['view.paths']);
-        });
-    }
 
     /**
      * overwwite laravel offical's 'blade.compiler' to cache view's info
@@ -51,6 +41,11 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     public function registerBladeEngine($resolver)
     {
         $this->app->singleton('blade.compiler', function () {
+            if(config('laravelfly.view_compile_1'))
+                return new BladeCompiler1(
+                    $this->app['files'], $this->app['config']['view.compiled']
+                );
+
             return new BladeCompiler(
                 $this->app['files'], $this->app['config']['view.compiled']
             );

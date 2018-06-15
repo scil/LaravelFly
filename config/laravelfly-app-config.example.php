@@ -4,7 +4,7 @@ if (!defined('LARAVELFLY_MODE')) return [];
 
 return [
     /**
-     * Not For Mode FpmLike
+     * For Mode Simple, Map or Greedy.
      *
      * @todo support Mode Map
      */
@@ -16,7 +16,15 @@ return [
     ],
 
     /**
-     * useless providers. Not For Mode FpmLike
+     * For each worker, if a view file is compiled max one time. Only For Mode Map
+     *
+     * If true, Laravel not know a view file changed until the swoole workers restart.
+     * It's good for production env.
+     */
+    'view_compile_1' => false,
+
+    /**
+     * useless providers. For Mode Simple, Map or Greedy.
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -29,7 +37,7 @@ return [
     ],
 
     /**
-     * Providers to reg and boot in each request. Not For Mode FpmLike
+     * Providers to reg and boot in each request.For Mode Simple, Map or Greedy.
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -101,7 +109,7 @@ return [
     ],
 
     /**
-     * providers to reg and boot on worker, before any request. only for Map mode
+     * providers to reg and boot on worker, before any request. only for Mode Map
      *
      * format:
      *      proverder_name => [],
