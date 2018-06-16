@@ -100,7 +100,7 @@ Trait Laravel
      */
     protected function swooleResponse(\swoole_http_response $response,\Symfony\Component\HttpFoundation\Response $laravel_response): void
     {
-        foreach ($laravel_response->headers->allPreserveCase() as $name => $values) {
+        foreach ($laravel_response->headers->allPreserveCaseWithoutCookies() as $name => $values) {
             foreach ($values as $value) {
                 $response->header($name, $value);
             }
