@@ -14,7 +14,7 @@ class SetBackupForBaseServices
 
         $needBackup = [];
 
-        foreach ($appConfig['laravelfly.BaseServices'] as $name => $config) {
+        foreach ($appConfig['laravelfly.BaseServices']?:[] as $name => $config) {
             if ($config) {
                 $needBackup[$name] = $config;
             }

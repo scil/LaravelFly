@@ -21,7 +21,7 @@ return [
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
      */
-    'view_compile_1' => false,
+    'view_compile_1' => env('APP_ENV')==='production' || env('APP_ENV')==='product',
 
     /**
      * useless providers. For Mode Simple, Map or Greedy.

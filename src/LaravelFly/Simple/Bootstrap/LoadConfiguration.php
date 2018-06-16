@@ -35,11 +35,11 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 die("no file config/laravelfly.php, please run `php artisan vendor:publish --tag=fly-app`");
             }
 
-            $psInRequest = $appConfig['laravelfly.providers_in_request'];
+            $psInRequest = $appConfig['laravelfly.providers_in_request']?:[];
 
             $psAcross = array_diff(
                 array_merge($appConfig['app.providers'], $app->make(PackageManifest::class)->providers()),
-                $psInRequest?:[],
+                $psInRequest,
                 $appConfig['laravelfly.providers_ignore']?:[]
             );
 
