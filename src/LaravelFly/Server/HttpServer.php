@@ -62,7 +62,8 @@ class HttpServer extends Common implements ServerInterface
             $server->shutdown();
         }
 
-        $this->app->forgetInstance('request');
+        // the fake request is useless, but harmless too
+        // $this->app->forgetInstance('request');
 
 
         if ($worker_id == 0) {
