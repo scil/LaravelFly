@@ -51,7 +51,7 @@ class CommonTest extends MapTestCase
         self::assertEquals('0.0.0.0', static::$default['listen_ip']);
 
         // compile should be false, as compiled files has been included in the $server->config([]) above
-        $server->config(['listen_ip' => '127.0.0.1', 'compile' => false]);
+        $server->config(['listen_ip' => '127.0.0.1', 'pre_include' => false]);
         // changed
         self::assertEquals('127.0.0.1', $server->getConfig('listen_ip'));
         // no change
@@ -72,14 +72,14 @@ class CommonTest extends MapTestCase
             $event['options'] = $options;
         });
 
-        static::$commonServer->config(['worker_num' => 3, 'compile' => false]);
+        static::$commonServer->config(['worker_num' => 3, 'pre_include' => false]);
         // event handler can change options
         self::assertEquals(4, static::$commonServer->getConfig('worker_num'));
 
     }
 
     function testConfigPidFile(){
-        static::$commonServer->config([ 'compile' => false]);
+        static::$commonServer->config([ 'pre_include' => false]);
         self::assertEquals( static::$laravelAppRoot . '/bootstrap/laravel-fly-9501.pid',static::$commonServer->getConfig('pid_file')  );
 
     }
@@ -90,12 +90,12 @@ class CommonTest extends MapTestCase
         $a= new \ReflectionProperty(static::$commonServer,'appClass');
         $a->setAccessible(true);
 
-        static::$commonServer->config([ 'compile' => false]);
+        static::$commonServer->config([ 'pre_include' => false]);
         $appClass = $a->getValue(static::$commonServer);
         self::assertEquals('\LaravelFly\Map\Application',$appClass);
 
         foreach (['Map','Simple','FpmLike'] as $mode){
-            static::$commonServer->config(['mode'=>$mode, 'compile' => false]);
+            static::$commonServer->config(['mode'=>$mode, 'pre_include' => false]);
             $appClass = $a->getValue(static::$commonServer);
             self::assertEquals("\LaravelFly\Map\Application",$appClass);
         }
@@ -118,7 +118,7 @@ class CommonTest extends MapTestCase
 
         $flyKernel= 'LaravelFly\Kernel';
 
-        static::$commonServer->config([ 'compile' => false]);
+        static::$commonServer->config([ 'pre_include' => false]);
         //self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
         self::assertEquals('App\Http\Kernel', $k->getValue(static::$commonServer));
 

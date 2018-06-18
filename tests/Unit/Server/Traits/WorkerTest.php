@@ -30,7 +30,7 @@ class WorkerTest extends CommonServerTestCase
             'listen_port' => 9503,
             'daemonize' => false,
             'log_file' => $server->path('/storage/logs/swoole.log'),
-            'compile' => false
+            'pre_include' => false
         ];
         $server->config($options);
 
@@ -67,7 +67,7 @@ class WorkerTest extends CommonServerTestCase
             $server->getSwooleServer()->shutdown();
         });
 
-        $swoole_server = $this->setSwooleForServer($options);
+        $swoole_server = $this->setServerPropSwoole($options);
 
         $server->start();
 

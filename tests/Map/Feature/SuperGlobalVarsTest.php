@@ -42,6 +42,7 @@ class SuperGlobalVarsTest extends MapTestCase
        -path ./vendor/sebastian/global-state -prune -o   \
        -path  ./vendor/symfony/http-foundation/Tests  -prune -o  \
        -path ./vendor/symfony/http-foundation  -prune -o  \
+       -path ./vendor/symfony/dom-crawler  -prune -o  \
        -path ./vendor/monolog/monolog -prune -o   \
        -type f  \
        -exec grep -E "\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b"  \

@@ -57,7 +57,7 @@ class TestCase extends Base
 
         self::assertTrue(is_dir($testsDir), "ensure /tmp/laravelfly_tests exists");
 
-        static::makeNewServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
+        static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
@@ -79,7 +79,7 @@ class TestCase extends Base
 
         });
 
-        static::$server->start();
+        static::$flyServer->start();
 
         echo "\n[[SWOOLE TEST RESULT]]\n", $chan->pop();
 

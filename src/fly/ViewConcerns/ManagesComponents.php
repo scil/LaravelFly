@@ -91,7 +91,7 @@ trait ManagesComponents
     public function slot($name, $content = null)
     {
         $cid=\co::getUid();
-        if (count(func_get_args()) == 2) {
+        if (count(func_get_args()) === 2) {
             static::$corDict[$cid]['slots'][$this->currentComponent()][$name] = $content;
         } else {
             if (ob_start()) {

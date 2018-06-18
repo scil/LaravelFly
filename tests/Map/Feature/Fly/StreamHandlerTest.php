@@ -12,7 +12,7 @@ class StreamHandlerTest extends MapTestCase
     {
         parent::setUpBeforeClass();
 
-        static::makeNewServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
+        static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
@@ -65,7 +65,7 @@ class StreamHandlerTest extends MapTestCase
             $swoole->shutdown();
         });
 
-        static::$server->start();
+        static::$flyServer->start();
 
     }
 
@@ -80,7 +80,7 @@ class StreamHandlerTest extends MapTestCase
         // no change, 11 is in cache
         self::assertEquals("12345\n678910\n", $chan->pop());
 
-        $logFile = static::getServer()->path('storage/logs/laravel.log');
+        $logFile = static::getFlyServer()->path('storage/logs/laravel.log');
 
         // after reload
         self::assertEquals("12345\n678910\n11\n", $this->stripLogRecord($logFile),'after shutdown');

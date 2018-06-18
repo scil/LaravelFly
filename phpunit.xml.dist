@@ -15,10 +15,14 @@
         </testsuite>
 
         <testsuite name="LaravelFly_Unit">
-            <!--<file>./tests/Unit/FlyTest.php</file>-->
-            <!--<file>./tests/Unit/Server/CommonTest.php</file>-->
-            <!--<file>./tests/Unit/Server/Traits/WorkerTest.php</file>-->
+            <file>./tests/Unit/FlyTest.php</file>
+            <file>./tests/Unit/Server/CommonTest.php</file>
+            <!--todo-->
             <file>./tests/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
+        </testsuite>
+        <testsuite name="LaravelFly_Unit2">
+            <!-- laravel offical application used -->
+            <file>./tests/Unit/Server/Traits/WorkerTest.php</file>
         </testsuite>
 
 
@@ -40,8 +44,6 @@
         </testsuite>
 
         <testsuite name="LaravelFly_Map_LaravelTests">
-            <!--<directory suffix="Test.php">./tests/Map/Unit/Server</directory>-->
-            <!--<file>./tests/Map/Unit/Server/CommonTest.php</file>-->
             <file>./tests/Map/LaravelTests/TestCase.php</file>
         </testsuite>
 

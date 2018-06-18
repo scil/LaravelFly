@@ -23,7 +23,7 @@ class CommonTest extends CommonServerTestCase
         $a->setAccessible(true);
 
         foreach (['Map','Simple','FpmLike'] as $mode){
-            static::$commonServer->config(['mode'=>$mode, 'compile' => false]);
+            static::$commonServer->config(['mode'=>$mode, 'pre_include' => false]);
             $appClass = $a->getValue(static::$commonServer);
             self::assertEquals("\LaravelFly\\$mode\Application",$appClass);
         }

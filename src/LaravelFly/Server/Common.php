@@ -173,8 +173,8 @@ class Common
             is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))) {
 
             $kernelClass = \LaravelFly\Kernel::class;
-            echo "[WARN] LaravelFly default kernel used: $kernelClass, \n\
-                  please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md\n\n";
+            echo "[WARN] LaravelFly default kernel used: $kernelClass, 
+      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md\n\n";
 
         }
         $this->kernelClass = $kernelClass;

@@ -14,14 +14,13 @@
     }
   ],
   "require": {
-    "laravel/framework": "~5.6",
+    "laravel/framework": "5.6.*",
     "ext-swoole":">=4.0.0 | >= 1.10.4"
   },
   "suggest": {
     "ext-inotify": ">=2.0.0"
   },
   "require-dev": {
-    "laravel/framework": "5.6.*@dev",
     "eaglewu/swoole-ide-helper": "dev-master",
     "nunomaduro/collision": "^2.0",
     "phpunit/phpunit": "^7.0",

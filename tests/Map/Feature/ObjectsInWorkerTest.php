@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Tests\Map\Feature;
 
+use Dotenv\Loader;
 use LaravelFly\Tests\Map\MapTestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -24,13 +25,14 @@ class ObjectsInWorkerTest extends MapTestCase
         'events',
         'router',
         'Illuminate\Contracts\Http\Kernel',
+        'request',
         'config',
 
-        'files',
-        'view.engine.resolver',
-        'view',
         'db.factory',
         'db',
+        'view.engine.resolver',
+        'files',
+        'view',
 
         'Illuminate\Contracts\Auth\Access\Gate',
         'routes',
@@ -42,6 +44,8 @@ class ObjectsInWorkerTest extends MapTestCase
         'validation.presence',
         'validator',
         'session',
+
+        'cache',
         'session.store',
         'Illuminate\Session\Middleware\StartSession',
         'hash',
@@ -49,7 +53,6 @@ class ObjectsInWorkerTest extends MapTestCase
         'filesystem.disk',
         'encrypter',
         'cookie',
-        'cache',
         'cache.store',
         'auth',
         'log',
@@ -65,13 +68,36 @@ class ObjectsInWorkerTest extends MapTestCase
         'translator' => ['macros'],
         'cache.store' => ['macros'],
         'blade.compiler' => ['mapFly'],
+
+        // don't worry about 'request', every request has it's own 'request'.
+        // The 'request' object in worker is a fake request.
+        // see: \LaravelFly\Server\HttpServer::onWorkerStart
+        'request'=>[
+            'formats',
+            'httpMethodParameterOverride',
+            'macros',
+            'requestFactory',
+            'trustedHostPatterns',
+            'trustedHosts',
+            'trustedProxies',
+        ]
     ];
+
+    static function initConfig(){
+
+        (new Loader(''))->setEnvironmentVariable('APP_ENV','production');
+        @unlink(static::$laravelAppRoot.'/bootstrap/cache/config.php');
+        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_config_map.php');
+        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_config_simple.php');
+
+    }
 
     static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
+        static::initConfig();
 
-        static::makeNewServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
+        static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
@@ -104,14 +130,18 @@ class ObjectsInWorkerTest extends MapTestCase
             $event['server']->getSwooleServer()->shutdown();
         });
 
-        static::$server->start();
+        static::$flyServer->start();
 
     }
 
     function testInstances()
     {
         $instances = static::$chan->pop();
-        self::assertEquals($this->instances, $instances);
+        // PHPUnit: assert two arrays are equal, but order of elements not important
+        // https://stackoverflow.com/questions/3838288/phpunit-assert-two-arrays-are-equal-but-order-of-elements-not-important
+        self::assertEquals($this->instances, $instances, "\$canonicalize = true", $delta = 0.0, $maxDepth = 10, $canonicalize = true);
+
+        //self::assertEquals($this->instances, $instances);
     }
 
     function testStaticProperties()
