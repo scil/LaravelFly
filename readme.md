@@ -6,6 +6,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 1.`pecl install swoole`   
 Make sure `extension=swoole.so` in config file for php cli.   
+LaravelFly Mode Map requires swoole 4.0.  
 Suggest: `pecl install inotify`   
 
 2.`composer require "scil/laravel-fly":"dev-master"`

@@ -70,14 +70,6 @@ class Common
         'Facade.php' =>
             '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
 
-        //blackhole
-        'Collection.php' =>
-            '/vendor/laravel/framework/src/Illuminate/Support/Collection.php',
-        'Controller.php' =>
-            '/vendor/laravel/framework/src/Illuminate/Routing/Controller.php',
-        'Relation.php' =>
-            '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/Relation.php',
-
     ];
     protected static $conditionFlyFiles = [
         'log_cache' => [

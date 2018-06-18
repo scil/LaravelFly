@@ -55,18 +55,11 @@ class ConnectionFactory extends \Illuminate\Database\Connectors\ConnectionFactor
         $config = $this->parseconfig($config, $name);
 
         if ($config['coroutine'] ?? false) {
-            /**
-             *
-             * laravel uses Closure, but laravelfly can not. because swoole coroutine can't used in closure.
-             * I have tried to use closure to reture an object wrapping a swoole myssql coroutine client
-             * then i enter blackhole, no response, no error msg.... nothing at all forever.
-             *
-             * this put you into blackhole:
-             * $connector = $this->createSwooleResolver($config);
-             */
-            $connector= $this->createConnector($config)->connect($config);
+
+            $connector = $this->createSwooleResolver($config);
+
             return $this->createSwooleCortoutineConnection(
-                $config['driver'],$connector,$config['database'], $config['prefix'], $config
+                $config['driver'], $connector, $config['database'], $config['prefix'], $config
             );
         }
 
@@ -78,7 +71,6 @@ class ConnectionFactory extends \Illuminate\Database\Connectors\ConnectionFactor
 
     /**
      * follow createPdoResolver() or createPdoResolverWithHosts(), they return a closure
-     * but this is not good for swoole coroutine. it leads to blackhole
      */
     protected function createSwooleResolver($config)
     {

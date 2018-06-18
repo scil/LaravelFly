@@ -21,7 +21,7 @@ return [
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
      */
-    'view_compile_1' => env('APP_ENV')==='production' || env('APP_ENV')==='product',
+    'view_compile_1' => env('APP_ENV') === 'production' || env('APP_ENV') === 'product',
 
     /**
      * useless providers. For Mode Simple, Map or Greedy.
@@ -203,11 +203,16 @@ return [
         /*
          * Application Service Providers...
          */
+        /* depends */
+        /**
+         * if it's register and boot need executing in each request, remove it to 'providers_in_request'
+         * if only it's boot needs executing in each request, comment it.
+         */
         App\Providers\AppServiceProvider::class => [],
+
         //todo
         App\Providers\AuthServiceProvider::class => [],
-        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_CF_SERVICES['broadcast'] ?
-            [] : false,
+        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_CF_SERVICES['broadcast'] ? [] : false,
         App\Providers\EventServiceProvider::class => [],
         App\Providers\RouteServiceProvider::class => [],
 
