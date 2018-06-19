@@ -141,7 +141,7 @@ xdebug_call_class()
 $__file
 
 // check server pid and pidfile
-LaravelFly::getInstance->getServer()
+LaravelFly\Fly::getServer()
 
 // which class aliases are defined in tinker
 sudo app('tinker')->loader->classes

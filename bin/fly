@@ -80,4 +80,4 @@ if (empty($options['tinker']) && !function_exists('tinker')) {
 }
 
 unset($root, $config_file, $pid_file, $pid);
-\LaravelFly\Fly::getInstance($options)->start();
+\LaravelFly\Fly::getServer($options)->start();

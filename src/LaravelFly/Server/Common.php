@@ -231,12 +231,12 @@ class Common
 
         printf("[INFO] event server.creating for %s\n", static::class);
 
+        if ($this->options['daemonize'])
+            $this->options['colorize'] = false;
+
         $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
         $swoole->set($options);
-
-        if ($this->options['daemonize'])
-            $this->options['colorize'] = false;
 
         $this->setListeners();
 

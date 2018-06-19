@@ -13,17 +13,12 @@ class Fly
     protected static $server;
 
     /**
-     * @var Fly
-     */
-    protected static $instance;
-
-    /**
      * @param array $options
      * @param EventDispatcher $dispatcher
      */
-    static function init(array $options, EventDispatcher $dispatcher = null): self
+    static function init(array $options, EventDispatcher $dispatcher = null)
     {
-        if (self::$instance) return self::$instance;
+        if (self::$server) return self::$server;
 
         static::initEnv();
 
@@ -31,8 +26,6 @@ class Fly
             $dispatcher = new EventDispatcher();
 
         echo "[INFO] server dispatcher created\n";
-
-        static::$instance = new static();
 
         $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
@@ -42,7 +35,7 @@ class Fly
 
         static::$server->createSwooleServer();
 
-        return self::$instance;
+        return self::$server;
     }
 
     static protected function initEnv()
@@ -56,29 +49,13 @@ class Fly
 
     }
 
-    public static function getInstance($options = null): self
+    public static function getServer($options = null)
     {
 
-        if (!self::$instance) {
+        if (!self::$server) {
             static::init($options);
         }
-        return self::$instance;
-    }
-
-    function start()
-    {
-        static::$server->start();
-    }
-
-
-    function getDispatcher()
-    {
-        return static::$server->getDispatcher();
-    }
-
-    function getServer()
-    {
-        return static::$server;
+        return self::$server;
     }
 
 }
