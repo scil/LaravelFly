@@ -14,19 +14,19 @@ Trait Laravel
      * because most of Coroutine-Friendly Services are made only by \co::getUid()
      * without using swoole_server::$worker_id, they can not distinguish coroutines in different workers.
      *
-     * @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application|\LaravelFly\Greedy\Application
+     * @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application
      */
     protected $app;
 
     /**
      * An laravel kernel instance living always with a worker.
      *
-     * @var \LaravelFly\Map\Kernel|\LaravelFly\Simple\Kernel|\LaravelFly\Greedy\Kernel
+     * @var \LaravelFly\Map\Kernel|\LaravelFly\Simple\Kernel
      */
     protected $kernel;
 
     /**
-     * @return \LaravelFly\Map\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application
+     * @return \LaravelFly\Map\Application|\LaravelFly\Simple\Application
      */
     public function getApp()
     {
@@ -35,7 +35,7 @@ Trait Laravel
 
     public function startLaravel()
     {
-        /** @var \LaravelFly\Map\Application|\LaravelFly\Greedy\Application|\LaravelFly\Simple\Application $app */
+        /** @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application $app */
         $this->app = $app = new $this->appClass($this->root);
 
         /** @var \LaravelFly\Server\ServerInterface|\LaravelFly\Server\HttpServer|\LaravelFly\Server\FpmHttpServer $this */
@@ -67,7 +67,7 @@ Trait Laravel
     /**
      * convert swoole request info to php global vars
      *
-     * only for Mode One or Greedy
+     * only for Mode One
      *
      * @param \swoole_http_request $request
      * @see https://github.com/matyhtf/framework/blob/master/libs/Swoole/Request.php setGlobal()

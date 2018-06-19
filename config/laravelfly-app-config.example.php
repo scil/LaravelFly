@@ -4,7 +4,7 @@ if (!defined('LARAVELFLY_MODE')) return [];
 
 return [
     /**
-     * For Mode Simple, Map or Greedy.
+     * For Mode Simple, Map
      *
      * @todo support Mode Map
      */
@@ -25,7 +25,7 @@ return [
         (env('APP_ENV') === 'production' || env('APP_ENV') === 'product'),
 
     /**
-     * useless providers. For Mode Simple, Map or Greedy.
+     * useless providers. For Mode Simple, Map
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -42,7 +42,7 @@ return [
     ] : []),
 
     /**
-     * Providers to reg and boot in each request.For Mode Simple, Map or Greedy.
+     * Providers to reg and boot in each request.For Mode Simple, Map
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -51,7 +51,7 @@ return [
 
 
     /**
-     * Which properties of base services need to backup. Only for Mode Simple or Greedy
+     * Which properties of base services need to backup. Only for Mode Simple
      *
      * See: Illuminate\Foundation\Application::registerBaseServiceProviders
      */

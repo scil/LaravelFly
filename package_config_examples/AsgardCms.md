@@ -10,17 +10,6 @@ https://asgardcms.com/install
 Modules\Core\Providers\AsgardServiceProvider::class,
 ```
 
-2 if you try Greedy mode, in the `providers_in_worker` array ,make sure `paths` and `views` under `view.__obj__.finder` are uncommented.
-```
-'view' => [
-     'obj.finder' => [
-          'paths',
-          'views',
-    ],
-],
-```
-To backup them is often necessary ,as Asgard frontend and backend use different Themes by default . 
-
 ## asgard/app/Providers/AppServiceProvider.php 
 comment this line:
 ```

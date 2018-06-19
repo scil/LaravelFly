@@ -75,7 +75,7 @@ class HttpServer extends Common implements ServerInterface
     }
 
     /**
-     * handle request for Mode Simple or Greedy
+     * handle request for Mode Simple
      *
      * @param \swoole_http_request $request
      * @param \swoole_http_response $response

@@ -34,9 +34,6 @@ class Kernel extends HttpKernel
         \LaravelFly\Map\Bootstrap\ResolveSomeFacadeAliases::class,
         \LaravelFly\Map\Bootstrap\ResetServiceProviders::class,
 
-        //todo
-//        \LaravelFly\Greedy\Bootstrap\FindViewFiles::class,
-
     ];
 
     function __clone()

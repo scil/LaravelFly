@@ -14,8 +14,6 @@ if (defined('LARAVELFLY_MODE')) {
         class WhichKernel extends \LaravelFly\Map\Kernel{}
     } elseif (LARAVELFLY_MODE === 'FpmLike') {
         class WhichKernel extends HttpKernel{}
-    } else {
-        class WhichKernel extends \LaravelFly\Greedy\Kernel{}
     }
 } else {
     class WhichKernel extends HttpKernel{}

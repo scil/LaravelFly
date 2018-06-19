@@ -53,21 +53,9 @@ The "$bootstrappers" is what Laravel do before handling a request, LaravelFly ex
 
 In Mode Simple, "RegisterProviders" is placed on "WorkerStart", while "BootProviders" is placed on "request". That means, all providers are registered before any requests and booted after each request.The only exception is, providers in "config('laravelfly.providers_in_request')" are registered and booted after each request.
 
-In Mode Map or Mode Greedy, providers in "config('laravelfly.providers_on_worker')" are registered and booted before any request. Other providers follow Mode Simple rule. 
+In Mode Map, providers in "config('laravelfly.providers_on_worker')" are registered and booted before any request. Other providers follow Mode Simple rule. 
 
-And In Mode Map or Mode Greedy, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".
-
-In Mode Greedy, response to homepage visit would be 1, 2, 3, 4,.. until current swooler worker reach to server config 'max_request' 
-```
-// routes/web.php
-$a=0;
-Route::get('/',function()use(&$a){
-    return ++$a;
-});
-```
-Note, Mode Greedy is still experimental and only for study.
-
-Mode Map is under dev and is future.
+And In Mode Map, you can define which singleton services to made before any request in "config('laravelfly.providers_in_worker')".
 
 ### Challenge: data pollution
 
@@ -75,11 +63,11 @@ Objects which created before request may be changed during a request, and the ch
 
 Global variables and static members have similar problems.
 
-Mode Map is more complicated than Mode Simple or Greedy. Requests are not handled one by one.
+Mode Map is more complicated than Mode Simple. Requests are not handled one by one.
 
 There are three solutions..
 
-The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.This method is call Mode Simple or Mode Greedy. Mode Simple only handle laravel's key objects, such as app, event. Mode Greedy tries to load services as many as possible, such as db, cache. Note: Mode Greedy is only for study.
+The first is to backup some objects before any request, and restore them after each request .`\LaravelFly\Application` extends `\Illuminate\Foundation\Application` , use method "backUpOnWorker" to backup, and use method "restoreAfterRequest" to restore.This method is call Mode Simple. Mode Simple only handle laravel's key objects, such as app, event. 
  
 The first solution can not use swoole's coroutine.
 

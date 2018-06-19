@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Simple, Map, FpmLike or Greedy
+ * Simple, Map, FpmLike
  *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
- * Greedy: only for study
  */
 if(!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
     'Simple'
