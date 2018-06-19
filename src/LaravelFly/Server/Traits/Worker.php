@@ -74,6 +74,10 @@ Trait Worker
 
             if(!file_exists($item)) {
                 echo "[WARN] not exists: $item.\n";
+                echo $this->colorize(
+                    "[WARN]  not exists: $item.\n",
+                    'WARNING'
+                );
                 continue;
             }
 

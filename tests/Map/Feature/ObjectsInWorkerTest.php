@@ -87,8 +87,8 @@ class ObjectsInWorkerTest extends MapTestCase
 
         (new Loader(''))->setEnvironmentVariable('APP_ENV','production');
         @unlink(static::$laravelAppRoot.'/bootstrap/cache/config.php');
-        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_config_map.php');
-        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_config_simple.php');
+        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_ps_map.php');
+        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_ps_simple.php');
 
     }
 

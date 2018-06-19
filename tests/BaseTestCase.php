@@ -98,7 +98,7 @@ abstract class BaseTestCase extends TestCase
 
     static protected function makeCommonServer()
     {
-        if( static::$commonServer ) return static::$commonServer;
+        if (static::$commonServer) return static::$commonServer;
 
         static::$commonServer = new \LaravelFly\Server\Common();
 
@@ -107,9 +107,10 @@ abstract class BaseTestCase extends TestCase
         $d->setAccessible(true);
         $options = $d->getValue(static::$commonServer);
         $options['pre_include'] = false;
+        $options['colorize'] = false;
         static::$default = $options;
 
-        return  static::$commonServer;
+        return static::$commonServer;
     }
 
     static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
@@ -119,12 +120,14 @@ abstract class BaseTestCase extends TestCase
                 define($name, $val);
         }
 
-        $file_options = require $config_file;
-
-        $options = array_merge($file_options, $options);
+        $options['colorize'] = false;
 
         if (!isset($options['pre_include']))
             $options['pre_include'] = false;
+
+        $file_options = require $config_file;
+
+        $options = array_merge($file_options, $options);
 
         $fly = \LaravelFly\Fly::init($options);
 
@@ -165,7 +168,7 @@ abstract class BaseTestCase extends TestCase
      * server::setServerPropSwoole may produce error:
      *  Fatal error: Swoole\Server::__construct(): eventLoop has already been created. unable to create swoole_server.
      */
-    function setServerPropSwoole($options, $server=null): \swoole_http_server
+    function setServerPropSwoole($options, $server = null): \swoole_http_server
     {
         $server = $server ?: static::$commonServer;
 

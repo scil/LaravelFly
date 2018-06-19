@@ -39,8 +39,8 @@ class ConfigCacheCommand extends \Illuminate\Foundation\Console\ConfigCacheComma
         );
 
 
-        $this->files->delete($this->laravel->bootstrapPath('cache/laravelfly_config_simple.php'));
-        $this->files->delete($this->laravel->bootstrapPath('cache/laravelfly_config_map.php'));
+        $this->files->delete($this->laravel->bootstrapPath('cache/laravelfly_ps_simple.php'));
+        $this->files->delete($this->laravel->bootstrapPath('cache/laravelfly_ps_map.php'));
         $this->info("[LaravelFly] Providers configuration for fly deleted successfully!");
 
 

@@ -8,6 +8,7 @@ use Illuminate\Contracts\Foundation\Application;
 class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfiguration
 {
 
+    var $service_cache_file = 'cache/laravelfly_ps_map.php';
 
     /**
      * @param \LaravelFly\Map\Application $app
@@ -16,17 +17,13 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
     {
         parent::bootstrap($app);
 
-        if (file_exists($cacheFile = $app->bootstrapPath('cache/laravelfly_config_map.php')) &&
-            ($mtime = filemtime($cacheFile)) > filemtime($app->getServer()->getConfig('conf')) &&
-            $mtime > filemtime($app->configPath('laravelfly.php')) &&
-            $mtime > filemtime($app->configPath('app.php')) &&
-            $mtime > filemtime($app->basePath('composer.lock')) &&   // because PackageManifest::class
-            (
-            file_exists($envFlyFile = $app->configPath($app['env'] . '/laravelfly.php')) ?
-                $mtime > filemtime($envFlyFile) : true)
-        ) {
+        if (file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
+            echo \LaravelFly\Fly::getInstance()->getServer()->colorize(
+                "[WARN] include: $cacheFile
+                if any configs or composer.json changed, please re-run 'php artisan config:cache'\n",
+                'WARNING'
+            );
             list($CFServices, $psOnWork, $psAcross, $psInRequest) = require $cacheFile;
-            echo "[INFO] include: $cacheFile\n";
         } else {
 
             $appConfig = $app->make('config');
@@ -93,10 +90,6 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             // ensure aliases cache file not outdated
             @unlink($app->bootstrapPath('/cache/laravelfly_aliases.php'));
 
-            if (file_exists($cached = $app->getCachedConfigPath())) {
-                echo "[NOTE] include config cache $cached, 
-               if it's outdated please re-run 'php artisan config:cache'\n";
-            }
         }
 
 

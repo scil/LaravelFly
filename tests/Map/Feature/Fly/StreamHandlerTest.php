@@ -12,7 +12,7 @@ class StreamHandlerTest extends MapTestCase
     {
         parent::setUpBeforeClass();
 
-        static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
+        static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1,'pre_include'=>false]);
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 

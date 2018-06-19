@@ -46,6 +46,7 @@ class Common
         'pre_files' => [],
         'log_cache' => 5,
         'conf' => null, // server config file
+        'colorize' => true,
     ];
 
     protected static $mapFlyFiles = [
@@ -173,8 +174,10 @@ class Common
             is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))) {
 
             $kernelClass = \LaravelFly\Kernel::class;
-            echo "[WARN] LaravelFly default kernel used: $kernelClass, 
-      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md\n\n";
+            echo $this->colorize(
+                "[WARN] LaravelFly default kernel used: $kernelClass, 
+      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md\n", 'WARNING'
+            );
 
         }
         $this->kernelClass = $kernelClass;
@@ -226,6 +229,9 @@ class Common
         $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
         $swoole->set($options);
+
+        if ($this->options['daemonize'])
+            $this->options['colorize'] = false;
 
         $this->setListeners();
 
@@ -321,5 +327,28 @@ class Common
         $this->atomicMemory[$name]->set((int)$value);
     }
 
+    function colorize($text, $status)
+    {
+        if (!$this->getConfig('colorize')) return $text;
+
+        $out = "";
+        switch ($status) {
+            case "SUCCESS":
+                $out = "[42m"; //Green background
+                break;
+            case "FAILURE":
+                $out = "[41m"; //Red background
+                break;
+            case "WARNING":
+                $out = "[43m"; //Yellow background
+                break;
+            case "NOTE":
+                $out = "[44m"; //Blue background
+                break;
+            default:
+                throw new Exception("Invalid status: " . $status);
+        }
+        return chr(27) . "$out" . "$text" . chr(27) . "[0m";
+    }
 
 }
