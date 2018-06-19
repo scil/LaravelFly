@@ -47,6 +47,7 @@ class Common
         'log_cache' => 5,
         'conf' => null, // server config file
         'colorize' => true,
+        'early_laravel' => false,
     ];
 
     protected static $mapFlyFiles = [
@@ -225,6 +226,8 @@ class Common
     public function createSwooleServer(): \swoole_http_server
     {
         $options = $this->options;
+
+        if($options['early_laravel']) $this->startLaravel();
 
         $this->dispatcher->dispatch('server.creating',
             new GenericEvent(null, ['server' => $this, 'options' => $options]));

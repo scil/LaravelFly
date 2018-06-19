@@ -20,7 +20,7 @@ class Fly
     {
         if (self::$server) return self::$server;
 
-        static::initEnv();
+        static::initEnv($options);
 
         if (null === $dispatcher)
             $dispatcher = new EventDispatcher();
@@ -38,8 +38,10 @@ class Fly
         return self::$server;
     }
 
-    static protected function initEnv()
+    static protected function initEnv($options)
     {
+        if($options['early_laravel']??false)
+            define('WORKER_COROUTINE_ID',-1);
 
         require_once __DIR__ . '/../functions.php';
 

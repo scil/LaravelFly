@@ -32,42 +32,10 @@ class HttpServer extends Common implements ServerInterface
 
         $this->workerStartHead($server, $worker_id);
 
-        $this->startLaravel();
+        if(!$this->getConfig('early_laravel')) $this->startLaravel();
 
-        /**
-         * instance a fake request then bootstrap
-         *
-         * new UrlGenerator need a request.
-         * In Mode Simple, no worry about it's fake, because
-         * app['url']->request will update when app['request'] changes, as rebinding is used
-         * <code>
-         * <?php
-         * $url = new UrlGenerator(
-         *  $routes, $app->rebinding(
-         *      'request', $this->requestRebinder()
-         *  )
-         * );
-         * ?>
-         *  "$app->rebinding( 'request',...)"
-         * </code>
-         * @see  \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
-         *
-         */
-        $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
-
-        try {
-            $this->kernel->bootstrap();
-        } catch (\Throwable $e) {
-            echo "[ERROR] bootstrap: $e\n";
-            $server->shutdown();
-        }
-
-        // the fake request is useless, but harmless too
-        // $this->app->forgetInstance('request');
-
-
-        if ($worker_id == 0) {
-            $this->workerZeroStartTail($server, ['downDir' => $this->path('storage/framework/')]);
+        if (0 == $worker_id) {
+            $this->workerZeroStartTail($server);
         }
 
         $this->workerStartTail($server, $worker_id);

@@ -131,6 +131,8 @@ return [
      * include laravel's core files befor server starts
      *
      * The core files will not support hot reload because they are included before workers start.
+     * This is not big flow when LaravelFly is working with nginx/apache together.
+     * There's are some nginx conf examples to let php-fpm handles request when LaravelFly is restarting.
      *
      */
     'pre_include' =>true,
@@ -143,6 +145,16 @@ return [
      * 2. The files will not support hot reload
      */
     'pre_files' => [],
+
+    /**
+     *  if Laravel Application instanced before server starts.
+     *
+     * no need worry about memory leak. Because the Laravel Application instance would be copied into
+     * a new process when each swoole worker started.
+     *
+     * The only flaw is that it make LaravelFly not supporting hot reload any more, like 'pre_include'
+     */
+    'early_laravel' => false,
 
     /**
      * In each worker process, Larave log will not write log files until the number of log records reach 'log_cache'

@@ -24,7 +24,7 @@ class FpmHttpServer extends Common implements ServerInterface
         $app = new $this->appClass($this->root);
 
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => $request]);
-        $this->dispatcher->dispatch('app.created', $event);
+        $this->dispatcher->dispatch('laravel.created', $event);
         printf("[INFO] pid %u: $this->appClass instanced\n", getmypid());
 
         $app->singleton(

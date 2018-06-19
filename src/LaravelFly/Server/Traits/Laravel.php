@@ -33,7 +33,7 @@ Trait Laravel
         return $this->app;
     }
 
-    public function startLaravel()
+    public function startLaravel(\swoole_http_server $server=null)
     {
         /** @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application $app */
         $this->app = $app = new $this->appClass($this->root);
@@ -56,11 +56,43 @@ Trait Laravel
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
-        printf("[INFO] event app.created for $this->appClass (pid %u)\n", getmypid());
+        /**
+         * instance a fake request then bootstrap
+         *
+         * new UrlGenerator need a request.
+         * In Mode Simple, no worry about it's fake, because
+         * app['url']->request will update when app['request'] changes, as rebinding is used
+         * <code>
+         * <?php
+         * $url = new UrlGenerator(
+         *  $routes, $app->rebinding(
+         *      'request', $this->requestRebinder()
+         *  )
+         * );
+         * ?>
+         *  "$app->rebinding( 'request',...)"
+         * </code>
+         * @see  \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
+         *
+         */
+        $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
+
+        try {
+            $this->kernel->bootstrap();
+        } catch (\Throwable $e) {
+            echo "[ERROR] bootstrap: $e\n";
+            $server && $server->shutdown();
+        }
+
+        // the fake request is useless, but harmless too
+        // $this->app->forgetInstance('request');
+
+
+        printf("[INFO] event laravel.created for $this->appClass (pid %u)\n", getmypid());
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);
-        $this->dispatcher->dispatch('app.created', $event);
+        $this->dispatcher->dispatch('laravel.created', $event);
 
     }
 
