@@ -21,20 +21,25 @@ return [
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
      */
-    'view_compile_1' => env('APP_ENV') === 'production' || env('APP_ENV') === 'product',
+    'view_compile_1' => LARAVELFLY_CF_SERVICES['view.finder'] &&
+        (env('APP_ENV') === 'production' || env('APP_ENV') === 'product'),
 
     /**
      * useless providers. For Mode Simple, Map or Greedy.
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
-    'providers_ignore' => [
+    'providers_ignore' => array_merge([
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         Fideloper\Proxy\TrustedProxyServiceProvider::class,
         LaravelFly\Providers\CommandsServiceProvider::class,
         'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
-    ],
+    ], LARAVELFLY_CF_SERVICES['broadcast'] ? [
+        Illuminate\Broadcasting\BroadcastManager::class,
+        Illuminate\Contracts\Broadcasting\Broadcaster::class,
+        App\Providers\BroadcastServiceProvider::class
+    ] : []),
 
     /**
      * Providers to reg and boot in each request.For Mode Simple, Map or Greedy.
@@ -123,13 +128,15 @@ return [
      *     *   $this->app->singleton('hash', function ($app) { ... });
      *
      * formats:
-     *      proverder2=> [
+     *      proverder1=> [],           // this provider will be booted on worker
+     *      proverder2=> true,           // this provider will be booted on worker
+     *      proverder3=> [
      *        '_replace' => 'provider1', // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
      *        'singleton_service_1' => true,  //  service will be made on worker
      *        'singleton_service_2' => false, //  service will not be made on worker,
      *                                            even if the service has apply if using coroutineFriendlyServices()
      *      ],
-     *      proverder3=> true,           // this provider will be booted on worker
+     *
      *      proverder4=> false,           // this provider will not be booted on worker
      *      proverder5=> null,           // this provider will not be booted on worker too.
      */
@@ -210,10 +217,16 @@ return [
          */
         App\Providers\AppServiceProvider::class => [],
 
+        /* depends */
         //todo
-        App\Providers\AuthServiceProvider::class => [],
+        App\Providers\AuthServiceProvider::class => false,
+
         App\Providers\BroadcastServiceProvider::class => LARAVELFLY_CF_SERVICES['broadcast'] ? [] : false,
+
+        /* depends */
         App\Providers\EventServiceProvider::class => [],
+
+        /* depends */
         App\Providers\RouteServiceProvider::class => [],
 
         // Collision is an error handler framework for console/command-line PHP applications such as laravelfly

@@ -2,14 +2,12 @@
 /**
  * add cache for view compiled file path
  *
- * this is implemented as trait
- * with the purpose to play the role of the abstract class Illuminate\View\Compilers\Compiler
+ * overwrite the methods of the abstract class Illuminate\View\Compilers\Compiler
  */
 
 namespace LaravelFly\Map\Illuminate\View;
 
-
-trait Compiler1
+class BladeCompiler_1 extends \Illuminate\View\Compilers\BladeCompiler
 {
     /**
      * save view info.
@@ -59,3 +57,4 @@ trait Compiler1
         return false;
     }
 }
+

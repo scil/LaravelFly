@@ -42,11 +42,11 @@ if(!defined('LARAVELFLY_CF_SERVICES')) define('LARAVELFLY_CF_SERVICES',[
     'filesystem.cloud' => false,
     'broadcast' => false,
 
-    // to false if app('hash')->setRounds may be called in a request. If we want to make 'hash' COROUTINE-FRIENDLY, it should be always same.
+    // set false if app('hash')->setRounds may be called in a request. If we want to make 'hash' COROUTINE-FRIENDLY, it should be always same.
     'hash' => true,
 
     /**
-     * to false if same view name refers to different view files in different requests.
+     * set false if same view name refers to different view files in different requests.
      * for example:
      *      view 'home' may points to 'guest_location/home.blade.php' for a guest ,
      *      while to 'admin_location/home.blade.php' for an admin
