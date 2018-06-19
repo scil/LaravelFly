@@ -226,6 +226,11 @@ class Common
     {
         $options = $this->options;
 
+        $this->dispatcher->dispatch('server.creating',
+            new GenericEvent(null, ['server' => $this, 'options' => $options]));
+
+        printf("[INFO] event server.creating for %s\n", static::class);
+
         $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
         $swoole->set($options);
@@ -236,11 +241,6 @@ class Common
         $this->setListeners();
 
         $swoole->fly = $this;
-
-        $this->dispatcher->dispatch('server.created',
-            new GenericEvent(null, ['server' => $this, 'options' => $options]));
-
-        printf("[INFO] event server.created for %s\n", static::class);
 
         return $swoole;
     }
