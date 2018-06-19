@@ -19,9 +19,9 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         if (file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
             echo \LaravelFly\Fly::getInstance()->getServer()->colorize(
-                "[WARN] include: $cacheFile
+                "[NOTE] include: $cacheFile
                 if any configs or composer.json changed, please re-run 'php artisan config:cache'\n",
-                'WARNING'
+                'NOTE'
             );
             list($CFServices, $psOnWork, $psAcross, $psInRequest) = require $cacheFile;
         } else {

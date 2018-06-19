@@ -340,10 +340,11 @@ class Common
                 $out = "[41m"; //Red background
                 break;
             case "WARNING":
-                $out = "[43m"; //Yellow background
+                $out = "[41m"; //Red background
                 break;
             case "NOTE":
-                $out = "[44m"; //Blue background
+                $out = "[43m"; //Yellow background
+                // $out = "[44m"; //Blue background
                 break;
             default:
                 throw new Exception("Invalid status: " . $status);
