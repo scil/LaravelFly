@@ -53,8 +53,12 @@ if(!defined('LARAVELFLY_CF_SERVICES')) define('LARAVELFLY_CF_SERVICES',[
     'view.finder' => true,
 
     /**
-     * set this false if config maybe changed during any request.
-     * e.g. Debugbar changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
+     * set this false if any items of app('config') may be changed during a request, because
+     * for Mode Simple, it's necessary to restore its origin value after each request.
+     * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
+     *
+     * In most cases, it's not necessary to set it false. Except for old versions of Debugbar
+     * which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
      * restore its origin value to allow Debugbar continue work in other requests.
      *
      */

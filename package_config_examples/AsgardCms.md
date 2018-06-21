@@ -17,9 +17,8 @@ comment this line:
 			$this->app->register('Barryvdh\Debugbar\ServiceProvider');
 		}
 ```
-If you'd like to use Debugbar, please follow the steps in [Debugbar.md](Debugbar.md)
 
 ## Final
-All of AsgardCms services are hard to registered or booted on work. All of them are registered and booted in each request. So AsgardCms can't use LaravelFly power. I use AsgardCms to make sure Laravel works fine on LaravelFly.
+All of AsgardCms services are hard to registered or booted on WorkerStart. All of them are registered and booted in each request. So AsgardCms can't use LaravelFly power. I use AsgardCms to make sure Laravel works fine on LaravelFly.
 
 
