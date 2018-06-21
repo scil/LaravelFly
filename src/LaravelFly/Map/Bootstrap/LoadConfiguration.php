@@ -23,16 +23,19 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 if any configs or composer.json changed, please re-run 'php artisan config:clear'\n",
                 'NOTE'
             );
-            list($CFServices, $psOnWork, $psAcross, $psInRequest) = require $cacheFile;
+            list('CFServices' => $CFServices,
+                'psOnWork' => $psOnWork,
+                'psAcross' => $psAcross,
+                'psInRequest' => $psInRequest) = require $cacheFile;
         } else {
 
             $appConfig = $app->make('config');
 
-            if(!$appConfig['laravelfly']){
+            if (!$appConfig['laravelfly']) {
                 die("no file config/laravelfly.php, please run `php artisan vendor:publish --tag=fly-app`");
             }
 
-            $psInRequest = $appConfig['laravelfly.providers_in_request']?:[];
+            $psInRequest = $appConfig['laravelfly.providers_in_request'] ?: [];
 
             $CFServices = [];
             $providersReplaced = [];
@@ -40,6 +43,11 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             foreach ($app['config']['laravelfly.providers_on_worker'] as $provider => $providerConfig) {
 
                 if ($providerConfig === false || $providerConfig === null) continue;
+
+                if(is_int($provider)){
+                    $provider = $providerConfig;
+                    $providerConfig = true;
+                }
 
                 if (!class_exists($provider)) continue;
 
@@ -78,11 +86,16 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $providersReplaced,
                 $psOnWork,
                 $psInRequest,
-                $appConfig['laravelfly.providers_ignore']?:[]
+                $appConfig['laravelfly.providers_ignore'] ?: []
             );
 
             file_put_contents($cacheFile, '<?php return ' .
-                var_export([$CFServices, $psOnWork, $psAcross, $psInRequest,], true) .
+                var_export([
+                    'CFServices' => $CFServices,
+                    'psOnWork' => $psOnWork,
+                    'psAcross' => $psAcross,
+                    'psInRequest' => $psInRequest
+                ], true) .
                 ';' . PHP_EOL);
 
             echo "[INFO] cache created: $cacheFile\n";

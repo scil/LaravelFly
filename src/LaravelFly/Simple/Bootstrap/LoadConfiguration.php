@@ -23,7 +23,8 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 if any configs or composer.json changed, please re-run 'php artisan config:clear'\n",
                 'NOTE'
             );
-            list($psAcross, $psInRequest) = require $cacheFile;
+            list('psAcross' => $psAcross,
+                'psInRequest' => $psInRequest) = require $cacheFile;
         } else {
 
             $appConfig = $app->make('config');
@@ -41,7 +42,10 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             );
 
             file_put_contents($cacheFile, '<?php return ' .
-                var_export([$psAcross, $psInRequest,], true) .
+                var_export([
+                    'psAcross' => $psAcross,
+                    'psInRequest' => $psInRequest
+                ], true) .
                 ';' . PHP_EOL);
 
             echo "[INFO] cache created: $cacheFile\n";

@@ -116,8 +116,9 @@ return [
      *     *   $this->app->singleton('hash', function ($app) { ... });
      *
      * formats:
-     *      proverder1=> [],           // this provider will be booted on worker
+     *      proverder,                   // this provider will be booted on worker
      *      proverder2=> true,           // this provider will be booted on worker
+     *      proverder1=> [],             // this provider will be booted on worker
      *      proverder3=> [
      *        '_replace' => 'provider1', // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
      *        'singleton_service_1' => true,  //  service will be made on worker
