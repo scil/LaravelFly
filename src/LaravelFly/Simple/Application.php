@@ -49,7 +49,7 @@ class Application  extends \Illuminate\Foundation\Application
 
     ];
     protected $needBackupServiceAttributes = [];
-    protected $needBackupConfigs = [];
+    protected $backupedConfig = null;
     protected $backupedValuesBeforeRequest = [];
     protected $restoreTool = [];
 
@@ -82,9 +82,9 @@ class Application  extends \Illuminate\Foundation\Application
     }
 
 
-    public function setNeedBackupConfigs($need)
+    public function setBackupedConfig()
     {
-        $this->needBackupConfigs = $need;
+        $this->backupedConfig = clone $this->make('config');
     }
 
     public function addNeedBackupServiceAttributes($need)
@@ -117,8 +117,8 @@ class Application  extends \Illuminate\Foundation\Application
     public function restoreAfterRequest()
     {
 
-        if ($this->needBackupConfigs) {
-            $this->make('config')->set($this->needBackupConfigs);
+        if ($this->backupedConfig) {
+            $this->instance('config',clone $this->backupedConfig);
         }
 
         // clear all, not just request

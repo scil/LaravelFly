@@ -4,18 +4,6 @@ if (!defined('LARAVELFLY_MODE')) return [];
 
 return [
     /**
-     * For Mode Simple, Map
-     *
-     * @todo support Mode Map
-     */
-    'config_changed_in_requests' => [
-        /** depends
-         * Debugbar is disabled after its booting, so it's necessary to maintain this config for each request.
-         * // 'debugbar.enabled',
-         */
-    ],
-
-    /**
      * For each worker, if a view file is compiled max one time. Only For Mode Map
      *
      * If true, Laravel not know a view file changed until the swoole workers restart.

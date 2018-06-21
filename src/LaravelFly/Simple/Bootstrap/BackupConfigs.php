@@ -10,18 +10,10 @@ class BackupConfigs
     public function bootstrap(Application $app)
     {
 
-        $appConfig = $app->make('config');
+        if (!(LARAVELFLY_CF_SERVICES['config'] ?? true)) {
 
-
-
-        $needBackup = [];
-        foreach ($appConfig['laravelfly.config_changed_in_requests']?:[] as $config) {
-            if (isset($appConfig[$config])) {
-                $needBackup[$config] = $appConfig[$config];
-            }
-
+            $app->setBackupedConfig();
         }
-        $app->setNeedBackupConfigs($needBackup);
 
     }
 }

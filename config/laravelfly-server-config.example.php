@@ -51,6 +51,15 @@ if(!defined('LARAVELFLY_CF_SERVICES')) define('LARAVELFLY_CF_SERVICES',[
      *      while to 'admin_location/home.blade.php' for an admin
      */
     'view.finder' => true,
+
+    /**
+     * set this false if config maybe changed during any request.
+     * e.g. Debugbar changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
+     * restore its origin value to allow Debugbar continue work in other requests.
+     *
+     */
+    'config' => true,
+
 ]);
 
 /**
