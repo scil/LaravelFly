@@ -28,11 +28,13 @@ Laravel's services/resources can be loaed following the start of swoole server o
 
 This means: There's an application in each worker process. When a new worker starts, a new application is made.
 
-Goods:
-* Hot Reload On Code Change. You can reload LaravelFly server manually or automatically with files monitor.
-* After a worker has handled 'max_request' requests, it will stop and a new worker starts.Maybe it  helps set aside suspicions that php can't run long time.
+
+* Good 1: Hot Reload On Code Change. You can reload LaravelFly server manually or automatically with files monitor.
+* Good 2: After a worker has handled 'max_request' requests, it will stop and a new worker starts.Maybe it  helps set aside suspicions that php can't run long time.
 
 BTW, in Mode FpmLike, all objects are loaded onRequest, like php-fpm. Mode FpmLike does nothing except converting swoole request to laravel request and laravel reponse to swoole response.It just provides a opportunity to use tinker() or similar shells online.
+
+There is a server config 'early_laravel' which allows Laravel Appication created before `onWorkerStart`. The Good 1 is lost, but the Good 2 is not lost.
 
 ### 2. Load services `onWorkerStart` as many as possbile?
 

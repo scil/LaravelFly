@@ -25,9 +25,11 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 [Start, Reload & Debug](doc/server.md)
 
-[Flow](doc/flow.md)
+[Coding Tips](doc/coding.md)
 
 [Events about LaravelFly](doc/events.md)
+
+[LaravelFly Execution Flow](doc/flow.md)
 
 [For Dev](doc/dev.md)
 
@@ -176,34 +178,6 @@ The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm
 
 Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects.
 
-## Tips for use
-
-### global vars are not global any more
-
-Global vars are only global in single swoole worker.
-
-Swoole workers run in different process, vars are not shared by different workers. 
-
-Methods to share vars between workers:
-* Swoole tools like Table, Channel, ...
-* Yac, Redis, Memcached, ...
-
-### php functions not fit LaravelFly
-
-name | replacement
------------- | ------------ 
-header | Laravel Api: $response->header
-setcookie | Laravel Api: $response->cookie
-
-### Mode Map
-
-Mode Map uses coroutine, so different requests can be handled by server concurrently. Suppose the server is handling a request, meet `co::sleep(3)` , then it goes to handle another request, later go back to the first request.
-
-The basic services have been converted to be Coroutine Friendly and some tests have added to make sure the converted files can follow Laravel's new releases.  
-
-There are some tips:
-* Do not use super global vars like $_GET, $_POST, they are different among requests.
-* If you use [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros), make sure they are always same in all of the requests. I've not made it Coroutine Friendly because I think in most situations they are always same.
 
 ## Todo
 

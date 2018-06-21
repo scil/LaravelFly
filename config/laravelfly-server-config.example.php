@@ -147,12 +147,13 @@ return [
     'pre_files' => [],
 
     /**
-     *  if Laravel Application instanced before server starts.
+     * If Laravel Application instanced before server starts.
      *
      * no need worry about memory leak. Because the Laravel Application instance would be copied into
      * a new process when each swoole worker started.
      *
-     * The little loss is that it make LaravelFly not supporting hot reload, like 'pre_include'
+     * It's good for production env.
+     * The little loss is that it make LaravelFly not supporting hot reload, like 'pre_include'.
      */
     'early_laravel' => false,
 
