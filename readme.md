@@ -23,13 +23,13 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 [Configuration](doc/config.md)
 
-[Start, Reload & Debug](doc/server.md)
+[Commands: Start, Reload & Debug](doc/server.md)
 
 [Coding Tips](doc/coding.md)
 
-[Using tinker when Laravel Working](doc/tinker.md)
-
 [Events about LaravelFly](doc/events.md)
+
+[Using tinker when Laravel Working](doc/tinker.md)
 
 [LaravelFly Execution Flow](doc/flow.md)
 

@@ -38,12 +38,6 @@ class ConfigCacheCommand extends \Illuminate\Foundation\Console\ConfigCacheComma
             ';' . PHP_EOL
         );
 
-
-        $this->files->delete($this->laravel->bootstrapPath('cache/laravelfly_ps_simple.php'));
-        $this->files->delete($this->laravel->bootstrapPath('cache/laravelfly_ps_map.php'));
-        $this->info("[LaravelFly] Providers configuration for fly deleted successfully!");
-
-
         $this->info('Configuration cached successfully!');
     }
 

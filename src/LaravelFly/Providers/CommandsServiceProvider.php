@@ -12,6 +12,11 @@ class CommandsServiceProvider extends ServiceProvider
         $this->app->extend('command.config.cache', function ($old,$app) {
             return new ConfigCacheCommand($app['files']);
         });
+
+        // overwrite artisan-command config.clear
+        $this->app->extend('command.config.clear', function ($old,$app) {
+            return new ConfigClearCommand($app['files']);
+        });
     }
 
     public function boot()
