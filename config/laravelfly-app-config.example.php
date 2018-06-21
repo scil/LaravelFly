@@ -9,7 +9,7 @@ return [
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
      */
-    'view_compile_1' => LARAVELFLY_CF_SERVICES['view.finder'] &&
+    'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] &&
         (env('APP_ENV') === 'production' || env('APP_ENV') === 'product'),
 
     /**
@@ -23,7 +23,7 @@ return [
         Fideloper\Proxy\TrustedProxyServiceProvider::class,
         LaravelFly\Providers\CommandsServiceProvider::class,
         'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
-    ], LARAVELFLY_CF_SERVICES['broadcast'] ? [
+    ], LARAVELFLY_SERVICES['broadcast'] ? [
         Illuminate\Broadcasting\BroadcastManager::class,
         Illuminate\Contracts\Broadcasting\Broadcaster::class,
         App\Providers\BroadcastServiceProvider::class
@@ -138,7 +138,7 @@ return [
             '_replace' => Illuminate\Auth\AuthServiceProvider::class,
         ],
         Illuminate\Broadcasting\BroadcastServiceProvider::class =>
-            LARAVELFLY_CF_SERVICES['broadcast'] ? [
+            LARAVELFLY_SERVICES['broadcast'] ? [
                 Illuminate\Broadcasting\BroadcastManager::class,
                 Illuminate\Contracts\Broadcasting\Broadcaster::class,
             ] : false,
@@ -163,12 +163,12 @@ return [
         Illuminate\Filesystem\FilesystemServiceProvider::class => [
             'files' => true,
             'filesystem.disk' => true,
-            'filesystem.cloud' => LARAVELFLY_CF_SERVICES['filesystem.cloud'],
+            'filesystem.cloud' => LARAVELFLY_SERVICES['filesystem.cloud'],
         ],
         /* This reg FormRequestServiceProvider, whose boot is related to request */
         // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
         Illuminate\Hashing\HashServiceProvider::class => [
-            'hash' => LARAVELFLY_CF_SERVICES['hash']
+            'hash' => LARAVELFLY_SERVICES['hash']
         ],
         Illuminate\Mail\MailServiceProvider::class => [],
 
@@ -179,7 +179,7 @@ return [
         Illuminate\Pipeline\PipelineServiceProvider::class => [],
         Illuminate\Queue\QueueServiceProvider::class => [],
         Illuminate\Redis\RedisServiceProvider::class => [
-            'redis' => LARAVELFLY_CF_SERVICES['redis'],
+            'redis' => LARAVELFLY_SERVICES['redis'],
         ],
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
         LaravelFly\Map\Illuminate\Session\SessionServiceProvider::class => [
@@ -210,7 +210,7 @@ return [
         //todo
         App\Providers\AuthServiceProvider::class => false,
 
-        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_CF_SERVICES['broadcast'] ? [] : false,
+        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : false,
 
         /* depends */
         App\Providers\EventServiceProvider::class => [],

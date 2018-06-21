@@ -91,7 +91,10 @@ class HttpServer extends Common implements ServerInterface
 
         $this->app->initForRequestCorontine($cid);
 
-        // why use clone for kernel, because there's a \App\Http\Kernel which is controlled by users
+        // why use clone for kernel, because
+        // there's a \App\Http\Kernel which is controlled by users and
+        // todo
+        // there's no objects using a ref to kernel
         $requestKernel = clone $this->kernel;
 
         $laravel_response = $requestKernel->handle($laravel_request);

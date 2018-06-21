@@ -22,7 +22,11 @@ return [
     $basePath.'/vendor/laravel/framework/src/Illuminate/Container/Container.php',
     $basePath.'/vendor/symfony/http-kernel/HttpKernelInterface.php',
 
-    // 'log_cache'
+    // for LARAVELFLY_SERVICES['config']===false
+    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Config/Repository.php',
+    $basePath . '/vendor/laravel/framework/src/Illuminate/Config/Repository.php',
+
+    // for server config 'log_cache'
 //    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php',
 //    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php',
 //    $basePath . '/vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php',

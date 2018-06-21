@@ -2,12 +2,14 @@
 
 namespace LaravelFly\Simple;
 
+use Illuminate\Config\Repository;
 use Illuminate\Events\EventServiceProvider;
 //use LaravelFly\Routing\RoutingServiceProvider;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Facade;
 
-class Application  extends \Illuminate\Foundation\Application
+class Application extends \Illuminate\Foundation\Application
 {
     use \LaravelFly\ApplicationTrait\ProvidersInRequest;
     use \LaravelFly\ApplicationTrait\InConsole;
@@ -49,7 +51,7 @@ class Application  extends \Illuminate\Foundation\Application
 
     ];
     protected $needBackupServiceAttributes = [];
-    protected $backupedConfig = null;
+    protected $backupedConfig = [];
     protected $backupedValuesBeforeRequest = [];
     protected $restoreTool = [];
 
@@ -84,7 +86,12 @@ class Application  extends \Illuminate\Foundation\Application
 
     public function setBackupedConfig()
     {
-        $this->backupedConfig = clone $this->make('config');
+        $config = $this->make('config');
+
+        $this->backupedConfig = $config->all();
+
+        $config->changedConfig = [];
+
     }
 
     public function addNeedBackupServiceAttributes($need)
@@ -94,6 +101,7 @@ class Application  extends \Illuminate\Foundation\Application
 
     public function backUpOnWorker()
     {
+
         foreach ($this->needBackUpAppAttributes as $attri) {
             $this->backupedValuesBeforeRequest[$attri] = $this->$attri;
         }
@@ -113,13 +121,9 @@ class Application  extends \Illuminate\Foundation\Application
 
     }
 
-
     public function restoreAfterRequest()
     {
 
-        if ($this->backupedConfig) {
-            $this->instance('config',clone $this->backupedConfig);
-        }
 
         // clear all, not just request
         Facade::clearResolvedInstances();
@@ -134,6 +138,16 @@ class Application  extends \Illuminate\Foundation\Application
 
         foreach ($this->restoreTool as $tool) {
             $tool();
+        }
+
+        if ($this->backupedConfig) {
+            $config = $this->make('config');
+
+            foreach ($config->changedConfig as $key) {
+                // [] is necessary, otherwise it may lead to array_merge(array,null)
+                $config->set($key, Arr::get($this->backupedConfig, $key, []));
+            }
+            $config->changedConfig = [];
         }
 
         $this->booted = false;
@@ -203,6 +217,6 @@ class Application  extends \Illuminate\Foundation\Application
                 }
             }
         };
-       }
+    }
 
 }

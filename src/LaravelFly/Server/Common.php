@@ -82,6 +82,11 @@ class Common
             'FileViewFinder.php' =>
                 '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
         ],
+        'config' => [
+            'Config/Repository.php' => [
+                '/vendor/laravel/framework/src/Illuminate/Config/Repository.php'
+            ]
+        ]
     ];
 
 
@@ -190,6 +195,9 @@ class Common
 
     static function includeFlyFiles(&$options)
     {
+        if (defined('LARAVELFLY_SERVICES') && !LARAVELFLY_SERVICES['config'])
+            include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Simple' ). 'Repository.php';
+
         static $mapLoaded = false;
         static $logLoaded = false;
 
@@ -201,9 +209,8 @@ class Common
                 require __DIR__ . "/../../fly/" . $f;
             }
 
-            if (!defined('LARAVELFLY_CF_SERVICES') || !LARAVELFLY_CF_SERVICES['view.finder'])
+            if (!defined('LARAVELFLY_SERVICES') || !LARAVELFLY_SERVICES['view.finder'])
                 include __DIR__ . '/../../fly/FileViewFinder.php';
-
         }
 
         if ($logLoaded) return;
@@ -227,7 +234,7 @@ class Common
     {
         $options = $this->options;
 
-        if($options['early_laravel']) $this->startLaravel();
+        if ($options['early_laravel']) $this->startLaravel();
 
         $this->dispatcher->dispatch('server.creating',
             new GenericEvent(null, ['server' => $this, 'options' => $options]));

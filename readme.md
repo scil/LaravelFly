@@ -84,8 +84,8 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 - [x] watch code changes and hot reload
 - [x] watch maintenance mode using swoole_event_add
 - [x] mysql coroutine
-- [ ] handle php config and laravel config like Zend in Mode Simple?
-- [ ] handle php config and laravel config in Mode Map?
+- [x] handle laravel config in Mode Simple and Mode Map
+- [ ] handle php config like Zend?
 - [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
 - [ ] mysql connection pool

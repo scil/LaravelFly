@@ -25,7 +25,6 @@ return [
     //$basePath.'/vendor/laravel/framework/src/Illuminate/Contracts/Support/Jsonable.php',
 
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Debug/ExceptionHandler.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Config/Repository.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Events/Dispatcher.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Cookie/Factory.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Cookie/QueueingFactory.php',
@@ -107,7 +106,6 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Arr.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Str.php',
     $basePath . '/vendor/symfony/debug/ErrorHandler.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Config/Repository.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/NamespacedItemResolver.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/AliasLoader.php',

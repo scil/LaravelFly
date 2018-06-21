@@ -12,6 +12,12 @@ trait Dict
     // protected static $arrayAttriForObj=[];
     protected static $corDict = [];
 
+    /**
+     * @param bool $listen
+     * some services sould be handled in
+     * \LaravelFly\Map\Application::initForRequestCorontine and unsetForRequestCorontine, so set $listen = false
+     *
+     */
     public function initOnWorker($listen = true)
     {
         if (static::$arrayAttriForObj ?? false) {

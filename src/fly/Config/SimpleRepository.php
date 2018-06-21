@@ -8,17 +8,20 @@ use Illuminate\Contracts\Config\Repository as ConfigContract;
 
 class Repository implements ArrayAccess, ConfigContract
 {
-    use \LaravelFly\Map\Util\Dict {
-    }
-    protected static $normalAttriForObj = [];
-    protected static $arrayAttriForObj = ['items'];
-
     /**
      * All of the configuration items.
      *
      * @var array
      */
-//    protected $items = [];
+    protected $items = [];
+
+
+    /**
+     * @var array configs changed during a request used by LaravelFly Mode Simple
+     *
+     * added by scil
+     */
+    public $changedConfig = [];
 
     /**
      * Create a new configuration repository.
@@ -28,9 +31,7 @@ class Repository implements ArrayAccess, ConfigContract
      */
     public function __construct(array $items = [])
     {
-        $this->initOnWorker(true);
-
-        static::$corDict[WORKER_COROUTINE_ID]['items'] = $items;
+        $this->items = $items;
     }
 
     /**
@@ -41,7 +42,7 @@ class Repository implements ArrayAccess, ConfigContract
      */
     public function has($key)
     {
-        return Arr::has(static::$corDict[\co::getUid()]['items'], $key);
+        return Arr::has($this->items, $key);
     }
 
     /**
@@ -57,7 +58,7 @@ class Repository implements ArrayAccess, ConfigContract
             return $this->getMany($key);
         }
 
-        return Arr::get(static::$corDict[\co::getUid()]['items'] , $key, $default);
+        return Arr::get($this->items, $key, $default);
     }
 
     /**
@@ -75,7 +76,7 @@ class Repository implements ArrayAccess, ConfigContract
                 list($key, $default) = [$default, null];
             }
 
-            $config[$key] = Arr::get(static::$corDict[\co::getUid()]['items'], $key, $default);
+            $config[$key] = Arr::get($this->items, $key, $default);
         }
 
         return $config;
@@ -92,8 +93,16 @@ class Repository implements ArrayAccess, ConfigContract
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
+//        $booted = app()->isBooted();
+
         foreach ($keys as $key => $value) {
-            Arr::set(static::$corDict[\co::getUid()]['items'], $key, $value);
+            Arr::set($this->items, $key, $value);
+            if (
+                // $booted &&
+                !in_array($key, $this->changedConfig)
+            ) {
+                $this->changedConfig[] = $key;
+            }
         }
     }
 
@@ -136,7 +145,7 @@ class Repository implements ArrayAccess, ConfigContract
      */
     public function all()
     {
-        return static::$corDict[\co::getUid()]['items'];
+        return $this->items;
     }
 
     /**
