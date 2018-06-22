@@ -19,9 +19,13 @@ If you enable `eval(tinker())` and see an error about mkdir, please start Larave
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
 
-Every time LaravelFly starts, it makes a config cache file `laravelfly_ps_map.php` or `laravelfly_ps_simple.php` located `bootstrap/cache`, you can run  
-`php artisan config:clear && php vendor/scil/laravel-fly/bin/fly start`   
-if config file `config/laravelfly.php` changed frequently.
+Every time LaravelFly starts, it makes a config cache file laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache, so if config file `config/laravelfly.php` changed frequently you can run  
+```
+alias ff='php artisan config:clear && php vendor/scil/laravel-fly/bin/fly start'
+
+ff
+```
+
 
 ## Doc
 
@@ -75,6 +79,16 @@ The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm
 
 Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects.
 
+## Todo Abut Avoiding Data Pollution
+
+- [x] Application.
+- [x] Base Services: Dispatcher/app('event'), Router/app('router') and UrlGenerator/app('url').
+- [x] Other Service Providers. configurable in config/laravel.php
+- [x] Facade.
+- [x] Laravel Config. configurable by the 'config' key of LARAVELFLY_SERVICES in fly.conf.php
+- [ ] Php Config. It's not supported in the near future. Tow reasons:    
+1. It's related with php internal function ini_set.  
+2. It's useless in 99% of cases where all of the php internal configs are same across multile requests.
 
 ## Todo
 
@@ -84,8 +98,6 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 - [x] watch code changes and hot reload
 - [x] watch maintenance mode using swoole_event_add
 - [x] mysql coroutine
-- [x] handle laravel config in Mode Simple and Mode Map
-- [ ] handle php config like Zend?
 - [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
 - [ ] mysql connection pool
