@@ -57,6 +57,8 @@ tinker use examples.
 ```php
 // visit private members
 sudo app()->booted
+sudo app('router')->routes->actionList 
+// Mode Map
 sudo $view= app()::$corDict[1]['instances']['view']
 
 // use Model or Controller without writing namespace, thanks to ClassAliasAutoloader
@@ -81,10 +83,13 @@ xdebug_call_class()
 $__file
 
 // check server pid and pidfile
-LaravelFly\Fly::getServer()
+Fly::getServer()
+//same as LaravelFly\Fly::getServer()
 
 // which class aliases are defined in tinker
 sudo app('tinker')->loader->classes
+
+sudo $middle = Fly::getServer()->kernel->middleware
 
 // run shell commands
 `pwd && ls `

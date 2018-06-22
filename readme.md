@@ -82,6 +82,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 ## Todo Abut Avoiding Data Pollution
 
 - [x] Application.
+- [x] Kernel.
 - [x] Base Services: Dispatcher/app('event'), Router/app('router') and UrlGenerator/app('url').
 - [x] Other Service Providers. configurable in config/laravel.php
 - [x] Facade.
