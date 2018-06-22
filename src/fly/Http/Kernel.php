@@ -13,6 +13,9 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+    use \LaravelFly\Map\Util\Dict;
+    protected static $normalAttriForObj = [];
+    protected static $arrayAttriForObj = ['middleware'];
 
     /**
      * The application implementation.
@@ -37,6 +40,65 @@ class Kernel extends HttpKernel
         \LaravelFly\Map\Bootstrap\ResetServiceProviders::class,
 
     ];
+
+
+    /*  coroutine start. This part only for coroutine */
+
+    public function __construct(\Illuminate\Contracts\Foundation\Application $app, Router $router)
+    {
+        parent::__construct($app, $router);
+
+        $this->initOnWorker(true);
+
+        static::$corDict[WORKER_COROUTINE_ID]['middleware'] = $this->middleware;
+    }
+
+    public function hasMiddleware($middleware)
+    {
+        return in_array($middleware, static::$corDict[\Co::getUid()]['middleware']);
+    }
+
+    public function prependMiddleware($middleware)
+    {
+        if (array_search($middleware, static::$corDict[\Co::getUid()]['middleware']) === false) {
+            array_unshift(static::$corDict[\Co::getUid()]['middleware'], $middleware);
+        }
+
+        return $this;
+    }
+
+    public function pushMiddleware($middleware)
+    {
+        if (array_search($middleware, static::$corDict[\Co::getUid()]['middleware']) === false) {
+            static::$corDict[\Co::getUid()]['middleware'][] = $middleware;
+        }
+
+        return $this;
+    }
+
+    protected function terminateMiddleware($request, $response)
+    {
+        $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
+            $this->gatherRouteMiddleware($request),
+            static::$corDict[\Co::getUid()]['middleware']
+        );
+
+        foreach ($middlewares as $middleware) {
+            if (!is_string($middleware)) {
+                continue;
+            }
+
+            list($name) = $this->parseMiddleware($middleware);
+
+            $instance = $this->app->make($name);
+
+            if (method_exists($instance, 'terminate')) {
+                $instance->terminate($request, $response);
+            }
+        }
+    }
+
+    /*  coroutine END */
 
 
     public function handle($request)
@@ -77,7 +139,7 @@ class Kernel extends HttpKernel
 
         return (new Pipeline($this->app))
             ->send($request)
-            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->through($this->app->shouldSkipMiddleware() ? [] : static::$corDict[\Co::getUid()]['middleware'])
             ->then($this->dispatchToRouter());
     }
 

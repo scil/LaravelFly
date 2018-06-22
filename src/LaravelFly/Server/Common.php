@@ -196,7 +196,7 @@ class Common
     static function includeFlyFiles(&$options)
     {
         if (defined('LARAVELFLY_SERVICES') && !LARAVELFLY_SERVICES['config'])
-            include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Simple' ). 'Repository.php';
+            include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Simple') . 'Repository.php';
 
         static $mapLoaded = false;
         static $logLoaded = false;
@@ -204,6 +204,9 @@ class Common
         if ($options['mode'] === 'Map' && !$mapLoaded) {
 
             $mapLoaded = true;
+
+            if (defined('LARAVELFLY_SERVICES') && !(LARAVELFLY_SERVICES['kernel'] ?? true))
+                include_once __DIR__ . '/../../fly/Http/Kernel.php';
 
             foreach (static::$mapFlyFiles as $f => $offical) {
                 require __DIR__ . "/../../fly/" . $f;

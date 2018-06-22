@@ -25,7 +25,7 @@ if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
 /**
  * make some services on worker, before any requests, to save memory
  *
- * mainly for Mode Mape with only one exception that item 'config' is also for Mode Simple.
+ * mainly for Mode Mape with oexception that items 'config' and 'kernel' are also for Mode Simple.
  *
  * A COROUTINE-FRIENDLY SERVICE must satisfy folling conditions:
  * 1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }
@@ -33,19 +33,6 @@ if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
 if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
-
-    /**
-     * set this false if items in app('config') different across different requests, because
-     * for Mode Simple, it's necessary to restore its origin value after each request.
-     * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
-     *
-     * In most cases, it's not necessary to set it false. Except for old versions of Debugbar
-     * which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
-     * restore its origin value to allow Debugbar continue work in other requests.
-     *
-     */
-    'config' => true,
-
 
     /**
      * set the corresponding service to be true if you use it.
@@ -64,6 +51,26 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
      *      while to 'admin_location/home.blade.php' for an admin
      */
     'view.finder' => true,
+
+    /**
+     * set this false if items in app('config') different across different requests, because
+     * for Mode Simple, it's necessary to restore its origin value after each request.
+     * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
+     *
+     * In most cases, it's not necessary to set it false. Except for old versions of Debugbar
+     * which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
+     * restore its origin value to allow Debugbar continue work in other requests.
+     *
+     */
+    'config' => true,
+
+    /**
+     * set this false if middlewares are not always same across multiple request.
+     * No need worry about same middlewares are added multiple times,
+     * because there's a check in Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware:
+     *          if (array_search($middleware, $this->middleware) === false)
+     */
+    'kernel' => true,
 
 ]);
 

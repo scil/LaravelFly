@@ -39,21 +39,11 @@ return [
 
 
     /**
-     * Which properties of kernel and base services need to backup. Only for Mode Simple
+     * Which properties of base services need to backup. Only for Mode Simple
      *
      * See: Illuminate\Foundation\Application::registerBaseServiceProviders
      */
     'BaseServices' => [
-
-        \Illuminate\Contracts\Http\Kernel::class => [
-            /** depends
-             * Uncomment it if it's not always same across multiple request. They may be changed by Route::middleware
-             * No need worry about same middlewares are added multiple times,
-             * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
-             *          if (array_search($middleware, $this->middleware) === false)
-             */
-           // 'middleware',
-        ],
 
         /* Illuminate\Events\EventServiceProvider::class : */
         'events' => [
