@@ -86,6 +86,11 @@ class Common
             'Config/Repository.php' => [
                 '/vendor/laravel/framework/src/Illuminate/Config/Repository.php'
             ]
+        ],
+        'kernel' => [
+            'Http/Kernel.php' => [
+                'vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php'
+            ]
         ]
     ];
 

@@ -77,13 +77,6 @@ The second is to clone or create new objects such as app/event/.. for each reque
 
 The third is to refactor laravel's services, moving related members to a new associative array with coroutine id as keys. This method is called Mode Map as it uses swoole coroutine.This mode is under dev.
 
-## Minor improvement
-
-- pre-include. Server configs  'pre_include' and 'pre_files'.
-- log cache. Server config 'log_cache'.
-- cache for view compiled path. App config 'view_compile_1'
-- watch maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
-
 
 ## Bridge between Laravel and LaravelFly
 

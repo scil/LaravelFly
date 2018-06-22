@@ -87,21 +87,29 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 - [x] Other Service Providers. configurable in config/laravel.php
 - [x] Facade.
 - [x] Laravel Config. configurable by the 'config' key of LARAVELFLY_SERVICES in fly.conf.php
+- [ ] Laravel Macros. In Mode Map it's not supported to avoid data pollution because in most situations macros are always same.
 - [ ] Php Config. It's not supported in the near future. Tow reasons:    
-1. It's related with php internal function ini_set.  
-2. It's useless in 99% of cases where all of the php internal configs are same across multile requests.
+1. It's useless in 99% of cases where all of the php internal configs are same across multile requests.
+2. It's hard to achive as it's related with php internal function ini_set.  
 
-## Todo
+## Todo About Improvement
+
+- [x] Config cache. laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache
+- [x] Log cache. Server config 'log_cache'.
+- [x] Cache for view compiled path. App config 'view_compile_1'
+- [x] Watching maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
+- [x] Pre-include. Server configs 'pre_include' and 'pre_files'.
+- [x] Server config 'early_laravel'
+- [x] Mysql coroutine
+- [ ] Mysql connection pool
+- [ ] Converting between swoole request/response and Laravel Request/Response
+
+## Other Todo
 
 - [x] add events
-- [x] aliases cache in ResolveSomeFacadeAliases
-- [x] add log cache
 - [x] watch code changes and hot reload
-- [x] watch maintenance mode using swoole_event_add
-- [x] mysql coroutine
 - [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
-- [ ] mysql connection pool
 - [ ] websocket
 - [ ] send file
 - [ ] travis, static analyze like phan, phpstan or https://github.com/exakat/php-static-analysis-tools
