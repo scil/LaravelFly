@@ -39,7 +39,6 @@ class Common
         'worker_num' => 5,
         'max_request' => 1000,
         'max_coro_num' => 3000,
-        'daemonize' => false,
         'watch' => [],
         'watch_delay' => 3500,
         'pre_include' => true,
@@ -181,15 +180,15 @@ class Common
 
         $kernelClass = $options['kernel'] ?? 'App\Http\Kernel';
         if (!(
-            is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class) ||
-            is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))) {
+            (LARAVELFLY_MODE === 'Simple' && is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class)) ||
+            (LARAVELFLY_MODE === 'Map' && is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))
+        )) {
 
             $kernelClass = \LaravelFly\Kernel::class;
             echo $this->colorize(
                 "[WARN] LaravelFly default kernel used: $kernelClass, 
       please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md\n", 'WARNING'
             );
-
         }
         $this->kernelClass = $kernelClass;
 

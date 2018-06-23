@@ -53,7 +53,7 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
     'view.finder' => true,
 
     /**
-     * set this false if items in app('config') different across different requests, because
+     * set this false if items in app('config') not keep same in different requests, because
      * for Mode Simple, it's necessary to restore its origin value after each request.
      * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
      *
@@ -65,7 +65,7 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
     'config' => true,
 
     /**
-     * set this false if middlewares are not always same across multiple request.
+     * set this false if middlewares are not always same in multiple request.
      * No need worry about same middlewares are added multiple times,
      * because there's a check in Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware:
      *          if (array_search($middleware, $this->middleware) === false)
@@ -246,12 +246,27 @@ return [
     //'pid_file' => '/run/laravelfly/pid',
 
     /**
+     *
+     * Tip One:
      * make sure this kernel class extends \LaravelFly\Simple\Kernel or
-     * \LaravelFly\Map\Kernel,
-     * otherwise \LaravelFly\Kernel::class is used.
+     * \LaravelFly\Map\Kernel, otherwise \LaravelFly\Kernel::class is used.
      *
      * A simple way it to edit app/Http/Kernel.php like the guide in
      * https://github.com/scil/LaravelFly/blob/master/doc/config.md
+     *
+     * Tip Two:
+     * Usually, the properties of this kernel are
+     *  ["middleware", "middlewareGroups", "routeMiddleware", "app", "router", "bootstrappers", "middlewarePriority"]
+     * If new properties are added by you, please ensure the new ones are safe, that is , keep same in different requests.
+     * If not,
+     * for Mode Simple
+     *      add the not safe properties to BaseServices['\Illuminate\Contracts\Http\Kernel::class'] in config/laravelfly.php
+     * for Mode Map
+     *      add `
+     *          use Dict` or `use StaticDict`
+     *      to your Kernel class and make some changes like
+     *          vendor/scil/laravel-fly/src/Http/Kernel.php
+     *
      */
     'kernel' => \App\Http\Kernel::class,
 

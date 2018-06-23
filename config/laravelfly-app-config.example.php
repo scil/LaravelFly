@@ -45,6 +45,22 @@ return [
      */
     'BaseServices' => [
 
+        \Illuminate\Contracts\Http\Kernel::class => [
+
+            /** depends
+             * put new not safe properties here
+             */
+            // 'newProp1', 'newProp2',
+
+            /** depends
+             * Uncomment it if it's not always same in multiple request. They may be changed by Route::middleware
+             * No need worry about same middlewares are added multiple times,
+             * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
+             *          if (array_search($middleware, $this->middleware) === false)
+             */
+           // 'middleware',
+
+        ],
         /* Illuminate\Events\EventServiceProvider::class : */
         'events' => [
             'listeners', 'wildcards', 'queueResolver',

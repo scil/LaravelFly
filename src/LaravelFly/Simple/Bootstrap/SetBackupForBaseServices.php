@@ -20,7 +20,11 @@ class SetBackupForBaseServices
             }
         }
 
-        if (defined('LARAVELFLY_SERVICES') && !(LARAVELFLY_SERVICES['kernel'] ?? true)) {
+        if (
+            !isset($needBackup[\Illuminate\Contracts\Http\Kernel::class]) &&
+            defined('LARAVELFLY_SERVICES') &&
+            !(LARAVELFLY_SERVICES['kernel'] ?? true)
+        ) {
 
             $needBackup[\Illuminate\Contracts\Http\Kernel::class] = [
                 'middleware',

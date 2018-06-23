@@ -168,7 +168,7 @@ class Application extends \Illuminate\Foundation\Application
                         continue;
                     }
                     if (!property_exists($this, $oAttriName)) {
-                        echo "[WARN] check config\laravelfly.php, property '$obj' not exists for ", get_class($this);
+                        echo "[WARN] check laravelfly config, obj property '$oAttriName' not exists for ", get_class($this),"\n";
                         continue;
                     }
                     $o = $this->$oAttriName;
@@ -190,7 +190,7 @@ class Application extends \Illuminate\Foundation\Application
                     $this->__old[$attri] = $this->$attri;
                     $changed = true;
                 } else {
-                    echo "[WARN]check config\laravelfly.php,property '$attri' not exists for ", get_class($this);
+                    echo "[WARN] check config\laravelfly.php,property '$attri' not exists for ", get_class($this),"\n";
 
                 }
             }
