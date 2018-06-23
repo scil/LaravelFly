@@ -96,7 +96,6 @@ class Application extends \Illuminate\Foundation\Application
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test
          */
-        ServiceProvider::initForRequestCorontine($cid);
         Facade::initForRequestCorontine($cid);
         $this->make('events')->initForRequestCorontine($cid);
         $this->instance('url', clone $this->make('url'));
@@ -111,8 +110,6 @@ class Application extends \Illuminate\Foundation\Application
         $this->make('events')->dispatch('request.corunset', [$cid]);
 
         $this->make('router')->unsetForRequestCorontine($cid);
-
-        ServiceProvider::unsetForRequestCorontine($cid);
 
         Facade::unsetForRequestCorontine($cid);
 

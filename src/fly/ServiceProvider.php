@@ -1,6 +1,6 @@
 <?php
 /**
- * hack to make Container to work in LaravelFly Mode Dict and define a base function coroutineFriendlyServices()
+ * define a function coroutineFriendlyServices()
  *
  */
 
@@ -47,25 +47,6 @@ abstract class ServiceProvider
     public function __construct($app)
     {
         $this->app = $app;
-        static::initForRequestCorontine(WORKER_COROUTINE_ID);
-    }
-
-    static function initForRequestCorontine(int $cid)
-    {
-        //todo test
-        foreach (['publishes', 'publishGroups'] as $attri) {
-            static::$$attri[$cid] = $cid == WORKER_COROUTINE_ID ? [] : static::$$attri[WORKER_COROUTINE_ID];
-        }
-    }
-
-    static function unsetForRequestCorontine(int $cid)
-    {
-        unset(static::$publishes[$cid], static::$publishGroups[$cid]);
-    }
-
-    static public function coroutineFriendlyServices(): array
-    {
-        return [];
     }
 
     /**
@@ -98,7 +79,7 @@ abstract class ServiceProvider
     /**
      * Register a view file namespace.
      *
-     * @param  string $path
+     * @param  string|array $path
      * @param  string $namespace
      * @return void
      */
@@ -164,8 +145,7 @@ abstract class ServiceProvider
     {
         $this->ensurePublishArrayInitialized($class = static::class);
 
-        $cid = \co::getUid();
-        static::$publishes[$cid][$class] = array_merge(static::$publishes[$cid][$class], $paths);
+        static::$publishes[$class] = array_merge(static::$publishes[$class], $paths);
 
         if ($group) {
             $this->addPublishGroup($group, $paths);
@@ -180,9 +160,8 @@ abstract class ServiceProvider
      */
     protected function ensurePublishArrayInitialized($class)
     {
-        $cid = \co::getUid();
-        if (!array_key_exists($class, static::$publishes[$cid])) {
-            static::$publishes[$cid][$class] = [];
+        if (!array_key_exists($class, static::$publishes)) {
+            static::$publishes[$class] = [];
         }
     }
 
@@ -195,13 +174,12 @@ abstract class ServiceProvider
      */
     protected function addPublishGroup($group, $paths)
     {
-        $cid = \co::getUid();
-        if (!array_key_exists($group, static::$publishGroups[$cid])) {
-            static::$publishGroups[$cid][$group] = [];
+        if (!array_key_exists($group, static::$publishGroups)) {
+            static::$publishGroups[$group] = [];
         }
 
-        static::$publishGroups[$cid][$group] = array_merge(
-            static::$publishGroups[$cid][$group], $paths
+        static::$publishGroups[$group] = array_merge(
+            static::$publishGroups[$group], $paths
         );
     }
 
@@ -218,7 +196,7 @@ abstract class ServiceProvider
             return $paths;
         }
 
-        return collect(static::$publishes[\co::getUid()])->reduce(function ($paths, $p) {
+        return collect(static::$publishes)->reduce(function ($paths, $p) {
             return array_merge($paths, $p);
         }, []);
     }
@@ -232,13 +210,12 @@ abstract class ServiceProvider
      */
     protected static function pathsForProviderOrGroup($provider, $group)
     {
-        $cid = \co::getUid();
         if ($provider && $group) {
             return static::pathsForProviderAndGroup($provider, $group);
-        } elseif ($group && array_key_exists($group, static::$publishGroups[$cid])) {
-            return static::$publishGroups[$cid][$group];
-        } elseif ($provider && array_key_exists($provider, static::$publishes[$cid])) {
-            return static::$publishes[$cid][$provider];
+        } elseif ($group && array_key_exists($group, static::$publishGroups)) {
+            return static::$publishGroups[$group];
+        } elseif ($provider && array_key_exists($provider, static::$publishes)) {
+            return static::$publishes[$provider];
         } elseif ($group || $provider) {
             return [];
         }
@@ -253,9 +230,8 @@ abstract class ServiceProvider
      */
     protected static function pathsForProviderAndGroup($provider, $group)
     {
-        $cid = \co::getUid();
-        if (!empty(static::$publishes[$cid][$provider]) && !empty(static::$publishGroups[$cid][$group])) {
-            return array_intersect_key(static::$publishes[$cid][$provider], static::$publishGroups[$cid][$group]);
+        if (!empty(static::$publishes[$provider]) && !empty(static::$publishGroups[$group])) {
+            return array_intersect_key(static::$publishes[$provider], static::$publishGroups[$group]);
         }
 
         return [];
@@ -268,7 +244,7 @@ abstract class ServiceProvider
      */
     public static function publishableProviders()
     {
-        return array_keys(static::$publishes[\co::getUid()]);
+        return array_keys(static::$publishes);
     }
 
     /**
@@ -278,7 +254,7 @@ abstract class ServiceProvider
      */
     public static function publishableGroups()
     {
-        return array_keys(static::$publishGroups[\co::getUid()]);
+        return array_keys(static::$publishGroups);
     }
 
     /**
@@ -324,5 +300,10 @@ abstract class ServiceProvider
     public function isDeferred()
     {
         return $this->defer;
+    }
+
+    static public function coroutineFriendlyServices(): array
+    {
+        return [];
     }
 }
