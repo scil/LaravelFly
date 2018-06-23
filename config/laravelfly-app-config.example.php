@@ -18,16 +18,18 @@ return [
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
     'providers_ignore' => array_merge([
+
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         Fideloper\Proxy\TrustedProxyServiceProvider::class,
         LaravelFly\Providers\CommandsServiceProvider::class,
         'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
-    ], LARAVELFLY_SERVICES['broadcast'] ? [
+
+    ], LARAVELFLY_SERVICES['broadcast'] ? [] : [
         Illuminate\Broadcasting\BroadcastManager::class,
         Illuminate\Contracts\Broadcasting\Broadcaster::class,
         App\Providers\BroadcastServiceProvider::class
-    ] : []),
+    ]),
 
     /**
      * Providers to reg and boot in each request.For Mode Simple, Map
@@ -58,7 +60,7 @@ return [
              * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
              *          if (array_search($middleware, $this->middleware) === false)
              */
-           // 'middleware',
+            // 'middleware',
 
         ],
         /* Illuminate\Events\EventServiceProvider::class : */
@@ -147,19 +149,24 @@ return [
      *      proverder5=> null,           // this provider will not be booted on worker too.
      */
     'providers_on_worker' => [
+
         // this is not in config('app.providers') and registered in Application:;registerBaseServiceProviders
         Illuminate\Log\LogServiceProvider::class => [
             'log' => true,
         ],
+
         LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class => [
             '_replace' => Illuminate\Auth\AuthServiceProvider::class,
         ],
+
         Illuminate\Broadcasting\BroadcastServiceProvider::class =>
             LARAVELFLY_SERVICES['broadcast'] ? [
                 Illuminate\Broadcasting\BroadcastManager::class,
                 Illuminate\Contracts\Broadcasting\Broadcaster::class,
             ] : false,
+
         Illuminate\Bus\BusServiceProvider::class => [],
+
         Illuminate\Cache\CacheServiceProvider::class => [
             'cache' => true,
             'cache.store' => true,
@@ -168,25 +175,32 @@ return [
             // 'memcached.connector' => true,
 
         ],
+
         LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class => [
             '_replace' => Illuminate\Cookie\CookieServiceProvider::class,
         ],
+
         LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class => [
             '_replace' => Illuminate\Database\DatabaseServiceProvider::class,
         ],
+
         Illuminate\Encryption\EncryptionServiceProvider::class => [
             'encrypter' => true,
         ],
+
         Illuminate\Filesystem\FilesystemServiceProvider::class => [
             'files' => true,
             'filesystem.disk' => true,
             'filesystem.cloud' => LARAVELFLY_SERVICES['filesystem.cloud'],
         ],
+
         /* This reg FormRequestServiceProvider, whose boot is related to request */
         // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
+
         Illuminate\Hashing\HashServiceProvider::class => [
             'hash' => LARAVELFLY_SERVICES['hash']
         ],
+
         Illuminate\Mail\MailServiceProvider::class => [],
 
         // Illuminate\Notifications\NotificationServiceProvider::class,
@@ -194,28 +208,39 @@ return [
         Illuminate\Pagination\PaginationServiceProvider::class => [],
 
         Illuminate\Pipeline\PipelineServiceProvider::class => [],
+
         Illuminate\Queue\QueueServiceProvider::class => [],
+
         Illuminate\Redis\RedisServiceProvider::class => [
             'redis' => LARAVELFLY_SERVICES['redis'],
         ],
+
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
+
         LaravelFly\Map\Illuminate\Session\SessionServiceProvider::class => [
             '_replace' => Illuminate\Session\SessionServiceProvider::class,
         ],
+
         Illuminate\Translation\TranslationServiceProvider::class => [
             'translation.loader' => true,
             'translator' => true,
         ],
+
         Illuminate\Validation\ValidationServiceProvider::class => [
             'validator' => true,
             'validation.presence' => true,
         ],
+
         \LaravelFly\Map\Illuminate\View\ViewServiceProvider::class => [
             '_replace' => Illuminate\View\ViewServiceProvider::class,
         ],
+
+
         /*
          * Application Service Providers...
          */
+
+
         /* depends */
         /**
          * if it's register and boot need executing in each request, remove it to 'providers_in_request'
@@ -224,7 +249,6 @@ return [
         App\Providers\AppServiceProvider::class => [],
 
         /* depends */
-        //todo
         App\Providers\AuthServiceProvider::class => false,
 
         App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : false,
@@ -234,6 +258,11 @@ return [
 
         /* depends */
         App\Providers\RouteServiceProvider::class => [],
+
+
+        /*
+         * Third Party
+         */
 
         // Collision is an error handler framework for console/command-line PHP applications such as laravelfly
         NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class => [

@@ -262,6 +262,8 @@ return [
      * for Mode Simple
      *      add the not safe properties to BaseServices['\Illuminate\Contracts\Http\Kernel::class'] in config/laravelfly.php
      * for Mode Map
+     *      set `'kernel' => false ,` in LARAVELFLY_SERVICES
+     *  and
      *      add `
      *          use Dict` or `use StaticDict`
      *      to your Kernel class and make some changes like
