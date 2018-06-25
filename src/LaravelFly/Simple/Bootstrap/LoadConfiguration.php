@@ -17,6 +17,8 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
     {
         parent::bootstrap($app);
 
+        $appConfig = $app->make('config');
+
         if (file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
             echo \LaravelFly\Fly::getServer()->colorize(
                 "[NOTE] include: $cacheFile
@@ -26,8 +28,6 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             list('psAcross' => $psAcross,
                 'psInRequest' => $psInRequest) = require $cacheFile;
         } else {
-
-            $appConfig = $app->make('config');
 
             if (!$appConfig['laravelfly']) {
                 die("no file config/laravelfly.php, please run `php artisan vendor:publish --tag=fly-app`");
