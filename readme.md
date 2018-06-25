@@ -83,11 +83,12 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 - [x] Application.
 - [x] Kernel.configurable by the 'kernel' key of LARAVELFLY_SERVICES in fly.conf.php
+- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands.
 - [x] Base Services: Dispatcher/app('event'), Router/app('router') and UrlGenerator/app('url').
 - [x] Other Service Providers. configurable in config/laravelfly.php
 - [x] Facade.
-- [x] Laravel Config. configurable by the 'config' key of LARAVELFLY_SERVICES in fly.conf.php
 - [ ] Laravel Macros. In Mode Map, macros are not supported to avoid data pollution, because in most situations macros are always same.
+- [x] Laravel Config. configurable by the 'config' key of LARAVELFLY_SERVICES in fly.conf.php
 - [ ] Php Config. It's not supported in the near future. Tow reasons:    
 1. It's useless in 99% of cases where all of the php internal configs are same in multile requests.
 2. It's hard to achive as it's related with php internal function ini_set.  

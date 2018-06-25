@@ -244,9 +244,16 @@ return [
         /* depends */
         /**
          * if it's register and boot need executing in each request, remove it to 'providers_in_request'
-         * if only it's boot needs executing in each request, comment it.
+         * if it's boot can execute on worker (before any requests), change false to true or [].
          */
-        App\Providers\AppServiceProvider::class => [],
+        App\Providers\AppServiceProvider::class => false,
+
+        /* depends */
+        /**
+         * if some executions always same in each request,
+         * suggest to create a new AppServiceProvider whoes reg and boot are both executed on worker.
+         */
+        // App\Providers\WorkerAppServiceProvider::class => [],
 
         /* depends */
         App\Providers\AuthServiceProvider::class => false,
