@@ -119,7 +119,7 @@ return [
     'daemonize' => false,
 
     // like pm.max_requests in php-fpm
-    'max_request' => 1000,
+    'max_request' => 500,
 
     /**
      *  watch files or dirs for server hot reload.

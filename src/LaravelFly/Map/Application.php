@@ -91,7 +91,7 @@ class Application extends \Illuminate\Foundation\Application
         /**
          *
          * url is not needed to implement __clone() method, because it's  attributes will updated auto.
-         * so it should be before routes which is cloned by {@link \LaravelFly\Map\Illuminate\Router::initOnWorker } .
+         * so it should be before routes which is cloned by {@link \Illuminate\Routing\Router::initForRequestCorontine } .
          *
          * @see \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
          * @todo test

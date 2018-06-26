@@ -79,11 +79,11 @@ The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm
 
 Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects.
 
-## Todo Abut Avoiding Data Pollution
+## Todo Abut Safe: Avoiding Data Pollution and Memory Leak
 
 - [x] Application.
 - [x] Kernel.configurable by the 'kernel' key of LARAVELFLY_SERVICES in fly.conf.php
-- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands.
+- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands and they are associate arrays which has no much risk of memory leak.
 - [x] Base Services: Dispatcher/app('event'), Router/app('router') and UrlGenerator/app('url').
 - [x] Other Service Providers. configurable in config/laravelfly.php
 - [x] Facade.
@@ -104,6 +104,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 - [x] Mysql coroutine
 - [ ] Mysql connection pool
 - [ ] Converting between swoole request/response and Laravel Request/Response
+- [ ] check memory usage in Mode Map
 
 ## Other Todo
 
