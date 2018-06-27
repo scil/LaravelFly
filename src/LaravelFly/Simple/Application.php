@@ -89,8 +89,6 @@ class Application extends \Illuminate\Foundation\Application
     {
         $config = $this->make('config');
 
-        $this->backupedConfig = $config->all();
-
         $config->changedConfig = [];
 
     }
@@ -141,12 +139,11 @@ class Application extends \Illuminate\Foundation\Application
             $tool();
         }
 
-        if ($this->backupedConfig) {
-            $config = $this->make('config');
+        $config = $this->make('config');
+        if ($config->changedConfig ) {
 
-            foreach ($config->changedConfig as $key) {
-                // [] is necessary, otherwise it may lead to array_merge(array,null)
-                $config->set($key, Arr::get($this->backupedConfig, $key, []));
+            foreach ($config->changedConfig as $key => $value) {
+                $config->set($key, $value);
             }
             $config->changedConfig = [];
         }

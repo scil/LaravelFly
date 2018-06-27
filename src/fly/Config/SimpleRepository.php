@@ -96,16 +96,16 @@ class Repository implements ArrayAccess, ConfigContract
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
-//        $booted = app()->isBooted();
-
         foreach ($keys as $key => $value) {
-            Arr::set($this->items, $key, $value);
-            if (
-                // $booted &&
-                !in_array($key, $this->changedConfig)
-            ) {
-                $this->changedConfig[] = $key;
+
+            if (!array_key_exists($key, $this->changedConfig)) {
+                //todo better solution is to delete the added new keys
+                // [] is necessary, otherwise it may lead to array_merge(array,null)
+                $this->changedConfig[$key] = $this->get($key, []);
             }
+
+
+            Arr::set($this->items, $key, $value);
         }
     }
 
