@@ -19,6 +19,7 @@ If you enable `eval(tinker())` and see an error about mkdir, please start Larave
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
 
+By defualt, every time LaravelFly starts, it makes a config cache file laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache, so if config file `config/laravelfly.php` changes you can change server config 'config_cache_always' to false in dev env , or run `php artisan config:clear` before starting LaravelFly in production env:
 ```
 alias ff='php artisan config:clear && php vendor/scil/laravel-fly/bin/fly start'
 
