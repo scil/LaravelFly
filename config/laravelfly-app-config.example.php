@@ -161,6 +161,9 @@ return [
      *
      *      proverder4=> false,           // this provider will not be booted on worker
      *      proverder5=> null,           // this provider will not be booted on worker too.
+     *      proverder6=> 'across',           // this provider will not be booted on worker too.
+     *      proverder7=> 'request',           // just like config('laravelfly.providers_in_request')
+     *      proverder8=> 'ignore',           // just like config('laravelfly.providers_ignore')
      */
     'providers_on_worker' => [
 
@@ -177,7 +180,7 @@ return [
             LARAVELFLY_SERVICES['broadcast'] ? [
                 Illuminate\Broadcasting\BroadcastManager::class,
                 Illuminate\Contracts\Broadcasting\Broadcaster::class,
-            ] : false,
+            ] : 'ignore',
 
         Illuminate\Bus\BusServiceProvider::class => [],
 
@@ -209,7 +212,7 @@ return [
         ],
 
         /* This reg FormRequestServiceProvider, whose boot is related to request */
-        // Illuminate\Foundation\Providers\FoundationServiceProvider::class=>[] : providers_across ,
+        Illuminate\Foundation\Providers\FoundationServiceProvider::class => 'across',
 
         Illuminate\Hashing\HashServiceProvider::class => [
             'hash' => LARAVELFLY_SERVICES['hash']
@@ -217,9 +220,9 @@ return [
 
         Illuminate\Mail\MailServiceProvider::class => [],
 
-        // Illuminate\Notifications\NotificationServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class => 'across',
 
-        Illuminate\Pagination\PaginationServiceProvider::class => [],
+        Illuminate\Pagination\PaginationServiceProvider::class => 'request',
 
         Illuminate\Pipeline\PipelineServiceProvider::class => [],
 
@@ -260,7 +263,7 @@ return [
          * if it's register and boot need executing in each request, remove it to 'providers_in_request'
          * if it's boot can execute on worker (before any requests), change false to true or [].
          */
-        App\Providers\AppServiceProvider::class => false,
+        App\Providers\AppServiceProvider::class => 'across',
 
         /* depends */
         /**
@@ -270,9 +273,9 @@ return [
         // App\Providers\WorkerAppServiceProvider::class => [],
 
         /* depends */
-        App\Providers\AuthServiceProvider::class => false,
+        App\Providers\AuthServiceProvider::class => 'across',
 
-        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : false,
+        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : 'across',
 
         /* depends */
         App\Providers\EventServiceProvider::class => [],

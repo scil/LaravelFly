@@ -38,20 +38,37 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             }
 
             $psInRequest = $appConfig['laravelfly.providers_in_request'] ?: [];
+            $psIgnore = $appConfig['laravelfly.providers_ignore'] ?: [];
 
             $CFServices = [];
             $providersReplaced = [];
             $psOnWork = [];
+            $psAcross = [];
+
             foreach ($app['config']['laravelfly.providers_on_worker'] as $provider => $providerConfig) {
 
-                if ($providerConfig === false || $providerConfig === null) continue;
+                if ($providerConfig === 'across' || $providerConfig === false || $providerConfig === null) {
+                    $psAcross[] = $provider;
+                    continue;
+                }
 
-                if(is_int($provider)){
+                if ($providerConfig === 'request') {
+                    if (!in_array($provider, $psInRequest)) $psInRequest[] = $provider;
+                    continue;
+                }
+
+                if ($providerConfig === 'ignore') {
+                    if (!in_array($provider, $psIgnore)) $psIgnore[] = $provider;
+                    continue;
+                }
+
+                if (is_int($provider)) {
                     $provider = $providerConfig;
                     $providerConfig = true;
                 }
 
                 if (!class_exists($provider)) continue;
+
 
                 $psOnWork[] = $provider;
 
@@ -83,15 +100,28 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 }
             }
 
-            $psAcross = array_diff(
+            $left = array_diff(
                 array_merge($appConfig['app.providers'], $app->make(PackageManifest::class)->providers()),
                 $providersReplaced,
                 $psOnWork,
+                $psAcross,
                 $psInRequest,
-                $appConfig['laravelfly.providers_ignore'] ?: []
+                $psIgnore
             );
 
-            if($configCacheAlways){
+            if ($left) {
+                $psAcross = array_merge($psAcross, $left);
+                $left = implode("\n", $left);
+
+                echo \LaravelFly\Fly::getServer()->colorize(
+                    "[NOTE] These providers not listed in config('laravel.providers_on_worker'):
+                    $left
+                They will be registered before any request and be booted in each request\n",
+                    'NOTE'
+                );
+            }
+
+            if ($configCacheAlways) {
 
                 file_put_contents($cacheFile, '<?php return ' .
                     var_export([
