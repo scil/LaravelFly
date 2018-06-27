@@ -28,7 +28,7 @@ class ResolveSomeFacadeAliases
     {
         $cacheFile = $app->bootstrapPath('/cache/laravelfly_aliases.php');
 
-        $configCacheAlways = \LaravelFly\Fly::getServer()->getConfig('config_cache_always');
+        $configCacheAlways = $app->make('config')['laravelfly.config_cache_always'];
 
         if ($configCacheAlways && is_file($cacheFile)) {
             /**

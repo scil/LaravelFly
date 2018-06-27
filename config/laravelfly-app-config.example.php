@@ -2,16 +2,28 @@
 
 if (!defined('LARAVELFLY_MODE')) return [];
 
-$ENV_PRODUCTION = env('APP_ENV') === 'production' || env('APP_ENV') === 'product';
+$IN_PRODUCTION = env('APP_ENV') === 'production' || env('APP_ENV') === 'product';
 
 return [
+    /**
+     * If use cache file for config/laravel.php always.
+     *
+     * If true, Laravelfly will always use cache file laravelfly_ps_simple.php or
+     * laravelfly_ps_map.php and laravelfly_aliases.php
+     * under bootstrap/cache/ when the files exist. If not exist, Laravelfly will create them.
+     *
+     * It's better to set it to false in dev env , set true and run `php artisan config:clear` before starting LaravelFly in production env
+     */
+    // 'config_cache_always' => $IN_PRODUCTION,
+    'config_cache_always' => true,
+
     /**
      * For each worker, if a view file is compiled max one time. Only For Mode Map
      *
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
      */
-    'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] && $ENV_PRODUCTION,
+    'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] && $IN_PRODUCTION,
 
     /**
      * useless providers. For Mode Simple, Map

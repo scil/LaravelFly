@@ -180,15 +180,6 @@ return [
 
 
     /**
-     * If use cache file for config/laravel.php always.
-     *
-     * If true, Laravelfly will always use cache file laravelfly_aliases.php and
-     * laravelfly_ps_simple.php or laravelfly_ps_map.php
-     * under bootstrap/cache/ when the files exist. If not exist, Laravelfly will create them.
-     */
-    'config_cache_always' => true,
-
-    /**
      * In each worker process, Larave log will not write log files until the number of log records reach 'log_cache'
      *
      * only for "single" or "daily" log.

@@ -19,7 +19,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         $appConfig = $app->make('config');
 
-        $configCacheAlways = \LaravelFly\Fly::getServer()->getConfig('config_cache_always');
+        $configCacheAlways = $appConfig['laravelfly.config_cache_always'];
 
         if ($configCacheAlways && file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
             echo \LaravelFly\Fly::getServer()->colorize(
