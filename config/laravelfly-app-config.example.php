@@ -39,6 +39,7 @@ return [
         'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
 
     ], LARAVELFLY_SERVICES['broadcast'] ? [] : [
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Broadcasting\BroadcastManager::class,
         Illuminate\Contracts\Broadcasting\Broadcaster::class,
         App\Providers\BroadcastServiceProvider::class
@@ -275,7 +276,7 @@ return [
         /* depends */
         App\Providers\AuthServiceProvider::class => 'across',
 
-        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : 'across',
+        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : 'ignore',
 
         /* depends */
         App\Providers\EventServiceProvider::class => [],

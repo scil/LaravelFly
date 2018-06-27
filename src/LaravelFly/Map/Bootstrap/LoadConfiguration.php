@@ -128,7 +128,8 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                         'CFServices' => $CFServices,
                         'psOnWork' => $psOnWork,
                         'psAcross' => $psAcross,
-                        'psInRequest' => $psInRequest
+                        'psInRequest' => $psInRequest,
+                        'psIgnore' => $psIgnore
                     ], true) .
                     ';' . PHP_EOL);
 
