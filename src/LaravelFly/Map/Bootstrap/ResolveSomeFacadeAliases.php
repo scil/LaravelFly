@@ -28,7 +28,9 @@ class ResolveSomeFacadeAliases
     {
         $cacheFile = $app->bootstrapPath('/cache/laravelfly_aliases.php');
 
-        if (is_file($cacheFile)) {
+        $configCacheAlways = \LaravelFly\Fly::getServer()->getConfig('config_cache_always');
+
+        if ($configCacheAlways && is_file($cacheFile)) {
             /**
              * not needed to check filemtime
              * @see:\LaravelFly\Map\Bootstrap\LoadConfiguration @unlink( $app->bootstrapPath('/cache/laravelfly_aliases.php'));
@@ -71,7 +73,13 @@ class ResolveSomeFacadeAliases
             }
         }
 
-        file_put_contents($cacheFile, '<?php return ' . var_export($aliases, true) . ';' . PHP_EOL);
+        if($configCacheAlways){
+
+            file_put_contents($cacheFile, '<?php return ' . var_export($aliases, true) . ';' . PHP_EOL);
+
+            echo "[INFO] cache created: $cacheFile\n";
+
+        }
 
         return $aliases;
 

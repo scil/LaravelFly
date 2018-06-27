@@ -19,7 +19,9 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         $appConfig = $app->make('config');
 
-        if (file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
+        $configCacheAlways = \LaravelFly\Fly::getServer()->getConfig('config_cache_always');
+
+        if ($configCacheAlways && file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
             echo \LaravelFly\Fly::getServer()->colorize(
                 "[NOTE] include: $cacheFile
                 if any configs or composer.json changed, please re-run 'php artisan config:clear'\n",
@@ -41,17 +43,18 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $appConfig['laravelfly.providers_ignore'] ?: []
             );
 
-            file_put_contents($cacheFile, '<?php return ' .
-                var_export([
-                    'psAcross' => $psAcross,
-                    'psInRequest' => $psInRequest
-                ], true) .
-                ';' . PHP_EOL);
+            if($configCacheAlways){
 
-            echo "[INFO] cache created: $cacheFile\n";
+                file_put_contents($cacheFile, '<?php return ' .
+                    var_export([
+                        'psAcross' => $psAcross,
+                        'psInRequest' => $psInRequest
+                    ], true) .
+                    ';' . PHP_EOL);
 
-            // ensure aliases cache file not outdated
-            @unlink($app->bootstrapPath('/cache/laravelfly_aliases.php'));
+                echo "[INFO] cache created: $cacheFile\n";
+
+            }
 
         }
 

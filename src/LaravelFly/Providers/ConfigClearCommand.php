@@ -19,6 +19,7 @@ class ConfigClearCommand extends \Illuminate\Foundation\Console\ConfigClearComma
 
         @unlink($this->laravel->bootstrapPath('cache/laravelfly_ps_simple.php'));
         @unlink($this->laravel->bootstrapPath('cache/laravelfly_ps_map.php'));
+        @unlink($this->laravel->bootstrapPath('cache/laravelfly_aliases.php'));
         $this->info("LaravelFly ps configuration cache cleard!");
 
     }

@@ -43,6 +43,7 @@ class Common
         'watch_delay' => 3500,
         'pre_include' => true,
         'pre_files' => [],
+        'config_cache_always' => true,
         'log_cache' => 5,
         'conf' => null, // server config file
         'colorize' => true,
