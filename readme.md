@@ -19,7 +19,7 @@ If you enable `eval(tinker())` and see an error about mkdir, please start Larave
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
 
-By defualt, every time LaravelFly starts, it makes a config cache file laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache, so if config file `config/laravelfly.php` changes you can change server config 'config_cache_always' to false in dev env , or run `php artisan config:clear` before starting LaravelFly in production env:
+By default, every time LaravelFly starts, it makes a config cache file laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache, so if config file `config/laravelfly.php` changes you can change config 'laravelfly.config_cache_always' to false in dev env , or run `php artisan config:clear` before starting LaravelFly in production env:
 ```
 alias ff='php artisan config:clear && php vendor/scil/laravel-fly/bin/fly start'
 
@@ -79,11 +79,11 @@ The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm
 
 Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects.
 
-## Todo Abut Safe: Avoiding Data Pollution and Memory Leak
+## Todo Abut Safe: Avoiding Data Pollution
 
 - [x] Application.
 - [x] Kernel.configurable by the 'kernel' key of LARAVELFLY_SERVICES in fly.conf.php
-- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands and they are associate arrays which has no much risk of memory leak.
+- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands.
 - [x] Base Services: Dispatcher/app('event'), Router/app('router') and UrlGenerator/app('url').
 - [x] Other Service Providers. configurable in config/laravelfly.php
 - [x] Facade.
@@ -92,6 +92,10 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 - [ ] Php Config. It's not supported in the near future. Tow reasons:    
 1. It's useless in 99% of cases where all of the php internal configs are same in multile requests.
 2. It's hard to achive as it's related with php internal function ini_set.  
+
+## Todo Abut Safe: Memory Leak
+
+- [x] Illuminate\Support\ServiceProvider. Its members 'publishes' and 'publishGroups' are associate arrays which has no much risk of memory leak.
 
 ## Todo About Improvement
 

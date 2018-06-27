@@ -159,11 +159,9 @@ class Application extends \Illuminate\Foundation\Application
     {
 
         //todo study official registerConfiguredProviders
-        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker()))
-            ->load($this->providersToBootOnWorker);
+        $providerRepository = new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker());
+        $providerRepository->loadForWorker($this->providersToBootOnWorker);
 
-        //todo
-        $this->loadDeferredProviders();
     }
 
     public function getCachedServicesPathBootOnWorker(): string
@@ -174,14 +172,14 @@ class Application extends \Illuminate\Foundation\Application
     public function bootOnWorker()
     {
 
-        $cid = \co::getUid();
         if ($this->bootedOnWorker) {
             return;
         }
 
-        $this->fireAppCallbacks(static::$corDict[$cid]['bootingCallbacks']);
+        $this->fireAppCallbacks(static::$corDict[WORKER_COROUTINE_ID]['bootingCallbacks']);
 
-        array_walk(static::$corDict[$cid]['serviceProviders'], function ($p) {
+        array_walk(static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'], function ($p) {
+//            print_r(get_class($p));echo " -- \n";
             $this->bootProvider($p);
         });
 

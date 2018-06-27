@@ -749,6 +749,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     protected function bootProvider(ServiceProvider $provider)
     {
+//        print_r(get_class($provider));echo "\n";
         if (method_exists($provider, 'boot')) {
             return $this->call([$provider, 'boot']);
         }
