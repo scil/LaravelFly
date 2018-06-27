@@ -1,7 +1,4 @@
 <?php
-/**
- * used when LARAVELFLY_SERVICES['view.finder'] === false
- */
 
 namespace Illuminate\View;
 

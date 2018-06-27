@@ -1,4 +1,7 @@
 <?php
+// todo this file seems useless? oh no! and we need work more! config maybe changed .see:
+// You may have wondered why when using the apigroup of middleware that $request->user() returns the correct user from the api guard and doesn't use the default web guard
+// https://asklagbox.com/blog/unboxing-laravel-authentication#the-user-resolver
 
 namespace LaravelFly\Map\Illuminate\Auth;
 

@@ -83,19 +83,31 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 - [x] Application.
 - [x] Kernel.configurable by the 'kernel' key of LARAVELFLY_SERVICES in fly.conf.php
-- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands.
 - [x] Base Services: Dispatcher/app('event'), Router/app('router') and UrlGenerator/app('url').
 - [x] Other Service Providers. configurable in config/laravelfly.php
 - [x] Facade.
+- [x] Laravel config. configurable by the 'config' key of LARAVELFLY_SERVICES in fly.conf.php
+- [ ] AuthServiceProvider 
+- [ ] PaginationServiceProvider 
+
+support no planned
+- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands.
 - [ ] Laravel Macros. In Mode Map, macros are not supported to avoid data pollution, because in most situations macros are always same.
-- [x] Laravel Config. configurable by the 'config' key of LARAVELFLY_SERVICES in fly.conf.php
 - [ ] Php Config. It's not supported in the near future. Tow reasons:    
 1. It's useless in 99% of cases where all of the php internal configs are same in multile requests.
 2. It's hard to achive as it's related with php internal function ini_set.  
 
 ## Todo Abut Safe: Memory Leak
 
-- [x] Illuminate\Support\ServiceProvider. Its members 'publishes' and 'publishGroups' are associate arrays which has no much risk of memory leak.
+item   | Fly Mode Simple  |  Fly Mode Map | config| problem| note
+------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
+Kernel   | √  |  √ | - | Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware | No need worry about same middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)`
+Laravel config | √ | √ |  Methods push and prepend |  LARAVELFLY_SERVICES['config'] | use dict in Mode Map. In Mode Simple.All change actions are controlled by method set in file src/fly/Config/SimpleRepository.php injects methods: . And LaravelFly\Simple\Application::setBackupedConfig.
+view.finder | √ | √ |  - | addNamespace offen called by loadViewsFrom of ServiceProvider jsuch as PaginationServiceProvider  and NotificationServiceProvider| Use Dict in Mode Map. No problem in Mode Simple
+
+
+support no planned
+- [ ] Illuminate\Support\ServiceProvider. Its members 'publishes' and 'publishGroups' are associate arrays which has no much risk of memory leak.
 
 ## Todo About Improvement
 

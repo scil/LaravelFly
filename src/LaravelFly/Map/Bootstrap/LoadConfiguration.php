@@ -100,6 +100,9 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 }
             }
 
+            //todo just for debug
+            // $psOnWork = array_diff($psOnWork,$psIgnore);
+
             $left = array_diff(
                 array_merge($appConfig['app.providers'], $app->make(PackageManifest::class)->providers()),
                 $providersReplaced,
@@ -117,8 +120,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                     "[NOTE] These providers not listed in config('laravel.providers_on_worker'):
                     $left
                 They will be registered before any request and be booted in each request\n",
-                    'NOTE'
-                );
+                    'NOTE');
             }
 
             if ($configCacheAlways) {

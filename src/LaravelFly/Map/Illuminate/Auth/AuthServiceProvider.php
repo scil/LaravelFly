@@ -2,12 +2,13 @@
 
 namespace LaravelFly\Map\Illuminate\Auth;
 
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
 {
     static public function coroutineFriendlyServices():array
     {
-        return ['auth'];
+        return ['auth',GateContract::class];
     }
 
     protected function registerAuthenticator()

@@ -99,6 +99,7 @@ class Application extends \Illuminate\Foundation\Application
          */
         Facade::initForRequestCorontine($cid);
         $this->make('events')->initForRequestCorontine($cid);
+        // make an new url object which is independent from origin url object
         $this->instance('url', clone $this->make('url'));
         $this->make('router')->initForRequestCorontine($cid);
 
@@ -194,7 +195,12 @@ class Application extends \Illuminate\Foundation\Application
     public function makeCFServices()
     {
         foreach ($this->CFServices as $service) {
-            $this->make($service);
+            if ($this->bound($service)) $this->make($service);
+            else {
+                echo \LaravelFly\Fly::getServer()->colorize(
+                    "[NOTE] $service not bound\n",
+                    'NOTE');
+            }
         }
     }
 

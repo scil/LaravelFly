@@ -71,15 +71,16 @@ class Common
         'Facade.php' =>
             '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
 
+        // otherwise PaginationServiceProvider  and NotificationServiceProvider would append view paths to app('view')->finder->hints
+        // by  $this->loadViewsFrom forever on each boot
+        'FileViewFinder.php' =>
+            '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
+
     ];
     protected static $conditionFlyFiles = [
         'log_cache' => [
             'StreamHandler.php' =>
                 '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php',
-        ],
-        '!view.finder' => [
-            'FileViewFinder.php' =>
-                '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
         ],
         'config' => [
             'Config/Repository.php' => [
@@ -199,6 +200,7 @@ class Common
 
     static function includeFlyFiles(&$options)
     {
+        // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Simple
         if (defined('LARAVELFLY_SERVICES') && !LARAVELFLY_SERVICES['config'])
             include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Simple') . 'Repository.php';
 
@@ -216,8 +218,6 @@ class Common
                 require __DIR__ . "/../../fly/" . $f;
             }
 
-            if (!defined('LARAVELFLY_SERVICES') || !LARAVELFLY_SERVICES['view.finder'])
-                include __DIR__ . '/../../fly/FileViewFinder.php';
         }
 
         if ($logLoaded) return;

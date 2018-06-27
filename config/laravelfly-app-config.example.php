@@ -28,7 +28,8 @@ return [
     /**
      * useless providers. For Mode Simple, Map
      *
-     * There providers will be removed from app('config')['app.providers'] on worker, before any requests
+     * There providers will be only removed from config('app.providers')
+     * not from  config('laravelfly.providers_on_worker') or  config('laravelfly.providers_in_request')
      */
     'providers_ignore' => array_merge([
 
@@ -52,6 +53,7 @@ return [
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
     'providers_in_request' => [
+        Illuminate\Pagination\PaginationServiceProvider::class,
     ],
 
 

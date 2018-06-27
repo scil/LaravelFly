@@ -1,4 +1,7 @@
 <?php
+/**
+ * add prop $changedConfig
+ */
 
 namespace Illuminate\Config;
 

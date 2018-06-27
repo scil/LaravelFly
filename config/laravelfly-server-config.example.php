@@ -66,9 +66,6 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
 
     /**
      * set this false if middlewares are not always same in multiple request.
-     * No need worry about same middlewares are added multiple times,
-     * because there's a check in Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware:
-     *          if (array_search($middleware, $this->middleware) === false)
      */
     'kernel' => true,
 
