@@ -2,6 +2,8 @@
 
 if (!defined('LARAVELFLY_MODE')) return [];
 
+$ENV_PRODUCTION = env('APP_ENV') === 'production' || env('APP_ENV') === 'product';
+
 return [
     /**
      * For each worker, if a view file is compiled max one time. Only For Mode Map
@@ -9,8 +11,7 @@ return [
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
      */
-    'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] &&
-        (env('APP_ENV') === 'production' || env('APP_ENV') === 'product'),
+    'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] && $ENV_PRODUCTION,
 
     /**
      * useless providers. For Mode Simple, Map
@@ -29,7 +30,8 @@ return [
         Illuminate\Broadcasting\BroadcastManager::class,
         Illuminate\Contracts\Broadcasting\Broadcaster::class,
         App\Providers\BroadcastServiceProvider::class
-    ]),
+    ]
+    ),
 
     /**
      * Providers to reg and boot in each request.For Mode Simple, Map
