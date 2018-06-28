@@ -10,10 +10,9 @@ class BackupConfigs
     public function bootstrap(Application $app)
     {
 
-        if (!(LARAVELFLY_SERVICES['config'] ?? true)) {
-
+        if (defined('LARAVELFLY_SERVICES') && !LARAVELFLY_SERVICES['config'])
             $app->setBackupedConfig();
-        }
+
 
     }
 }

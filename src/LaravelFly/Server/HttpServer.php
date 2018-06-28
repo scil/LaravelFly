@@ -39,6 +39,7 @@ class HttpServer extends Common implements ServerInterface
         }
 
         $this->workerStartTail($server, $worker_id);
+//        eval(tinker());
 
     }
 

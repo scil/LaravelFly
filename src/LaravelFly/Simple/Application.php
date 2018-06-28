@@ -52,7 +52,7 @@ class Application extends \Illuminate\Foundation\Application
 
     ];
     protected $needBackupServiceAttributes = [];
-    protected $backupedConfig = [];
+    protected $configNeedBackup =false;
     protected $backupedValuesBeforeRequest = [];
     protected $restoreTool = [];
 
@@ -90,6 +90,8 @@ class Application extends \Illuminate\Foundation\Application
         $config = $this->make('config');
 
         $config->changedConfig = [];
+
+        $this->configNeedBackup =true;
 
     }
 
@@ -139,8 +141,10 @@ class Application extends \Illuminate\Foundation\Application
             $tool();
         }
 
-        $config = $this->make('config');
-        if ($config->changedConfig ) {
+
+        if ($this->configNeedBackup ) {
+
+            $config = $this->make('config');
 
             foreach ($config->changedConfig as $key => $value) {
                 $config->set($key, $value);

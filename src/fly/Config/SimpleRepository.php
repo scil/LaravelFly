@@ -99,7 +99,7 @@ class Repository implements ArrayAccess, ConfigContract
         foreach ($keys as $key => $value) {
 
             if (!array_key_exists($key, $this->changedConfig)) {
-                //todo better solution is to delete the added new keys
+                //todo better solution is to run if(has(key)) and delete the added new keys
                 // [] is necessary, otherwise it may lead to array_merge(array,null)
                 $this->changedConfig[$key] = $this->get($key, []);
             }
