@@ -88,11 +88,11 @@ Trait Laravel
         // $this->app->forgetInstance('request');
 
 
-        printf("[INFO] event laravel.created for $this->appClass (pid %u)\n", getmypid());
+        printf("[INFO] event laravel.ready with $this->appClass (pid %u)\n", getmypid());
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);
-        $this->dispatcher->dispatch('laravel.created', $event);
+        $this->dispatcher->dispatch('laravel.ready', $event);
 
     }
 

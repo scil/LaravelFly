@@ -23,10 +23,6 @@ class FpmHttpServer extends Common implements ServerInterface
         /** @var \LaravelFly\FpmLike\Application $app */
         $app = new $this->appClass($this->root);
 
-        $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => $request]);
-        $this->dispatcher->dispatch('laravel.created', $event);
-        printf("[INFO] pid %u: $this->appClass instanced\n", getmypid());
-
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             \App\Http\Kernel::class
@@ -36,6 +32,9 @@ class FpmHttpServer extends Common implements ServerInterface
             \App\Exceptions\Handler::class
         );
 
+        $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => $request]);
+        $this->dispatcher->dispatch('laravel.ready', $event);
+        printf("[INFO] event laravel.ready: $this->appClass instanced(pid %u)\n", getmypid());
 
         $this->setGlobal($request);
 

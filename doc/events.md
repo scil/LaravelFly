@@ -11,7 +11,7 @@ The app dispatcher objects does not created until the Laravel app created.
 1. worker.starting  
 available args: $event['server'], $event['workerid']
 the swooler http server wrapped in a Laravelfly server can be got by $event['server']->getSwoole().
-1. laravel.created  
+1. laravel.ready  
 available args: $event['server'], $event['app'], $event['request']  
 the $event['request'] is null unless FpmLike is used.
 1. events 'bootstrapping' and events 'bootstrapped' of multiple Bootstrap classes listed in your kernel class  
@@ -32,7 +32,7 @@ $dispatcher->addListener('worker.starting', function (GenericEvent $event) {
     var_dump(get_included_files())
 });
 
-$dispatcher->addListener('laravel.created', function (GenericEvent $event) {
+$dispatcher->addListener('laravel.ready', function (GenericEvent $event) {
     $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
 });
 ```
@@ -42,7 +42,7 @@ class MyServer extends \LaravelFly\Server\HttpServer
 {
     public function start()
     {
-        $this->dispatcher->addListener('laravel.created', function (GenericEvent $event) {
+        $this->dispatcher->addListener('laravel.ready', function (GenericEvent $event) {
             $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
         });
 

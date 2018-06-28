@@ -42,7 +42,7 @@ Trait Tinker
             ]);
         });
 
-        $this->dispatcher->addListener('laravel.created', function (GenericEvent $event) {
+        $this->dispatcher->addListener('laravel.ready', function (GenericEvent $event) {
             $event['app']->instance('tinker', \LaravelFly\Tinker\Shell::$instance);
         });
 
