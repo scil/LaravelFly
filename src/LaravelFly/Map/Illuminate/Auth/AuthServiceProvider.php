@@ -8,7 +8,16 @@ class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
 {
     static public function coroutineFriendlyServices():array
     {
-        return ['auth',GateContract::class];
+        return [
+
+            'auth',
+
+            /**
+             * no resolve it on work, because it has props like afterCallbacks relating memory leak
+             * it's Illuminate\Auth\Access\Gate
+             */
+            // GateContract::class
+        ];
     }
 
     protected function registerAuthenticator()

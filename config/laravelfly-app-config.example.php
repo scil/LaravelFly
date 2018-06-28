@@ -53,7 +53,6 @@ return [
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
     'providers_in_request' => [
-        Illuminate\Pagination\PaginationServiceProvider::class,
     ],
 
 
@@ -196,6 +195,10 @@ return [
 
         ],
 
+        /**
+         * CookieJar's path, domain, secure and sameSite  are not rewriten to be a full COROUTINE-FRIENDLY SERVICE.
+         * so this provider requires there values always be same in all requests.
+         */
         LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class => [
             '_replace' => Illuminate\Cookie\CookieServiceProvider::class,
         ],
@@ -225,7 +228,12 @@ return [
 
         Illuminate\Notifications\NotificationServiceProvider::class => 'across',
 
-        Illuminate\Pagination\PaginationServiceProvider::class => 'request',
+        /**
+         * some static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator
+         * in most cases they keep same.
+         * if not same, `use StaticDict` is needed to convert AbstractPaginator in Map Mode.
+         */
+        Illuminate\Pagination\PaginationServiceProvider::class => [],
 
         Illuminate\Pipeline\PipelineServiceProvider::class => [],
 
@@ -276,6 +284,11 @@ return [
         // App\Providers\WorkerAppServiceProvider::class => [],
 
         /* depends */
+        /**
+         * its boot relates Illuminate\Auth\Access\Gate
+         * which would better not to be made on worker
+         * because it has props like afterCallbacks relating memory leak
+         */
         App\Providers\AuthServiceProvider::class => 'across',
 
         App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : 'ignore',

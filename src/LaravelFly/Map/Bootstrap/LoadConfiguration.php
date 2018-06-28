@@ -101,7 +101,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             }
 
             //todo just for debug
-            // $psOnWork = array_diff($psOnWork,$psIgnore);
+//             $psOnWork = array_diff($psOnWork,$psIgnore);
 
             $left = array_diff(
                 array_merge($appConfig['app.providers'], $app->make(PackageManifest::class)->providers()),

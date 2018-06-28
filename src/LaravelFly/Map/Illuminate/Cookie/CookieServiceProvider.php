@@ -12,7 +12,6 @@ class CookieServiceProvider extends ServiceProvider
          * CookieJar's path, domain, secure and sameSite  are not rewriten to be a full COROUTINE-FRIENDLY SERVICE.
          * so this provider requires there values always be same in all requests.
          */
-
         return ['cookie'];
     }
     /**

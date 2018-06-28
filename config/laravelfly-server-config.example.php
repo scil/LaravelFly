@@ -44,6 +44,13 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
     // set false if app('hash')->setRounds may be called in a request. If we want to make 'hash' COROUTINE-FRIENDLY, it should be always same.
     'hash' => true,
 
+
+    /**
+     * set false if different routes in different requests.
+     *
+     */
+    'routes' => true,
+
     /**
      * set false if same view name refers to different view files in different requests.
      * for example:

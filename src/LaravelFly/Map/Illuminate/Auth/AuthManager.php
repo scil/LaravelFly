@@ -1,7 +1,4 @@
 <?php
-// todo this file seems useless? oh no! and we need work more! config maybe changed .see:
-// You may have wondered why when using the apigroup of middleware that $request->user() returns the correct user from the api guard and doesn't use the default web guard
-// https://asklagbox.com/blog/unboxing-laravel-authentication#the-user-resolver
 
 namespace LaravelFly\Map\Illuminate\Auth;
 
@@ -12,12 +9,13 @@ class AuthManager extends \Illuminate\Auth\AuthManager
 {
     use \LaravelFly\Map\Util\Dict;
 
-    protected static $normalAttriForObj=['userResolver'=>null];
+    // todo needed really?
+    protected static $normalAttriForObj = ['userResolver' => null];
 
     protected static $arrayAttriForObj = [
         'guards',
         // 'customCreators'
-        ];
+    ];
 
 
     public function __construct($app)
@@ -47,16 +45,21 @@ class AuthManager extends \Illuminate\Auth\AuthManager
     {
         $name = $name ?: $this->getDefaultDriver();
 
+// todo this file seems useless? oh no! and we need work more! config maybe changed .see:
+// You may have wondered why when using the apigroup of middleware that $request->user() returns the correct user from the api guard and doesn't use the default web guard
+// https://asklagbox.com/blog/unboxing-laravel-authentication#the-user-resolver
         $this->setDefaultDriver($name);
 
         static::$corDict[\co::getUid()]['userResolver'] = function ($name = null) {
             return $this->guard($name)->user();
         };
     }
+
     public function userResolver()
     {
         return static::$corDict[\co::getUid()]['userResolver'];
     }
+
     public function resolveUsersUsing(Closure $userResolver)
     {
         static::$corDict[\co::getUid()]['userResolver'] = $userResolver;
