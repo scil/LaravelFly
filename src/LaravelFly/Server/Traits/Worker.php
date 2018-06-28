@@ -50,15 +50,15 @@ Trait Worker
      */
     protected function workerZeroStartTail(\swoole_server $swoole_server)
     {
-        $this->watchDownFile();
+        if ($this->getConfig('watch_down')) $this->watchDownFile();
 
-        $this->watchForHotReload($swoole_server);
+        if ($this->getConfig('watch')) $this->watchForHotReload($swoole_server);
     }
 
     protected function watchForHotReload($swoole_server)
     {
 
-        if (!function_exists('inotify_init') || empty($this->getConfig('watch'))) return;
+        if (!function_exists('inotify_init')) return;
 
         echo "[INFO] watch for hot reload.\n";
 
@@ -72,7 +72,7 @@ Trait Worker
 
         foreach ($this->getConfig('watch') as $item) {
 
-            if(!file_exists($item)) {
+            if (!file_exists($item)) {
                 echo "[WARN] not exists: $item.\n";
                 echo $this->colorize(
                     "[WARN]  not exists: $item.\n",
@@ -92,7 +92,7 @@ Trait Worker
 
         $adapter->setPathPrefix($oldPathPrefix);
 
-        $delay = $this->getConfig('watch_delay') ?? 1500;
+        $delay = $this->getConfig('watch_delay');
 
         swoole_event_add($fd, function () use ($fd, $swoole_server, $delay) {
             static $timer = null;
@@ -152,7 +152,7 @@ Trait Worker
 
     public function onWorkerStop(\swoole_server $server, int $worker_id)
     {
-        echo "[INFO] event worker.stopped for id $worker_id\n";
+        echo "[INFO] event worker.stopped for id $worker_id, statcache and opcache cleaned later\n";
 
         $this->dispatcher->dispatch('worker.stopped',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));

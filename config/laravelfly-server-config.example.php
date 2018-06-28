@@ -152,6 +152,14 @@ return [
      */
     'watch_delay'=> 1500,
 
+
+    /**
+     * Allow LaravelFly watch file storage/framework/down, no more checking file on each request
+     *
+     * It is a demo to use var sharing across worker processes.
+     */
+    'watch_down'=> true,
+
     /**
      * include laravel's core files befor server starts
      *

@@ -41,6 +41,7 @@ class Common
         'max_coro_num' => 3000,
         'watch' => [],
         'watch_delay' => 3500,
+        'watch_down' => true,
         'pre_include' => true,
         'pre_files' => [],
         'log_cache' => 5,
@@ -265,11 +266,15 @@ class Common
 
     public function start()
     {
-        $this->addMemory('isDown', new swoole_atomic(0));
 
         if (!method_exists('\co', 'getUid'))
             die("[ERROR] pecl install swoole or enable swoole.use_shortname.\n");
 
+
+        if ($this->getConfig('watch_down')){
+
+            $this->addMemory('isDown', new swoole_atomic(0));
+        }
 
         try {
 

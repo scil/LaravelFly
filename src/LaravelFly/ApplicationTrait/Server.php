@@ -33,11 +33,15 @@ trait Server
     }
 
     /**
-     * @return int 0 or 1
+     * @return int 0 or 1,  or bool from parent
      */
-    public function isDownForMaintenance():int
+    public function isDownForMaintenance(): int
     {
-        return $this->server->getMemory('isDown');
+        static $watch = null;
+        if ($watch === null) {
+            $watch = $this->getServer()->getConfig('watch_down');
+        }
+        return $watch ? $this->server->getMemory('isDown') : parent::isDownForMaintenance();
     }
 
 }
