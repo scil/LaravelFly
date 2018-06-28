@@ -79,41 +79,53 @@ The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm
 
 Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects.
 
-## Todo Abut Safe: Avoiding Data Pollution
+## Todo Abut Safe: Mode Simple
 
-- [x] Application.
-- [x] Kernel.configurable by the 'kernel' key of LARAVELFLY_SERVICES in fly.conf.php
-- [x] Base Services: Dispatcher/app('event'), Router/app('router') and UrlGenerator/app('url').
-- [x] Other Service Providers. configurable in config/laravelfly.php
-- [x] Facade.
-- [x] Laravel config. configurable by the 'config' key of LARAVELFLY_SERVICES in fly.conf.php
-- [ ] AuthServiceProvider 
-- [ ] PaginationServiceProvider 
+item   | Data Pollution  |  note | Memory Leak| note| config
+------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
+Application   | √  |  LaravelFly\Simple\Application::needBackUpAppAttributes   | | | -
+Kernel   | 🔧  |     | 🔧 | Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
+Base Services: event | √  |     | | | 
+Base Services: router | √  |     | | | 
+Base Services: url(UrlGenerator) | √  |     | | | 
+Facade | √  |     | | | 
+Laravel config | 🔧  |   All change actions are controlled by method set in file src/fly/Config/SimpleRepository.php injects methods: . And LaravelFly\Simple\Application::setBackupedConfig. | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
+PHP Config | ×  | | NA |  | 
 
-support no planned
-- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are used only in artisan commands.
-- [ ] Laravel Macros. In Mode Map, macros are not supported to avoid data pollution, because in most situations macros are always same.
-- [ ] Php Config. It's not supported in the near future. Tow reasons:    
-1. It's useless in 99% of cases where all of the php internal configs are same in multile requests.
+Php Config not planed to support:    
+1. It's useless 
 2. It's hard to achive as it's related with php internal function ini_set.  
 
-## Todo Abut Safe: Memory Leak
+## Todo Abut Safe: Mode Map
 
-item   | Fly Mode Simple  |  Fly Mode Map | config| problem| note
+item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
-Kernel   | √  |  √ | - | Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware | No need worry about same middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)`
-Laravel config | √ | √ |  Methods push and prepend |  LARAVELFLY_SERVICES['config'] | use dict in Mode Map. In Mode Simple.All change actions are controlled by method set in file src/fly/Config/SimpleRepository.php injects methods: . And LaravelFly\Simple\Application::setBackupedConfig.
-view.finder | √ | √ |  - | addNamespace offen called by loadViewsFrom of ServiceProvider jsuch as PaginationServiceProvider  and NotificationServiceProvider| Use Dict in Mode Map. No problem in Mode Simple
+Application   | √  |     | | | -
+Kernel   | 🔧  |     | 🔧 | Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
+Base Services: event | √  |     | | | 
+Base Services: router | √  |     | | | 
+Base Services: url(UrlGenerator) | √  |     | | | 
+Facade | √  |     | | | 
+Laravel config | 🔧  |  FLY | 🔧 | Methods push and prepend. | LARAVELFLY_SERVICES['config']
+PHP Config | ×  | | √ |  | 
+routes |  🔧 |  FLY   | √ | most cases, no problems, because props in RouteCollection are associate arrays.|  LARAVELFLY_SERVICES['routes']
+view.finder | √  |  FLY   | √ | addNamespace offen called by loadViewsFrom of ServiceProviders such as PaginationServiceProvider  and NotificationServiceProvider.|  
 
+
+- [ ] AuthServiceProvider 
 
 support no planned
-- [ ] Illuminate\Support\ServiceProvider. Its members 'publishes' and 'publishGroups' are associate arrays which has no much risk of memory leak.
+- [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are  are associate arrays which has no much risk of memory leak and used only in artisan commands.
+- [ ] Laravel Macros. In Mode Map, macros are not supported to avoid data pollution, because in most situations macros are always same.
+- [ ] PaginationServiceProvider in Mode Map. In most cases, the static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator keep same. 
+- [ ] Php Config. It's not supported in the near future. 
+
 
 ## Todo About Improvement
 
 - [x] Config cache. laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache
 - [x] Log cache. Server config 'log_cache'.
-- [x] Cache for view compiled path. App config 'view_compile_1'
+- [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
 - [x] Watching maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
 - [x] Pre-include. Server configs 'pre_include' and 'pre_files'.
 - [x] Server config 'early_laravel'
