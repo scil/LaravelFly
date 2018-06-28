@@ -235,11 +235,6 @@ class Common
 
         if ($options['early_laravel']) $this->startLaravel();
 
-        $this->dispatcher->dispatch('server.creating',
-            new GenericEvent(null, ['server' => $this, 'options' => $options]));
-
-        printf("[INFO] event server.creating for \%s\n", static::class);
-
         if ($this->options['daemonize'])
             $this->options['colorize'] = false;
 

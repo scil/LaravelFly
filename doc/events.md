@@ -8,11 +8,9 @@ The app dispatcher objects does not created until the Laravel app created.
 
 ## events and callbacks before the first request or after the last request
 
-1. server.creating  
-available args: $event['server'], $event['options']  
-the swooler http server wrapped in a Laravelfly server can be got by $event['server']->getSwoole().
 1. worker.starting  
 available args: $event['server'], $event['workerid']
+the swooler http server wrapped in a Laravelfly server can be got by $event['server']->getSwoole().
 1. laravel.created  
 available args: $event['server'], $event['app'], $event['request']  
 the $event['request'] is null unless FpmLike is used.
