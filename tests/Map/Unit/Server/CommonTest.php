@@ -58,26 +58,6 @@ class CommonTest extends MapTestCase
         self::assertEquals(static::$default['worker_num'], $server->getConfig('worker_num'));
     }
 
-    function testConfigEvent()
-    {
-        $dispatcher = static::$commonServer->getDispatcher();
-
-        $dispatcher->addListener('server.config', function ($event) {
-            /*
-             * if use `$event['options']['worker_num'] =1`,   error:
-             *       Indirect modification of overloaded element
-             */
-            $options = $event['options'];
-            $options['worker_num'] += 1;
-            $event['options'] = $options;
-        });
-
-        static::$commonServer->config(['worker_num' => 3, 'pre_include' => false]);
-        // event handler can change options
-        self::assertEquals(4, static::$commonServer->getConfig('worker_num'));
-
-    }
-
     function testConfigPidFile(){
         static::$commonServer->config([ 'pre_include' => false]);
         self::assertEquals( static::$laravelAppRoot . '/bootstrap/laravel-fly-9501.pid',static::$commonServer->getConfig('pid_file')  );

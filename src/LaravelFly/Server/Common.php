@@ -139,14 +139,6 @@ class Common
 
         $this->options = array_merge($this->defaultOptions, $options);
 
-        echo '[INFO] event server.config', PHP_EOL;
-
-        $event = new GenericEvent(null, ['server' => $this, 'options' => $this->options]);
-        $this->dispatcher->dispatch('server.config', $event);
-
-        // so options can be changed by event handler
-        $this->options = $event['options'];
-
         $this->parseOptions($this->options);
 
     }

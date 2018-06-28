@@ -83,13 +83,13 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
-Application   | √  |  LaravelFly\Simple\Application::needBackUpAppAttributes   | | | -
+Application   | √  |  needBackUpAppAttributes in LaravelFly\Simple\Application | | | -
 Kernel   | 🔧  |     | 🔧 | Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
 Base Services: event | √  |     | | | 
 Base Services: router | √  |     | | | 
 Base Services: url(UrlGenerator) | √  |     | | | 
 Facade | √  |     | | | 
-Laravel config | 🔧  |   All change actions are controlled by method set in file src/fly/Config/SimpleRepository.php injects methods: . And LaravelFly\Simple\Application::setBackupedConfig. | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
+Laravel config | 🔧  |  FLY. And setBackupedConfig in LaravelFly\Simple\Application. | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
 PHP Config | ×  | | NA |  | 
 
 Php Config not planed to support:    
@@ -113,6 +113,7 @@ view.finder | √  |  FLY   | √ | addNamespace offen called by loadViewsFrom o
 
 
 - [ ] AuthServiceProvider 
+
 
 support no planned
 - [ ] Illuminate\Support\ServiceProvider.No plan to make its members 'publishes' and 'publishGroups' supported in Mode Map, because they are  are associate arrays which has no much risk of memory leak and used only in artisan commands.

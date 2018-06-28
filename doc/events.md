@@ -8,8 +8,6 @@ The app dispatcher objects does not created until the Laravel app created.
 
 ## events and callbacks before the first request or after the last request
 
-1. server.config  
-available args: $event['server'], $event['config']
 1. server.creating  
 available args: $event['server'], $event['options']  
 the swooler http server wrapped in a Laravelfly server can be got by $event['server']->getSwoole().
@@ -30,17 +28,6 @@ available args: $event['server'] ,$event['workerid'], $event['app']
 These events are instances of Symfony\Component\EventDispatcher\GenericEvent, they can be used like
 ```
 $dispatcher = \LaravelFly\Fly::getServer()->getDispatcher();
-
-// adding listeners for 'server.config' must be before the server is created if you want to change the config.
-$dispatcher->addListener('server.config', function (GenericEvent $event)  {
-    /*
-     * if use `$event['options']['worker_num'] =1`,   error:
-     *       Indirect modification of overloaded element 
-     */
-    $options = $event['options'];
-    $options['worker_num']=1;
-    $event['options'] = $options;
-});
 
 $dispatcher->addListener('worker.starting', function (GenericEvent $event) {
     echo "There files can not be hot reloaded, because they are included before worker starting\n";
