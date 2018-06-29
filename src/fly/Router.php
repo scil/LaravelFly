@@ -64,15 +64,14 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         $this->init($cid);
 
-        if (defined('LARAVELFLY_SERVICES') && !LARAVELFLY_SERVICES['routes']) {
+        if (!LARAVELFLY_SERVICES['routes']) {
             $newRoutes = clone static::$corDict[WORKER_COROUTINE_ID]['routes'];
             static::$corDict[$cid]['routes'] = $newRoutes;
             $this->container->instance('routes', $newRoutes);
         }
     }
 
-    public
-    function get($uri, $action = null)
+    public function get($uri, $action = null)
     {
         return $this->addRoute(['GET', 'HEAD'], $uri, $action);
     }

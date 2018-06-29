@@ -102,28 +102,31 @@ return [
              */
 
             /* Illuminate\Routing\RouteCollection */
-            'obj.routes' => [
-                /** depends
-                 *
-                 * Uncomment them if routes created during requests are different.
-                 * Most cases, Service Providers add same routes, like DebugBar(Barryvdh\Debugbar\ServiceProvider),
-                 * so it's not needed to comment them because they are of associate array.
-                 */
-                // 'routes' , 'allRoutes' , 'nameList' , 'actionList' ,
+            'obj.routes' => LARAVELFLY_SERVICES['routes'] ? [] : [
+                'routes', 'allRoutes', 'nameList', 'actionList',
             ],
         ], /* end 'router' */
 
         'url' => [
             /* depends */
             // 'forcedRoot', 'forceSchema',
-            // 'cachedRoot', 'cachedSchema',
+            // 'rootNamespace',
+            // 'sessionResolver','keyResolver',
+            // 'formatHostUsing','formatPathUsing'
 
             /** not necessary to backup,
              *
              * the ref to app('request') will be released during next request;
              * and no need set request for `url' on every request , because there is a $app->rebinding for request:
              *      $app->rebinding( 'request', $this->requestRebinder() )
-             * //'request'
+             *
+             * // 'request',
+             *
+             * auto reset when request is updated ( setRequest )
+             * // 'routeGenerator','cachedRoot', 'cachedSchema',
+             *
+             * same as 'request'
+             * // 'routes'
              */
         ],
 
