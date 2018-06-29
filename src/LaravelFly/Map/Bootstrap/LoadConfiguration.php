@@ -72,9 +72,9 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
                 $psOnWork[] = $provider;
 
-                if (!is_array($providerConfig)) continue;
-
-                if (isset($providerConfig['_replace'])) {
+                if (!is_array($providerConfig)) {
+                    $providerConfig = [];
+                } elseif (isset($providerConfig['_replace'])) {
                     $providersReplaced[] = $providerConfig['_replace'];
                     unset($providerConfig['_replace']);
                 }
@@ -83,17 +83,29 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 /** @var \Illuminate\Support\ServiceProvider $provider */
                 $officalCFServices = $provider::coroutineFriendlyServices();
                 // $officalCFServices is base
-                $curCFServices = $officalCFServices;
+                $curCFServices = [];
 
-                foreach ($providerConfig as $CFS_name => $config) {
-                    // true $config only works when empty $officalCFServices
-                    if ($config === true && !$officalCFServices) {
-                        $curCFServices[] = $CFS_name;
-                    } elseif ($config === false && in_array($CFS_name, $officalCFServices)) {
-                        $curCFServices = array_diff($curCFServices, [$CFS_name]);
+                if ($providerConfig) {
+                    foreach ($providerConfig as $CFS_name => $config) {
+                        if (is_int($CFS_name)) {
+                            $CFS_name = $config;
+                            $config = true;
+                        }
+                        if ($config === true) {
+                            if (
+                                !$officalCFServices
+                                ||
+                                // if there are $officalCFServices, $CFS_name must be in it
+                                ($officalCFServices && in_array($CFS_name, $officalCFServices))) {
+
+                                $curCFServices[] = $CFS_name;
+                            }
+                        }
                     }
-                }
 
+                } else {
+                    $curCFServices = $officalCFServices;
+                }
 
                 if ($curCFServices) {
                     $CFServices = array_unique(array_merge($curCFServices, $CFServices));

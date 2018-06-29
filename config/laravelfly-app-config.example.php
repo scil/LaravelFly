@@ -155,10 +155,15 @@ return [
      *      proverder2=> true,           // this provider will be booted on worker
      *      proverder1=> [],             // this provider will be booted on worker
      *      proverder3=> [
-     *        '_replace' => 'provider1', // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
-     *        'singleton_service_1' => true,  //  service will be made on worker
-     *        'singleton_service_2' => false, //  service will not be made on worker,
-     *                                            even if the service has apply if using coroutineFriendlyServices()
+     *        '_replace' => 'provider1',       // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
+     *
+     *        'singleton_service_1',          //  services will be made on worker
+     *                                            it must be in result of coroutineFriendlyServices() if this method exists in serviceprovider
+     *
+     *        'singleton_service_2' => true,  //  service will be made on worker
+     *                                            it must be in result of coroutineFriendlyServices() if this method exists in serviceprovider
+     *
+     *        'singleton_service_3' => false, //  service will not be made on worker,
      *      ],
      *
      *      proverder4=> false,           // this provider will not be booted on worker
@@ -176,6 +181,7 @@ return [
 
         LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class => [
             '_replace' => Illuminate\Auth\AuthServiceProvider::class,
+            'auth',
         ],
 
         Illuminate\Broadcasting\BroadcastServiceProvider::class =>
@@ -197,10 +203,13 @@ return [
 
         LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class => [
             '_replace' => Illuminate\Cookie\CookieServiceProvider::class,
+            'cookie'
         ],
 
         LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class => [
             '_replace' => Illuminate\Database\DatabaseServiceProvider::class,
+            'db.factory',
+            'db'
         ],
 
         Illuminate\Encryption\EncryptionServiceProvider::class => [
@@ -243,6 +252,9 @@ return [
 
         LaravelFly\Map\Illuminate\Session\SessionServiceProvider::class => [
             '_replace' => Illuminate\Session\SessionServiceProvider::class,
+            'session',
+            'session.store',
+            \Illuminate\Session\Middleware\StartSession::class
         ],
 
         Illuminate\Translation\TranslationServiceProvider::class => [
@@ -257,6 +269,7 @@ return [
 
         \LaravelFly\Map\Illuminate\View\ViewServiceProvider::class => [
             '_replace' => Illuminate\View\ViewServiceProvider::class,
+            'view', 'view.engine.resolver', 'blade.compiler'
         ],
 
 

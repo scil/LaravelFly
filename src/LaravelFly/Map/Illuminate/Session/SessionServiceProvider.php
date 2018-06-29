@@ -7,7 +7,11 @@ class SessionServiceProvider extends \Illuminate\Session\SessionServiceProvider
 {
     static public function coroutineFriendlyServices():array
     {
-        return ['session', 'session.store', \Illuminate\Session\Middleware\StartSession::class];
+        return [
+            'session',
+            'session.store',
+            \Illuminate\Session\Middleware\StartSession::class
+        ];
     }
 
     public function register()

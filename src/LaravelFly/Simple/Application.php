@@ -17,6 +17,11 @@ class Application extends \Illuminate\Foundation\Application
     use \LaravelFly\ApplicationTrait\NoMorePackageManifest;
 
     protected $needBackUpAppAttributes = [
+
+        // ----
+        // from Container
+        // ----
+
         'resolved',
         'bindings',
         'methodBindings',
@@ -25,6 +30,11 @@ class Application extends \Illuminate\Foundation\Application
         'abstractAliases',
         'extenders',
         'tags',
+        /** not necessary to backup
+         *
+         * 'buildStack',
+         * 'with',
+         */
         'contextual',
 
         'reboundCallbacks',
@@ -32,23 +42,27 @@ class Application extends \Illuminate\Foundation\Application
         'globalAfterResolvingCallbacks',
         'resolvingCallbacks',
         'afterResolvingCallbacks',
-        'terminatingCallbacks',
 
-        'serviceProviders',
-        'loadedProviders',
-        'deferredServices',
 
-        /** not necessary to backup
-         *
-         * 'buildStack',
-         * 'with',
-         * 'monologConfigurator'
-         *
+        // ----
+        // from Application
+        // ----
+
+        // hasBeenBootstrapped
+        // booted
+
+        /**
          * I don't think there're some situatins where a new callback would be inserted into them during any request,
          * that's useless for a php app which would be freed in memory after a request
          * // 'bootingCallbacks',
          * // 'bootedCallbacks',
          */
+
+        'terminatingCallbacks',
+
+        'serviceProviders',
+        'loadedProviders',
+        'deferredServices',
 
     ];
     protected $needBackupServiceAttributes = [];
