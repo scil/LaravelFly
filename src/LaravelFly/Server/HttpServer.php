@@ -32,7 +32,7 @@ class HttpServer extends Common implements ServerInterface
 
         $this->workerStartHead($server, $worker_id);
 
-        if(!$this->getConfig('early_laravel')) $this->startLaravel();
+        if (!$this->getConfig('early_laravel')) $this->startLaravel();
 
         if (0 == $worker_id) {
             $this->workerZeroStartTail($server);
@@ -85,12 +85,14 @@ class HttpServer extends Common implements ServerInterface
 
     public function onMapRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
-
-        $laravel_request = (new \LaravelFly\Map\IlluminateBase\Request())->createFromSwoole($request);
+//        static $i = 0; $TARGET = 200;$i++;if ($i == $TARGET) memprof_enable();
 
         $cid = \co::getUid();
 
         $this->app->initForRequestCorontine($cid);
+
+
+        $laravel_request = (new \LaravelFly\Map\IlluminateBase\Request())->createFromSwoole($request);
 
         $laravel_response = $this->kernel->handle($laravel_request);
 
@@ -98,8 +100,10 @@ class HttpServer extends Common implements ServerInterface
 
         $this->kernel->terminate($laravel_request, $laravel_response);
 
+
         $this->app->unsetForRequestCorontine($cid);
 
+//        if ($i == $TARGET) {$dump = memprof_dump_array();ob_start();print_r($dump);$d=ob_get_clean();file_put_contents("/vagrant/callgrind.$i.out", $d);}
     }
 
 

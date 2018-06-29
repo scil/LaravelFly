@@ -39,7 +39,7 @@ Trait Laravel
         $this->app = $app = new $this->appClass($this->root);
 
         /** @var \LaravelFly\Server\ServerInterface|\LaravelFly\Server\HttpServer|\LaravelFly\Server\FpmHttpServer $this */
-        $this->app->setServer($this);
+        $app->setServer($this);
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,

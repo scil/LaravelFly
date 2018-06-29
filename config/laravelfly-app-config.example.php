@@ -195,10 +195,6 @@ return [
 
         ],
 
-        /**
-         * CookieJar's path, domain, secure and sameSite  are not rewriten to be a full COROUTINE-FRIENDLY SERVICE.
-         * so this provider requires there values always be same in all requests.
-         */
         LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class => [
             '_replace' => Illuminate\Cookie\CookieServiceProvider::class,
         ],
@@ -271,8 +267,8 @@ return [
 
         /* depends */
         /**
-         * if it's register and boot need executing in each request, remove it to 'providers_in_request'
-         * if it's boot can execute on worker (before any requests), change false to true or [].
+         * if it's register and boot need executing in each request, set to 'request' or move it to 'providers_in_request'
+         * if it's boot can execute on worker (before any requests), set to true or [].
          */
         App\Providers\AppServiceProvider::class => 'across',
 
@@ -294,7 +290,11 @@ return [
         App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : 'ignore',
 
         /* depends */
-        App\Providers\EventServiceProvider::class => [],
+        /**
+         * if it's register and boot need executing in each request, set to 'request' or move it to 'providers_in_request'
+         * if it's events are always same in different request, set to true or [].
+         */
+        App\Providers\EventServiceProvider::class => 'across',
 
         /* depends */
         App\Providers\RouteServiceProvider::class => [],

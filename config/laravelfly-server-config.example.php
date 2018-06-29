@@ -113,17 +113,26 @@ return [
     'listen_port' => 9501,
 
     // like pm.start_servers in php-fpm, but there's no option like pm.max_children
-    'worker_num' => 5,
+    'worker_num' => 4,
 
     // max number of coroutines handled by a worker in the same time
-    'max_coro_num' => 3000,
+    'max_coro_num' => 20,
+
+    /**
+     * The max number of connection the server could handle at the same time.
+     *
+     * max_conn should be less than ulimit -n max_conn should be more than (serv->worker_num + SwooleG.task_worker_num) * 2 + 32
+     * the default value of max_conn is ulimit -n
+     */
+    // large number needs large memory! Please test different numbers on your server.
+    'max_conn' => 128,
+
+    // like pm.max_requests in php-fpm
+    'max_request' => 500,
 
     // set it to false when debug, otherwise true
     // if you use tinker(), daemonize is disabled always.
     'daemonize' => false,
-
-    // like pm.max_requests in php-fpm
-    'max_request' => 500,
 
     /**
      *  watch files or dirs for server hot reload.
