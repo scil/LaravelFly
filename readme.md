@@ -81,7 +81,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 ## Similar projects that mix swoole and laravel
 
-* [laravel-swoole](https://github.com/swooletw/laravel-swoole): It is alse a safe sollution. The main difference is that it uses clone almost everything to achive safety, however LaravelFly uses only twice. Why? Because clone create new objects. Give an object X1, and another object Y holding a ref to X1, in a new request X1 is cloned to produce a new object X2, but object Y is still holding X1, not X2.
+* [laravel-swoole](https://github.com/swooletw/laravel-swoole): It is alse a safe sollution. The main difference is that it uses clone almost everything to achiev safety, however LaravelFly uses only twice in Mode Map. Why? Because clone create new objects. Give an object X1, and another object Y holding a ref to X1, in a new request X1 is cloned to produce a new object X2, but object Y is still holding X1, not X2.
 
 * [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
 
