@@ -85,7 +85,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 * [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
 
-## Todo Abut Safe: Mode Simple
+## Mode Simple SAFETY CHECKLIST
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
@@ -97,17 +97,15 @@ Base Services: router.routes | 🔧 |     |  √ | props are associate arrays| L
 Base Services: url(UrlGenerator) | 🔧 |    | | | config('laravelfly.BaseServices')['url']
 Facade | √  |  Facade::clearResolvedInstances   | NA | | 
 Laravel config | 🔧  |  FLY. And setBackupedConfig in LaravelFly\Simple\Application. | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
-PHP Config | ×  | | NA |  | 
+PHP Config | 🖏  | | NA |  | 
 
 🔧: configurable
+🖏: works well in most cases, except basic config different in different requests. for example, UrlGenerator::$formatHostUsing is a callback/closure and keep same in most projects.But if your project has different formatHostUsing, plus hack work is needed.
+🔧🖏: configurable, and works well in most cases after configration.
+NA: not applicable
 
-Php Config not planed to support:    
-1. It's useless 
-2. It's hard to achive as it's related with php internal function ini_set.  
 
-## Todo Abut Safe: Mode Map
-
-### Base Objects
+## Mode Map SAFETY CHECKLIST on Base Items
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
@@ -120,33 +118,24 @@ Base Services: router.routes | 🔧 |  clone   |  √ | props are associate arra
 Base Services: url(UrlGenerator) | 🖏  |  clone🤝 ,its routes and request would update auto (registerUrlGenerator) and also routeGenerator when setRequest. But four props 'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing' are not cloned, as closure | √ | | 
 Facade | √  |  Dict   | | | 
 Laravel config | 🔧  |  Dict | 🔧 | Methods push and prepend. | LARAVELFLY_SERVICES['config']
-PHP Config | ×  | | √ |  | 
+PHP Config | 🖏  | | NA |  | 
 routes |  🔧 |  Dict   | √ | most cases, no problems, because props in RouteCollection are associate arrays.|  LARAVELFLY_SERVICES['routes']
 
-🖏: works well in most cases, except basic config different in different requests. for example, UrlGenerator::$formatHostUsing is a callback/closure and keep same in most projects.But if your project has different formatHostUsing, plus hack work is needed.
-🔧🖏: configurable, and works well in most cases after configration.
 
+## Mode Map SAFETY CHECKLIST on None-Base Items
 
-
-### None-Base
-
-They can be booted on worker or not.If you boot some of them before any requests, this table is useful.
+Objects here can boot on worker or not.If you boot some of them before any requests, this table is useful.
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
 view.finder | √  |  Dict   | √ | addNamespace offen called by loadViewsFrom of ServiceProviders such as PaginationServiceProvider  and NotificationServiceProvider.|  
-cookie(CookieJar) | 🔧🖏  |  Dict   | √ |  Dict version considers prop 'queued',but path, domain, secure and sameSite  are not rewriten.| config('laravel.providers_on_worker')[LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class ] 
-PaginationServiceProvider  | 🖏  |     | √ | the static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator keep same.  | 
-
-
-
-- [ ] AuthServiceProvider 
+cookie(CookieJar) | 🔧🖏  |  Dict   | √ |  prop 'queued' can dif,but path, domain, secure and sameSite should keep same.| config('laravel.providers_on_worker')[LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class ] 
+PaginationServiceProvider  | 🖏  |     | √ | the static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator should keep same.  | 
+auth  |  |     |  | | 
 
 
 support no planned
-- [ ] .No plan to make its members 
 - [ ] Laravel Macros. In Mode Map, macros are not supported to avoid data pollution, because in most situations macros are always same.
-- [ ] Php Config. It's not supported in the near future. 
 
 
 ## Todo About Improvement
