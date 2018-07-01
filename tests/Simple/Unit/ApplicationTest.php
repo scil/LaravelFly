@@ -12,6 +12,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
+use Illuminate\Routing\UrlGenerator;
 use LaravelFly\Tests\BaseTestCase;
 use ReflectionClass;
 use ReflectionProperty;
@@ -113,6 +114,12 @@ class ApplicationTest extends BaseTestCase
         'routes'
     ];
 
+    var $redirectorProps = [
+        'generator',
+        'session',
+        'macros',
+    ];
+
     function testOfficialApplicationProps()
     {
 
@@ -139,6 +146,13 @@ class ApplicationTest extends BaseTestCase
     function testOfficialUrlProps()
     {
         $this->props($this->urlProps, 'Illuminate\Routing\UrlGenerator', new RouteCollection(), new Request());
+
+    }
+
+    function testOfficialRedirectorProps()
+    {
+        $this->props($this->redirectorProps, 'Illuminate\Routing\Redirector',
+            new UrlGenerator(new RouteCollection(), new Request()));
 
     }
 

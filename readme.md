@@ -92,9 +92,10 @@ item   | Data Pollution  |  note | Memory Leak| note| config
 Application   | √  |  needBackUpAppAttributes in LaravelFly\Simple\Application | √| | -
 Kernel   | 🔧  |     | 🔧 | Methods pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'] and config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
 Base Services: events | √  |     | √ | | config('laravelfly.BaseServices')['events']
-Base Services: router | 🔧🖏 |  no support for different macros in dif requests   | | | config('laravelfly.BaseServices')['router']
+Base Services: router | 🔧🖏 |  no support for different macros | | | config('laravelfly.BaseServices')['router']
 Base Services: router.routes | 🔧 |     |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
-Base Services: url(UrlGenerator) |  🔧🖏 |  no support for different macros in dif requests| | | config('laravelfly.BaseServices')['url']
+Base Services: url(UrlGenerator) |  🔧🖏 |  no support for different macros | | | config('laravelfly.BaseServices')['url']
+Base Services: redirect(Redirector) | 🖏 |  no support for different macros | | | config('laravelfly.BaseServices')['url']
 Facade | √  |  Facade::clearResolvedInstances   | NA | | 
 Laravel config | 🔧  |  FLY | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
 PHP Config | 🖏  | | NA |  | 
