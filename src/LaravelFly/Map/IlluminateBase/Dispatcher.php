@@ -18,9 +18,9 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     use \LaravelFly\Map\Util\Dict;
 
-    protected static $normalAttriForObj=['queueResolver'=>null];
+    protected static $normalAttriForObj = ['queueResolver' => null];
 
-    protected static $arrayAttriForObj=['listeners','wildcards'];
+    protected static $arrayAttriForObj = ['listeners', 'wildcards', 'wildcardsCache'];
 
     public function __construct(ContainerContract $container)
     {
@@ -42,6 +42,8 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     protected function setupWildcardListen($event, $listener)
     {
         static::$corDict[\co::getUid()]['wildcards'][$event][] = $this->makeListener($listener, true);
+
+        static::$corDict[\co::getUid()]['wildcardsCache'] = [];
     }
 
     public function hasListeners($eventName)
@@ -70,7 +72,8 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         $listeners = static::$corDict[\co::getUid()]['listeners'][$eventName] ?? [];
 
         $listeners = array_merge(
-            $listeners, $this->getWildcardListeners($eventName)
+            $listeners,
+            static::$corDict[\co::getUid()]['wildcardsCache'][$eventName] ?? $this->getWildcardListeners($eventName)
         );
 
         return class_exists($eventName, false)
@@ -88,7 +91,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
             }
         }
 
-        return $wildcards;
+        return static::$corDict[\co::getUid()]['wildcardsCache'][$eventName] = $wildcards;
     }
 
     protected function addInterfaceListeners($eventName, array $listeners = [])
