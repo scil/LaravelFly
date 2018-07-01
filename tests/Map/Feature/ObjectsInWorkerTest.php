@@ -139,7 +139,7 @@ class ObjectsInWorkerTest extends MapTestCase
         $instances = static::$chan->pop();
         // PHPUnit: assert two arrays are equal, but order of elements not important
         // https://stackoverflow.com/questions/3838288/phpunit-assert-two-arrays-are-equal-but-order-of-elements-not-important
-        self::assertEquals($this->instances, $instances, "\$canonicalize = true", $delta = 0.0, $maxDepth = 10, $canonicalize = true);
+        self::assertEquals($this->instances, $instances, "\$canonicalize = true",  0.0, 10,  true);
 
         //self::assertEquals($this->instances, $instances);
     }

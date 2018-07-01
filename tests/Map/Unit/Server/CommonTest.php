@@ -2,9 +2,8 @@
 
 namespace LaravelFly\Tests\Map\Unit\Server;
 
-use LaravelFly\Tests\Map\MapTestCase;
 
-class CommonTest extends MapTestCase
+class CommonTest extends CommonServerTestCase
 {
     /**
      * This method is called before each test.
@@ -13,13 +12,39 @@ class CommonTest extends MapTestCase
     {
         parent::setUpBeforeClass();
 
-        static::$commonServer = new \LaravelFly\Server\Common();
+        //static::$commonServer = new \LaravelFly\Server\Common();
+        /**
+         * create a server and get default server options
+         */
+        parent::makeCommonServer();
 
         $d = new \ReflectionProperty(static::$commonServer, 'defaultOptions');
         $d->setAccessible(true);
         static::$default = $d->getValue(static::$commonServer);
     }
 
+    function testInit()
+    {
+        $server = static::$commonServer;
+
+        $root = new \ReflectionProperty($server, 'root');
+        $root->setAccessible(true);
+        self::assertEquals(static::$laravelAppRoot, $root->getValue($server));
+    }
+
+    function testAppClass(){
+        $this->resetServerConfigAndDispatcher();
+
+        $a= new \ReflectionProperty(static::$commonServer,'appClass');
+        $a->setAccessible(true);
+
+        foreach (['Map','Simple','FpmLike'] as $mode){
+            static::$commonServer->config(['mode'=>$mode, 'pre_include' => false]);
+            $appClass = $a->getValue(static::$commonServer);
+            self::assertEquals("\LaravelFly\\$mode\Application",$appClass);
+        }
+
+    }
 
     function testDefaultOptions()
     {
@@ -64,23 +89,6 @@ class CommonTest extends MapTestCase
 
     }
 
-    function testAppClass(){
-        $this->resetServerConfigAndDispatcher();
-
-        $a= new \ReflectionProperty(static::$commonServer,'appClass');
-        $a->setAccessible(true);
-
-        static::$commonServer->config([ 'pre_include' => false]);
-        $appClass = $a->getValue(static::$commonServer);
-        self::assertEquals('\LaravelFly\Map\Application',$appClass);
-
-        foreach (['Map','Simple','FpmLike'] as $mode){
-            static::$commonServer->config(['mode'=>$mode, 'pre_include' => false]);
-            $appClass = $a->getValue(static::$commonServer);
-            self::assertEquals("\LaravelFly\Map\Application",$appClass);
-        }
-
-    }
 
     /**
      * kernelClass always be \LaravelFly\Kernel, because

@@ -3,8 +3,9 @@
 namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
 use Illuminate\Support\Facades\Artisan;
-use LaravelFly\Tests\Unit\Server\CommonServerTestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
+
+use LaravelFly\Tests\Map\Unit\Server\CommonServerTestCase;
 
 class WorkerTest extends CommonServerTestCase
 {
@@ -26,11 +27,12 @@ class WorkerTest extends CommonServerTestCase
         $options = [
             // use two process for two workers, worker 0 used for watchDownFile, worker 1 used for phpunit
             'worker_num' => 2,
-            'mode'=>'Simple',
+            'mode' => 'Simple',
             'listen_port' => 9503,
             'daemonize' => false,
             'log_file' => $server->path('/storage/logs/swoole.log'),
-            'pre_include' => false
+            'pre_include' => false,
+            'watch_down' => true,
         ];
         $server->config($options);
 
@@ -47,14 +49,14 @@ class WorkerTest extends CommonServerTestCase
              * $server->getMemory('isDown') will not change.
              *
              */
-            if($event['workerid']===0) return;
+            if ($event['workerid'] === 0) return;
 
             self::assertEquals(0, $server->getMemory('isDown'));
 
             $art->call('down');
             sleep(1);
             self::assertTrue($app->isDownForMaintenance());
-            file_put_contents($server->path('storage/framework/ok3'),$server->getMemory('isDown'));
+            file_put_contents($server->path('storage/framework/ok3'), $server->getMemory('isDown'));
             self::assertEquals(1, $server->getMemory('isDown'));
 
 

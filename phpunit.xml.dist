@@ -14,17 +14,10 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
 
-        <testsuite name="LaravelFly_Unit">
-            <file>./tests/Unit/FlyTest.php</file>
-            <file>./tests/Unit/Server/CommonTest.php</file>
-            <!--todo-->
-            <file>./tests/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
-        </testsuite>
-        <testsuite name="LaravelFly_Unit2">
-            <!-- laravel offical application used -->
-            <file>./tests/Unit/Server/Traits/WorkerTest.php</file>
-        </testsuite>
 
+        <testsuite name="LaravelFly_Simple_Unit">
+            <file>./tests/Simple/Unit/ApplicationTest.php</file>
+        </testsuite>
 
 
         <testsuite name="LaravelFly_Map_Unit">
@@ -33,6 +26,16 @@
 
         <testsuite name="LaravelFly_Map_Unit2">
             <file>./tests/Map/Unit/Server/FlyFilesTest.php</file>
+        </testsuite>
+        <testsuite name="LaravelFly_Map_Unit3">
+            <!-- laravel offical application used -->
+            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
+        </testsuite>
+        <testsuite name="LaravelFly_Map_Unit4">
+            <file>./tests/Map/Unit/FlyTest.php</file>
+            <file>./tests/Map/Unit/Server/CommonTest.php</file>
+            <!--todo-->
+            <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Feature">

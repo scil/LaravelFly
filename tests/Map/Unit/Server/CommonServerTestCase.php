@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelFly\Tests\Unit\Server;
+namespace LaravelFly\Tests\Map\Unit\Server;
 
-use LaravelFly\Tests\BaseTestCase as Base;
+use LaravelFly\Tests\Map\MapTestCase as Base;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 abstract class CommonServerTestCase extends Base
@@ -15,9 +15,6 @@ abstract class CommonServerTestCase extends Base
     {
         parent::setUpBeforeClass();
         parent::makeCommonServer();
-        if(!defined('WORKER_COROUTINE_ID')){
-            define('WORKER_COROUTINE_ID',1);
-        }
 
     }
 

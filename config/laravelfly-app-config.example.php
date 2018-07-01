@@ -81,7 +81,7 @@ return [
         ],
         /* Illuminate\Events\EventServiceProvider::class : */
         'events' => [
-            'listeners', 'wildcards', 'queueResolver',
+            'listeners', 'wildcards', 'wildcardsCache', 'queueResolver',
         ],
 
         /* Illuminate\Routing\RoutingServiceProvider::class : */
@@ -90,6 +90,9 @@ return [
              * Uncomment them if it's not same on each request. They may be changed by Route::middleware
              */
             // 'middleware','middlewareGroups','middlewarePriority',
+
+            /** depends */
+            // 'binders', 'patterns', 'groupStack',
 
             /** not necessary to backup,
              * it will be changed during next request
@@ -109,10 +112,10 @@ return [
 
         'url' => [
             /* depends */
-            // 'forcedRoot', 'forceSchema',
+            // 'forcedRoot', 'forceScheme',
             // 'rootNamespace',
             // 'sessionResolver','keyResolver',
-            // 'formatHostUsing','formatPathUsing'
+            // 'formatHostUsing','formatPathUsing',
 
             /** not necessary to backup,
              *

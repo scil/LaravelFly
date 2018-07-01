@@ -3,18 +3,21 @@
 
 /**
  * first:
- * cd_laravel_project_root
+ * cd laravel_project_root
  *
- * vendor/bin/phpunit  --stop-on-failure  -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Unit
- * vendor/bin/phpunit  --stop-on-failure  -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Unit2
  *
  * Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit2
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit3
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit4
+ *
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature2
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
+ * Mode simple
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Simple_Unit
  */
 
 namespace LaravelFly\Tests;

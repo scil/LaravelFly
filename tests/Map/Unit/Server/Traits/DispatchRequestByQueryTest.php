@@ -2,7 +2,7 @@
 
 namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
-use LaravelFly\Tests\Unit\Server\CommonServerTestCase;
+use LaravelFly\Tests\Map\Unit\Server\CommonServerTestCase;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
 
