@@ -63,20 +63,14 @@ return [
      */
     'BaseServices' => [
 
-        \Illuminate\Contracts\Http\Kernel::class => [
+        \Illuminate\Contracts\Http\Kernel::class => LARAVELFLY_SERVICES['kernel'] ? [] : [
+
+             'middleware',
 
             /** depends
              * put new not safe properties here
              */
             // 'newProp1', 'newProp2',
-
-            /** depends
-             * Uncomment it if it's not always same in multiple request. They may be changed by Route::middleware
-             * No need worry about same middlewares are added multiple times,
-             * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
-             *          if (array_search($middleware, $this->middleware) === false)
-             */
-            // 'middleware',
 
         ],
         /* Illuminate\Events\EventServiceProvider::class : */
@@ -92,7 +86,15 @@ return [
             // 'middleware','middlewareGroups','middlewarePriority',
 
             /** depends */
-            // 'binders', 'patterns', 'groupStack',
+            // 'binders',
+
+            /** depends */
+            // 'patterns',
+
+
+            /** not necessary to backup,
+             * // 'groupStack',
+             */
 
             /** not necessary to backup,
              * it will be changed during next request

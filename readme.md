@@ -85,7 +85,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 * [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
 
-## Mode Simple SAFETY CHECKLIST
+## Mode Simple Safety Checklist
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
@@ -107,7 +107,7 @@ PHP Config | 🖏  | | NA |  |
 - NA: not applicable
 
 
-## Mode Map SAFETY CHECKLIST on Base Items
+## Mode Map Safety Checklist on Base Items
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
@@ -132,7 +132,7 @@ Objects url and routes have ref in Laravel offical objects , but rarely have ref
 
 clone👀 means LaravelFly has handled the Stale Reference problems in Laravel Official objects.
 
-## Mode Map SAFETY CHECKLIST on None-Base Items
+## Mode Map Safety Checklist on None-Base Items
 
 Objects here can boot on worker or not.If you boot some of them before any requests, this table is useful.
 
@@ -158,6 +158,7 @@ support no planned
 - [x] Server config 'early_laravel'
 - [x] Mysql coroutine
 - [ ] Mysql connection pool
+- [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] check memory usage in Mode Map
 

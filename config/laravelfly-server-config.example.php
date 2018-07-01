@@ -75,6 +75,11 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
 
     /**
      * set this false if middlewares are not always same in multiple request.
+     *
+     * Middlewares may be changed by Route::middleware
+     * No need worry about same middlewares are added multiple times,
+     * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
+     *          if (array_search($middleware, $this->middleware) === false)
      */
     'kernel' => true,
 
@@ -283,15 +288,14 @@ return [
      *  ["middleware", "middlewareGroups", "routeMiddleware", "app", "router", "bootstrappers", "middlewarePriority"]
      * If new properties are added by you, please ensure the new ones are safe, that is , keep same in different requests.
      * If not,
-     * for Mode Simple
-     *      add the not safe properties to BaseServices['\Illuminate\Contracts\Http\Kernel::class'] in config/laravelfly.php
-     * for Mode Map
      *      set `'kernel' => false ,` in LARAVELFLY_SERVICES
-     *  and
+     * and
+     *   for Mode Simple
+     *      add the not safe properties to BaseServices['\Illuminate\Contracts\Http\Kernel::class'] in config/laravelfly.php
+     *   for Mode Map
      *      add `
      *          use Dict` or `use StaticDict`
-     *      to your Kernel class and make some changes like
-     *          vendor/scil/laravel-fly/src/Http/Kernel.php
+     *      to your Kernel class and make some changes like vendor/scil/laravel-fly/src/Http/Kernel.php
      *
      */
     'kernel' => \App\Http\Kernel::class,
