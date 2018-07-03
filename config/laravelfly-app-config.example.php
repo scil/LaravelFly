@@ -190,6 +190,7 @@ return [
         LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class => [
             '_replace' => Illuminate\Auth\AuthServiceProvider::class,
             'auth',
+            Illuminate\Contracts\Auth\Access\Gate::class,
         ],
 
         Illuminate\Broadcasting\BroadcastServiceProvider::class =>

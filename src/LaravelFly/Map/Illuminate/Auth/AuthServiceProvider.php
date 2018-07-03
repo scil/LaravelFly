@@ -9,15 +9,18 @@ class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
     static public function coroutineFriendlyServices():array
     {
         return [
-
             'auth',
-
-            /**
-             * do not resolve it on work, because it has props like afterCallbacks which may cause memory leak
-             * it's official implement is Illuminate\Auth\Access\Gate
-             */
-            // GateContract::class
+             GateContract::class
         ];
+    }
+
+    protected function registerAccessGate()
+    {
+        $this->app->singleton(GateContract::class, function ($app) {
+            return new Gate($app, function () use ($app) {
+                return call_user_func($app['auth']->userResolver());
+            });
+        });
     }
 
     protected function registerAuthenticator()

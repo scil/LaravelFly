@@ -1,4 +1,4 @@
-LaravelFly runs Laravel much faster, and make Tinker to be used online(use tinker while Laravel is responding requests from browsers).
+LaravelFly speeds up our existing Laravel projects, and make Tinker to be used online (use tinker while Laravel is responding requests from browsers).
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
@@ -90,7 +90,7 @@ The main difference is that all the requests will be processed by a new `sandbox
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
 Application   | √  |  | √| | -
-Kernel   | 🔧  |     | 🔧 | Methods pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'] and config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
+Kernel   | 🔧  |     | 🔧 | Methods pushMiddleware or prependMiddleware? No worry, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'] and config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
 events | √  |     | √ | | config('laravelfly.BaseServices')['events']
 router | 🔧 |  | | | config('laravelfly.BaseServices')['router']
 router.routes | 🔧 |  |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
@@ -145,7 +145,7 @@ Objects here can boot on worker.If you boot some of them before any requests, th
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
 auth  | 🖏| Dict, **customCreators** with same name should keep same | √ | | 
-GateContract::class | | | | |
+GateContract::class | √ | Dict| √ | afterCallbacks and beforeCallbacks can append |
 cookie(CookieJar) | 🖏  |  Dict. props **path, domain, secure and sameSite** should keep same. | √ | | CookieServiceProvider in config('laravel.providers_on_worker') 
 Pagination | 🖏  |  **static props like currentPathResolver, ...** in Pagination\AbstractPaginator should keep same. | √ | | 
 log | √  |  | √ | |  
