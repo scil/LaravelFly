@@ -4,6 +4,8 @@ if (!defined('LARAVELFLY_MODE')) return [];
 
 $IN_PRODUCTION = env('APP_ENV') === 'production' || env('APP_ENV') === 'product';
 
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+
 return [
     /**
      * If use cache file for config/laravel.php always.
@@ -190,7 +192,7 @@ return [
         LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class => [
             '_replace' => Illuminate\Auth\AuthServiceProvider::class,
             'auth',
-            Illuminate\Contracts\Auth\Access\Gate::class,
+            GateContract::class,
         ],
 
         Illuminate\Broadcasting\BroadcastServiceProvider::class =>

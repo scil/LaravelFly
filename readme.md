@@ -19,7 +19,7 @@ If you enable `eval(tinker())` and see an error about mkdir, please start Larave
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
 
-By default, every time LaravelFly starts, it makes a config cache file laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache, so if config file `config/laravelfly.php` changes you can change config 'laravelfly.config_cache_always' to false in dev env , or run `php artisan config:clear` before starting LaravelFly in production env:
+By default, every time LaravelFly starts, it makes or loads a config cache file laravelfly_ps_map.php or laravelfly_ps_simple.php, so if config file `config/laravelfly.php` changes you can change config 'laravelfly.config_cache_always' to false in dev env , or run `php artisan config:clear` before starting LaravelFly in production env:
 ```
 alias ff='php artisan config:clear && php vendor/scil/laravel-fly/bin/fly start'
 
@@ -81,75 +81,9 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 * [laravel-swoole](https://github.com/swooletw/laravel-swoole): It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly.   
 The first difference is that laravel-swoole is configurable based on service,like log, view while LaravelFly is configurable based on service providers like LogServiceProvider, ViewServiceProvider.(In Mode Simple, providers are registered before any requests and booted in request, in Mode Map some providers are registered and booted before any requests.)   
-The main difference is that all the requests will be processed by a new `sandbox app` cloned from the original app container and laravel-swoole updates related container bindings to sandbox. However in LaravelFly, `clone` is used only twice to create `url` and `routes` in Mode Map, and other objects such as `app`, `event`.... always keep one object to handle requests in a worker process. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. See `Stale Reference` part of this readme. 
+The main difference is that all the requests will be processed by a new `sandbox app` cloned from the original app container and laravel-swoole updates related container bindings to sandbox. However in LaravelFly, `clone` is used only twice to create `url` and `routes` in Mode Map, and other objects such as `app`, `event`.... always keep one object to handle requests in a worker process. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. See [Stale Reference](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist)`. 
 
 * [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
-
-## Mode Simple Safety Checklist
-
-item   | Data Pollution  |  note | Memory Leak| note| config
------------- | ------------ | ------------- | ------------- | ------------- | ------------- 
-Application   | √  |  | √| | -
-Kernel   | 🔧  |     | 🔧 | Methods pushMiddleware or prependMiddleware? No worry, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'] and config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
-events | √  |     | √ | | config('laravelfly.BaseServices')['events']
-router | 🔧 |  | | | config('laravelfly.BaseServices')['router']
-router.routes | 🔧 |  |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
-url(UrlGenerator) |  🔧 |  | | | config('laravelfly.BaseServices')['url']
-redirect(Redirector) |  √ |  | | | config('laravelfly.BaseServices')['url']
-Facade | √  |  Facade::clearResolvedInstances   | NA | | 
-config | 🔧  |  FLY | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
-PHP Config | 🖏  | should not changed in any requests | NA |  | 
-
----
-
-- 🔧: configurable
-- 🖏: works well in most cases, except basic config different in different requests. for example, UrlGenerator::$formatHostUsing is a callback/closure and keep same in most projects.But if your project has different formatHostUsing, plus hack work is needed.
-- 🔧🖏: configurable, and works well in most cases after configration.
-- NA: not applicable
-
-
-## Mode Map Safety Checklist on Base Items
-
-item   | Data Pollution  |  note | Memory Leak| note| config
------------- | ------------ | ------------- | ------------- | ------------- | ------------- 
-Application   | √  |   | | | -
-Kernel   | 🔧  |     | 🔧 | Kernel::pushMiddleware or prependMiddleware? No worry, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
-ServiceProvider  | 🖏  | __'publishes', 'publishGroups'__ are used mainly in php artisan   | √ | props are associate arrays | 
-events | √  |  Dict   | √| Dict | 
-router | 🖏 | 🕅 | | | 
-routes |  🔧 |  clone👀  | √ | props are associate arrays.|  LARAVELFLY_SERVICES['routes']
-url(UrlGenerator) | 🖏  |  🕅; clone👀 [1], but closure props __'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing'__ are not cloned. | √ | | 
-redirect(Redirector) | 🖏 |  🕅 | | | 
-Facade | √  |  Dict   | | | 
-config | 🔧  |  Dict | 🔧 | Methods set/push/prepend. | LARAVELFLY_SERVICES['config']
-PHP Config | 🖏  | should not changed in any requests | NA |  | 
-
--------
-
-🕅: __macros__ with same name should keep same.In Mode Map, Laravel Macros are not supported to avoid data pollution, because in most situations macros are always same.
-[1]: Props routes and request of url would update (registerUrlGenerator) and also routeGenerator when setRequest.
-
-###  clone👀 and Stale Reference
-`clone` creates new objects. Give an object X1, and another object Y holding a ref to X1, in a new request X1 is cloned to produce a new object X2, but object Y is still holding X1, not X2. So developers and users should pay some attention to this kind of relations.
-
-The second problem is that by default `clone` does not clone props of type closure or object. 
-
-Objects url and routes have ref in Laravel offical objects , but rarely have ref in your code. So `clone` is used. While other objects, such as event, are used widely in your code, so `clone` is not used, trait `Dict` is used.
-
-clone👀 means LaravelFly has handled the Stale Reference problems in Laravel Official objects.
-
-## Mode Map Safety Checklist on None-Base Items (allowing them to boot before any requests)
-
-Objects here can boot on worker.If you boot some of them before any requests, this table is useful.
-
-item   | Data Pollution  |  note | Memory Leak| note| config
------------- | ------------ | ------------- | ------------- | ------------- | ------------- 
-auth  | 🖏| Dict, **customCreators** with same name should keep same | √ | | 
-GateContract::class | √ | Dict| √ | afterCallbacks and beforeCallbacks can append |
-cookie(CookieJar) | 🖏  |  Dict. props **path, domain, secure and sameSite** should keep same. | √ | | CookieServiceProvider in config('laravel.providers_on_worker') 
-Pagination | 🖏  |  **static props like currentPathResolver, ...** in Pagination\AbstractPaginator should keep same. | √ | | 
-log | √  |  | √ | |  
-view.finder | √  |  Dict   | √ | addNamespace offen called by loadViewsFrom of ServiceProviders such as PaginationServiceProvider.|  
 
 
 ## Todo About Improvement
