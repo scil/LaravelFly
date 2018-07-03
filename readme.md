@@ -39,8 +39,6 @@ ff
 
 [Using tinker when Laravel Working](doc/tinker.md)
 
-[LaravelFly Execution Flow](doc/flow.md)
-
 [For Dev](doc/dev.md)
 
 ## A simple ab test 
