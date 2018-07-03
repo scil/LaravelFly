@@ -203,6 +203,7 @@ return [
         Illuminate\Cache\CacheServiceProvider::class => [
             'cache' => true,
             'cache.store' => true,
+
             /* depends */
             // if memcached is used, enable it
             // 'memcached.connector' => true,
