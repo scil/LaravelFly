@@ -79,9 +79,9 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 ## Similar projects that mix swoole and laravel
 
-* [laravel-swoole](https://github.com/swooletw/laravel-swoole): It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly. The first difference is that laravel-swoole is configurable based on service,like log, view while LaravelFly is configurable based on service providers like LogServiceProvider, ViewServiceProvider.
-
-The main difference is that all the requests will be processed by a new `sandbox app` cloned from the original app container and laravel-swoole updates related container bindings to sandbox. However in LaravelFly, `clone` is used only twice to create `url` and `routes` in Mode Map, and other objects such as `app`, `event`.... always keep one object to handle requests in a worker process. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. See `Stale Reference` part of this readme. 
+* [laravel-swoole](https://github.com/swooletw/laravel-swoole): It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly.   
+The first difference is that laravel-swoole is configurable based on service,like log, view while LaravelFly is configurable based on service providers like LogServiceProvider, ViewServiceProvider.(In Mode Simple, providers are registered before any requests and booted in request, in Mode Map some providers are registered and booted before any requests.)   
+The main difference is that all the requests will be processed by a new `sandbox app` cloned from the original app container and laravel-swoole updates related container bindings to sandbox. However in LaravelFly, `clone` is used only twice to create `url` and `routes` in Mode Map, and other objects such as `app`, `event`.... always keep one object to handle requests in a worker process. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. It's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests for laravel-swoole. See `Stale Reference` part of this readme. 
 
 * [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
 
@@ -134,15 +134,15 @@ Objects url and routes have ref in Laravel offical objects , but rarely have ref
 
 clone👀 means LaravelFly has handled the Stale Reference problems in Laravel Official objects.
 
-## Mode Map Safety Checklist on None-Base Items
+## Mode Map Safety Checklist on None-Base Items (allowing them to boot before any requests)
 
 Objects here can boot on worker or not.If you boot some of them before any requests, this table is useful.
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
-view.finder | √  |  Dict   | √ | addNamespace offen called by loadViewsFrom of ServiceProviders such as PaginationServiceProvider  and NotificationServiceProvider.|  
-cookie(CookieJar) | 🔧🖏  |  Dict   | √ |  prop 'queued' can dif,but path, domain, secure and sameSite should keep same.| config('laravel.providers_on_worker')[LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class ] 
-Pagination | 🖏  |     | √ | the static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator should keep same.  | 
+view.finder | √  |  Dict   | √ | addNamespace offen called by loadViewsFrom of ServiceProviders such as PaginationServiceProvider.|  
+cookie(CookieJar) | 🖏  |  Dict   | √ |  props **path, domain, secure and sameSite** should keep same.| CookieServiceProvider in config('laravel.providers_on_worker') 
+Pagination | 🖏  |     | √ | **static props like currentPathResolver, ...** in Pagination\AbstractPaginator should keep same. | 
 auth  |  |     |  | | 
 
 
