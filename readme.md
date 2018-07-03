@@ -90,10 +90,10 @@ item   | Data Pollution  |  note | Memory Leak| note| config
 Application   | √  |  | √| | -
 Kernel   | 🔧  |     | 🔧 | Methods pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'] and config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
 events | √  |     | √ | | config('laravelfly.BaseServices')['events']
-router | 🔧🖏 |  dif __macros__ not supported| | | config('laravelfly.BaseServices')['router']
-router.routes | 🔧 |     |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
-url(UrlGenerator) |  🔧🖏 |  dif __macros__ not supported | | | config('laravelfly.BaseServices')['url']
-redirect(Redirector) | 🖏 |  dif __macros__ not supported | | | config('laravelfly.BaseServices')['url']
+router | 🔧 |  | | | config('laravelfly.BaseServices')['router']
+router.routes | 🔧 |  |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
+url(UrlGenerator) |  🔧 |  | | | config('laravelfly.BaseServices')['url']
+redirect(Redirector) |  √ |  | | | config('laravelfly.BaseServices')['url']
 Facade | √  |  Facade::clearResolvedInstances   | NA | | 
 config | 🔧  |  FLY | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
 PHP Config | 🖏  | should not changed in any requests | NA |  | 
@@ -113,9 +113,10 @@ Application   | √  |   | | | -
 Kernel   | 🔧  |     | 🔧 | Kernel::pushMiddleware or prependMiddleware? No worry, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
 ServiceProvider  | 🖏  | __'publishes', 'publishGroups'__ are used mainly in php artisan   | √ | props are associate arrays | 
 events | √  |  Dict   | √| Dict | 
-router | √  |     | | | 
+router | √  |  dif __macros__ not supported   | | | 
 routes |  🔧 |  clone👀  | √ | props are associate arrays.|  LARAVELFLY_SERVICES['routes']
-url(UrlGenerator) | 🖏  |  clone👀 [1],but four closure props __'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing'__ are not cloned | √ | | 
+url(UrlGenerator) | 🖏  |  clone👀 [1],but four closure props __'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing'__ are not cloned. | √ | | 
+redirect(Redirector) | 🖏 |  dif __macros__ not supported | | | 
 Facade | √  |  Dict   | | | 
 config | 🔧  |  Dict | 🔧 | Methods set/push/prepend. | LARAVELFLY_SERVICES['config']
 PHP Config | 🖏  | should not changed in any requests | NA |  | 
