@@ -79,7 +79,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 ## Similar projects that mix swoole and laravel
 
-* [laravel-swoole](https://github.com/swooletw/laravel-swoole): It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly. The main difference is that it clones many objects to achiev safety, however LaravelFly uses `clone` only twice in Mode Map. Why?  See `Stale Reference` part. 
+* [laravel-swoole](https://github.com/swooletw/laravel-swoole): It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly. The main difference is that all the requests will be processed by a new `sandbox app` cloned from the original app container and laravel-swoole updates related container bindings to sandbox. However in LaravelFly, `clone` is used only twice to create `url` and `routes` in Mode Map, and other objects such as `app`, `event`.... always keep one object to handle requests in a worker process. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling. See `Stale Reference` part of this readme. 
 
 * [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
 
@@ -90,13 +90,13 @@ item   | Data Pollution  |  note | Memory Leak| note| config
 Application   | √  |  | √| | -
 Kernel   | 🔧  |     | 🔧 | Methods pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'] and config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
 events | √  |     | √ | | config('laravelfly.BaseServices')['events']
-router | 🔧🖏 |  dif macros not supported| | | config('laravelfly.BaseServices')['router']
+router | 🔧🖏 |  dif __macros__ not supported| | | config('laravelfly.BaseServices')['router']
 router.routes | 🔧 |     |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
-url(UrlGenerator) |  🔧🖏 |  dif macros not supported | | | config('laravelfly.BaseServices')['url']
-redirect(Redirector) | 🖏 |  dif macros not supported | | | config('laravelfly.BaseServices')['url']
+url(UrlGenerator) |  🔧🖏 |  dif __macros__ not supported | | | config('laravelfly.BaseServices')['url']
+redirect(Redirector) | 🖏 |  dif __macros__ not supported | | | config('laravelfly.BaseServices')['url']
 Facade | √  |  Facade::clearResolvedInstances   | NA | | 
 config | 🔧  |  FLY | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
-PHP Config | 🖏  | | NA |  | 
+PHP Config | 🖏  | should not changed in any requests | NA |  | 
 
 
 - 🔧: configurable
@@ -111,14 +111,16 @@ item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
 Application   | √  |   | | | -
 Kernel   | 🔧  |     | 🔧 | Kernel::pushMiddleware or prependMiddleware? No worry, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
-ServiceProvider  | 🖏  |     | √ | props are associate arrays | 
+ServiceProvider  | 🖏  | __'publishes', 'publishGroups'__ are used mainly in php artisan   | √ | props are associate arrays | 
 events | √  |  Dict   | √| Dict | 
 router | √  |     | | | 
 routes |  🔧 |  clone👀  | √ | props are associate arrays.|  LARAVELFLY_SERVICES['routes']
-url(UrlGenerator) | 🖏  |  clone👀 ,its routes and request would update (registerUrlGenerator) and also routeGenerator when setRequest. But four closure props 'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing' are not cloned | √ | | 
+url(UrlGenerator) | 🖏  |  clone👀 [1],but four closure props __'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing'__ are not cloned | √ | | 
 Facade | √  |  Dict   | | | 
 config | 🔧  |  Dict | 🔧 | Methods set/push/prepend. | LARAVELFLY_SERVICES['config']
-PHP Config | 🖏  | | NA |  | 
+PHP Config | 🖏  | should not changed in any requests | NA |  | 
+
+[1]: Props routes and request of url would update (registerUrlGenerator) and also routeGenerator when setRequest.
 
 ###  clone👀 and Stale Reference
 `clone` creates new objects. Give an object X1, and another object Y holding a ref to X1, in a new request X1 is cloned to produce a new object X2, but object Y is still holding X1, not X2. So developers and users should pay some attention to this kind of relations.
