@@ -43,9 +43,7 @@ ff
 
 [For Dev](doc/dev.md)
 
-## Speed Test
-
-### A simple ab test 
+## A simple ab test 
 
  `ab -k -n 1000 -c 10 http://zc.test/green `
 
@@ -89,15 +87,15 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
-Application   | √  |  needBackUpAppAttributes in LaravelFly\Simple\Application | √| | -
+Application   | √  |  | √| | -
 Kernel   | 🔧  |     | 🔧 | Methods pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'] and config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
-Base Services: events | √  |     | √ | | config('laravelfly.BaseServices')['events']
-Base Services: router | 🔧🖏 |  no support for different macros | | | config('laravelfly.BaseServices')['router']
-Base Services: router.routes | 🔧 |     |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
-Base Services: url(UrlGenerator) |  🔧🖏 |  no support for different macros | | | config('laravelfly.BaseServices')['url']
-Base Services: redirect(Redirector) | 🖏 |  no support for different macros | | | config('laravelfly.BaseServices')['url']
+events | √  |     | √ | | config('laravelfly.BaseServices')['events']
+router | 🔧🖏 |  dif macros not supported| | | config('laravelfly.BaseServices')['router']
+router.routes | 🔧 |     |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] and config('laravelfly.BaseServices')['router.obj.routes']
+url(UrlGenerator) |  🔧🖏 |  dif macros not supported | | | config('laravelfly.BaseServices')['url']
+redirect(Redirector) | 🖏 |  dif macros not supported | | | config('laravelfly.BaseServices')['url']
 Facade | √  |  Facade::clearResolvedInstances   | NA | | 
-Laravel config | 🔧  |  FLY | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
+config | 🔧  |  FLY | 🔧 | Methods push and prepend | LARAVELFLY_SERVICES['config']
 PHP Config | 🖏  | | NA |  | 
 
 
@@ -111,17 +109,16 @@ PHP Config | 🖏  | | NA |  |
 
 item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
-Application   | √  |     | | | -
-Kernel   | 🔧  |     | 🔧 | Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware? No worry about middlewares are added multiple times, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
-Illuminate\Support\ServiceProvider  | 🖏  |     | √ | 'publishes' and 'publishGroups' are associate arrays and used only in artisan commands.| 
-Base Services: events | √  |  Dict   | √| Dict | 
-Base Services: router | √  |     | | | 
-Base Services: router.routes | 🔧 |  clone   |  √ | props are associate arrays| LARAVELFLY_SERVICES['routes'] 
-Base Services: url(UrlGenerator) | 🖏  |  clone👀 ,its routes and request would update auto (registerUrlGenerator) and also routeGenerator when setRequest. But four props 'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing' are not cloned, as closure | √ | | 
+Application   | √  |   | | | -
+Kernel   | 🔧  |     | 🔧 | Kernel::pushMiddleware or prependMiddleware? No worry, because there's a check: ` if (array_search($middleware, $this->middleware) === false)` | LARAVELFLY_SERVICES['kernel'], config('laravelfly.BaseServices')[\Illuminate\Contracts\Http\Kernel::class]
+ServiceProvider  | 🖏  |     | √ | props are associate arrays | 
+events | √  |  Dict   | √| Dict | 
+router | √  |     | | | 
+routes |  🔧 |  clone👀  | √ | props are associate arrays.|  LARAVELFLY_SERVICES['routes']
+url(UrlGenerator) | 🖏  |  clone👀 ,its routes and request would update (registerUrlGenerator) and also routeGenerator when setRequest. But four closure props 'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing' are not cloned | √ | | 
 Facade | √  |  Dict   | | | 
-Laravel config | 🔧  |  Dict | 🔧 | Methods push and prepend. | LARAVELFLY_SERVICES['config']
+config | 🔧  |  Dict | 🔧 | Methods set/push/prepend. | LARAVELFLY_SERVICES['config']
 PHP Config | 🖏  | | NA |  | 
-routes |  🔧 |  clone👀  | √ | most cases, no problems, because props in RouteCollection are associate arrays.|  LARAVELFLY_SERVICES['routes']
 
 ###  clone👀 and Stale Reference
 `clone` creates new objects. Give an object X1, and another object Y holding a ref to X1, in a new request X1 is cloned to produce a new object X2, but object Y is still holding X1, not X2. So developers and users should pay some attention to this kind of relations.
@@ -140,7 +137,7 @@ item   | Data Pollution  |  note | Memory Leak| note| config
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
 view.finder | √  |  Dict   | √ | addNamespace offen called by loadViewsFrom of ServiceProviders such as PaginationServiceProvider  and NotificationServiceProvider.|  
 cookie(CookieJar) | 🔧🖏  |  Dict   | √ |  prop 'queued' can dif,but path, domain, secure and sameSite should keep same.| config('laravel.providers_on_worker')[LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class ] 
-PaginationServiceProvider  | 🖏  |     | √ | the static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator should keep same.  | 
+Pagination | 🖏  |     | √ | the static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator should keep same.  | 
 auth  |  |     |  | | 
 
 

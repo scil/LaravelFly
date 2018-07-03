@@ -16,7 +16,7 @@ class Application extends \Illuminate\Foundation\Application
     use \LaravelFly\ApplicationTrait\Server;
     use \LaravelFly\ApplicationTrait\NoMorePackageManifest;
 
-    protected $needBackUpAppAttributes = [
+    protected $needBackUp = [
 
         // ----
         // from Container
@@ -117,7 +117,7 @@ class Application extends \Illuminate\Foundation\Application
     public function backUpOnWorker()
     {
 
-        foreach ($this->needBackUpAppAttributes as $attri) {
+        foreach ($this->needBackUp as $attri) {
             $this->backupedValuesBeforeRequest[$attri] = $this->$attri;
         }
 
