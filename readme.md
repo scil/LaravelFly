@@ -85,7 +85,6 @@ The main difference is that all the requests will be processed by a new `sandbox
 
 * [laravoole](https://github.com/garveen/laravoole) : wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
 
-
 ## Todo About Improvement
 
 - [x] Config cache. laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache
