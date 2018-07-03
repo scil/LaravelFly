@@ -13,8 +13,8 @@ class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
             'auth',
 
             /**
-             * no resolve it on work, because it has props like afterCallbacks relating memory leak
-             * it's Illuminate\Auth\Access\Gate
+             * do not resolve it on work, because it has props like afterCallbacks which may cause memory leak
+             * it's official implement is Illuminate\Auth\Access\Gate
              */
             // GateContract::class
         ];
