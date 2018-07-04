@@ -81,7 +81,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 ## Similar projects that mix swoole and laravel
 
-### [laravel-swoole](https://github.com/swooletw/laravel-swoole) 
+### 1. [laravel-swoole](https://github.com/swooletw/laravel-swoole) 
 
 It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly.   
 
@@ -93,9 +93,10 @@ The main difference is that in laravel-swoole requests will be processed by a ne
 ------------ | ------------ | ------------- | ------------- 
 laravel-swoole  | clone app contaniner and objects to make them safe |  low  | high (maintaining relations of cloned objects to avoid Stale Reference)
 LaravelFly Mode Map  | refactor objects to make them safe on their own |  high (Refactoring)  | low
+LaravelFly Mode Simple  | service providers reg on work and boot in requests |  low  | low
 
 
-### [laravoole](https://github.com/garveen/laravoole) 
+### 2. [laravoole](https://github.com/garveen/laravoole) 
 wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .
 
 ## Todo About Improvement
