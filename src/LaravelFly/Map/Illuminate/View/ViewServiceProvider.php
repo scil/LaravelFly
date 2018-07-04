@@ -29,6 +29,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 
     protected function createFactory($resolver, $finder, $events)
     {
+        // hack
         return new Factory($resolver, $finder, $events);
     }
 
@@ -42,6 +43,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     {
         $this->app->singleton('blade.compiler', function () {
             if(config('laravelfly.view_compile_1'))
+                // hack
                 return new BladeCompiler_1(
                     $this->app['files'], $this->app['config']['view.compiled']
                 );

@@ -21,6 +21,7 @@ class SessionServiceProvider extends \Illuminate\Session\SessionServiceProvider
         $this->registerSessionDriver();
 
         $this->app->singleton(\Illuminate\Session\Middleware\StartSession::class, function ($app) {
+            // hack
             return new StartSession($this->app->make('session'));
         });
 
@@ -28,6 +29,7 @@ class SessionServiceProvider extends \Illuminate\Session\SessionServiceProvider
     protected function registerSessionManager()
     {
         $this->app->singleton('session', function ($app) {
+            // hack
             return new SessionManager($app);
         });
     }

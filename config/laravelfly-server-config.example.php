@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Simple, Map, Same, FpmLike
+ * Simple, Map, Stable, FpmLike
  *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  */
@@ -41,11 +41,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
     'filesystem.cloud' => false,
     'broadcast' => false,
 
-], LARAVELFLY_MODE === 'Same' ? ['hash' => true, 'routes' => true, 'view.finder' => true, 'config' => true, 'kernel' => true] : [
-
-
-    // set false if app('hash')->setRounds may be called in a request. If we want to make 'hash' COROUTINE-FRIENDLY, it should be always same.
-    'hash' => true,
+], LARAVELFLY_MODE === 'Stable' ? [ 'routes' => true, 'view.finder' => true, 'config' => true, 'kernel' => true] : [
 
 
     /**

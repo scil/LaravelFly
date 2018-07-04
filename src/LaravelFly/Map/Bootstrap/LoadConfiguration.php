@@ -67,18 +67,17 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                     $providerConfig = true;
                 }
 
-                if (!class_exists($provider)) continue;
-
-
                 if (!is_array($providerConfig)) {
                     $providerConfig = [];
                 }
 
-                if (isset($providerConfig['_replaced_by'])) {
+                if (!empty($providerConfig['_replaced_by'])) {
                     $providersReplaced[] = $provider;
                     $provider = $providerConfig['_replaced_by'];
                     unset($providerConfig['_replaced_by']);
                 }
+
+                if (!class_exists($provider)) continue;
 
                 $psOnWork[] = $provider;
 

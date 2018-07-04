@@ -28,7 +28,7 @@ return [
     'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] && $IN_PRODUCTION,
 
     /**
-     * useless providers. For Mode Simple, Map, Same
+     * useless providers. For Mode Simple, Map, Stable
      *
      * There providers will be only removed from config('app.providers')
      * not from  config('laravelfly.providers_on_worker') or  config('laravelfly.providers_in_request')
@@ -50,7 +50,7 @@ return [
     ),
 
     /**
-     * Providers to reg and boot in each request.For Mode Simple, Map, Same
+     * Providers to reg and boot in each request.For Mode Simple, Map, Stable
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -147,7 +147,7 @@ return [
     ],
 
     /**
-     * providers to reg and boot on worker, before any request. only for Mode Map, Same
+     * providers to reg and boot on worker, before any request. only for Mode Map, Stable
      *
      * format:
      *      proverder_name => [],
@@ -238,7 +238,8 @@ return [
         Illuminate\Foundation\Providers\FoundationServiceProvider::class => 'across',
 
         Illuminate\Hashing\HashServiceProvider::class => [
-            'hash' => LARAVELFLY_SERVICES['hash']
+            'hash',
+            'hash.driver',
         ],
 
         Illuminate\Mail\MailServiceProvider::class => [],
