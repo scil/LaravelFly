@@ -41,7 +41,9 @@ class Router implements RegistrarContract, BindingRegistrar
 
     public static $verbs = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
 
-    protected static $normalAttriForObj = [];
+    protected static $normalAttriForObj = [
+        // see below
+    ];
 
     protected static $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns', 'groupStack'];
 
@@ -56,7 +58,8 @@ class Router implements RegistrarContract, BindingRegistrar
             'currentRequest' => null,
             'routes' => function () {
                 return new RouteCollection;
-            }];
+            }
+        ];
         $this->initOnWorker(false);
     }
 

@@ -2,10 +2,19 @@ LaravelFly speeds up our existing Laravel projects, and make Tinker to be used o
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
-## Version Compatibility
+## Version Compatibility & Requirements
 
 - Laravel 5.6.*
 - swoole >4.0
+- In most cases, our projects running on a base of consistent and stable configuration. For LaravelFly, it's a requirement for absolute safety. In each request, the env should always be same:
+    - php configuration should keep same in any requests.
+    - In Mode Map some objects are not fully refactored because it's useless most time. Pay some attention:
+        1. [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same.
+        2. url(UrlGenerator): props **'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing'** should keep same.
+        3. auth: prop **customCreators** with same name should keep same
+        4. cookie(CookieJar): props **path, domain, secure and sameSite** with init values form config('session') should keep same.
+        5. Pagination: static props **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** in AbstractPaginator should keep same.
+        6. hash: BcryptHasher's prop **rounds**, ArgonHasher's props **memory,time,threads** should keep same
 
 ## Quick Start
 
@@ -92,7 +101,7 @@ The main difference is that in laravel-swoole requests will be processed by a ne
 .   | technique | difficulty for dev  |  difficulty for users
 ------------ | ------------ | ------------- | ------------- 
 laravel-swoole  | clone app contaniner and objects to make them safe |  low  | high (maintaining relations of cloned objects to avoid Stale Reference)
-LaravelFly Mode Map  | refactor objects to make them safe on their own |  high (Refactoring)  | low
+LaravelFly Mode Map  | refactor most official objects to make them safe on their own |  high (Refactoring)  | low
 LaravelFly Mode Simple  | service providers reg on work and boot in requests |  low  | low
 
 
