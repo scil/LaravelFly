@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Map\Illuminate\Database;
+namespace LaravelFly\Map\Illuminate\Database\Connectors;
 
 use Illuminate\Database\Connectors\PostgresConnector;
 use Illuminate\Database\Connectors\SQLiteConnector;
@@ -35,7 +35,7 @@ class ConnectionFactory extends \Illuminate\Database\Connectors\ConnectionFactor
         switch ($config['driver']) {
             case 'mysql':
                 if ($config['coroutine'] ?? false) {
-                    return new Connectors\MySqlConnector;
+                    return new MySqlConnector;
                 }
                 return new \Illuminate\Database\Connectors\MySqlConnector;
             case 'pgsql':

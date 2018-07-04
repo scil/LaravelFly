@@ -62,6 +62,10 @@ abstract class BaseTestCase extends TestCase
     static protected $workingRoot;
     static protected $laravelAppRoot;
 
+    protected $flyDir = __DIR__ . '/../src/fly/';
+
+    protected $backOfficalDir = __DIR__ . '/offcial_files/';
+
     static function setUpBeforeClass()
     {
 
@@ -189,6 +193,33 @@ abstract class BaseTestCase extends TestCase
         $server->setListeners();
 
         return $new_swoole;
+    }
+
+    function compareFilesContent($map)
+    {
+
+        $diffOPtions = '--ignore-all-space --ignore-blank-lines';
+
+        $same = true;
+
+        foreach ($map as $back => $offcial) {
+            $back = $this->backOfficalDir . $back;
+            $offcial = static::$laravelAppRoot . $offcial;
+            $cmdArguments = "$diffOPtions $back $offcial ";
+
+            unset($a);
+            exec("diff --brief $cmdArguments > /dev/null", $a, $r);
+//            echo "\n\n[CMD] diff $cmdArguments\n\n";
+//            print_r($a);
+            if ($r !== 0) {
+                $same = false;
+                echo "\n\n[CMD] diff $cmdArguments\n\n";
+                system("diff  $cmdArguments");
+            }
+        }
+
+        self::assertEquals(true, $same);
+
     }
 }
 
