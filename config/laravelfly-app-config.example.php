@@ -28,7 +28,7 @@ return [
     'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] && $IN_PRODUCTION,
 
     /**
-     * useless providers. For Mode Simple, Map
+     * useless providers. For Mode Simple, Map, Same
      *
      * There providers will be only removed from config('app.providers')
      * not from  config('laravelfly.providers_on_worker') or  config('laravelfly.providers_in_request')
@@ -50,7 +50,7 @@ return [
     ),
 
     /**
-     * Providers to reg and boot in each request.For Mode Simple, Map
+     * Providers to reg and boot in each request.For Mode Simple, Map, Same
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -147,7 +147,7 @@ return [
     ],
 
     /**
-     * providers to reg and boot on worker, before any request. only for Mode Map
+     * providers to reg and boot on worker, before any request. only for Mode Map, Same
      *
      * format:
      *      proverder_name => [],
@@ -165,7 +165,7 @@ return [
      *      proverder2=> true,           // this provider will be booted on worker
      *      proverder1=> [],             // this provider will be booted on worker
      *      proverder3=> [
-     *        '_replace' => 'provider1',       // the provider1 will be replaced by provider2 and deleted from app['config']['app.providers']
+     *        '_replaced_by' => 'provider1',       // the provider1 will replace provider3 and provider3 will be deleted from app['config']['app.providers']
      *
      *        'singleton_service_1',          //  services will be made on worker
      *                                            it must be in result of coroutineFriendlyServices() if this method exists in serviceprovider
@@ -189,8 +189,8 @@ return [
             'log' => true,
         ],
 
-        LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class => [
-            '_replace' => Illuminate\Auth\AuthServiceProvider::class,
+        Illuminate\Auth\AuthServiceProvider::class=> [
+            '_replaced_by' => LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class ,
             'auth',
             GateContract::class,
         ],
@@ -213,13 +213,13 @@ return [
 
         ],
 
-        LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class => [
-            '_replace' => Illuminate\Cookie\CookieServiceProvider::class,
+        Illuminate\Cookie\CookieServiceProvider::class=> [
+            '_replaced_by' =>LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class  ,
             'cookie'
         ],
 
-        LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class => [
-            '_replace' => Illuminate\Database\DatabaseServiceProvider::class,
+        Illuminate\Database\DatabaseServiceProvider::class=> [
+            '_replaced_by' =>LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class  ,
             'db.factory',
             'db'
         ],
@@ -262,8 +262,8 @@ return [
 
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
 
-        LaravelFly\Map\Illuminate\Session\SessionServiceProvider::class => [
-            '_replace' => Illuminate\Session\SessionServiceProvider::class,
+        Illuminate\Session\SessionServiceProvider::class=> [
+            '_replaced_by' => LaravelFly\Map\Illuminate\Session\SessionServiceProvider::class ,
             'session',
             'session.store',
             \Illuminate\Session\Middleware\StartSession::class
@@ -279,8 +279,8 @@ return [
             'validation.presence' => true,
         ],
 
-        \LaravelFly\Map\Illuminate\View\ViewServiceProvider::class => [
-            '_replace' => Illuminate\View\ViewServiceProvider::class,
+        Illuminate\View\ViewServiceProvider::class=> [
+            '_replaced_by' => \LaravelFly\Map\Illuminate\View\ViewServiceProvider::class ,
             'view', 'view.engine.resolver', 'blade.compiler'
         ],
 

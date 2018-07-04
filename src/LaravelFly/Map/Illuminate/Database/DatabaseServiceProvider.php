@@ -30,7 +30,7 @@ class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvid
         // the database. We will inject the factory into the manager so that it may
         // make the connections while they are actually needed and not of before.
         $this->app->singleton('db.factory', function ($app) {
-            return new \LaravelFly\Map\Illuminate\Database\ConnectionFactory($app);
+            return new \LaravelFly\Map\Illuminate\Database\Connectors\ConnectionFactory($app);
         });
 
         // The database manager is used to resolve various connections, since multiple

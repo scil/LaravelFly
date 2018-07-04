@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Simple, Map, FpmLike
+ * Simple, Map, Same, FpmLike
  *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  */
-if(!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
+if (!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
     'Simple'
 );
 
@@ -18,7 +18,7 @@ if(!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
  * Set it true, Application::runningInConsole() return true, and DebugBar can not start.
  * If you use FpmLike, must keep it false.
  */
-if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
+if (!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
     false
 );
 
@@ -32,7 +32,7 @@ if(!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
  * 2. its vars will not changed in any requests
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
-if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
+if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
 
     /**
      * set the corresponding service to be true if you use it.
@@ -40,6 +40,9 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
     "redis" => false,
     'filesystem.cloud' => false,
     'broadcast' => false,
+
+], LARAVELFLY_MODE === 'Same' ? ['hash' => true, 'routes' => true, 'view.finder' => true, 'config' => true, 'kernel' => true] : [
+
 
     // set false if app('hash')->setRounds may be called in a request. If we want to make 'hash' COROUTINE-FRIENDLY, it should be always same.
     'hash' => true,
@@ -83,7 +86,7 @@ if(!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES',[
      */
     'kernel' => true,
 
-]);
+]));
 
 /**
  * this array is used for swoole server,
@@ -115,7 +118,7 @@ return [
      * extend it and overwrite its __construct() if you need different listen_ip,
      */
     // 'listen_ip' => '127.0.0.1',// listen only to localhost
-     'listen_ip' => '0.0.0.0',// listen to any address
+    'listen_ip' => '0.0.0.0',// listen to any address
 
     'listen_port' => 9501,
 
@@ -156,7 +159,7 @@ return [
      * (see:https://github.com/moby/moby/issues/18246)
      * A solution is to watch a file like `/home/vagrant/.watch`, and modify it when your codes change.
      */
-    'watch'=>[
+    'watch' => [
 //        __DIR__.'/app',
 //        __DIR__.'/config',
 //        __DIR__.'/resources/views',
@@ -166,7 +169,7 @@ return [
      * how long after code changes the server hot reload
      * default is 1500ms
      */
-    'watch_delay'=> 1500,
+    'watch_delay' => 1500,
 
 
     /**
@@ -174,7 +177,7 @@ return [
      *
      * It is a demo to use var sharing across worker processes.
      */
-    'watch_down'=> true,
+    'watch_down' => true,
 
     /**
      * include laravel's core files befor server starts
@@ -184,7 +187,7 @@ return [
      * There's are some nginx conf examples to let php-fpm handles request when LaravelFly is restarting.
      *
      */
-    'pre_include' =>true,
+    'pre_include' => true,
 
     /**
      * Add more files to be pre-included
@@ -243,7 +246,7 @@ return [
      *
      * Please do not enalbe it in production env.
      */
-    'dispatch_by_query'=>false,
+    'dispatch_by_query' => false,
 
     /**
      * only works when running LaravelFly as root:
@@ -255,12 +258,12 @@ return [
      *
      * If you use watch, disable these, or ensure the user here is a member of group root
      * /
-    // 'user' => 'www-data',
-    // 'group' => 'www-data',
-
-    //'log_file' => '/data/log/swoole.log',
-
-    /** Set the output buffer size in the memory.
+     * // 'user' => 'www-data',
+     * // 'group' => 'www-data',
+     *
+     * //'log_file' => '/data/log/swoole.log',
+     *
+     * /** Set the output buffer size in the memory.
      * The default value is 2M. The data to send can't be larger than buffer_output_size every times.
      */
     //'buffer_output_size' => 32 * 1024 *1024, // byte in unit
