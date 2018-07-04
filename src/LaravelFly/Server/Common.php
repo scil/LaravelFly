@@ -51,7 +51,7 @@ class Common
         'early_laravel' => false,
     ];
 
-    protected static $mapFlyFiles = [
+    const mapFlyFiles = [
         'Container.php' =>
             '/vendor/laravel/framework/src/Illuminate/Container/Container.php',
         'Application.php' =>
@@ -73,9 +73,9 @@ class Common
         'Facade.php' =>
             '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
 
-        // otherwise PaginationServiceProvider  and NotificationServiceProvider would append view paths to app('view')->finder->hints
-        // by  $this->loadViewsFrom forever on each boot
-        'FileViewFinder.php' =>
+        // otherwise on each boot of PaginationServiceProvider and NotificationServiceProvider,view paths would be appended to app('view')->finder->hints
+        // by  $this->loadViewsFrom forever
+        'FileViewFinder'.(LARAVELFLY_SERVICES['view.finder']?'SameView':'').'.php' =>
             '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
 
     ];
@@ -208,7 +208,7 @@ class Common
             if (defined('LARAVELFLY_SERVICES') && !(LARAVELFLY_SERVICES['kernel'] ?? true))
                 include_once __DIR__ . '/../../fly/Http/Kernel.php';
 
-            foreach (static::$mapFlyFiles as $f => $offical) {
+            foreach (static::mapFlyFiles as $f => $offical) {
                 require __DIR__ . "/../../fly/" . $f;
             }
 
@@ -298,7 +298,7 @@ class Common
 
     static function getAllFlyMap()
     {
-        $r = static::$mapFlyFiles;
+        $r = static::mapFlyFiles;
 
         foreach (static::$conditionFlyFiles as $map) {
             $r = array_merge($r, $map);

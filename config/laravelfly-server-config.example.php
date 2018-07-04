@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Simple, Map, Stable, FpmLike
+ * Simple, Map,  FpmLike
  *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  */
@@ -41,7 +41,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
     'filesystem.cloud' => false,
     'broadcast' => false,
 
-], LARAVELFLY_MODE === 'Stable' ? [ 'routes' => true, 'view.finder' => true, 'config' => true, 'kernel' => true] : [
+], [
 
 
     /**

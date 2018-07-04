@@ -95,6 +95,8 @@ The main difference is that all the requests will be processed by a new `sandbox
 - [ ] Mysql connection pool
 - [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
+- [ ] safe: router, remove middleware?
+- [ ] safe: auth, remove some props?
 - [ ] check memory usage in Mode Map
 
 ## Other Todo
