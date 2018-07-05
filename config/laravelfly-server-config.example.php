@@ -53,6 +53,24 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
     'routes' => true,
 
     /**
+     * set false if different values of props path, domain, secure and sameSite in different requests.
+     * They can be changed by CookieJar::setDefaultPathAndDomain
+     *
+     * Most cases, these values init with data from config('session') and keep same across the whole project.
+     */
+    'cookie' => true,
+
+
+    /**
+     * set false if different values of props of hash drivers in different requests.
+     * BcryptHasher's prop: rounds
+     * ArgonHasher's props: memory,time,threads
+     *
+     * their values init with data from config('hashing.bcrypt') and config('hashing.argon')
+     */
+    'hash' => true,
+
+    /**
      * set false if same view name refers to different view files in different requests.
      * for example:
      *      view 'home' may points to 'guest_location/home.blade.php' for a guest ,

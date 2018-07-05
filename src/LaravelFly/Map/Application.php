@@ -40,6 +40,8 @@ class Application extends \Illuminate\Foundation\Application
     protected $acrossServiceProviders = [];
 
     protected $CFServices = [];
+    protected $cloneServices = [];
+    protected $updateForClone = [];
 
     protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
 
@@ -104,6 +106,13 @@ class Application extends \Illuminate\Foundation\Application
         $this->make('router')->initForRequestCorontine($cid);
 
         $this->make('events')->dispatch('request.corinit', [$cid]);
+
+        foreach($this->cloneServices as $service){
+            $this->instance($service, clone $this->make($service));
+        }
+        foreach ($this->updateForClone as $item ){
+            $item['closure']->call($this->make($item['this']));
+        }
     }
 
     function unsetForRequestCorontine(int $cid)
@@ -132,6 +141,14 @@ class Application extends \Illuminate\Foundation\Application
     {
         if ($services)
             $this->CFServices = $services;
+    }
+
+    public function setCloneServices($services, $update)
+    {
+        if ($services)
+            $this->cloneServices = $services;
+        if ($update)
+            $this->updateForClone = $update;
     }
 
     public function registerAcrossProviders()

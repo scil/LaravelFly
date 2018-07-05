@@ -8,7 +8,7 @@ use LaravelFly\Map\Util\Dict;
 use Symfony\Component\HttpFoundation\Cookie;
 use Illuminate\Contracts\Cookie\QueueingFactory as JarContract;
 
-class CookieJar extends \Illuminate\Cookie\CookieJar
+class CookieJarSame extends \Illuminate\Cookie\CookieJar
 {
     use Dict;
     protected static $arrayAttriForObj = ['queued',];

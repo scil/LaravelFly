@@ -28,7 +28,7 @@ return [
     'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] && $IN_PRODUCTION,
 
     /**
-     * useless providers. For Mode Simple, Map, Stable
+     * useless providers. For Mode Simple, Map
      *
      * There providers will be only removed from config('app.providers')
      * not from  config('laravelfly.providers_on_worker') or  config('laravelfly.providers_in_request')
@@ -50,7 +50,7 @@ return [
     ),
 
     /**
-     * Providers to reg and boot in each request.For Mode Simple, Map, Stable
+     * Providers to reg and boot in each request.For Mode Simple, Map
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -67,7 +67,7 @@ return [
 
         \Illuminate\Contracts\Http\Kernel::class => LARAVELFLY_SERVICES['kernel'] ? [] : [
 
-             'middleware',
+            'middleware',
 
             /** depends
              * put new not safe properties here
@@ -147,7 +147,7 @@ return [
     ],
 
     /**
-     * providers to reg and boot on worker, before any request. only for Mode Map, Stable
+     * providers to reg and boot on worker, before any request. only for Mode Map
      *
      * format:
      *      proverder_name => [],
@@ -168,10 +168,8 @@ return [
      *        '_replaced_by' => 'provider1',       // the provider1 will replace provider3 and provider3 will be deleted from app['config']['app.providers']
      *
      *        'singleton_service_1',          //  services will be made on worker
-     *                                            it must be in result of coroutineFriendlyServices() if this method exists in serviceprovider
      *
      *        'singleton_service_2' => true,  //  service will be made on worker
-     *                                            it must be in result of coroutineFriendlyServices() if this method exists in serviceprovider
      *
      *        'singleton_service_3' => false, //  service will not be made on worker,
      *      ],
@@ -189,8 +187,8 @@ return [
             'log' => true,
         ],
 
-        Illuminate\Auth\AuthServiceProvider::class=> [
-            '_replaced_by' => LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class ,
+        Illuminate\Auth\AuthServiceProvider::class => [
+            '_replaced_by' => LaravelFly\Map\Illuminate\Auth\AuthServiceProvider::class,
             'auth',
             GateContract::class,
         ],
@@ -213,13 +211,13 @@ return [
 
         ],
 
-        Illuminate\Cookie\CookieServiceProvider::class=> [
-            '_replaced_by' =>LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class  ,
+        Illuminate\Cookie\CookieServiceProvider::class => [
+            '_replaced_by' => LaravelFly\Map\Illuminate\Cookie\CookieServiceProvider::class,
             'cookie'
         ],
 
-        Illuminate\Database\DatabaseServiceProvider::class=> [
-            '_replaced_by' =>LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class  ,
+        Illuminate\Database\DatabaseServiceProvider::class => [
+            '_replaced_by' => LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class,
             'db.factory',
             'db'
         ],
@@ -238,7 +236,9 @@ return [
         Illuminate\Foundation\Providers\FoundationServiceProvider::class => 'across',
 
         Illuminate\Hashing\HashServiceProvider::class => [
-            'hash',
+
+            'hash' => !empty(LARAVELFLY_SERVICES['hash']) ? true : 'clone',
+
             'hash.driver',
         ],
 
@@ -263,8 +263,8 @@ return [
 
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
 
-        Illuminate\Session\SessionServiceProvider::class=> [
-            '_replaced_by' => LaravelFly\Map\Illuminate\Session\SessionServiceProvider::class ,
+        Illuminate\Session\SessionServiceProvider::class => [
+            '_replaced_by' => LaravelFly\Map\Illuminate\Session\SessionServiceProvider::class,
             'session',
             'session.store',
             \Illuminate\Session\Middleware\StartSession::class
@@ -280,8 +280,8 @@ return [
             'validation.presence' => true,
         ],
 
-        Illuminate\View\ViewServiceProvider::class=> [
-            '_replaced_by' => \LaravelFly\Map\Illuminate\View\ViewServiceProvider::class ,
+        Illuminate\View\ViewServiceProvider::class => [
+            '_replaced_by' => \LaravelFly\Map\Illuminate\View\ViewServiceProvider::class,
             'view', 'view.engine.resolver', 'blade.compiler'
         ],
 
@@ -335,6 +335,32 @@ return [
             Illuminate\Contracts\Debug\ExceptionHandler::class => true,
         ],
 
+    ],
+
+    /**
+     * for Mode Map
+     */
+    'update_for_clone' => [
+
+        // for cloned hash
+        !empty(LARAVELFLY_SERVICES['hash']) ? false :
+            [
+                'this' => 'hash',
+                'closure' => function () {
+                    // $this here is app('hash'), a newly cloned instance of HashManager
+                    foreach ($this->getDrivers() as $name => $drive) {
+                        // var_dump($name); debug_zval_dump($drive);
+                        $this->drivers[$name] = clone $drive;
+                        // debug_zval_dump($this->drivers[$name] );
+                    }
+                },
+            ],
+
+        // put one more updating item here
+        [
+            // 'this' => 'name',
+            // 'closure' => function () { },
+        ]
     ],
 
 ];

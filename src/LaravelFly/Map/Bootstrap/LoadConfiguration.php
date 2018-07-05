@@ -28,6 +28,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 'NOTE'
             );
             list('CFServices' => $CFServices,
+                'cloneServices' => $cloneServices,
                 'psOnWork' => $psOnWork,
                 'psAcross' => $psAcross,
                 'psInRequest' => $psInRequest) = require $cacheFile;
@@ -41,6 +42,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             $psIgnore = $appConfig['laravelfly.providers_ignore'] ?: [];
 
             $CFServices = [];
+            $cloneServices = [];
             $providersReplaced = [];
             $psOnWork = [];
             $psAcross = [];
@@ -64,10 +66,8 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
                 if (is_int($provider)) {
                     $provider = $providerConfig;
-                    $providerConfig = true;
-                }
-
-                if (!is_array($providerConfig)) {
+                    $providerConfig = [];
+                } elseif (!is_array($providerConfig)) {
                     $providerConfig = [];
                 }
 
@@ -81,37 +81,24 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
                 $psOnWork[] = $provider;
 
-                /** @var string[] $officalCFServices */
-                /** @var \Illuminate\Support\ServiceProvider $provider */
-                $officalCFServices = $provider::coroutineFriendlyServices();
-                // $officalCFServices is base
-                $curCFServices = [];
-
-                if ($providerConfig) {
-                    foreach ($providerConfig as $CFS_name => $config) {
-                        if (is_int($CFS_name)) {
-                            $CFS_name = $config;
-                            $config = true;
-                        }
-                        if ($config === true) {
-                            if (
-                                !$officalCFServices
-                                ||
-                                // if there are $officalCFServices, $CFS_name must be in it
-                                ($officalCFServices && in_array($CFS_name, $officalCFServices))) {
-
-                                $curCFServices[] = $CFS_name;
-                            }
-                        }
+                foreach ($providerConfig ?: $provider::coroutineFriendlyServices() as $serviceName => $serviceConfig) {
+                    if (is_int($serviceName)) {
+                        $serviceName = $serviceConfig;
+                        $serviceConfig = true;
                     }
 
-                } else {
-                    $curCFServices = $officalCFServices;
+                    if ($serviceConfig) {
+
+                        $CFServices[] = $serviceName;
+
+                        if ($serviceConfig === 'clone') {
+                            $cloneServices[] = $serviceName;
+                        }
+
+                    }
                 }
 
-                if ($curCFServices) {
-                    $CFServices = array_unique(array_merge($curCFServices, $CFServices));
-                }
+
             }
 
             //todo just for debug
@@ -142,6 +129,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 file_put_contents($cacheFile, '<?php return ' .
                     var_export([
                         'CFServices' => $CFServices,
+                        'cloneServices' => $cloneServices,
                         'psOnWork' => $psOnWork,
                         'psAcross' => $psAcross,
                         'psInRequest' => $psInRequest,
@@ -164,6 +152,17 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         $app->setProvidersToBootOnWorker($psOnWork);
 
         $app->setCFServices($CFServices);
+
+
+        $update = [];
+
+        foreach ($appConfig['laravelfly.update_for_clone'] ?: [] as $item) {
+            if ($item && $item['this'] && $item['closure']) {
+                $update[] = $item;
+            }
+        }
+
+        $app->setCloneServices($cloneServices, $update);
 
     }
 

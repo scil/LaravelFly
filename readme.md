@@ -15,9 +15,7 @@ In most cases, our projects running on a base of consistent and stable configura
     1. [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same.
     2. url(UrlGenerator): props **'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing'** should keep same.
     3. auth: prop **customCreators** with same name should keep same
-    4. cookie(CookieJar): props **path, domain, secure and sameSite** with init values form config('session') should keep same.
-    5. Pagination: static props **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** in AbstractPaginator should keep same.
-    6. hash: BcryptHasher's prop **rounds**, ArgonHasher's props **memory,time,threads** should keep same
+    4. Pagination: static props **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** in AbstractPaginator should keep same.
 
 ## Quick Start
 
