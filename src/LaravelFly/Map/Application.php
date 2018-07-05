@@ -145,8 +145,10 @@ class Application extends \Illuminate\Foundation\Application
 
     public function setCloneServices($services, $update)
     {
-        if ($services)
+        if ($services){
             $this->cloneServices = $services;
+        }
+
         if ($update)
             $this->updateForClone = $update;
     }
