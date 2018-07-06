@@ -47,7 +47,7 @@ ff
 
 ## Doc
 
-[Configuration](doc/config.md)
+[Configuration](https://github.com/scil/LaravelFly/wiki/Configuration)
 
 [Commands: Start, Reload & Debug](doc/server.md)
 
@@ -103,11 +103,11 @@ The first difference is that laravel-swoole's configuration is based on service,
 
 The main difference is that in laravel-swoole requests will be processed by a new `app` cloned from the original app container and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container. In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is used only twice to create `url` and `routes` in Mode Map. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read "Stale Reference" in [Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist)`. 
 
-.   | technique | difficulty for dev  |  difficulty for users
------------- | ------------ | ------------- | ------------- 
-laravel-swoole  | clone app contaniner and objects to make them safe |  low  | high (maintaining relations of cloned objects to avoid Stale Reference)
-LaravelFly Mode Map  | refactor most official objects to make them safe on their own |  high (Refactoring)  | low
-LaravelFly Mode Simple  | service providers reg on work and boot in requests |  low  | low
+.   | technique | every service is in control | work: config |  work: maintaining relations of cloned objects to avoid Stale Reference
+------------ | ------------ | ------------- | ------------- | ------------- 
+laravel-swoole  | clone app contaniner and objects to make them safe |  no | less work | more work (app,event...are cloned)
+LaravelFly Mode Map  | refactor most official objects to make them safe on their own |  yes | more work  | less work (only url and routes cloned)
+LaravelFly Mode Simple  | service providers reg on work and boot in requests |  less  | yes work | less work 
 
 
 ### 2. [laravoole](https://github.com/garveen/laravoole) 
