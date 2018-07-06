@@ -342,6 +342,19 @@ return [
      */
     'update_for_clone' => [
 
+        // for cloned url
+        !empty(LARAVELFLY_SERVICES['url']) ? false :
+            [
+                'this' => 'url',
+                'closure' => function () {
+                    // $this here is app('url'), a newly cloned instance of UrlGenerator
+                    $this->sessionResolver = clone $this->sessionResolver;
+                    $this->keyResolver = clone $this->keyResolver;
+                    $this->formatHostUsing = clone $this->formatHostUsing;
+                    $this->formatPathUsing = clone $this->formatPathUsing;
+                },
+            ],
+
         // for cloned hash
         !empty(LARAVELFLY_SERVICES['hash']) ? false :
             [

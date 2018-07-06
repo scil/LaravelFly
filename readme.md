@@ -1,4 +1,4 @@
-LaravelFly speeds up our existing Laravel projects, and make Tinker to be used online (use tinker while Laravel is responding requests from browsers).
+LaravelFly speeds up our existing Laravel projects without data pollution and memory leak, and make Tinker to be used online (use tinker while Laravel is responding requests from browsers).
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
@@ -7,15 +7,19 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 - Laravel 5.6.*
 - swoole >4.0
 
+## Features
+
+- To be absolutely safe, put your code under control.
+- Extra speed improvements such as log cache, view path cache.
+
 ## Requirements or Code Tips
-In most cases, our projects running on a base of consistent and stable configuration. For absolute safety, it's a requirement . In each request, the env should always be same:
+In most cases, our projects running on a base of consistent and stable configuration. Using LaravelFly, in each request, these items of env should always be same:
 
 1. php configuration should keep same in any requests.
 2. In LaravelFly Mode Map, some objects are created before any requests by default, but not fully refactored because that is useless most time. Have a look:
     1. [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same.
-    2. url(UrlGenerator): props **'sessionResolver','keyResolver', 'formatHostUsing','formatPathUsing'** should keep same.
-    3. auth: prop **customCreators** with same name should keep same
-    4. Pagination: static props **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** in AbstractPaginator should keep same.
+    2. auth: prop **customCreators** with same name should keep same
+    3. Pagination: static props **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** in AbstractPaginator should keep same.
 
 ## Quick Start
 
@@ -97,7 +101,7 @@ It is alse a safe sollution. It is light.It has supported Lumen and websocket. I
 
 The first difference is that laravel-swoole's configuration is based on service,like log, view while LaravelFly is based on service providers like LogServiceProvider, ViewServiceProvider.(In Mode Simple, providers are registered before any requests, in Mode Map some providers are registered and booted before any requests.) 
 
-The main difference is that in laravel-swoole requests will be processed by a new `app` cloned from the original app container and laravel-swoole updates related container bindings to the new app. However in LaravelFly, `clone` is used only twice to create `url` and `routes` in Mode Map, and other objects such as `app`, `event`.... always keep one object in a worker process. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read "Stale Reference" in [Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist)`. 
+The main difference is that in laravel-swoole requests will be processed by a new `app` cloned from the original app container and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container. In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is used only twice to create `url` and `routes` in Mode Map. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read "Stale Reference" in [Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist)`. 
 
 .   | technique | difficulty for dev  |  difficulty for users
 ------------ | ------------ | ------------- | ------------- 

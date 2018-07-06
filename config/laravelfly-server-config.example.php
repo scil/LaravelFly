@@ -53,6 +53,14 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
     'routes' => true,
 
     /**
+     * set false if any one of props sessionResolver,keyResolver, formatHostUsing or formatPathUsing does not keep same
+     *
+     * You can control which props to be cloned in config('laravelfly.update_for_clone')
+     *
+     */
+    'url' => true,
+
+    /**
      * set false if different values of props path, domain, secure and sameSite in different requests.
      * They can be changed by CookieJar::setDefaultPathAndDomain
      *
@@ -65,6 +73,8 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
      * set false if different values of props of hash drivers in different requests.
      * BcryptHasher's prop: rounds
      * ArgonHasher's props: memory,time,threads
+     *
+     * You can control which driver, BcryptHasher or ArgonHasher to be cloned in config('laravelfly.update_for_clone')
      *
      * their values init with data from config('hashing.bcrypt') and config('hashing.argon')
      */
