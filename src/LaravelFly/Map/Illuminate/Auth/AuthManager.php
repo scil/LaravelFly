@@ -4,8 +4,10 @@ namespace LaravelFly\Map\Illuminate\Auth;
 
 
 use Closure;
+use InvalidArgumentException;
+use Illuminate\Contracts\Auth\Factory as FactoryContract;
 
-class AuthManager extends \Illuminate\Auth\AuthManager
+class AuthManager extends AuthManagerSame
 {
     use \LaravelFly\Map\Util\Dict;
 
@@ -14,55 +16,45 @@ class AuthManager extends \Illuminate\Auth\AuthManager
 
     protected static $arrayAttriForObj = [
         'guards',
-        // 'customCreators'
+        // plus
+        'customCreators'
     ];
 
 
     public function __construct($app)
     {
-
-        $this->app = $app;
-
-        $this->initOnWorker(true);
-
-        // this statement must be after initOnWorker
-        static::$corDict[WORKER_COROUTINE_ID]['userResolver'] = function ($guard = null) {
-            return $this->guard($guard)->user();
-        };
+       parent::__construct($app);
 
     }
 
-    public function guard($name = null)
+    protected function resolve($name)
     {
-        $name = $name ?: $this->getDefaultDriver();
+        $config = $this->getConfig($name);
 
-        $cid = \co::getUid();
-        return static::$corDict[$cid]['guards'][$name] ??
-            (static::$corDict[$cid]['guards'][$name] = $this->resolve($name));
+        if (is_null($config)) {
+            throw new InvalidArgumentException("Auth guard [{$name}] is not defined.");
+        }
+
+        if (isset(static::$corDict[\Swoole\Coroutine::getuid()]['customCreators'][$config['driver']])) {
+            return $this->callCustomCreator($name, $config);
+        }
+
+        $driverMethod = 'create'.ucfirst($config['driver']).'Driver';
+
+        if (method_exists($this, $driverMethod)) {
+            return $this->{$driverMethod}($name, $config);
+        }
+
+        throw new InvalidArgumentException("Auth driver [{$config['driver']}] for guard [{$name}] is not defined.");
     }
 
-    public function shouldUse($name)
+    protected function callCustomCreator($name, array $config)
     {
-        $name = $name ?: $this->getDefaultDriver();
-
-// todo this file seems useless? oh no! and we need work more! config maybe changed .see:
-// You may have wondered why when using the apigroup of middleware that $request->user() returns the correct user from the api guard and doesn't use the default web guard
-// https://asklagbox.com/blog/unboxing-laravel-authentication#the-user-resolver
-        $this->setDefaultDriver($name);
-
-        static::$corDict[\co::getUid()]['userResolver'] = function ($name = null) {
-            return $this->guard($name)->user();
-        };
+        return static::$corDict[\Swoole\Coroutine::getuid()]['customCreators'][$config['driver']]($this->app, $name, $config);
     }
-
-    public function userResolver()
+    public function extend($driver, Closure $callback)
     {
-        return static::$corDict[\co::getUid()]['userResolver'];
-    }
-
-    public function resolveUsersUsing(Closure $userResolver)
-    {
-        static::$corDict[\co::getUid()]['userResolver'] = $userResolver;
+        static::$corDict[\Swoole\Coroutine::getuid()]['customCreators'][$driver] = $callback;
 
         return $this;
     }

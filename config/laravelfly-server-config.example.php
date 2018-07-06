@@ -52,12 +52,18 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
 
     /**
      * set false if different values of props path, domain, secure and sameSite in different requests.
-     * They can be changed by CookieJar::setDefaultPathAndDomain
+     * They can be changed by CookieJar::setDefaultPathAndDomain or app('cookie')->setDefaultPathAndDomain
      *
      * Most cases, these values init with data from config('session') and keep same across the whole project.
      */
     'cookie' => true,
 
+    /**
+     * set false if prop customCreators with same name does not keep same.
+     * They can be changed by AuthManager::extend or app('auth')->extend
+     *
+     */
+    'auth' => true,
 
     /**
      * set false if different values of props of hash drivers in different requests.

@@ -32,7 +32,10 @@ class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
             $app['auth.loaded'] = true;
 
             // hack
-            return new \LaravelFly\Map\Illuminate\Auth\AuthManager($app);
+            $class = LARAVELFLY_SERVICES['auth']?
+                \LaravelFly\Map\Illuminate\Auth\AuthManagerSame::class:
+                \LaravelFly\Map\Illuminate\Auth\AuthManager ::class;
+            return new $class($app);
         });
 
         $this->app->singleton('auth.driver', function ($app) {
