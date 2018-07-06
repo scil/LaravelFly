@@ -32,7 +32,7 @@ if (!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
  * 2. its vars will not changed in any requests
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
  */
-if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
+if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
 
     /**
      * set the corresponding service to be true if you use it.
@@ -40,8 +40,6 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
     "redis" => false,
     'filesystem.cloud' => false,
     'broadcast' => false,
-
-], [
 
 
     /**
@@ -102,7 +100,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', array_merge([
      */
     'kernel' => true,
 
-]));
+]);
 
 /**
  * this array is used for swoole server,
