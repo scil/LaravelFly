@@ -61,9 +61,6 @@ return [
     /**
      * providers to reg and boot on worker, before any request. only for Mode Map
      *
-     * format:
-     *      proverder_name => [],
-     *
      * you can also supply singleton services to made on worker
      * only singleton services are useful and valid here.
      * and the singleton services must not be changed during any request,
@@ -71,6 +68,7 @@ return [
      *
      * a singeton service is like this:
      *     *   $this->app->singleton('hash', function ($app) { ... });
+     *
      *
      * formats:
      *      proverder,                   // this provider will be booted on worker
@@ -84,6 +82,10 @@ return [
      *        'singleton_service_2' => true,  //  service will be made on worker
      *
      *        'singleton_service_3' => false, //  service will not be made on worker,
+     *
+     *        'singleton_service_3' => 'clone', //  service will be cloned, so there are more than one instances,
+     *                                          //  it's necessary to update relations if some objects have ref to the service,
+     *                                          //  see config 'laravelfly.update_for_clone'
      *      ],
      *
      *      proverder4=> false,           // this provider will not be booted on worker
@@ -148,9 +150,7 @@ return [
         Illuminate\Foundation\Providers\FoundationServiceProvider::class => 'across',
 
         Illuminate\Hashing\HashServiceProvider::class => [
-
             'hash' => !empty(LARAVELFLY_SERVICES['hash']) ? true : 'clone',
-
             'hash.driver',
         ],
 
@@ -250,7 +250,9 @@ return [
     ],
 
     /**
-     * for Mode Map
+     * handle relations about cloned services. For Mode Map
+     *
+     * clone and closure run in each request.
      */
     'update_for_clone' => [
 

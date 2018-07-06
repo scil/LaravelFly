@@ -46,7 +46,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
      * set false if different routes in different requests.
      *
      * Most cases, Service Providers add same routes, like DebugBar(Barryvdh\Debugbar\ServiceProvider),
-     * so it's not needed to set false because 'routes', 'allRoutes', 'nameList', 'actionList' are of associate array.
+     * so it's not needed to set false because 'routes', 'allRoutes', 'nameList', 'actionList' are associate arrays.
      */
     'routes' => true,
 
