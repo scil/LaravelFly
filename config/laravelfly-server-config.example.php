@@ -25,9 +25,9 @@ if (!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
 /**
  * make some services on worker, before any requests, to save memory
  *
- * mainly for Mode Mape with oexception that items 'config' and 'kernel' are also for Mode Simple.
+ * main for Mode Mape with exceptions 'config' and 'kernel' which are also for Mode Simple.
  *
- * A COROUTINE-FRIENDLY SERVICE must satisfy folling conditions:
+ * a service that can be made on worker sould be A COROUTINE-FRIENDLY SERVICE that must satisfy folling conditions:
  * 1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }
  * 2. its vars will not changed in any requests
  * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
@@ -35,7 +35,7 @@ if (!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
 if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
 
     /**
-     * set the corresponding service to be true if you use it.
+     * you can set the corresponding service to be true if you use it.
      */
     "redis" => false,
     'filesystem.cloud' => false,
@@ -43,30 +43,31 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
 
 
     /**
-     * set false if different routes in different requests.
+     * you can set true if routes keep same in different requests.
      *
      * Most cases, Service Providers add same routes, like DebugBar(Barryvdh\Debugbar\ServiceProvider),
      * so it's not needed to set false because 'routes', 'allRoutes', 'nameList', 'actionList' are associate arrays.
      */
-    'routes' => true,
+    'routes' => false,
 
     /**
-     * set false if different values of props path, domain, secure and sameSite in different requests.
+     * you can set true if values of props path, domain, secure and sameSite keep same in different requests.
      * They can be changed by CookieJar::setDefaultPathAndDomain or app('cookie')->setDefaultPathAndDomain
      *
      * Most cases, these values init with data from config('session') and keep same across the whole project.
      */
-    'cookie' => true,
+    'cookie' => false,
 
     /**
-     * set false if prop customCreators with same name does not keep same.
-     * They can be changed by AuthManager::extend or app('auth')->extend
+     * you can set true if prop customCreators with same name keep same.
+     * customCreators is of associate array,
+     * it can be changed by AuthManager::extend or app('auth')->extend
      *
      */
-    'auth' => true,
+    'auth' => false,
 
     /**
-     * set false if different values of props of hash drivers in different requests.
+     * you can set true if values of props of hash drivers keep same in different requests.
      * BcryptHasher's prop: rounds
      * ArgonHasher's props: memory,time,threads
      *
@@ -74,18 +75,21 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
      *
      * their values init with data from config('hashing.bcrypt') and config('hashing.argon')
      */
-    'hash' => true,
+    'hash' => false,
 
     /**
-     * set false if same view name refers to different view files in different requests.
+     * set true if same view name refers to same view files in different requests.
+     *
+     * some times, same view name refers to different file
      * for example:
      *      view 'home' may points to 'guest_location/home.blade.php' for a guest ,
      *      while to 'admin_location/home.blade.php' for an admin
      */
-    'view.finder' => true,
+    'view.finder' => false,
 
     /**
-     * set this false if items in app('config') not keep same in different requests, because
+     * set true if items in app('config') keep same in different requests,
+     * othersize leave it false because
      * for Mode Simple, it's necessary to restore its origin value after each request.
      * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
      *
@@ -94,17 +98,17 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
      * restore its origin value to allow Debugbar continue work in other requests.
      *
      */
-    'config' => true,
+    'config' => false,
 
     /**
-     * set this false if middlewares are not always same in multiple request.
+     * set true if middlewares are always same in multiple request.
      *
      * Middlewares may be changed by Route::middleware
      * No need worry about same middlewares are added multiple times,
      * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
      *          if (array_search($middleware, $this->middleware) === false)
      */
-    'kernel' => true,
+    'kernel' => false,
 
 ]);
 
