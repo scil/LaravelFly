@@ -23,14 +23,12 @@ if (!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
 );
 
 /**
- * make some services on worker, before any requests, to save memory
- *
+ * Configuration about some of services on worker, before any requests.
  * main for Mode Mape with exceptions 'config' and 'kernel' which are also for Mode Simple.
  *
- * a service that can be made on worker sould be A COROUTINE-FRIENDLY SERVICE that must satisfy folling conditions:
- * 1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }
- * 2. its vars will not changed in any requests
- * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
+ * Setting to true can save some memory or speed up a little.
+ * For More configurations go to config('laravelfly.providers_on_worker')
+ *
  */
 if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
 

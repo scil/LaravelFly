@@ -69,6 +69,11 @@ return [
      * a singeton service is like this:
      *     *   $this->app->singleton('hash', function ($app) { ... });
      *
+     * a service that can be made on worker sould be A COROUTINE-FRIENDLY SERVICE that must satisfy folling conditions:
+     * 1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }
+     * 2. its vars will not changed in any requests
+     * 3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
+     *
      *
      * formats:
      *      proverder,                   // this provider will be booted on worker
