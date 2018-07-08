@@ -11,7 +11,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 - Same codes can run on PHP-FPM or LaravelFly
 - To be absolutely safe, put your code under control.
-- A laravel service that made before any requests can be configurable to serve in multiple requests (only one instance of the service), or to be cloned in each request (one instance in one request).
+- A laravel service that made before any requests can be configurable to serve in multiple requests (only one instance of the service), or to be cloned in each request (one instance in one request).LaravelFly named them COROUTINE-FRIENDLY SERVICE and CLONE SERVICE.
 - Extra speed improvements such as log cache, view path cache.
 
 ## Requirements or Code Tips
