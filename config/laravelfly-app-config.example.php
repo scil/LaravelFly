@@ -217,17 +217,12 @@ return [
 
         /* depends */
         /**
-         * if some executions always same in each request,
+         * if some executions always be same in each request,
          * suggest to create a new AppServiceProvider whoes reg and boot are both executed on worker.
          */
         // App\Providers\WorkerAppServiceProvider::class => [],
 
         /* depends */
-        /**
-         * its boot relates Illuminate\Auth\Access\Gate
-         * which would better not to be made on worker
-         * because it has props like afterCallbacks relating memory leak
-         */
         App\Providers\AuthServiceProvider::class => 'across',
 
         App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : 'ignore',
@@ -239,7 +234,13 @@ return [
          */
         App\Providers\EventServiceProvider::class => 'across',
 
-        /* depends */
+        /**
+         * its boot loads files routes/web.php and routes/api.php.
+         * see:
+         *      Illuminate\Foundation\Support\Providers\RouteServiceProvider::boot()
+         * and
+         *      App\Providers\RouteServiceProvider::map
+         */
         App\Providers\RouteServiceProvider::class => [],
 
 

@@ -23,10 +23,10 @@ if (!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
 );
 
 /**
- * Configuration about some of services on worker, before any requests.
+ * Configuration about some of services on worker, booted before any requests.
  * main for Mode Mape with exceptions 'config' and 'kernel' which are also for Mode Simple.
  *
- * Setting to true can save some memory or speed up a little.
+ * Setting them to true can save some memory or speed up a little.
  * For More configurations go to config('laravelfly.providers_on_worker')
  *
  */
@@ -41,12 +41,12 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
 
 
     /**
-     * you can set true if routes keep same in different requests.
+     * you can set false if routes with same name do not keep same in different requests.
      *
-     * Most cases, Service Providers add same routes, like DebugBar(Barryvdh\Debugbar\ServiceProvider),
-     * so it's not needed to set false because 'routes', 'allRoutes', 'nameList', 'actionList' are associate arrays.
+     * Most cases, some Service Providers add same routes, like DebugBar(Barryvdh\Debugbar\ServiceProvider),
+     * so it's not necessary to set false because 'routes', 'allRoutes', 'nameList', 'actionList' are associate arrays.
      */
-    'routes' => false,
+    'routes' => true,
 
     /**
      * you can set true if values of props path, domain, secure and sameSite keep same in different requests.
