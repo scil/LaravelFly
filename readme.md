@@ -31,21 +31,10 @@ Suggest: `pecl install inotify`
 
 2.`composer require "scil/laravel-fly":"dev-master"`
 
-3.`php artisan vendor:publish --tag=fly-app`   
-This is publishing an app config file 
-
-4.`php vendor/scil/laravel-fly/bin/fly start`   
+3.`php vendor/scil/laravel-fly/bin/fly start`   
 If you enable `eval(tinker())` and see an error about mkdir, please start LaravelFly using sudo.
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
-
-By default, every time LaravelFly starts, it makes or loads a config cache file laravelfly_ps_map.php or laravelfly_ps_simple.php, so if config file `config/laravelfly.php` changes you can change config 'laravelfly.config_cache_always' to false in dev env , or run `php artisan config:clear` before starting LaravelFly in production env:
-```
-alias ff='php artisan config:clear && php vendor/scil/laravel-fly/bin/fly start'
-
-ff
-```
-
 
 ## Doc
 
@@ -105,11 +94,11 @@ The first difference is that laravel-swoole's configuration is based on service,
 
 The main difference is that in laravel-swoole requests will be processed by a new `app` cloned from the original app container and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container. In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is used only to create `url` (and `routes` when LARAVELFLY_SERVICES['routes'] ===false ) in Mode Map. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read "Stale Reference" in [Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist)`. 
 
-.   | technique | every service is in control |  every service provider is in control | work: config |  work: maintaining relations of cloned objects to avoid Stale Reference
+.   | technique | every service is in control |  every service provider is in control | work to maintaining relations of cloned objects to avoid Stale Reference
 ------------ | ------------ | ------------- | ------------- | ------------- | ------------- 
-laravel-swoole  | clone app contaniner and objects to make them safe |  no | no | less work | more work (app,event...are cloned)
-LaravelFly Mode Map  | refactor most official objects to make them safe on their own |  yes  | yes | more work  | less work (only url and routes cloned)
-LaravelFly Mode Simple  | service providers reg on work and boot in requests | yes | yes | less work | less work 
+laravel-swoole  | clone app contaniner and objects to make them safe |  no | no | more work (app,event...are cloned)
+LaravelFly Mode Map  | refactor most official objects to make them safe on their own |  yes  | yes  | less work (only url and routes cloned)
+LaravelFly Mode Simple  | service providers reg on work and boot in requests | yes | yes | less work 
 
 
 ### 2. [laravoole](https://github.com/garveen/laravoole) 

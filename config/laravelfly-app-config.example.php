@@ -16,8 +16,8 @@ return [
      *
      * It's better to set it to false in dev env , set true and run `php artisan config:clear` before starting LaravelFly in production env
      */
-    // 'config_cache_always' => $IN_PRODUCTION,
-    'config_cache_always' => true,
+     'config_cache_always' => $IN_PRODUCTION,
+    // 'config_cache_always' => true,
 
     /**
      * For each worker, if a view file is compiled max one time. Only For Mode Map
