@@ -127,8 +127,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
             $allClone = implode(", ", array_merge(LARAVELFLY_SERVICES['routes'] ? ['url'] : ['url', 'routes'], $cloneServices));
             echo \LaravelFly\Fly::getServer()->colorize(
-                "[NOTE] services to be cloned in each request: $allClone
-       an object from you or 3rd-party should update references if it is made before any requets and has a relation with any of these services. In most cases, these services are not referenced by your or others, so clone is used by LaravelFly. This message is just a notice. \n",
+                "[NOTE] services to be cloned in each request: [ $allClone ]. An object in your code should update references if it is made before any requets and has a relation with any of these services, see config('laravel.update_for_clone').\n",
                 'NOTE'
             );
 

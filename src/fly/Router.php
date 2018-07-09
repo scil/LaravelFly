@@ -1,4 +1,7 @@
 <?php
+/**
+ * add Dict, plus $this->middlewareStable which is totally useless when any routes middlewares are reg in a request.
+ */
 
 namespace Illuminate\Routing;
 
@@ -545,15 +548,26 @@ class Router implements RegistrarContract, BindingRegistrar
             });
     }
 
+    protected $middlewareStable = false;
+
     public
     function gatherRouteMiddleware(Route $route)
     {
+        //hack
+        static $cache = [];
+        $id = spl_object_hash($route);
+        if ($this->middlewareStable && isset($cache[$id])) return $cache[$id];
+        var_dump('add new route middleware cache');
+        $this->middlewareStable = true;
+
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
             $cid = \co::getUid();
             return (array)MiddlewareNameResolver::resolve($name, static::$corDict[$cid]['middleware'], static::$corDict[$cid]['middlewareGroups']);
         })->flatten();
 
-        return $this->sortMiddleware($middleware);
+        // hack
+        // return $this->sortMiddleware($middleware);
+        return $cache[$id] = $this->sortMiddleware($middleware);
     }
 
     protected
@@ -647,6 +661,9 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         static::$corDict[\co::getUid()]['middleware'][$name] = $class;
 
+        // hack
+        $this->middlewareStable = false;
+
         return $this;
     }
 
@@ -674,6 +691,10 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         static::$corDict[\co::getUid()]['middlewareGroups'][$name] = $middleware;
 
+
+        // hack
+        $this->middlewareStable = false;
+
         return $this;
     }
 
@@ -691,6 +712,10 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         $cid = \co::getUid();
         if (isset(static::$corDict[$cid]['middlewareGroups'][$group]) && !in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
+
+            // hack
+            $this->middlewareStable = false;
+
             array_unshift(static::$corDict[$cid]['middlewareGroups'][$group], $middleware);
         }
 
@@ -715,6 +740,10 @@ class Router implements RegistrarContract, BindingRegistrar
         }
 
         if (!in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
+
+            // hack
+            $this->middlewareStable = false;
+
             static::$corDict[$cid]['middlewareGroups'][$group][] = $middleware;
         }
 
