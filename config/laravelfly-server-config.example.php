@@ -6,7 +6,7 @@
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  */
 if (!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
-    'Simple'
+    'Map'
 );
 
 /**

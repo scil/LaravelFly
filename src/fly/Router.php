@@ -557,7 +557,6 @@ class Router implements RegistrarContract, BindingRegistrar
         static $cache = [];
         $id = spl_object_hash($route);
         if ($this->middlewareStable && isset($cache[$id])) return $cache[$id];
-        var_dump('add new route middleware cache');
         $this->middlewareStable = true;
 
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
