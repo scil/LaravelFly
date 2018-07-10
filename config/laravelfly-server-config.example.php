@@ -65,7 +65,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
     'auth' => false,
 
     /**
-     * you can set true if values of props of hash drivers keep same in different requests.
+     * set false if values of props of hash drivers not keep same in different requests.
      * BcryptHasher's prop: rounds
      * ArgonHasher's props: memory,time,threads
      *
@@ -73,7 +73,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
      *
      * their values init with data from config('hashing.bcrypt') and config('hashing.argon')
      */
-    'hash' => false,
+    'hash' => true,
 
     /**
      * set true if same view name refers to same view files in different requests.
@@ -99,12 +99,14 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
     'config' => false,
 
     /**
-     * set true if middlewares are always same in multiple request.
+     * set true if middlewares are added before any requests, or same middlewares are added in all requests.
      *
      * Middlewares may be changed by Route::middleware
+     *
      * No need worry about same middlewares are added multiple times,
      * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
      *          if (array_search($middleware, $this->middleware) === false)
+     *
      */
     'kernel' => false,
 
