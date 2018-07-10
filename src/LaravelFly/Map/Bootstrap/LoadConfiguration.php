@@ -127,7 +127,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
             $allClone = implode(", ", array_merge(LARAVELFLY_SERVICES['routes'] ? ['url(UrlGenerator)'] : ['url(UrlGenerator)', 'routes'], $cloneServices));
             echo \LaravelFly\Fly::getServer()->colorize(
-                "[NOTE] services to be cloned in each request: [$allClone, ]. An object in your middlewares or somewhere else should update references IF it is made BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_for_clone').\n",
+                "[NOTE] services to be cloned in each request: [$allClone, ]. An object in your middlewares, service provider or somewhere else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_for_clone').\n",
                 'NOTE'
             );
 

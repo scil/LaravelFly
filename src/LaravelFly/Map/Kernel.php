@@ -77,7 +77,7 @@ class Kernel extends HttpKernel
 
         return (new Pipeline($this->app))
             ->send($request)
-            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middlewareInstances)
             ->then($this->dispatchToRouter());
     }
 
@@ -90,5 +90,15 @@ class Kernel extends HttpKernel
 
             return $this->router->dispatch($request);
         };
+    }
+
+    protected $middlewareInstances = [];
+
+    public function instanceMiddlewares()
+    {
+
+        $this->middlewareInstances = array_map(function ($name) {
+            return $this->app->make($name);
+        }, $this->middleware);
     }
 }

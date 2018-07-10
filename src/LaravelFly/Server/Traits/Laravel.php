@@ -33,7 +33,7 @@ Trait Laravel
         return $this->app;
     }
 
-    public function startLaravel(\swoole_http_server $server=null)
+    public function startLaravel(\swoole_http_server $server = null)
     {
         /** @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application $app */
         $this->app = $app = new $this->appClass($this->root);
@@ -87,6 +87,10 @@ Trait Laravel
         // the fake request is useless, but harmless too
         // $this->app->forgetInstance('request');
 
+        if (LARAVELFLY_SERVICES['kernel']) {
+            $this->kernel->instanceMiddlewares();
+        }
+
 
         printf("[INFO] event laravel.ready with $this->appClass (pid %u)\n", getmypid());
 
@@ -130,7 +134,7 @@ Trait Laravel
      * @param \swoole_http_response $response
      * @param $laravel_response
      */
-    protected function swooleResponse(\swoole_http_response $response,\Symfony\Component\HttpFoundation\Response $laravel_response): void
+    protected function swooleResponse(\swoole_http_response $response, \Symfony\Component\HttpFoundation\Response $laravel_response): void
     {
         foreach ($laravel_response->headers->allPreserveCaseWithoutCookies() as $name => $values) {
             foreach ($values as $value) {
