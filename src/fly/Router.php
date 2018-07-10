@@ -1,6 +1,8 @@
 <?php
 /**
- * add Dict, plus $this->middlewareStable which is totally useless when any routes middlewares are reg in a request.
+ * add Dict, plus 
+ *  1. cacheByRoute and $this->middlewareStable , but note that it is totally useless when any routes middlewares are reg in a request.
+ *  2. cacheForObj
  */
 
 namespace Illuminate\Routing;
@@ -554,9 +556,9 @@ class Router implements RegistrarContract, BindingRegistrar
     function gatherRouteMiddleware(Route $route)
     {
         //hack
-        static $cache = [];
+        static $cacheByRoute = [], $cacheForObj=[];
         $id = spl_object_hash($route);
-        if ($this->middlewareStable && isset($cache[$id])) return $cache[$id];
+        if ($this->middlewareStable && isset($cacheByRoute[$id])) return $cacheByRoute[$id];
         $this->middlewareStable = true;
 
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
@@ -564,9 +566,24 @@ class Router implements RegistrarContract, BindingRegistrar
             return (array)MiddlewareNameResolver::resolve($name, static::$corDict[$cid]['middleware'], static::$corDict[$cid]['middlewareGroups']);
         })->flatten();
 
-        // hack
         // return $this->sortMiddleware($middleware);
-        return $cache[$id] = $this->sortMiddleware($middleware);
+        // hack
+        return $cacheByRoute[$id] = array_map(function ($name)use(&$cacheForObj) {
+
+            if (isset($cacheForObj[$name])) {
+                return $cacheForObj[$name];
+            }
+
+            // avoid middlewares with parameters because the execution of obj middleware do not support parameters
+            //  see: Pipleline::carry()
+            if (mb_strpos($name, ':') === false) {
+                return $cacheForObj[$name] = $this->container->make($name);
+            }
+
+            return $name;
+
+        }, $this->sortMiddleware($middleware));
+
     }
 
     protected

@@ -114,7 +114,8 @@ wonderful with many merits which LaravelFly will study. Caution: laravoole loads
 - [x] Server config 'early_laravel'
 - [x] Mysql coroutine
 - [ ] Mysql connection pool
-- [x] Cache for route middlewares.Router::middlewareStable, only useful when all route middleaes are reg on worker. 
+- [x] Cache for route middlewares. $cacheByRoute in Router::gatherRouteMiddleware, only useful when all route middleaes are reg on worker. 
+- [x] Cache for route middlewares objects. $cacheForObj in Router::gatherRouteMiddleware, avoid creating instances repeatly. 
 - [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] safe: router, remove middleware?
