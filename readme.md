@@ -12,16 +12,30 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 - Same codes can run on PHP-FPM or LaravelFly
 - To be absolutely safe, put your code under control.
 - A laravel service that made before any requests can be configurable to serve in multiple requests (only one instance of the service), or to be cloned in each request (one instance in one request).LaravelFly named them COROUTINE-FRIENDLY SERVICE and CLONE SERVICE.
-- Extra speed improvements such as route middleeares cahce, view path cache.
+- Extra speed improvements such as middleeares cache, view path cache.
 
 ## Requirements or Code Tips
 In most cases, our projects running on a base of consistent and stable configuration. Using LaravelFly, in each request, these items of env should always be same:
 
 1. php configuration should keep same in any requests.
+
 2. In LaravelFly Mode Map, some objects are created before any requests by default, but not fully refactored because that is useless most time. Have a look:
     1. [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same.
-    2. static props should be always same.
-        1. Pagination: **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** .
+
+3. static props should keep consistent.
+
+    1. Pagination: **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** .
+    
+    2. Model: **globalScopes** ( [Global Scopes](https://laravel.com/docs/5.6/eloquent#global-scopes) ) is an associated array, its values on the same key should always be same. For example, follwing code should not coexist in a project, because global scope 'age' means different closure.They should be merged into single closure.  
+    ```
+    static::addGlobalScope('age', function (Builder $builder) {
+            $builder->where('age', '>', 200);
+    });
+    
+    static::addGlobalScope('age', function (Builder $builder) {
+            $builder->where('age', '>', 200000000000000000000000000);
+    });
+    ```
 
 ## Quick Start
 
@@ -106,16 +120,17 @@ wonderful with many merits which LaravelFly will study. Caution: laravoole loads
 
 ## Todo About Improvement
 
-- [x] Config cache. laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache
-- [x] Log cache. Server config 'log_cache'.
-- [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
-- [x] Watching maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
 - [x] Pre-include. Server configs 'pre_include' and 'pre_files'.
 - [x] Server config 'early_laravel'
-- [x] Mysql coroutine
-- [ ] Mysql connection pool
+- [x] Cache for LaravelFly app config. laravelfly_ps_map.php or laravelfly_ps_simple.php located bootstrap/cache
+- [x] Cache for Log. Server options 'log_cache'.
+- [x] Watching maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
 - [x] Cache for route middlewares. $cacheByRoute in Router::gatherRouteMiddleware, only useful when all route middleaes are reg on worker. 
 - [x] Cache for route middlewares objects. $cacheForObj in Router::gatherRouteMiddleware, avoid creating instances repeatly. 
+- [x] Cache for global middlewares objects. Kernel::instanceMiddlewares, only when LARAVELFLY_SERVICES['kernel'] is true. 
+- [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
+- [x] Mysql coroutine
+- [ ] Mysql connection pool
 - [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] safe: router, remove middleware?
