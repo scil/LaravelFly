@@ -111,7 +111,7 @@ class Application extends \Illuminate\Foundation\Application
             $this->instance($service, clone $this->make($service));
         }
         foreach ($this->updateForClone as $item ){
-            $item['closure']->call($this);
+            $item['closure']->call($this->make($item['this']));
         }
     }
 
