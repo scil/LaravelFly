@@ -15,7 +15,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
 
         $data = [
             ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=0 HTTP/1.1', 'fd' => 99, 'selected' => 0],
-//            ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=2 HTTP/1.1', 'fd' => 99, 'selected' => 2],
+            ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=2 HTTP/1.1', 'fd' => 99, 'selected' => 2],
 //            ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=3 HTTP/1.1', 'fd' => 99, 'selected' => 3],
 //            ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 1", 'fd' => 99, 'selected' => 1],
 //            ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 9", 'fd' => 99, 'selected' => 4],

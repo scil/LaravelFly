@@ -35,6 +35,7 @@ Trait Laravel
 
     public function startLaravel(\swoole_http_server $server = null)
     {
+
         /** @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application $app */
         $this->app = $app = new $this->appClass($this->root);
 

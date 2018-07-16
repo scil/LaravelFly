@@ -5,6 +5,9 @@ namespace LaravelFly\Tests\Map\Unit\Server;
 use LaravelFly\Tests\Map\MapTestCase as Base;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+
+
+
 abstract class CommonServerTestCase extends Base
 {
 
@@ -21,6 +24,8 @@ abstract class CommonServerTestCase extends Base
         parent::setUpBeforeClass();
         static::makeCommonServer();
 
+
+
     }
 
     /**
@@ -34,6 +39,7 @@ abstract class CommonServerTestCase extends Base
     static protected function makeCommonServer()
     {
         if (static::$commonServer) return static::$commonServer;
+
 
         static::$commonServer = new \LaravelFly\Server\Common();
 

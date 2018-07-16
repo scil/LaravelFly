@@ -32,16 +32,21 @@ class CommonTest extends CommonServerTestCase
         self::assertEquals(static::$laravelAppRoot, $root->getValue($server));
     }
 
-    function testAppClass(){
+    function testAppClass()
+    {
         $this->resetServerConfigAndDispatcher(static::$commonServer);
 
-        $a= new \ReflectionProperty(static::$commonServer,'appClass');
+        $a = new \ReflectionProperty(static::$commonServer, 'appClass');
         $a->setAccessible(true);
 
-        foreach (['Map','Simple','FpmLike'] as $mode){
-            static::$commonServer->config(['mode'=>$mode, 'pre_include' => false]);
+        foreach ([
+                     'Map',
+//                     'Simple',
+//                     'FpmLike'
+                 ] as $mode) {
+            static::$commonServer->config(['mode' => $mode, 'pre_include' => false]);
             $appClass = $a->getValue(static::$commonServer);
-            self::assertEquals("\LaravelFly\\$mode\Application",$appClass);
+            self::assertEquals("\LaravelFly\\$mode\Application", $appClass);
         }
 
     }
@@ -58,7 +63,7 @@ class CommonTest extends CommonServerTestCase
         $actual = $server->getConfig();
         self::assertEquals(true, isset($actual['pid_file']));
 
-        self::assertEquals('Map',$actual['mode']);
+        self::assertEquals('Map', $actual['mode']);
 
         unset($actual['pid_file']);
         self::assertEquals(static::$default, $actual);
@@ -83,9 +88,10 @@ class CommonTest extends CommonServerTestCase
         self::assertEquals(static::$default['worker_num'], $server->getConfig('worker_num'));
     }
 
-    function testConfigPidFile(){
-        static::$commonServer->config([ 'pre_include' => false]);
-        self::assertEquals( static::$laravelAppRoot . '/bootstrap/laravel-fly-9501.pid',static::$commonServer->getConfig('pid_file')  );
+    function testConfigPidFile()
+    {
+        static::$commonServer->config(['pre_include' => false]);
+        self::assertEquals(static::$laravelAppRoot . '/bootstrap/laravel-fly-9501.pid', static::$commonServer->getConfig('pid_file'));
 
     }
 
@@ -101,12 +107,12 @@ class CommonTest extends CommonServerTestCase
 
         $this->resetServerConfigAndDispatcher(static::$commonServer);
 
-        $k= new \ReflectionProperty(static::$commonServer,'kernelClass');
+        $k = new \ReflectionProperty(static::$commonServer, 'kernelClass');
         $k->setAccessible(true);
 
-        $flyKernel= 'LaravelFly\Kernel';
+        $flyKernel = 'LaravelFly\Kernel';
 
-        static::$commonServer->config([ 'pre_include' => false]);
+        static::$commonServer->config(['pre_include' => false]);
         //self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
         self::assertEquals('App\Http\Kernel', $k->getValue(static::$commonServer));
 
@@ -117,8 +123,9 @@ class CommonTest extends CommonServerTestCase
     {
         self::assertEquals(static::$laravelAppRoot, static::$commonServer->path());
 
-        self::assertEquals(static::$laravelAppRoot.'/bootstrap/', static::$commonServer->path('bootstrap/'));
+        self::assertEquals(static::$laravelAppRoot . '/bootstrap/', static::$commonServer->path('bootstrap/'));
     }
+
     function testGetMemory()
     {
         self::assertEquals(null, static::$commonServer->getMemory('no-exist'));

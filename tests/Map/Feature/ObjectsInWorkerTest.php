@@ -49,6 +49,7 @@ class ObjectsInWorkerTest extends MapTestCase
         'session.store',
         'Illuminate\Session\Middleware\StartSession',
         'hash',
+        'hash.driver',
         'filesystem',
         'filesystem.disk',
         'encrypter',
@@ -126,7 +127,7 @@ class ObjectsInWorkerTest extends MapTestCase
             }
             $chan->push($allStaticProperties);
 
-            sleep(3);
+            sleep(2);
             $event['server']->getSwooleServer()->shutdown();
         });
 
@@ -137,6 +138,12 @@ class ObjectsInWorkerTest extends MapTestCase
     function testInstances()
     {
         $instances = static::$chan->pop();
+
+        self::assertEquals([],array_diff($this->instances,$instances));
+
+        echo "instances not wrote in test file:\n";
+        var_dump(array_diff($instances,$this->instances));
+
         // PHPUnit: assert two arrays are equal, but order of elements not important
         // https://stackoverflow.com/questions/3838288/phpunit-assert-two-arrays-are-equal-but-order-of-elements-not-important
         self::assertEquals($this->instances, $instances, "\$canonicalize = true",  0.0, 10,  true);
@@ -146,8 +153,10 @@ class ObjectsInWorkerTest extends MapTestCase
 
     function testStaticProperties()
     {
+        $exp = $this->allStaticProperties;
+        unset($exp['blade.compiler']);
         $allStaticProperties =  static::$chan->pop();
-        self::assertEquals($this->allStaticProperties, $allStaticProperties);
+        self::assertEquals($exp, $allStaticProperties);
     }
 }
 

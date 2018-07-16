@@ -10,19 +10,11 @@ use LaravelFly\Tests\Map\Unit\Server\CommonServerTestCase;
 class WorkerTest extends CommonServerTestCase
 {
 
+
     function testDownFile()
     {
-        $server = static::getCommonServer();
-        $this->resetServerConfigAndDispatcher($server);
 
-        $app = static::getLaravelApp();
-
-        /**
-         * @var \Illuminate\Foundation\Console\Kernel
-         */
-        $art = $app->make('\Illuminate\Foundation\Console\Kernel');
-        @unlink($server->getDownFileDir() . '/down');
-        self::assertFalse($app->isDownForMaintenance());
+        $appRoot= static::$laravelAppRoot;
 
         $options = [
             // use two process for two workers, worker 0 used for watchDownFile, worker 1 used for phpunit
@@ -30,16 +22,22 @@ class WorkerTest extends CommonServerTestCase
             'mode' => 'Simple',
             'listen_port' => 9503,
             'daemonize' => false,
-            'log_file' => $server->path('/storage/logs/swoole.log'),
+            'log_file' => $appRoot.'/storage/logs/swoole.log',
             'pre_include' => false,
             'watch_down' => true,
         ];
-        $server->config($options);
+        $server = static::makeNewFlyServer([],$options);
 
         $dispatcher = $server->getDispatcher();
 
         // use assert in server, these tests can not reported by phpunit , but if assert failed, error output in console
-        $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server, $app, $art) {
+        $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server,$appRoot) {
+
+            $app = $event['app'];
+
+            @unlink($server->getDownFileDir() . '/down');
+
+            self::assertEquals(0,$app->isDownForMaintenance());
 
             /**
              * worker 0 used for watchDownFile, worker 1 used for phpunit
@@ -51,25 +49,24 @@ class WorkerTest extends CommonServerTestCase
              */
             if ($event['workerid'] === 0) return;
 
-            self::assertEquals(0, $server->getMemory('isDown'));
+            self::assertEquals(false, $server->getMemory('isDown'));
 
-            $art->call('down');
+            passthru("cd $appRoot && php artisan down");
             sleep(1);
-            self::assertTrue($app->isDownForMaintenance());
+            self::assertEquals(1,$app->isDownForMaintenance());
             file_put_contents($server->path('storage/framework/ok3'), $server->getMemory('isDown'));
             self::assertEquals(1, $server->getMemory('isDown'));
 
 
-            $art->call('up');
+            passthru("cd $appRoot && php artisan up");
             sleep(1);
-            self::assertFalse($app->isDownForMaintenance());
+            self::assertEquals(0,$app->isDownForMaintenance());
             sleep(1);
             self::assertEquals(0, $server->getMemory('isDown'));
 
             $server->getSwooleServer()->shutdown();
         });
 
-        $swoole_server = $this->recreateSwooleServer($options,$server);
 
         $server->start();
 

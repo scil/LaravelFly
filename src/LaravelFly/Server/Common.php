@@ -6,6 +6,9 @@ use swoole_atomic;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+
+if (!defined('LARAVELFLY_SERVICES')) include __DIR__.'/../../../config/laravelfly-server-config.example.php';
+
 class Common
 {
     use Traits\DispatchRequestByQuery;
@@ -85,14 +88,14 @@ class Common
                 '/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php',
         ],
         'config' => [
-            'Config/Repository.php' => [
+            'Config/Repository.php' =>
                 '/vendor/laravel/framework/src/Illuminate/Config/Repository.php'
-            ]
+
         ],
         'kernel' => [
-            'Http/Kernel.php' => [
-                'vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php'
-            ]
+            'Http/Kernel.php' =>
+                '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php'
+
         ]
     ];
 

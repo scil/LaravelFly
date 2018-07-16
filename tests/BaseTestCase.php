@@ -10,7 +10,6 @@
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit2
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit3
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit4
  *
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature2
@@ -33,10 +32,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 abstract class BaseTestCase extends TestCase
 {
-    /**
-     * @var \Illuminate\Foundation\Application
-     */
-    static private $laravelApp;
 
     /**
      * @var EventDispatcher
@@ -78,19 +73,6 @@ abstract class BaseTestCase extends TestCase
         }
     }
 
-    /**
-     * Get laravel official App instance, but instance of any of Laravelfly Applications
-     *
-     * @return \Illuminate\Foundation\Application
-     */
-    static protected function getLaravelApp()
-    {
-        if (!self::$laravelApp)
-            self::$laravelApp = require static::$laravelAppRoot . '/bootstrap/app.php';
-
-        return self::$laravelApp;
-    }
-
 
     static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
     {
@@ -108,11 +90,11 @@ abstract class BaseTestCase extends TestCase
 
         $options = array_merge($file_options, $options);
 
-        $fly = \LaravelFly\Fly::init($options);
+        $flyServer = \LaravelFly\Fly::init($options);
 
-        static::$dispatcher = $fly->getDispatcher();
+        static::$dispatcher = $flyServer->getDispatcher();
 
-        return static::$flyServer = $fly->getServer();
+        return static::$flyServer = $flyServer;
     }
 
     /**
@@ -149,12 +131,23 @@ abstract class BaseTestCase extends TestCase
      */
     function recreateSwooleServer($options, $server = null): \swoole_http_server
     {
+        /**
+         * \LaravelFly\Server\Common
+         */
         $server = $server ?: static::$flyServer;
 
         $options = array_merge(self::$default, $options);
 
+
         $s = new \ReflectionProperty($server, 'swoole');
         $s->setAccessible(true);
+
+        //todo
+//        $old_swoole=$s->getValue($server);
+//        if($old_swoole){
+//            $old_swoole->exit();
+//        }
+
         $new_swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
         $new_swoole->set($options);
 
