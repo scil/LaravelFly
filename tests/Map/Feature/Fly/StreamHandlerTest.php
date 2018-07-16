@@ -85,7 +85,10 @@ class StreamHandlerTest extends MapTestCase
         $logFile = static::getFlyServer()->path('storage/logs/laravel.log');
 
         // after shutdown
-        self::assertEquals("12345\n678910\n11\n", $this->stripLogRecord($logFile),'after shutdown');
+        self::assertEquals("12345\n678910\n11\n", $this->stripLogRecord($logFile),'after shutdown, see reason :
+        // todo why?
+       in src/fly/StreamHandler.php 
+        ');
 
     }
 
