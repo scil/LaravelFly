@@ -164,7 +164,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         $update = [];
 
         foreach ($appConfig['laravelfly.update_for_clone'] ?: [] as $item) {
-            if ($item && $item['this'] && $item['closure']) {
+            if (is_callable($item)) {
                 $update[] = $item;
             }
         }

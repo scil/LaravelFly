@@ -270,23 +270,16 @@ return [
 
         // for cloned hash
         !empty(LARAVELFLY_SERVICES['hash']) ? false :
-            [
-                'this' => 'hash',
-                'closure' => function () {
-                    // $this here is app('hash'), a newly cloned instance of HashManager
-                    foreach ($this->getDrivers() as $name => $drive) {
-                        // var_dump($name); debug_zval_dump($drive);
-                        $this->drivers[$name] = clone $drive;
-                        // debug_zval_dump($this->drivers[$name] );
-                    }
-                },
-            ],
+        function () {
+            // $this here is app()
+            $hash = $this->make('hash');
+            foreach ($hash->getDrivers() as $name => $drive) {
+                // var_dump($name); debug_zval_dump($drive);
+                $hash->drivers[$name] = clone $drive;
+                // debug_zval_dump($hash->drivers[$name] );
+            }
+        },
 
-        // put one more updating item here
-        [
-            // 'this' => 'name',
-            // 'closure' => function () { },
-        ]
     ],
 
 
