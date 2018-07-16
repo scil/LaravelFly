@@ -56,12 +56,14 @@ class StreamHandlerTest extends MapTestCase
              * @var \swoole_http_server
              */
             $swoole = $event['server']->getSwooleServer();
-            /**
-             * ensure onWorkerStop is executed, then event 'worker.stopped' dispatched, then  cacheWrite() executed
-             * This is only needed when `$swoole->shutdown()`.
-             * I have no idea why sending signal SIGTERM allow onWorkerStop, while shutdown not allow
-             */
-            $swoole->stop($event['workerid'], true);
+
+//            /**  for old version of swoole
+//             * ensure onWorkerStop is executed, then event 'worker.stopped' dispatched, then  cacheWrite() executed
+//             * This is only needed when `$swoole->shutdown()`.
+//             * I have no idea why sending signal SIGTERM allow onWorkerStop, while shutdown not allow
+//             */
+//            $swoole->stop($event['workerid'], true);
+
             $swoole->shutdown();
         });
 
@@ -82,7 +84,7 @@ class StreamHandlerTest extends MapTestCase
 
         $logFile = static::getFlyServer()->path('storage/logs/laravel.log');
 
-        // after reload
+        // after shutdown
         self::assertEquals("12345\n678910\n11\n", $this->stripLogRecord($logFile),'after shutdown');
 
     }

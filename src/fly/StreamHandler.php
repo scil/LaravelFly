@@ -66,6 +66,10 @@ class StreamHandler extends AbstractProcessingHandler
 
         $this->flyCacheMax = \LaravelFly\Fly::getServer()->getConfig('log_cache') ?? 5;
 
+        // todo why?
+        // $this->__destruct();  will call $this->>close();
+        // but the sad thing is that: $this->>__destruct not called when server is reloaded or restarted,
+        // so i need call it manuly
         $dispatcher = \LaravelFly\Fly::getServer()->getDispatcher();
         $dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
             if ($this->flyCache)
@@ -80,9 +84,6 @@ class StreamHandler extends AbstractProcessingHandler
     public function close()
     {
         if ($this->url && is_resource($this->stream)) {
-            // todo why?
-            // $this->__destruct();  will call $this->>close();
-            // but the sad thing is that: $this->>__destruct not called when server is reloaded or restarted,
             $this->cacheWrite();
             fclose($this->stream);
         }
