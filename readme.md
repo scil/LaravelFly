@@ -14,19 +14,19 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 - A laravel service that made before any requests can be configurable to serve in multiple requests (only one instance of the service), or to be cloned in each request (one instance in one request).LaravelFly named them COROUTINE-FRIENDLY SERVICE and CLONE SERVICE. The latter is simple, but sometimes has the problem Stale Reference.
 - Extra speed improvements such as middleeares cache, view path cache.
 
-## Requirements or Code Tips
+## Code Tips: Consistency Requirements 
+
 In most cases, our projects running on a base of consistent and stable configuration. Using LaravelFly, in each request, these items of env should always be same:
 
-1. php configuration should keep same in any requests.
+1. php configuration should keep same in any requests. Any changes of php configuration must be made before any requests.
 
-2. In LaravelFly Mode Map, some objects are created before any requests by default, but not fully refactored because that is useless most time. Have a look:
-    1. [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same.
+2. In LaravelFly Mode Map, [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same.
 
 3. static props should keep consistent.
 
-    1. Pagination: **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** .
+    1. Illuminate\Pagination\Paginator: **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** .
     
-    2. Model: **globalScopes** ( [Global Scopes](https://laravel.com/docs/5.6/eloquent#global-scopes) ) is an associated array, its values on the same key should always be same. For example, follwing code should not coexist in a project, because global scope 'age' means different closure.They should be merged into single closure.  
+    2. Illuminate\Database\Eloquent\Model: **globalScopes** ( [Global Scopes](https://laravel.com/docs/5.6/eloquent#global-scopes) ) is an associated array, its values on the same key should always be same. For example, follwing code should not coexist in a project, because global scope 'age' means different closure.They should be merged into single closure.  
     ```
     static::addGlobalScope('age', function (Builder $builder) {
             $builder->where('age', '>', 200);

@@ -164,6 +164,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         $update = [];
 
         foreach ($appConfig['laravelfly.update_for_clone'] ?: [] as $item) {
+            // 'this' is userful , it allows closure access to protected props
             if ($item && $item['this'] && $item['closure']) {
                 $update[] = $item;
             }

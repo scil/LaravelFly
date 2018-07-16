@@ -81,7 +81,7 @@ Trait Laravel
         try {
             $this->kernel->bootstrap();
         } catch (\Throwable $e) {
-            echo "[ERROR] bootstrap: $e\n";
+            echo "[FLY ERROR] bootstrap: $e\n";
             $server && $server->shutdown();
         }
 

@@ -3,6 +3,7 @@
 namespace LaravelFly\Tests\Map\Feature;
 
 use Dotenv\Loader;
+use LaravelFly\Map\Illuminate\View\BladeCompiler_1;
 use LaravelFly\Tests\Map\MapTestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -127,6 +128,14 @@ class ObjectsInWorkerTest extends MapTestCase
             }
             $chan->push($allStaticProperties);
 
+            $bladeR = new \ReflectionClass(BladeCompiler_1::class);
+            $s=$bladeR->getStaticProperties();
+            if($s) {
+                $names = array_keys($s);
+                $chan->push($names);
+            }
+
+
             sleep(2);
             $event['server']->getSwooleServer()->shutdown();
         });
@@ -153,10 +162,19 @@ class ObjectsInWorkerTest extends MapTestCase
 
     function testStaticProperties()
     {
+
+        $allStaticProperties =  static::$chan->pop();
+        self::assertFalse(array_key_exists('blade.compiler',$allStaticProperties),'no static props for bloade.compiler in dev env');
+
         $exp = $this->allStaticProperties;
         unset($exp['blade.compiler']);
-        $allStaticProperties =  static::$chan->pop();
+
         self::assertEquals($exp, $allStaticProperties);
+    }
+
+    function testStaticPropertiesForBladeCompiler1()
+    {
+        self::assertEquals($this->allStaticProperties['blade.compiler'], static::$chan->pop());
     }
 }
 
