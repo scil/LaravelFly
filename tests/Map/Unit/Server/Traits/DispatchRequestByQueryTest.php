@@ -22,7 +22,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
         ];
 
         foreach ($data as $one) {
-            $this->resetServerConfigAndDispatcher();
+            $this->resetServerConfigAndDispatcher(static::$commonServer);
 
             $options = [
                 'worker_num' => $one['worker_num'],
@@ -32,7 +32,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
             ];
             $server->config($options);
 
-            $swoole_server = $this->setServerPropSwoole($options);
+            $swoole_server = $this->recreateSwooleServer($options,$server);
 
             self::assertEquals($one['selected'], $server->dispatch($swoole_server, $one['fd'], '', $one['raw']));
 
@@ -55,7 +55,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
 
         foreach ($data as $one) {
 
-            $this->resetServerConfigAndDispatcher();
+            $this->resetServerConfigAndDispatcher($server);
 
             $options = [
                 'dispatch_by_query' => true,
@@ -75,7 +75,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
                 $event->stopPropagation();
             }, 9);
 
-            $swoole_server = $this->setServerPropSwoole($options);
+            $swoole_server = $this->recreateSwooleServer($options,$server);
 
             $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server) {
 

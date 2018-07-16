@@ -33,7 +33,7 @@ class CommonTest extends CommonServerTestCase
     }
 
     function testAppClass(){
-        $this->resetServerConfigAndDispatcher();
+        $this->resetServerConfigAndDispatcher(static::$commonServer);
 
         $a= new \ReflectionProperty(static::$commonServer,'appClass');
         $a->setAccessible(true);
@@ -48,7 +48,7 @@ class CommonTest extends CommonServerTestCase
 
     function testDefaultOptions()
     {
-        $this->resetServerConfigAndDispatcher();
+        $this->resetServerConfigAndDispatcher(static::$commonServer);
 
         $server = static::$commonServer;
 
@@ -68,7 +68,7 @@ class CommonTest extends CommonServerTestCase
 
     function testMergeOptions()
     {
-        $this->resetServerConfigAndDispatcher();
+        $this->resetServerConfigAndDispatcher(static::$commonServer);
 
         $server = static::$commonServer;
 
@@ -99,7 +99,7 @@ class CommonTest extends CommonServerTestCase
     function testKernalClass()
     {
 
-        $this->resetServerConfigAndDispatcher();
+        $this->resetServerConfigAndDispatcher(static::$commonServer);
 
         $k= new \ReflectionProperty(static::$commonServer,'kernelClass');
         $k->setAccessible(true);

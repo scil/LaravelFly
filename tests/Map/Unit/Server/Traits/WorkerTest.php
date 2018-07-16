@@ -13,7 +13,7 @@ class WorkerTest extends CommonServerTestCase
     function testDownFile()
     {
         $server = static::getCommonServer();
-        $this->resetServerConfigAndDispatcher();
+        $this->resetServerConfigAndDispatcher($server);
 
         $app = static::getLaravelApp();
 
@@ -69,7 +69,7 @@ class WorkerTest extends CommonServerTestCase
             $server->getSwooleServer()->shutdown();
         });
 
-        $swoole_server = $this->setServerPropSwoole($options);
+        $swoole_server = $this->recreateSwooleServer($options,$server);
 
         $server->start();
 

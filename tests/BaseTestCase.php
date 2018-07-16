@@ -48,10 +48,6 @@ abstract class BaseTestCase extends TestCase
      */
     static protected $flyServer;
 
-    /**
-     * @var \LaravelFly\Server\Common;
-     */
-    static $commonServer;
 
     // get default server options
     static $default = [];
@@ -95,30 +91,6 @@ abstract class BaseTestCase extends TestCase
         return self::$laravelApp;
     }
 
-    /**
-     * @return \LaravelFly\Server\Common
-     */
-    public static function getCommonServer(): \LaravelFly\Server\Common
-    {
-        return self::$commonServer;
-    }
-
-    static protected function makeCommonServer()
-    {
-        if (static::$commonServer) return static::$commonServer;
-
-        static::$commonServer = new \LaravelFly\Server\Common();
-
-        // get default server options
-        $d = new \ReflectionProperty(static::$commonServer, 'defaultOptions');
-        $d->setAccessible(true);
-        $options = $d->getValue(static::$commonServer);
-        $options['pre_include'] = false;
-        $options['colorize'] = false;
-        static::$default = $options;
-
-        return static::$commonServer;
-    }
 
     static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
     {
@@ -153,7 +125,7 @@ abstract class BaseTestCase extends TestCase
 
     function resetServerConfigAndDispatcher($server = null)
     {
-        $server = $server ?: static::$commonServer;
+        $server = $server ?: static::$flyServer;
         $c = new \ReflectionProperty($server, 'options');
         $c->setAccessible(true);
         $c->setValue($server, []);
@@ -172,12 +144,12 @@ abstract class BaseTestCase extends TestCase
      * @return \swoole_http_server
      * @throws \ReflectionException
      *
-     * server::setServerPropSwoole may produce error:
+     * server::recreateSwooleServer may produce error:
      *  Fatal error: Swoole\Server::__construct(): eventLoop has already been created. unable to create swoole_server.
      */
-    function setServerPropSwoole($options, $server = null): \swoole_http_server
+    function recreateSwooleServer($options, $server = null): \swoole_http_server
     {
-        $server = $server ?: static::$commonServer;
+        $server = $server ?: static::$flyServer;
 
         $options = array_merge(self::$default, $options);
 
