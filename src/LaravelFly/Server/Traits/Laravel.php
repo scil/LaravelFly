@@ -33,7 +33,7 @@ Trait Laravel
         return $this->app;
     }
 
-    public function startLaravel(\swoole_http_server $server = null)
+    public function _makeLaravelApp()
     {
 
         /** @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application $app */
@@ -56,6 +56,12 @@ Trait Laravel
         );
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+
+    }
+
+    public function startLaravel(\swoole_http_server $server = null)
+    {
+        $this->_makeLaravelApp();
 
         /**
          * instance a fake request then bootstrap

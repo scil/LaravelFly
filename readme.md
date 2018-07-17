@@ -18,9 +18,9 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 In most cases, our projects running on a base of consistent and stable configuration. Using LaravelFly, in each request, these items of env should always be same:
 
-1. php configuration should keep same in any requests. Any changes of php configuration must be made before any requests.
+1. php configuration should keep same in any requests. Any changes of php configuration must be made before any requests (that is, made on worker ).
 
-2. In LaravelFly Mode Map, [Laravel Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same.
+2. In LaravelFly Mode Map, an object's [Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same if the object is made on worker.
 
 3. static props should keep consistent.
 

@@ -123,7 +123,7 @@ class Common
     /**
      * @var string
      */
-    protected $kernelClass;
+    protected $kernelClass =\LaravelFly\Kernel::class;
 
 
     public function __construct($dispatcher = null)
