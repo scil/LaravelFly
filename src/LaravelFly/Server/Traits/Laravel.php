@@ -91,7 +91,7 @@ Trait Laravel
         } catch (\Throwable $e) {
             $msg=$e->getMessage();
             echo "[FLY ERROR] bootstrap: $msg\n";
-//            $server && $server->shutdown();
+            $server && $server->shutdown();
         }
 
         // the fake request is useless, but harmless too

@@ -16,7 +16,7 @@ class Fly
      * @param array $options
      * @param EventDispatcher $dispatcher
      */
-    static function init(array $options, EventDispatcher $dispatcher = null, $swoole = true)
+    static function init(array $options, EventDispatcher $dispatcher = null)
     {
         if (self::$server) return self::$server;
 
@@ -33,8 +33,7 @@ class Fly
 
         static::$server->config($options);
 
-        if ($swoole)
-            static::$server->createSwooleServer();
+        static::$server->createSwooleServer();
 
         return self::$server;
     }

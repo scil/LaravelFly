@@ -637,8 +637,8 @@ class ServerManager
     }
 }
 
-function debug($var)
-{
-    var_dump($var);
-    exit;
-}
+// function debug($var)
+// {
+//     var_dump($var);
+//     exit;
+// }

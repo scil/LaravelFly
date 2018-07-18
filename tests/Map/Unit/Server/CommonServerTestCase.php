@@ -24,4 +24,17 @@ abstract class CommonServerTestCase extends Base
         return static::$commonServer = new \LaravelFly\Server\Common();
     }
 
+    function resetServerConfigAndDispatcher($server = null)
+    {
+        $server = $server ?: static::getCommonServer();
+        $c = new \ReflectionProperty($server, 'options');
+        $c->setAccessible(true);
+        $c->setValue($server, []);
+
+        $d = new \ReflectionProperty($server, 'dispatcher');
+        $d->setAccessible(true);
+        $d->setValue($server, new EventDispatcher());
+
+    }
+
 }

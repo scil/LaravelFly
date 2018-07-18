@@ -63,7 +63,7 @@ class ObjectsInWorkerTest extends MapTestCase
     protected $allStaticProperties = [
         'app' => ['instance'],
         'Illuminate\Foundation\Container' => ['instance'],
-        'router' => ['macros','verbs'],
+        'router' => ['macros', 'verbs'],
         'files' => ['macros'],
         'view' => ['parentPlaceholder'],
         'url' => ['macros'],
@@ -74,7 +74,7 @@ class ObjectsInWorkerTest extends MapTestCase
         // don't worry about 'request', every request has it's own 'request'.
         // The 'request' object in worker is a fake request.
         // see: \LaravelFly\Server\HttpServer::onWorkerStart
-        'request'=>[
+        'request' => [
             'formats',
             'httpMethodParameterOverride',
             'macros',
@@ -85,12 +85,13 @@ class ObjectsInWorkerTest extends MapTestCase
         ]
     ];
 
-    static function initConfig(){
+    static function initConfig()
+    {
 
-        (new Loader(''))->setEnvironmentVariable('APP_ENV','production');
-        @unlink(static::$laravelAppRoot.'/bootstrap/cache/config.php');
-        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_ps_map.php');
-        @unlink(static::$laravelAppRoot.'/bootstrap/cache/laravelfly_ps_simple.php');
+        (new Loader(''))->setEnvironmentVariable('APP_ENV', 'production');
+        @unlink(static::$laravelAppRoot . '/bootstrap/cache/config.php');
+        @unlink(static::$laravelAppRoot . '/bootstrap/cache/laravelfly_ps_map.php');
+        @unlink(static::$laravelAppRoot . '/bootstrap/cache/laravelfly_ps_simple.php');
 
     }
 
@@ -98,64 +99,73 @@ class ObjectsInWorkerTest extends MapTestCase
     {
         parent::setUpBeforeClass();
         static::initConfig();
+    }
 
-        static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1]);
+    function test()
+    {
+        self::assertTrue(True);
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
-        static::$dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($chan) {
-            $appR = new \ReflectionObject($event['app']);
-            $corDictR = $appR->getProperty('corDict');
-            $corDictR->setAccessible(true);
-            $instances = $corDictR->getValue()[WORKER_COROUTINE_ID]['instances'];
+        $r = $this->createFlyServerInProcess(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1], function ($server) use ($chan) {
 
-            $chan->push(array_keys($instances));
+            $dispatcher = $server->getDispatcher();
 
-            $allStaticProperties = [];
-            foreach ($instances as $name => $instance) {
-                if (!is_object($instance)) continue;
-                $instanceR = new \ReflectionObject($instance);
-                $staticProperties = array_keys($instanceR->getStaticProperties());
-                if ($staticProperties) {
-                    $clean = array_diff($staticProperties, ['corDict', 'corStaticDict',
-                        'normalAttriForObj','arrayAttriForObj','normalStaticAttri','arrayStaticAttri'
+            $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($chan) {
+                $appR = new \ReflectionObject($event['app']);
+                $corDictR = $appR->getProperty('corDict');
+                $corDictR->setAccessible(true);
+                $instances = $corDictR->getValue()[WORKER_COROUTINE_ID]['instances'];
+
+                $chan->push(array_keys($instances));
+
+                $allStaticProperties = [];
+                foreach ($instances as $name => $instance) {
+                    if (!is_object($instance)) continue;
+                    $instanceR = new \ReflectionObject($instance);
+                    $staticProperties = array_keys($instanceR->getStaticProperties());
+                    if ($staticProperties) {
+                        $clean = array_diff($staticProperties, ['corDict', 'corStaticDict',
+                            'normalAttriForObj', 'arrayAttriForObj', 'normalStaticAttri', 'arrayStaticAttri'
                         ]);
-                    if ($clean){
-                        sort($clean); // force it index from 0 ,otherwise self::assertEqual fail
-                        $allStaticProperties[$name] = $clean;
+                        if ($clean) {
+                            sort($clean); // force it index from 0 ,otherwise self::assertEqual fail
+                            $allStaticProperties[$name] = $clean;
+                        }
                     }
                 }
-            }
-            $chan->push($allStaticProperties);
+                $chan->push($allStaticProperties);
 
-            $bladeR = new \ReflectionClass(BladeCompiler_1::class);
-            $s=$bladeR->getStaticProperties();
-            if($s) {
-                $names = array_keys($s);
-                $chan->push($names);
-            }
+                $bladeR = new \ReflectionClass(BladeCompiler_1::class);
+                $s = $bladeR->getStaticProperties();
+                if ($s) {
+                    $names = array_keys($s);
+                    $chan->push($names);
+                }
+
+//                $event['server']->getSwooleServer()->shutdown();
+            });
+
+            $server->start();
 
 
-            sleep(2);
-            $event['server']->getSwooleServer()->shutdown();
-        });
-
-        static::$flyServer->start();
+        }, 8);
 
     }
 
     function testInstances()
     {
         $instances = static::$chan->pop();
+        var_dump($instances);
 
-        self::assertEquals([],array_diff($this->instances,$instances));
+        self::assertEquals([], array_diff($this->instances, $instances));
 
         echo "instances not wrote in test file:\n";
-        var_dump(array_diff($instances,$this->instances));
+        var_dump(array_diff($instances, $this->instances));
 
         // PHPUnit: assert two arrays are equal, but order of elements not important
         // https://stackoverflow.com/questions/3838288/phpunit-assert-two-arrays-are-equal-but-order-of-elements-not-important
-        self::assertEquals($this->instances, $instances, "\$canonicalize = true",  0.0, 10,  true);
+        self::assertEquals($this->instances, $instances, "\$canonicalize = true", 0.0, 10, true);
 
         //self::assertEquals($this->instances, $instances);
     }
@@ -163,8 +173,8 @@ class ObjectsInWorkerTest extends MapTestCase
     function testStaticProperties()
     {
 
-        $allStaticProperties =  static::$chan->pop();
-        self::assertFalse(array_key_exists('blade.compiler',$allStaticProperties),'no static props for bloade.compiler in dev env');
+        $allStaticProperties = static::$chan->pop();
+        self::assertFalse(array_key_exists('blade.compiler', $allStaticProperties), 'no static props for bloade.compiler in dev env');
 
         $exp = $this->allStaticProperties;
         unset($exp['blade.compiler']);

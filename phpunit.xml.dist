@@ -36,9 +36,9 @@
             <file>./tests/Map/Feature/ExtendedFlyFilesTest.php</file>
             <file>./tests/Map/Feature/SuperGlobalVarsTest.php</file>
             <file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>
+            <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
         </testsuite>
         <testsuite name="LaravelFly_Map_Feature2">
-            <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_LaravelTests">

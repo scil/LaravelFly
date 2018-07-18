@@ -10,14 +10,11 @@
  *
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit
- ** cd laravelfly_root
- * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Unit2
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit2
  *
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature2
  *
- ** cd laravelfly_root
- * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
  ** example for debugging with gdb:
  * gdb ~/php/7.1.14root/bin/php       // this php is a debug versioin, see D:\vagrant\ansible\files\scripts\php-debug\
@@ -96,22 +93,10 @@ abstract class BaseTestCase extends TestCase
      * @param array $constances
      * @param array $options
      * @param string $config_file
-     * @return \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
-     */
-    static protected function makeNewFlyServerNoSwoole($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
-    {
-
-        return static::makeNewFlyServer($constances, $options, $config_file, false);
-    }
-
-    /**
-     * @param array $constances
-     * @param array $options
-     * @param string $config_file
      * @param bool $swoole
      * @return \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
      */
-    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php', $swoole = true)
+    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
     {
         static $step = 0;
 
@@ -133,7 +118,7 @@ abstract class BaseTestCase extends TestCase
 
         $options = array_merge($file_options, $options);
 
-        $flyServer = \LaravelFly\Fly::init($options, null, $swoole);
+        $flyServer = \LaravelFly\Fly::init($options, null);
 
         static::$dispatcher = $flyServer->getDispatcher();
 
@@ -146,60 +131,6 @@ abstract class BaseTestCase extends TestCase
     public static function getFlyServer(): \LaravelFly\Server\ServerInterface
     {
         return self::$flyServer;
-    }
-
-    function resetServerConfigAndDispatcher($server = null)
-    {
-        $server = $server ?: static::getFlyServer();
-        $c = new \ReflectionProperty($server, 'options');
-        $c->setAccessible(true);
-        $c->setValue($server, []);
-
-        $d = new \ReflectionProperty($server, 'dispatcher');
-        $d->setAccessible(true);
-        $d->setValue($server, new EventDispatcher());
-
-    }
-
-    /**
-     * to create swoole server in phpunit, use this instead of server::createSwooleServer
-     *
-     * @param $options
-     * @param $server
-     * @return \swoole_http_server
-     * @throws \ReflectionException
-     *
-     * server::recreateSwooleServer may produce error:
-     *  Fatal error: Swoole\Server::__construct(): eventLoop has already been created. unable to create swoole_server.
-     */
-    function recreateSwooleServer($options, $server = null): \swoole_http_server
-    {
-        /**
-         * \LaravelFly\Server\Common
-         */
-        $server = $server ?: static::makeNewFlyServerNoSwoole($options);
-
-        $options = array_merge(self::$default, $options);
-
-        $s = new \ReflectionProperty($server, 'swoole');
-        $s->setAccessible(true);
-
-        //todo
-//        $old_swoole=$s->getValue($server);
-//        if($old_swoole){
-//            $old_swoole->exit();
-//        }
-
-        $new_swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
-        $new_swoole->set($options);
-
-        $s->setValue($server, $new_swoole);
-
-
-        $new_swoole->fly = $server;
-        $server->setListeners();
-
-        return $new_swoole;
     }
 
     function compareFilesContent($map)
@@ -268,7 +199,7 @@ abstract class BaseTestCase extends TestCase
         return $this->process(function () use ($constances, $options, $func) {
             $server = self::makeNewFlyServer($constances, $options);
             $r = $func($server);
-//            var_dump($r);
+//            var_dump("result from func(server):",$r);
             return $r;
         }, $wait);
 
