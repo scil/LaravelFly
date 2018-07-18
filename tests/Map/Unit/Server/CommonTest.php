@@ -17,14 +17,14 @@ class CommonTest extends CommonServerTestCase
          * create a server and get default server options
          */
 
-        $d = new \ReflectionProperty(static::$commonServer, 'defaultOptions');
+        $d = new \ReflectionProperty(static::$commonServerNoSwoole, 'defaultOptions');
         $d->setAccessible(true);
-        static::$default = $d->getValue(static::$commonServer);
+        static::$default = $d->getValue(static::$commonServerNoSwoole);
     }
 
     function testInit()
     {
-        $server = static::$commonServer;
+        $server = static::$commonServerNoSwoole;
 
         $root = new \ReflectionProperty($server, 'root');
         $root->setAccessible(true);
@@ -33,9 +33,9 @@ class CommonTest extends CommonServerTestCase
 
     function testAppClass()
     {
-        $this->resetServerConfigAndDispatcher(static::$commonServer);
+        $this->resetServerConfigAndDispatcher(static::$commonServerNoSwoole);
 
-        $a = new \ReflectionProperty(static::$commonServer, 'appClass');
+        $a = new \ReflectionProperty(static::$commonServerNoSwoole, 'appClass');
         $a->setAccessible(true);
 
         foreach ([
@@ -43,8 +43,8 @@ class CommonTest extends CommonServerTestCase
 //                     'Simple',
 //                     'FpmLike'
                  ] as $mode) {
-            static::$commonServer->config(['mode' => $mode, 'pre_include' => false]);
-            $appClass = $a->getValue(static::$commonServer);
+            static::$commonServerNoSwoole->config(['mode' => $mode, 'pre_include' => false]);
+            $appClass = $a->getValue(static::$commonServerNoSwoole);
             self::assertEquals("\LaravelFly\\$mode\Application", $appClass);
         }
 
@@ -52,9 +52,9 @@ class CommonTest extends CommonServerTestCase
 
     function testDefaultOptions()
     {
-        $this->resetServerConfigAndDispatcher(static::$commonServer);
+        $this->resetServerConfigAndDispatcher(static::$commonServerNoSwoole);
 
-        $server = static::$commonServer;
+        $server = static::$commonServerNoSwoole;
 
 
         $server->config([]);
@@ -72,9 +72,9 @@ class CommonTest extends CommonServerTestCase
 
     function testMergeOptions()
     {
-        $this->resetServerConfigAndDispatcher(static::$commonServer);
+        $this->resetServerConfigAndDispatcher(static::$commonServerNoSwoole);
 
-        $server = static::$commonServer;
+        $server = static::$commonServerNoSwoole;
 
         self::assertEquals(null, $server->getConfig('listen_ip'));
         self::assertEquals('0.0.0.0', static::$default['listen_ip']);
@@ -89,8 +89,8 @@ class CommonTest extends CommonServerTestCase
 
     function testConfigPidFile()
     {
-        static::$commonServer->config(['pre_include' => false]);
-        self::assertEquals(static::$laravelAppRoot . '/bootstrap/laravel-fly-9501.pid', static::$commonServer->getConfig('pid_file'));
+        static::$commonServerNoSwoole->config(['pre_include' => false]);
+        self::assertEquals(static::$laravelAppRoot . '/bootstrap/laravel-fly-9501.pid', static::$commonServerNoSwoole->getConfig('pid_file'));
 
     }
 
@@ -104,29 +104,29 @@ class CommonTest extends CommonServerTestCase
     function testKernalClass()
     {
 
-        $this->resetServerConfigAndDispatcher(static::$commonServer);
+        $this->resetServerConfigAndDispatcher(static::$commonServerNoSwoole);
 
-        $k = new \ReflectionProperty(static::$commonServer, 'kernelClass');
+        $k = new \ReflectionProperty(static::$commonServerNoSwoole, 'kernelClass');
         $k->setAccessible(true);
 
         $flyKernel = 'LaravelFly\Kernel';
 
-        static::$commonServer->config(['pre_include' => false]);
+        static::$commonServerNoSwoole->config(['pre_include' => false]);
         //self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
-        self::assertEquals('App\Http\Kernel', $k->getValue(static::$commonServer));
+        self::assertEquals('App\Http\Kernel', $k->getValue(static::$commonServerNoSwoole));
 
     }
 
 
     function testPath()
     {
-        self::assertEquals(static::$laravelAppRoot, static::$commonServer->path());
+        self::assertEquals(static::$laravelAppRoot, static::$commonServerNoSwoole->path());
 
-        self::assertEquals(static::$laravelAppRoot . '/bootstrap/', static::$commonServer->path('bootstrap/'));
+        self::assertEquals(static::$laravelAppRoot . '/bootstrap/', static::$commonServerNoSwoole->path('bootstrap/'));
     }
 
     function testGetMemory()
     {
-        self::assertEquals(null, static::$commonServer->getMemory('no-exist'));
+        self::assertEquals(null, static::$commonServerNoSwoole->getMemory('no-exist'));
     }
 }

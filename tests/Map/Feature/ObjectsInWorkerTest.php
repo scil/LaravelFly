@@ -163,11 +163,11 @@ class ObjectsInWorkerTest extends MapTestCase
         echo "instances not wrote in test file:\n";
         var_dump(array_diff($instances, $this->instances));
 
-        // PHPUnit: assert two arrays are equal, but order of elements not important
-        // https://stackoverflow.com/questions/3838288/phpunit-assert-two-arrays-are-equal-but-order-of-elements-not-important
-        self::assertEquals($this->instances, $instances, "\$canonicalize = true", 0.0, 10, true);
+        sort($instances);
+        $exp = array_sort($this->instances);
+        self::assertEquals($exp, $instances);
 
-        //self::assertEquals($this->instances, $instances);
+        //self::assertEquals($exp, $instances);
     }
 
     function testStaticProperties()

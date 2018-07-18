@@ -24,11 +24,11 @@
             <file>./tests/Map/Unit/Server/FlyFilesTest.php</file>
             <file>./tests/Map/Unit/FlyTest.php</file>
             <file>./tests/Map/Unit/Server/CommonTest.php</file>
+            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
+            <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Unit2">
-            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
-            <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Feature">

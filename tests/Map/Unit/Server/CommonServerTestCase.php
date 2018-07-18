@@ -12,21 +12,21 @@ abstract class CommonServerTestCase extends Base
     /**
      * @var \LaravelFly\Server\Common;
      */
-    static $commonServer;
+    static $commonServerNoSwoole;
 
     /**
      * @return \LaravelFly\Server\Common
      */
-    public static function getCommonServer(): \LaravelFly\Server\Common
+    public static function getCommonServerNoSwoole(): \LaravelFly\Server\Common
     {
-        if (static::$commonServer) return static::$commonServer;
+        if (static::$commonServerNoSwoole) return static::$commonServerNoSwoole;
 
-        return static::$commonServer = new \LaravelFly\Server\Common();
+        return static::$commonServerNoSwoole = new \LaravelFly\Server\Common();
     }
 
     function resetServerConfigAndDispatcher($server = null)
     {
-        $server = $server ?: static::getCommonServer();
+        $server = $server ?: static::getCommonServerNoSwoole();
         $c = new \ReflectionProperty($server, 'options');
         $c->setAccessible(true);
         $c->setValue($server, []);
