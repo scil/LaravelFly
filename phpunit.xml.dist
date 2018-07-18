@@ -27,13 +27,7 @@
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Unit2">
-            <!--test in a worker process. these tests can not reported by phpunit , but if assert failed, error output in console and
-            phpunit report risk
-            -->
             <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
-        </testsuite>
-        <testsuite name="LaravelFly_Map_Unit3">
-            <!--todo-->
             <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
         </testsuite>
 

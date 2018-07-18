@@ -10,14 +10,14 @@
  *
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit2
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit3
+ ** cd laravelfly_root
+ * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Unit2
  *
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature2
  *
  ** cd laravelfly_root
- * ../../bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
+ * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
  ** example for debugging with gdb:
  * gdb ~/php/7.1.14root/bin/php       // this php is a debug versioin, see D:\vagrant\ansible\files\scripts\php-debug\
@@ -28,6 +28,8 @@
 namespace LaravelFly\Tests;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\TextUI\TestRunner;
+use PHPUnit\Framework\Test;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -38,6 +40,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 abstract class BaseTestCase extends TestCase
 {
+    use DirTest;
 
     /**
      * @var EventDispatcher
@@ -77,11 +80,41 @@ abstract class BaseTestCase extends TestCase
         if (!is_dir($r . '/app')) {
             exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
         }
+
+
+        // get default server options
+        $commonServer = new \LaravelFly\Server\Common();
+        $d = new \ReflectionProperty($commonServer, 'defaultOptions');
+        $d->setAccessible(true);
+        $options = $d->getValue($commonServer);
+        $options['pre_include'] = false;
+        $options['colorize'] = false;
+        static::$default = $options;
     }
 
-
-    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
+    /**
+     * @param array $constances
+     * @param array $options
+     * @param string $config_file
+     * @return \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
+     */
+    static protected function makeNewFlyServerNoSwoole($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
     {
+
+        return static::makeNewFlyServer($constances,$options,$config_file,false);
+    }
+
+    /**
+     * @param array $constances
+     * @param array $options
+     * @param string $config_file
+     * @param bool $swoole
+     * @return \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
+     */
+    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php',$swoole=true)
+    {
+        static  $step=0;
+
         foreach ($constances as $name => $val) {
             if (!defined($name))
                 define($name, $val);
@@ -91,12 +124,17 @@ abstract class BaseTestCase extends TestCase
 
         if (!isset($options['pre_include']))
             $options['pre_include'] = false;
+        if(!isset($options['listen_port']))
+        {
+            $options['listen_port'] = 9022+$step;
+            ++$step;
+        }
 
         $file_options = require $config_file;
 
         $options = array_merge($file_options, $options);
 
-        $flyServer = \LaravelFly\Fly::init($options);
+        $flyServer = \LaravelFly\Fly::init($options,null,$swoole);
 
         static::$dispatcher = $flyServer->getDispatcher();
 
@@ -113,7 +151,7 @@ abstract class BaseTestCase extends TestCase
 
     function resetServerConfigAndDispatcher($server = null)
     {
-        $server = $server ?: static::$flyServer;
+        $server = $server ?: static::getFlyServer();
         $c = new \ReflectionProperty($server, 'options');
         $c->setAccessible(true);
         $c->setValue($server, []);
@@ -140,10 +178,9 @@ abstract class BaseTestCase extends TestCase
         /**
          * \LaravelFly\Server\Common
          */
-        $server = $server ?: static::$flyServer;
+        $server = $server ?: static::makeNewFlyServerNoSwoole($options);
 
         $options = array_merge(self::$default, $options);
-
 
         $s = new \ReflectionProperty($server, 'swoole');
         $s->setAccessible(true);
@@ -190,6 +227,56 @@ abstract class BaseTestCase extends TestCase
         }
 
         self::assertEquals(true, $same);
+
+    }
+
+    function process($func, $waittime=1)
+    {
+
+        require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
+        require_once __DIR__ . "/swoole_src_tests/include/lib/curl_concurrency.php";
+
+        ob_start();
+        $pm = new \ProcessManager;
+
+        $chan = new \Swoole\Channel(1024 * 256);
+
+        $pm->childFunc = function () use ($func, $pm, $chan) {
+            $r = $func();
+            if (is_string($r))
+                $chan->push($r);
+            else {
+                $chan->push(" func must return string");
+            }
+            $pm->wakeup();
+
+        };
+        // server can not be made in parentFunc,because parentFunc run in current process
+        $pm->parentFunc = function ($pid) use ($chan,$waittime) {
+            echo $chan->pop();
+            sleep($waittime);
+            \swoole_process::kill($pid);
+        };
+        $pm->childFirst();
+        $pm->run();
+
+        return ob_get_clean();
+    }
+
+
+    /**
+     * @param $options
+     * @param $func
+     * @param $server \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
+     * @return string
+     */
+    function createSwooleServerInProcess($options, $func, $server = null,$wait=0)
+    {
+        return $this->process(function () use ($options, $func, $server) {
+            $swoole = $this->recreateSwooleServer($options, $server);
+            $r = $func($swoole);
+            return $r;
+        },$wait);
 
     }
 }

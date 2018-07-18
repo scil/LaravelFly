@@ -57,11 +57,13 @@ Trait Laravel
 
         $this->kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
+        return $app;
+
     }
 
     public function startLaravel(\swoole_http_server $server = null)
     {
-        $this->_makeLaravelApp();
+        $app = $this->_makeLaravelApp();
 
         /**
          * instance a fake request then bootstrap
@@ -87,8 +89,9 @@ Trait Laravel
         try {
             $this->kernel->bootstrap();
         } catch (\Throwable $e) {
-            echo "[FLY ERROR] bootstrap: $e\n";
-            $server && $server->shutdown();
+            $msg=$e->getMessage();
+            echo "[FLY ERROR] bootstrap: $msg\n";
+//            $server && $server->shutdown();
         }
 
         // the fake request is useless, but harmless too

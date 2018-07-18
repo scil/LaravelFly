@@ -16,7 +16,6 @@ class CommonTest extends CommonServerTestCase
         /**
          * create a server and get default server options
          */
-        parent::makeCommonServer();
 
         $d = new \ReflectionProperty(static::$commonServer, 'defaultOptions');
         $d->setAccessible(true);

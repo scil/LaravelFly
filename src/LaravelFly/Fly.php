@@ -16,7 +16,7 @@ class Fly
      * @param array $options
      * @param EventDispatcher $dispatcher
      */
-    static function init(array $options, EventDispatcher $dispatcher = null)
+    static function init(array $options, EventDispatcher $dispatcher = null, $swoole = true)
     {
         if (self::$server) return self::$server;
 
@@ -33,15 +33,16 @@ class Fly
 
         static::$server->config($options);
 
-        static::$server->createSwooleServer();
+        if ($swoole)
+            static::$server->createSwooleServer();
 
         return self::$server;
     }
 
     static protected function initEnv($options)
     {
-        if($options['early_laravel']??false)
-            define('WORKER_COROUTINE_ID',-1);
+        if ($options['early_laravel'] ?? false)
+            define('WORKER_COROUTINE_ID', -1);
 
         require_once __DIR__ . '/../functions.php';
 

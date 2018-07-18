@@ -8,33 +8,42 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class DispatchRequestByQueryTest extends CommonServerTestCase
 {
-    function testDispatchCallbackByWorkerId()
+    private function testDispatchCallbackByWorkerId()
     {
 
         $server = static::getCommonServer();
+        $this->resetServerConfigAndDispatcher($server);
 
         $data = [
             ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=0 HTTP/1.1', 'fd' => 99, 'selected' => 0],
             ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=2 HTTP/1.1', 'fd' => 99, 'selected' => 2],
-//            ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=3 HTTP/1.1', 'fd' => 99, 'selected' => 3],
-//            ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 1", 'fd' => 99, 'selected' => 1],
-//            ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 9", 'fd' => 99, 'selected' => 4],
+            ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=3 HTTP/1.1', 'fd' => 99, 'selected' => 3],
+            ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 1", 'fd' => 99, 'selected' => 1],
+            ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 9", 'fd' => 99, 'selected' => 4],
         ];
 
-        foreach ($data as $one) {
-            $this->resetServerConfigAndDispatcher(static::$commonServer);
+        $step = 0;
 
+        foreach ($data as $one) {
+
+            $step += 1;
             $options = [
                 'worker_num' => $one['worker_num'],
                 'pre_include' => false,
-                'mode'=>'Simple',
-                'listen_port'=> $one['selected'],
+                'mode' => 'Simple',
+                'dispatch_by_query' => true,
+                'listen_port' => 9891 + $step,
             ];
-            $server->config($options);
+//            $server->config($options);
 
-            $swoole_server = $this->recreateSwooleServer($options,$server);
 
-            self::assertEquals($one['selected'], $server->dispatch($swoole_server, $one['fd'], '', $one['raw']));
+            $r = $this->createSwooleServerInProcess($options, function ($swoole_server) use ($one, $server) {
+                return $server->dispatch($swoole_server, $one['fd'], '', $one['raw']);
+            }, $server);
+
+            $r = (int)last(explode("\n", $r));
+
+            self::assertEquals($one['selected'], $r);
 
         }
     }
@@ -44,67 +53,78 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
 
         $server = static::getCommonServer();
 
-        // todo
-        // only one is allowed to test , otherwise : eventLoop has already been created. unable to create swoole_server
-        // https://github.com/swoole/swoole-src/blob/master/swoole_async.c
+        $this->resetServerConfigAndDispatcher($server);
+
         $data = [
-//            ['worker_num' => 5, 'raw' => 'GET /fly?worker-pid=%d HTTP/1.1', 'fd' => 99],
+            ['worker_num' => 5, 'raw' => 'GET /fly?worker-pid=%d HTTP/1.1', 'fd' => 99],
             ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Pid: %d", 'fd' => 99],
         ];
 
 
+        $step =0;
         foreach ($data as $one) {
-
-            $this->resetServerConfigAndDispatcher($server);
+            $step += 1;
 
             $options = [
                 'dispatch_by_query' => true,
                 'worker_num' => $one['worker_num'],
                 'pre_include' => false,
-                'mode'=>'Simple'
+                'mode' => 'Simple',
+                'listen_port' => 9991 + $step,
             ];
 
-            $server->config($options);
 
-            $dispatcher = $server->getDispatcher();
-            /**
-             *  stop run this statement: static::$workerIds->del($event['workerid']);
-             *  then $server->getWorkerIds() can get the data even swoole is shutdown
-             */
-            $dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
-                $event->stopPropagation();
-            }, 9);
+            $r = $this->createSwooleServerInProcess($options, function ($swoole_server) use ($one, $server, $options) {
 
-            $swoole_server = $this->recreateSwooleServer($options,$server);
+                $server->config($options);
 
-            $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server) {
+                $dispatcher = $server->getDispatcher();
+                /**
+                 *  stop run this statement: static::$workerIds->del($event['workerid']);
+                 *  then $server->getWorkerIds() can get the data even swoole is shutdown
+                 */
+                $dispatcher->addListener('worker.stopped', function (GenericEvent $event) {
+                    $event->stopPropagation();
+                }, 9);
+
+
+                $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server) {
+
+                    $ids = $server->getWorkerIds();
+                    if (count($ids) === $server->getConfig('worker_num')) {
+
+                        $server->getSwooleServer()->shutdown();
+                    }
+                });
+
+                $server->start();
 
                 $ids = $server->getWorkerIds();
-                if (count($ids) === $server->getConfig('worker_num')) {
 
-                    $server->getSwooleServer()->shutdown();
-                }
-            });
+                $selected_worker_id = random_int(0, $one['worker_num'] - 1);
+
+                $a_line = $ids->get($selected_worker_id);
+
+                return json_encode( [
+                    'to_select' => $selected_worker_id,
+                    'id' => $a_line['id'],
+                    'selected' => $server->dispatch($swoole_server,
+                        $one['fd'], '',
+                        sprintf($one['raw'], $a_line['pid'])
+                    )
+                ]);
 
 
-            $server->start();
+            }, $server);
 
-            $ids = $server->getWorkerIds();
+//            $r = (int)last(explode("\n", $r));
 
-            $selected_worker_id = random_int(0, $one['worker_num'] - 1);
+            $r= json_decode($r);
 
-            $a_line = $ids->get($selected_worker_id);
+            $selected_worker_id = $r->to_select;
+            self::assertEquals($selected_worker_id, $r->id);
+            self::assertEquals($selected_worker_id, $r->selected);
 
-            self::assertEquals($selected_worker_id, $a_line['id']);
-
-            self::assertEquals($selected_worker_id,
-                $server->dispatch($swoole_server,
-                    $one['fd'], '',
-                    sprintf($one['raw'], $a_line['pid'])
-                )
-            );
-
-//            exit();
         }
 
 

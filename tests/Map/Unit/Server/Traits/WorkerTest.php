@@ -14,7 +14,7 @@ class WorkerTest extends CommonServerTestCase
     function testDownFile()
     {
 
-        $appRoot= static::$laravelAppRoot;
+        $appRoot = static::$laravelAppRoot;
 
         $options = [
             // use two process for two workers, worker 0 used for watchDownFile, worker 1 used for phpunit
@@ -22,53 +22,74 @@ class WorkerTest extends CommonServerTestCase
             'mode' => 'Simple',
             'listen_port' => 9503,
             'daemonize' => false,
-            'log_file' => $appRoot.'/storage/logs/swoole.log',
+            'log_file' => $appRoot . '/storage/logs/swoole.log',
             'pre_include' => false,
             'watch_down' => true,
         ];
-        $server = static::makeNewFlyServer([],$options);
 
-        $dispatcher = $server->getDispatcher();
+        $mychan = static::$chan = new \Swoole\Channel(1024 * 256);
 
-        // use assert in server, these tests can not reported by phpunit , but if assert failed, error output in console
-        $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server,$appRoot) {
-
-            $app = $event['app'];
-
-            @unlink($server->getDownFileDir() . '/down');
-
-            self::assertEquals(0,$app->isDownForMaintenance());
-
-            /**
-             * worker 0 used for watchDownFile, worker 1 used for phpunit
-             *
-             * if only one worker,closure added by swoole_event_add in watchDownFile() only run
-             * after the closure here finish
-             * $server->getMemory('isDown') will not change.
-             *
-             */
-            if ($event['workerid'] === 0) return;
-
-            self::assertEquals(false, $server->getMemory('isDown'));
-
-            passthru("cd $appRoot && php artisan down");
-            sleep(1);
-            self::assertEquals(1,$app->isDownForMaintenance());
-            file_put_contents($server->path('storage/framework/ok3'), $server->getMemory('isDown'));
-            self::assertEquals(1, $server->getMemory('isDown'));
+        $server = static::makeNewFlyServerNoSwoole([], $options);
+        $r = $this->createSwooleServerInProcess($options, function ($swoole_server) use ($appRoot, $options, $server, $mychan) {
 
 
-            passthru("cd $appRoot && php artisan up");
-            sleep(1);
-            self::assertEquals(0,$app->isDownForMaintenance());
-            sleep(1);
-            self::assertEquals(0, $server->getMemory('isDown'));
+            $dispatcher = $server->getDispatcher();
 
-            $server->getSwooleServer()->shutdown();
-        });
+            // use assert in server, these tests can not reported by phpunit , but if assert failed, error output in console
+            $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server, $appRoot, $mychan, $swoole_server) {
+
+                $app = $event['app'];
+
+                @unlink($server->getDownFileDir() . '/down');
+
+//                self::assertEquals(0, $app->isDownForMaintenance());
+                $r[] = $app->isDownForMaintenance();
+
+                /**
+                 * worker 0 used for watchDownFile, worker 1 used for phpunit
+                 *
+                 * if only one worker,closure added by swoole_event_add in watchDownFile() only run
+                 * after the closure here finish
+                 * $server->getMemory('isDown') will not change.
+                 *
+                 */
+                if ($event['workerid'] === 0) return;
+
+//                self::assertEquals(0, $server->getMemory('isDown'));
+                $r[] = $server->getMemory('isDown');
+
+                passthru("cd $appRoot && php artisan down");
+                sleep(1);
+//                self::assertEquals(1, $app->isDownForMaintenance());
+                $r[] = $app->isDownForMaintenance();
+
+//                file_put_contents($server->path('storage/framework/ok3'), $server->getMemory('isDown'));
+//                self::assertEquals(1, $server->getMemory('isDown'));
+                $r[] = $server->getMemory('isDown');
 
 
-        $server->start();
+                passthru("cd $appRoot && php artisan up");
+                sleep(2);
+//                self::assertEquals(0, $app->isDownForMaintenance());
+                $r[] = $app->isDownForMaintenance();
 
+                sleep(1);
+//                self::assertEquals(0, $server->getMemory('isDown'));
+                $r[] = $server->getMemory('isDown');
+
+
+                $mychan->push(json_encode($r));
+
+                $swoole_server->shutdown();
+
+            });
+
+            $server->start();
+
+        }, $server, 10);
+
+        $rr = json_decode($mychan->pop());
+//        var_dump("RRR:"); var_dump($rr);
+        self::assertEquals([0, 0, 1, 1, 0, 0], $rr);
     }
 }
