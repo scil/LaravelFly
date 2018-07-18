@@ -8,11 +8,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class DispatchRequestByQueryTest extends CommonServerTestCase
 {
-    private function testDispatchCallbackByWorkerId()
+    function testDispatchCallbackByWorkerId()
     {
 
-        $server = static::getCommonServer();
-        $this->resetServerConfigAndDispatcher($server);
 
         $data = [
             ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=0 HTTP/1.1', 'fd' => 99, 'selected' => 0],
@@ -20,6 +18,9 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
             ['worker_num' => 5, 'raw' => 'GET /fly?worker-id=3 HTTP/1.1', 'fd' => 99, 'selected' => 3],
             ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 1", 'fd' => 99, 'selected' => 1],
             ['worker_num' => 5, 'raw' => "GET /fly HTTP/1.1\nWorker-Id: 9", 'fd' => 99, 'selected' => 4],
+        ];
+
+        $constances = [
         ];
 
         $step = 0;
@@ -34,12 +35,10 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
                 'dispatch_by_query' => true,
                 'listen_port' => 9891 + $step,
             ];
-//            $server->config($options);
 
-
-            $r = $this->createSwooleServerInProcess($options, function ($swoole_server) use ($one, $server) {
-                return $server->dispatch($swoole_server, $one['fd'], '', $one['raw']);
-            }, $server);
+            $r = $this->createFlyServerInProcess($constances, $options, function (\LaravelFly\Server\ServerInterface $server) use ($one) {
+                return $server->dispatch($server->getSwooleServer(), $one['fd'], '', $one['raw']);
+            }, 1);
 
             $r = (int)last(explode("\n", $r));
 
@@ -51,9 +50,8 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
     function testDispatchCallbackByWorkerPid()
     {
 
-        $server = static::getCommonServer();
-
-        $this->resetServerConfigAndDispatcher($server);
+        $constances = [
+        ];
 
         $data = [
             ['worker_num' => 5, 'raw' => 'GET /fly?worker-pid=%d HTTP/1.1', 'fd' => 99],
@@ -61,7 +59,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
         ];
 
 
-        $step =0;
+        $step = 0;
         foreach ($data as $one) {
             $step += 1;
 
@@ -74,7 +72,7 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
             ];
 
 
-            $r = $this->createSwooleServerInProcess($options, function ($swoole_server) use ($one, $server, $options) {
+            $r = $this->createFlyServerInProcess($constances, $options, function ($server) use ($one, $options) {
 
                 $server->config($options);
 
@@ -105,21 +103,21 @@ class DispatchRequestByQueryTest extends CommonServerTestCase
 
                 $a_line = $ids->get($selected_worker_id);
 
-                return json_encode( [
+                return json_encode([
                     'to_select' => $selected_worker_id,
                     'id' => $a_line['id'],
-                    'selected' => $server->dispatch($swoole_server,
+                    'selected' => $server->dispatch($server->getSwooleServer(),
                         $one['fd'], '',
                         sprintf($one['raw'], $a_line['pid'])
                     )
                 ]);
 
 
-            }, $server);
+            }, 1);
 
 //            $r = (int)last(explode("\n", $r));
 
-            $r= json_decode($r);
+            $r = json_decode($r);
 
             $selected_worker_id = $r->to_select;
             self::assertEquals($selected_worker_id, $r->id);

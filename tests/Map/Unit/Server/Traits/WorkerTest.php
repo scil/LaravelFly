@@ -16,6 +16,9 @@ class WorkerTest extends CommonServerTestCase
 
         $appRoot = static::$laravelAppRoot;
 
+        $constances=[
+        ];
+
         $options = [
             // use two process for two workers, worker 0 used for watchDownFile, worker 1 used for phpunit
             'worker_num' => 2,
@@ -29,14 +32,13 @@ class WorkerTest extends CommonServerTestCase
 
         $mychan = static::$chan = new \Swoole\Channel(1024 * 256);
 
-        $server = static::makeNewFlyServerNoSwoole([], $options);
-        $r = $this->createSwooleServerInProcess($options, function ($swoole_server) use ($appRoot, $options, $server, $mychan) {
+        $r = $this->createFlyServerInProcess($constances,$options, function ($server) use ($appRoot, $options,  $mychan) {
 
 
             $dispatcher = $server->getDispatcher();
 
             // use assert in server, these tests can not reported by phpunit , but if assert failed, error output in console
-            $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server, $appRoot, $mychan, $swoole_server) {
+            $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server, $appRoot, $mychan) {
 
                 $app = $event['app'];
 
@@ -80,13 +82,12 @@ class WorkerTest extends CommonServerTestCase
 
                 $mychan->push(json_encode($r));
 
-                $swoole_server->shutdown();
 
             });
 
             $server->start();
 
-        }, $server, 10);
+        },  10);
 
         $rr = json_decode($mychan->pop());
 //        var_dump("RRR:"); var_dump($rr);

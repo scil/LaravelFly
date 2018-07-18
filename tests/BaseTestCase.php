@@ -101,7 +101,7 @@ abstract class BaseTestCase extends TestCase
     static protected function makeNewFlyServerNoSwoole($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
     {
 
-        return static::makeNewFlyServer($constances,$options,$config_file,false);
+        return static::makeNewFlyServer($constances, $options, $config_file, false);
     }
 
     /**
@@ -111,9 +111,9 @@ abstract class BaseTestCase extends TestCase
      * @param bool $swoole
      * @return \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
      */
-    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php',$swoole=true)
+    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php', $swoole = true)
     {
-        static  $step=0;
+        static $step = 0;
 
         foreach ($constances as $name => $val) {
             if (!defined($name))
@@ -124,9 +124,8 @@ abstract class BaseTestCase extends TestCase
 
         if (!isset($options['pre_include']))
             $options['pre_include'] = false;
-        if(!isset($options['listen_port']))
-        {
-            $options['listen_port'] = 9022+$step;
+        if (!isset($options['listen_port'])) {
+            $options['listen_port'] = 9022 + $step;
             ++$step;
         }
 
@@ -134,7 +133,7 @@ abstract class BaseTestCase extends TestCase
 
         $options = array_merge($file_options, $options);
 
-        $flyServer = \LaravelFly\Fly::init($options,null,$swoole);
+        $flyServer = \LaravelFly\Fly::init($options, null, $swoole);
 
         static::$dispatcher = $flyServer->getDispatcher();
 
@@ -230,7 +229,7 @@ abstract class BaseTestCase extends TestCase
 
     }
 
-    function process($func, $waittime=1)
+    function process($func, $waittime = 1)
     {
 
         require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
@@ -243,18 +242,19 @@ abstract class BaseTestCase extends TestCase
 
         $pm->childFunc = function () use ($func, $pm, $chan) {
             $r = $func();
-            if (is_string($r))
-                $chan->push($r);
+            if (is_array($r)){
+                $chan->push(json_encode($r));
+            }
             else {
-                $chan->push(" func must return string");
+                $chan->push($r);
             }
             $pm->wakeup();
 
         };
         // server can not be made in parentFunc,because parentFunc run in current process
-        $pm->parentFunc = function ($pid) use ($chan,$waittime) {
-            echo $chan->pop();
+        $pm->parentFunc = function ($pid) use ($chan, $waittime) {
             sleep($waittime);
+            echo $chan->pop();
             \swoole_process::kill($pid);
         };
         $pm->childFirst();
@@ -263,20 +263,14 @@ abstract class BaseTestCase extends TestCase
         return ob_get_clean();
     }
 
-
-    /**
-     * @param $options
-     * @param $func
-     * @param $server \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
-     * @return string
-     */
-    function createSwooleServerInProcess($options, $func, $server = null,$wait=0)
+    function createFlyServerInProcess($constances, $options, $func, $wait = 0)
     {
-        return $this->process(function () use ($options, $func, $server) {
-            $swoole = $this->recreateSwooleServer($options, $server);
-            $r = $func($swoole);
+        return $this->process(function () use ($constances, $options, $func) {
+            $server = self::makeNewFlyServer($constances, $options);
+            $r = $func($server);
+//            var_dump($r);
             return $r;
-        },$wait);
+        }, $wait);
 
     }
 }
