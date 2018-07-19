@@ -152,6 +152,7 @@ class StreamHandler extends AbstractProcessingHandler
             flock($this->stream, LOCK_EX);
         }
 
+        // hack
         //$this->streamWrite($this->stream, $record);
         $this->cacheWrite();
 
@@ -160,6 +161,7 @@ class StreamHandler extends AbstractProcessingHandler
         }
     }
 
+    // hack
     public function cacheWrite()
     {
         fwrite($this->stream, implode('', $this->flyCache) . PHP_EOL);

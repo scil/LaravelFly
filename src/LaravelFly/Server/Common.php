@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 
-if (!defined('LARAVELFLY_SERVICES')) include __DIR__.'/../../../config/laravelfly-server-config.example.php';
+if (!defined('LARAVELFLY_SERVICES')) include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
 
 class Common
 {
@@ -78,7 +78,7 @@ class Common
 
         // otherwise on each boot of PaginationServiceProvider and NotificationServiceProvider,view paths would be appended to app('view')->finder->hints
         // by  $this->loadViewsFrom forever
-        'FileViewFinder'.(LARAVELFLY_SERVICES['view.finder']?'SameView':'').'.php' =>
+        'FileViewFinder' . (LARAVELFLY_SERVICES['view.finder'] ? 'SameView' : '') . '.php' =>
             '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
 
     ];
@@ -123,7 +123,7 @@ class Common
     /**
      * @var string
      */
-    protected $kernelClass =\LaravelFly\Kernel::class;
+    protected $kernelClass = \LaravelFly\Kernel::class;
 
 
     public function __construct($dispatcher = null)
@@ -140,7 +140,7 @@ class Common
 
     public function config(array $options)
     {
-        if (defined('LARAVELFLY_MODE')) $options['mode'] = LARAVELFLY_MODE;
+        if (empty($options['mode']) && defined('LARAVELFLY_MODE')) $options['mode'] = LARAVELFLY_MODE;
 
         $this->options = array_merge($this->defaultOptions, $options);
 
@@ -275,7 +275,7 @@ class Common
             die("[ERROR] pecl install swoole or enable swoole.use_shortname.\n");
 
 
-        if ($this->getConfig('watch_down')){
+        if ($this->getConfig('watch_down')) {
 
             $this->addMemory('isDown', new swoole_atomic(0));
         }

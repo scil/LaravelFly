@@ -11,15 +11,20 @@ class FlyTest extends BaseTestCase
 
     function testInitEnv()
     {
-        self::assertEquals(false, defined('WORKER_COROUTINE_ID '));
+        $r = $this->process(function () {
+            $r[]= defined('WORKER_COROUTINE_ID ');
 
-        $initEnv = new \ReflectionMethod('\LaravelFly\Fly', 'initEnv');
-        $initEnv->setAccessible(true);
-        $initEnv->invoke(null,[]);
+            $initEnv = new \ReflectionMethod('\LaravelFly\Fly', 'initEnv');
+            $initEnv->setAccessible(true);
+            $initEnv->invoke(null, []);
 
-        self::assertEquals(true, defined('WORKER_COROUTINE_ID'));
-        self::assertEquals(true, function_exists('tinker'));
+            $r[]= defined('WORKER_COROUTINE_ID');
+            $r[]= function_exists('tinker');
 
+            return $r;
+        });
+
+        self::assertEquals([false, true, true], json_decode($r));
 
     }
 

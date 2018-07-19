@@ -47,9 +47,9 @@ trait ManagesComponents
             $cid = \co::getUid();
             static::$corDict[$cid]['componentStack'][] = $name;
 
-            static::$corDict[$cid]['componentData'][$this->currentComponent()] = $data;
+            static::$corDict[$cid]['componentData'][$this->currentComponent($cid)] = $data;
 
-            static::$corDict[$cid]['slots'][$this->currentComponent()] = [];
+            static::$corDict[$cid]['slots'][$this->currentComponent($cid)] = [];
         }
     }
 
@@ -60,9 +60,11 @@ trait ManagesComponents
      */
     public function renderComponent()
     {
-        $name = array_pop(static::$corDict[\co::getUid()]['componentStack']);
+        $cid = \co::getUid();
 
-        return $this->make($name, $this->componentData($name))->render();
+        $name = array_pop(static::$corDict[$cid]['componentStack']);
+
+        return $this->make($name, $this->componentData($name, $cid))->render();
     }
 
     /**
@@ -71,9 +73,8 @@ trait ManagesComponents
      * @param  string $name
      * @return array
      */
-    protected function componentData($name)
+    protected function componentData($name, $cid)
     {
-        $cid=\co::getUid();
         return array_merge(
             static::$corDict[$cid]['componentData'][count(static::$corDict[$cid]['componentStack'])],
             ['slot' => new HtmlString(trim(ob_get_clean()))],
@@ -90,14 +91,14 @@ trait ManagesComponents
      */
     public function slot($name, $content = null)
     {
-        $cid=\co::getUid();
+        $cid = \co::getUid();
         if (count(func_get_args()) === 2) {
-            static::$corDict[$cid]['slots'][$this->currentComponent()][$name] = $content;
+            static::$corDict[$cid]['slots'][$this->currentComponent($cid)][$name] = $content;
         } else {
             if (ob_start()) {
-                static::$corDict[$cid]['slots'][$this->currentComponent()][$name] = '';
+                static::$corDict[$cid]['slots'][$this->currentComponent($cid)][$name] = '';
 
-                static::$corDict[$cid]['slotStack'][$this->currentComponent()][] = $name;
+                static::$corDict[$cid]['slotStack'][$this->currentComponent($cid)][] = $name;
             }
         }
     }
@@ -109,14 +110,14 @@ trait ManagesComponents
      */
     public function endSlot()
     {
-        $cid=\co::getUid();
+        $cid = \co::getUid();
         last(static::$corDict[$cid]['componentStack']);
 
         $currentSlot = array_pop(
-            static::$corDict[$cid]['slotStack'][$this->currentComponent()]
+            static::$corDict[$cid]['slotStack'][$this->currentComponent($cid)]
         );
 
-        static::$corDict[$cid]['slots'][$this->currentComponent()]
+        static::$corDict[$cid]['slots'][$this->currentComponent($cid)]
         [$currentSlot] = new HtmlString(trim(ob_get_clean()));
     }
 
@@ -125,8 +126,8 @@ trait ManagesComponents
      *
      * @return int
      */
-    protected function currentComponent()
+    protected function currentComponent($cid)
     {
-        return count(static::$corDict[\co::getUid()]['componentStack']) - 1;
+        return count(static::$corDict[$cid]['componentStack']) - 1;
     }
 }

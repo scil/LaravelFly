@@ -1,8 +1,8 @@
 <?php
 /**
  * add Dict, plus 
- *  1. cacheByRoute and $this->middlewareStable , but note that it is totally useless when any routes middlewares are reg in a request.
- *  2. cacheForObj
+ *  1. middlewareCacheByRoute and $this->middlewareStable , but note that this feature is totally useless when a route middleware is reg in a request.
+ *  2. middlewareCacheForObj
  */
 
 namespace Illuminate\Routing;
@@ -556,9 +556,9 @@ class Router implements RegistrarContract, BindingRegistrar
     function gatherRouteMiddleware(Route $route)
     {
         //hack
-        static $cacheByRoute = [], $cacheForObj=[];
+        static $middlewareCacheByRoute = [], $middlewareCacheForObj=[];
         $id = spl_object_hash($route);
-        if ($this->middlewareStable && isset($cacheByRoute[$id])) return $cacheByRoute[$id];
+        if ($this->middlewareStable && isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
         $this->middlewareStable = true;
 
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
@@ -568,16 +568,16 @@ class Router implements RegistrarContract, BindingRegistrar
 
         // return $this->sortMiddleware($middleware);
         // hack
-        return $cacheByRoute[$id] = array_map(function ($name)use(&$cacheForObj) {
+        return $middlewareCacheByRoute[$id] = array_map(function ($name)use(&$middlewareCacheForObj) {
 
-            if (isset($cacheForObj[$name])) {
-                return $cacheForObj[$name];
+            if (isset($middlewareCacheForObj[$name])) {
+                return $middlewareCacheForObj[$name];
             }
 
             // avoid middlewares with parameters because the execution of obj middleware do not support parameters
             //  see: Pipleline::carry()
             if (mb_strpos($name, ':') === false) {
-                return $cacheForObj[$name] = $this->container->make($name);
+                return $middlewareCacheForObj[$name] = $this->container->make($name);
             }
 
             return $name;

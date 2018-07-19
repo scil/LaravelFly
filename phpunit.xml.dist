@@ -21,14 +21,15 @@
 
 
         <testsuite name="LaravelFly_Map_Unit">
-            <file>./tests/Map/Unit/Server/FlyFilesTest.php</file>
             <file>./tests/Map/Unit/FlyTest.php</file>
-            <file>./tests/Map/Unit/Server/CommonTest.php</file>
+            <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
+            <file>./tests/Map/Unit/Server/CommonTest.php</file>
         </testsuite>
 
-        <testsuite name="LaravelFly_Map_Unit2">
+        <testsuite name="LaravelFly_tmp">
+            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Feature">

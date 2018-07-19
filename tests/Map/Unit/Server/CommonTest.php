@@ -3,7 +3,9 @@
 namespace LaravelFly\Tests\Map\Unit\Server;
 
 
-class CommonTest extends CommonServerTestCase
+use LaravelFly\Tests\Map\MapTestCase;
+
+class CommonTest extends MapTestCase
 {
     /**
      * This method is called before each test.
@@ -17,10 +19,41 @@ class CommonTest extends CommonServerTestCase
          * create a server and get default server options
          */
 
-        $d = new \ReflectionProperty(static::$commonServerNoSwoole, 'defaultOptions');
+        $d = new \ReflectionProperty(static::getCommonServerNoSwoole(), 'defaultOptions');
         $d->setAccessible(true);
         static::$default = $d->getValue(static::$commonServerNoSwoole);
     }
+
+    /**
+     * @var \LaravelFly\Server\Common;
+     */
+    static $commonServerNoSwoole;
+
+    /**
+     * @return \LaravelFly\Server\Common
+     */
+    public static function getCommonServerNoSwoole(): \LaravelFly\Server\Common
+    {
+        if (static::$commonServerNoSwoole) return static::$commonServerNoSwoole;
+
+        return static::$commonServerNoSwoole = new \LaravelFly\Server\Common();
+    }
+
+    function resetServerConfigAndDispatcher($server = null)
+    {
+        $server = $server ?: static::getCommonServerNoSwoole();
+        $c = new \ReflectionProperty($server, 'options');
+        $c->setAccessible(true);
+        $c->setValue($server, []);
+
+        $d = new \ReflectionProperty($server, 'dispatcher');
+        $d->setAccessible(true);
+        $d->setValue($server, new EventDispatcher());
+
+    }
+
+
+
 
     function testInit()
     {
@@ -38,13 +71,14 @@ class CommonTest extends CommonServerTestCase
         $a = new \ReflectionProperty(static::$commonServerNoSwoole, 'appClass');
         $a->setAccessible(true);
 
-        foreach ([
-                     'Map',
-//                     'Simple',
-//                     'FpmLike'
-                 ] as $mode) {
-            static::$commonServerNoSwoole->config(['mode' => $mode, 'pre_include' => false]);
-            $appClass = $a->getValue(static::$commonServerNoSwoole);
+        foreach (['Map', 'Simple', 'FpmLike'] as $mode) {
+
+            $appClass = $this->process(function () use ($mode, $a) {
+                static::$commonServerNoSwoole->config(['mode' => $mode, 'pre_include' => false]);
+                $appClass = $a->getValue(static::$commonServerNoSwoole);
+                return $appClass;
+            });
+
             self::assertEquals("\LaravelFly\\$mode\Application", $appClass);
         }
 
@@ -72,9 +106,9 @@ class CommonTest extends CommonServerTestCase
 
     function testMergeOptions()
     {
-        $this->resetServerConfigAndDispatcher(static::$commonServerNoSwoole);
-
         $server = static::$commonServerNoSwoole;
+
+        $this->resetServerConfigAndDispatcher($server);
 
         self::assertEquals(null, $server->getConfig('listen_ip'));
         self::assertEquals('0.0.0.0', static::$default['listen_ip']);
@@ -112,7 +146,7 @@ class CommonTest extends CommonServerTestCase
         $flyKernel = 'LaravelFly\Kernel';
 
         static::$commonServerNoSwoole->config(['pre_include' => false]);
-        //self::assertEquals($flyKernel, $k->getValue(static::$commonServer));
+        //self::assertEquals($flyKernel, $k->getValue(static::$commonServerNoSwoole));
         self::assertEquals('App\Http\Kernel', $k->getValue(static::$commonServerNoSwoole));
 
     }

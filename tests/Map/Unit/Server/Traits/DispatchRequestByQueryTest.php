@@ -2,11 +2,11 @@
 
 namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
-use LaravelFly\Tests\Map\Unit\Server\CommonServerTestCase;
+use LaravelFly\Tests\Map\MapTestCase;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class DispatchRequestByQueryTest extends CommonServerTestCase
+class DispatchRequestByQueryTest extends MapTestCase
 {
     function testDispatchCallbackByWorkerId()
     {
