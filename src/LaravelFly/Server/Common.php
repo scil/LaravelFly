@@ -28,32 +28,6 @@ class Common
      */
     protected $options;
 
-    /**
-     * @var array
-     */
-    protected $defaultOptions = [
-        'mode' => 'Map',
-        'server' => 'LaravelFly\\Server\\HttpServer',
-        'daemonize' => false,
-        'tinker' => false,
-        'dispatch_by_query' => false,
-        'listen_ip' => '0.0.0.0',
-        'listen_port' => 9501,
-        'worker_num' => 5,
-        'max_coro_num' => 20,
-        'max_conn' => 128,
-        'max_request' => 1000,
-        'watch' => [],
-        'watch_delay' => 3500,
-        'watch_down' => true,
-        'pre_include' => true,
-        'pre_files' => [],
-        'log_cache' => 5,
-        'conf' => null, // server config file
-        'colorize' => true,
-        'early_laravel' => false,
-    ];
-
     const mapFlyFiles = [
         'Container.php' =>
             '/vendor/laravel/framework/src/Illuminate/Container/Container.php',
@@ -142,10 +116,24 @@ class Common
     {
         if (empty($options['mode']) && defined('LARAVELFLY_MODE')) $options['mode'] = LARAVELFLY_MODE;
 
-        $this->options = array_merge($this->defaultOptions, $options);
+
+        $default = $this->getDefaultConfig();
+
+        $this->options = array_merge($default, $options);
 
         $this->parseOptions($this->options);
 
+    }
+
+    public function getDefaultConfig()
+    {
+        $d = include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
+
+        return array_merge([
+            'mode' => 'Map',
+            'conf' => null, // server config file
+            'colorize' => true,
+        ], $d);
     }
 
     public function getConfig($name = null)
@@ -172,6 +160,7 @@ class Common
         }
 
         $this->appClass = '\LaravelFly\\' . $options['mode'] . '\Application';
+
         if (!class_exists($this->appClass)) {
             die("[ERROR] Mode set in config file not valid\n");
         }

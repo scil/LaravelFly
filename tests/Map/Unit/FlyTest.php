@@ -11,7 +11,7 @@ class FlyTest extends BaseTestCase
 
     function testInitEnv()
     {
-        $r = $this->process(function () {
+        $r = self::process(function () {
             $r[]= defined('WORKER_COROUTINE_ID ');
 
             $initEnv = new \ReflectionMethod('\LaravelFly\Fly', 'initEnv');

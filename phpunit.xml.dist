@@ -29,7 +29,7 @@
         </testsuite>
 
         <testsuite name="LaravelFly_tmp">
-            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
+            <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Feature">

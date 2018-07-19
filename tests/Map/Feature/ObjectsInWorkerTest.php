@@ -107,7 +107,7 @@ class ObjectsInWorkerTest extends MapTestCase
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
-        $r = $this->createFlyServerInProcess(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1], function ($server) use ($chan) {
+        $r = self::createFlyServerInProcess(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1], function ($server) use ($chan) {
 
             $dispatcher = $server->getDispatcher();
 

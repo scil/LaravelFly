@@ -3,7 +3,6 @@
 
 namespace LaravelFly\Tests\Map\LaravelTests;
 
-use LaravelFly\Server\Common;
 use LaravelFly\Tests\Map\MapTestCase as Base;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -78,7 +77,7 @@ class TestCase extends Base
 
     function est1()
     {
-        echo 'test:', $this->process(function () {
+        echo 'test:', self::process(function () {
             echo 33333333;
         });
     }

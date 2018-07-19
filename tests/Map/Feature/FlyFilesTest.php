@@ -8,10 +8,23 @@ use LaravelFly\Tests\Map\MapTestCase;
 class FlyFilesTest extends MapTestCase
 {
 
+    static $map;
+
+    function test()
+    {
+        self::assertTrue(True);
+
+        $r= self::processGetArray(function (){
+            return \LaravelFly\Server\Common::getAllFlyMap();
+        });
+         static::$map = $r;
+    }
+
 
     function testFlyFiles()
     {
-        $map = \LaravelFly\Server\Common::getAllFlyMap();
+        $map = static::$map;
+
         $number = count($map);
         $flyFilesNumber = 16;
 
@@ -34,7 +47,8 @@ class FlyFilesTest extends MapTestCase
 
     function testCompareFilesContent()
     {
-        $this->compareFilesContent(\LaravelFly\Server\Common::getAllFlyMap());
+        $map = static::$map;
+        $this->compareFilesContent($map);
     }
 
 }

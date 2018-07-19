@@ -36,7 +36,7 @@ class DispatchRequestByQueryTest extends MapTestCase
                 'listen_port' => 9891 + $step,
             ];
 
-            $r = $this->createFlyServerInProcess($constances, $options, function (\LaravelFly\Server\ServerInterface $server) use ($one) {
+            $r = self::createFlyServerInProcess($constances, $options, function (\LaravelFly\Server\ServerInterface $server) use ($one) {
                 return $server->dispatch($server->getSwooleServer(), $one['fd'], '', $one['raw']);
             }, 1);
 
@@ -72,7 +72,7 @@ class DispatchRequestByQueryTest extends MapTestCase
             ];
 
 
-            $r = $this->createFlyServerInProcess($constances, $options, function ($server) use ($one, $options) {
+            $r = self::createFlyServerInProcess($constances, $options, function ($server) use ($one, $options) {
 
                 $server->config($options);
 

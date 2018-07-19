@@ -10,7 +10,7 @@ class IncludeFlyFilesTest extends MapTestCase
 
     function testInitEnv()
     {
-        $r = $this->process(function () {
+        $r = self::processGetArray(function () {
             $r[] = class_exists('Illuminate\Container\Container', false);
             $r[] = class_exists('Illuminate\Foundation\Application ', false);
 
@@ -22,7 +22,7 @@ class IncludeFlyFilesTest extends MapTestCase
             return $r;
         });
 
-        self::assertEquals([false,false,true], json_decode($r));
+        self::assertEquals([false,false,true], $r);
     }
 
 }

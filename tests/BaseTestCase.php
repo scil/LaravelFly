@@ -79,14 +79,15 @@ abstract class BaseTestCase extends TestCase
         }
 
 
-        // get default server options
-        $commonServer = new \LaravelFly\Server\Common();
-        $d = new \ReflectionProperty($commonServer, 'defaultOptions');
-        $d->setAccessible(true);
-        $options = $d->getValue($commonServer);
-        $options['pre_include'] = false;
-        $options['colorize'] = false;
-        static::$default = $options;
+        $d = static::processGetArray(function () {
+            return include static::$laravelAppRoot . '/vendor/scil/laravel-fly/config/laravelfly-server-config.example.php';
+        });
+
+        static::$default = array_merge([
+            'mode' => 'Map',
+            'conf' => null, // server config file
+            'colorize' => true,
+        ], $d);
     }
 
     /**
@@ -160,7 +161,17 @@ abstract class BaseTestCase extends TestCase
 
     }
 
-    function process($func, $waittime = 1)
+    static function processGetArray($func, $waittime=1)
+    {
+        return json_decode(self::process($func, $waittime), true);
+    }
+
+    /**
+     * @param $func
+     * @param int $waittime
+     * @return string|int|boolean    it will json_encode array
+     */
+    static function process($func, $waittime = 1)
     {
 
         require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
@@ -173,10 +184,9 @@ abstract class BaseTestCase extends TestCase
 
         $pm->childFunc = function () use ($func, $pm, $chan) {
             $r = $func();
-            if (is_array($r)){
+            if (is_array($r)) {
                 $chan->push(json_encode($r));
-            }
-            else {
+            } else {
                 $chan->push($r);
             }
             $pm->wakeup();
@@ -194,9 +204,9 @@ abstract class BaseTestCase extends TestCase
         return ob_get_clean();
     }
 
-    function createFlyServerInProcess($constances, $options, $func, $wait = 0)
+    static function createFlyServerInProcess($constances, $options, $func, $wait = 0)
     {
-        return $this->process(function () use ($constances, $options, $func) {
+        return self::process(function () use ($constances, $options, $func) {
             $server = self::makeNewFlyServer($constances, $options);
             $r = $func($server);
 //            var_dump("result from func(server):",$r);

@@ -33,7 +33,7 @@ class WorkerTest extends MapTestCase
 
         $mychan = static::$chan = new \Swoole\Channel(1024 * 256);
 
-        $r = $this->createFlyServerInProcess($constances,$options, function ($server) use ($appRoot, $options,  $mychan) {
+        $r = self::createFlyServerInProcess($constances,$options, function ($server) use ($appRoot, $options,  $mychan) {
 
 
             $dispatcher = $server->getDispatcher();

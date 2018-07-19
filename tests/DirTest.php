@@ -2,7 +2,6 @@
 
 namespace LaravelFly\Tests;
 
-use LaravelFly\Server\Common;
 use PHPUnit\TextUI\TestRunner;
 
 trait DirTest
@@ -20,7 +19,7 @@ trait DirTest
 
     function dirTestInProcess($init_func, $testsDir)
     {
-        return $this->process(function () use ($init_func, $testsDir) {
+        return self::process(function () use ($init_func, $testsDir) {
             $init_func();
             return $this->dirTestInOb($testsDir);
         });
@@ -48,7 +47,7 @@ trait DirTest
 
             $options = ['mode' => 'Map', 'log_cache' => true,];
 
-            Common::includeFlyFiles($options);
+            \LaravelFly\Server\Common::includeFlyFiles($options);
 
             if ($app) {
                 $commonServer = new \LaravelFly\Server\Common();
