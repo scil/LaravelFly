@@ -39,7 +39,6 @@ class CommonTest extends BaseTestCase
 
 
 
-
     function testInit()
     {
         $server = static::getCommonServerNoSwoole();
@@ -47,6 +46,7 @@ class CommonTest extends BaseTestCase
         $root = new \ReflectionProperty($server, 'root');
         $root->setAccessible(true);
         self::assertEquals(static::$laravelAppRoot, $root->getValue($server));
+
     }
 
     function testAppClass()

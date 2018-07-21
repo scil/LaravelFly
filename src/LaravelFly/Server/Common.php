@@ -6,7 +6,7 @@ use swoole_atomic;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-
+// this is necessary for  const mapFlyFiles where LARAVELFLY_SERVICES is used
 if (!defined('LARAVELFLY_SERVICES')) include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
 
 class Common
