@@ -1,10 +1,9 @@
 #!/usr/bin/env php
 <?php
-/**
- * LaravelFly server script
- *
- * doc: https://github.com/scil/LaravelFly/blob/master/doc/server.md
- */
+
+//// another style which uses Command instead of $argv:
+//      include __DIR__ . '/../../../../vendor/autoload.php';
+//      (new \LaravelFly\Command())->exe(); return;
 
 if ($argc == 1) {
     $msg = <<<U

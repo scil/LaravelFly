@@ -14,29 +14,6 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 - A laravel service that made before any requests can be configurable to serve in multiple requests (only one instance of the service), or to be cloned in each request (one instance in one request).LaravelFly named them COROUTINE-FRIENDLY SERVICE and CLONE SERVICE. The latter is simple, but sometimes has the problem Stale Reference.
 - Extra speed improvements such as middleeares cache, view path cache.
 
-## Code Tips: Consistency Requirements 
-
-In most cases, our projects running on a base of consistent and stable configuration. Using LaravelFly, in each request, these items of env should always be same:
-
-1. php configuration should keep same in any requests. Any changes of php configuration must be made before any requests (that is, made on worker ).
-
-2. In LaravelFly Mode Map, an object's [Macros](https://tighten.co/blog/the-magic-of-laravel-macros/) with same name should always be same if the object is made on worker.
-
-3. static props should keep consistent.
-
-    1. Illuminate\Pagination\Paginator: **currentPathResolver,currentPageResolver,viewFactoryResolver,defaultView,defaultSimpleView** .
-    
-    2. Illuminate\Database\Eloquent\Model: **globalScopes** ( [Global Scopes](https://laravel.com/docs/5.6/eloquent#global-scopes) ) is an associated array, its values on the same key should always be same. For example, follwing code should not coexist in a project, because global scope 'age' means different closure.They should be merged into single closure.  
-    ```
-    static::addGlobalScope('age', function (Builder $builder) {
-            $builder->where('age', '>', 200);
-    });
-    
-    static::addGlobalScope('age', function (Builder $builder) {
-            $builder->where('age', '>', 200000000000000000000000000);
-    });
-    ```
-
 ## Quick Start
 
 1.`pecl install swoole`   
@@ -54,9 +31,9 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 [Configuration](https://github.com/scil/LaravelFly/wiki/Configuration)
 
-[Commands: Start, Reload & Debug](doc/server.md)
+[Commands: Start, Reload & Debug](https://github.com/scil/LaravelFly/wiki/Commands)
 
-[Coding Tips](doc/coding.md)
+[Coding Guideline](https://github.com/scil/LaravelFly/wiki/Coding-Guideline)
 
 [Events about LaravelFly](doc/events.md)
 
@@ -106,13 +83,13 @@ It is alse a safe sollution. It is light.It has supported Lumen and websocket. I
 
 The first difference is that laravel-swoole's configuration is based on service,like log, view while LaravelFly is based on service providers like LogServiceProvider, ViewServiceProvider.(In Mode Simple, providers are registered before any requests, in Mode Map some providers are registered and booted before any requests.) 
 
-The main difference is that in laravel-swoole requests will be processed by a new `app` cloned from the original app container and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container. In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is used only to create `url` (and `routes` when LARAVELFLY_SERVICES['routes'] ===false ) in Mode Map. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read "Stale Reference" in [Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist)`. 
+The main difference is that in laravel-swoole user's code will be processed by a new `app` cloned from SwooleTW\Http\Server\Application::$application and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container. In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is used only to create `url` (and `routes` when LARAVELFLY_SERVICES['routes'] ===false ) in Mode Map. LaravelFly makes most of laravel objects keep safe on its own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read "Stale Reference" in [Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist)`. 
 
- .  | technique | every service is in control |  every service provider is in control | work to maintaining relations of cloned objects to avoid Stale Reference 
------------- | ------------ | ------------- | ------------- | ------------- 
-laravel-swoole  | clone app contaniner and objects to make them safe |  yes | no | more work (app,event...are cloned)
-LaravelFly Mode Map  | refactor most official objects to make them safe on their own |  yes  | yes  | few work (only url and routes are cloned)
-LaravelFly Mode Simple  | service providers reg on work and boot in requests | yes | yes | no work 
+ .  | speed |technique | every service is in control |  every service provider is in control | work to maintaining relations of cloned objects to avoid Stale Reference 
+------------ |------------ | ------------ | ------------- | ------------- | ------------- 
+laravel-swoole  | slow | clone app contaniner and objects to make them safe |  yes | no | more work (app,event...are cloned)
+LaravelFly Mode Map | fast | refactor most official objects to make them safe on their own |  yes  | yes  | few work (only url and routes are cloned)
+LaravelFly Mode Simple | slow | service providers reg on work and boot in requests | yes | yes | no work 
 
 ### 2. [laravoole](https://github.com/garveen/laravoole) 
 wonderful with many merits which LaravelFly will study. Caution: laravoole loads the app before any request ([onWorkerStart->parent::prepareKernel](https://github.com/garveen/laravoole/blob/master/src/Wrapper/Swoole.php)),  but it ignores data pollution, so please do not use any service which may change during a request, do not write any code that may change Laravel app or app('event') during a request, such as registering event .

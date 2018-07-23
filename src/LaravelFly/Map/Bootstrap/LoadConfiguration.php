@@ -117,11 +117,9 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $psAcross = array_merge($psAcross, $left);
                 $left = implode("\n", $left);
 
-                echo \LaravelFly\Fly::getServer()->colorize(
-                    "[NOTE] These providers not listed in config('laravel.providers_on_worker'):
-                    $left
-                They will be registered before any request and be booted in each request\n",
-                    'NOTE');
+                echo "[INFO] These providers not listed in config('laravel.providers_on_worker'):
+         $left
+        They will be registered before any request and be booted in each request\n";
             }
 
 
