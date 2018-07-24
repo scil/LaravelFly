@@ -112,6 +112,7 @@ F;
          -path  ./vendor/phpunit/phpunit -prune -o   \
          -path  ./vendor/scil/laravel-fly -prune -o    \
          -path  ./vendor/scil/laravel-fly-local -prune -o    \
+         -path  ./vendor/swooletw  -prune  -o   \
          -path  ./vendor/symfony/http-foundation/Tests  -prune  -o   \
          -type f  \
          -exec grep -E "\bcreateFromGlobals\b"  \

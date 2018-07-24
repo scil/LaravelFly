@@ -14,6 +14,7 @@ use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\UrlGenerator;
 use LaravelFly\Tests\BaseTestCase;
+use Mockery\Exception;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -134,7 +135,7 @@ class ApplicationTest extends BaseTestCase
     function testOfficialRouterProps()
     {
 
-        $this->props($this->routerProps, 'Illuminate\Routing\Router', new Dispatcher());
+        $this->props($this->routerProps, 'Illuminate\Routing\Router', Dispatcher::class);
     }
 
     function testOfficialRoutesProps()
@@ -145,40 +146,78 @@ class ApplicationTest extends BaseTestCase
 
     function testOfficialUrlProps()
     {
-        $this->props($this->urlProps, 'Illuminate\Routing\UrlGenerator', new RouteCollection(), new Request());
+        $this->props($this->urlProps, 'Illuminate\Routing\UrlGenerator', RouteCollection::class, Request::class);
 
     }
 
     function testOfficialRedirectorProps()
     {
         $this->props($this->redirectorProps, 'Illuminate\Routing\Redirector',
-            new UrlGenerator(new RouteCollection(), new Request()));
+            // new UrlGenerator(new RouteCollection(), new Request())
+            [
+                UrlGenerator::class => [
+                    RouteCollection::class,
+                    Request::class
+                ]
+            ]
+        );
 
     }
 
     function props($expect, $class, ...$args)
     {
-//        echo "test $class \n";
-
-        switch (count($args)) {
-            case 0:
-                $obj = new $class();
-                break;
-            case 1:
-                $obj = new $class($args[0]);
-                break;
-            case 2:
-                $obj = new $class($args[0], $args[1]);
-                break;
-        }
-        $reflect = new ReflectionClass($obj);
-        $props = $reflect->getProperties();
-
-        foreach ($props as $prop) {
-            $actual[] = $prop->getName();
-        }
+        $actual = $this->getPropsInProcess($class, $args);
 
         $this->assertSame(array_diff($expect, $actual), array_diff($actual, $expect));
+    }
+
+    function getPropsInProcess($class, $args)
+    {
+        return self::processGetArray(function () use ($class, $args) {
+//        echo "test $class \n";
+
+            switch (count($args)) {
+                case 0:
+                    $obj = new $class();
+                    break;
+                case 1:
+                    $obj = new $class($this->parseArg($args[0]));
+                    break;
+                case 2:
+                    $obj = new $class($this->parseArg($args[0]), $this->parseArg($args[1]));
+                    break;
+                default:
+                    return "too many arguments? ";
+            }
+            $reflect = new ReflectionClass($obj);
+            $props = $reflect->getProperties();
+
+            foreach ($props as $prop) {
+                $actual[] = $prop->getName();
+            }
+
+            return $actual;
+
+        });
+    }
+
+    function parseArg($arg)
+    {
+        if (is_array($arg)) {
+            foreach ($arg as $class => $args) {
+                switch (count($args)) {
+                    case 1:
+                        return new $class($this->parseArg($args[0]));
+                    case 2:
+                        return new $class($this->parseArg($args[0]), $this->parseArg($args[1]));
+                    default:
+                        throw new \Exception('too many argumnets?');
+
+                }
+            }
+        }
+
+        return is_string($arg) && class_exists($arg) ? new $arg : $arg;
     }
 
 }
