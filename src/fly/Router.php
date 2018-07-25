@@ -3,8 +3,9 @@
  * add Dict, plus
  *  1. $middlewareCacheByRoute
  *     and
- *     $middlewareStable , // var across multple requests, changed in any request would change this var
+ *     $middlewareStable ,
  *     note that this feature is totally useless when a route middleware may be registered in a request.
+ *     so vars are across multple requests, changed in any request would change this var
  *
  *  2. middlewareCacheForObj
  */

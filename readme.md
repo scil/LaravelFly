@@ -10,8 +10,13 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 ## Features
 
 - Same codes can run on PHP-FPM or LaravelFly
+
 - To be absolutely safe, put your code under control.
-- A laravel service that made before any requests can be configurable to serve in multiple requests (only one instance of the service), or to be cloned in each request (one instance in one request).LaravelFly named them COROUTINE-FRIENDLY SERVICE and CLONE SERVICE. The latter is simple, but sometimes has the problem Stale Reference.
+
+- A laravel service that made before any requests can 
+  - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it COROUTINE-FRIENDLY SERVICE 
+  - or to be cloned in each request (one instance in one request).LaravelFly named it CLONE SERVICE. This way is simple, but often has the problem Stale Reference.
+  
 - Extra speed improvements such as middleeares cache, view path cache.
 
 ## Quick Start
@@ -103,6 +108,7 @@ wonderful with many merits which LaravelFly will study. Caution: laravoole loads
 - [x] Watching maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
 - [x] Cache for route middlewares. $cacheByRoute in Router::gatherRouteMiddleware, only useful when all route middleaes are reg on worker. 
 - [x] Cache for route middlewares objects. $cacheForObj in Router::gatherRouteMiddleware, avoid creating instances repeatly. 
+- [x] Cache for event listeners. $listenersStalbe in LaravelFly\Map\IlluminateBase\Dispatcher
 - [x] Cache for global middlewares objects. Kernel::instanceMiddlewares, only when LARAVELFLY_SERVICES['kernel'] is true. 
 - [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
 - [x] Mysql coroutine

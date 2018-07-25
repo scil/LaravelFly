@@ -1,8 +1,7 @@
 <?php
 /**
  * add Dict, plus
- * listeners cache
- *      this var across multple requests, changed in any request would change this var
+ * listeners cache which is across multple requests, changed in any request would change this var
  *          static $listenersStalbe = [];
  *
  */
