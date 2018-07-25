@@ -52,20 +52,8 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         return isset($current['listeners'][$eventName]) || isset($current['wildcards'][$eventName]);
     }
 
-    //todo
-    protected function resolveSubscriber($subscriber)
-    {
-        if (is_string($subscriber)) {
-            return $this->container->make($subscriber);
-        }
 
-        return $subscriber;
-    }
 
-    protected function broadcastEvent($event)
-    {
-        $this->container->make(BroadcastFactory::class)->queue($event);
-    }
 
     public function getListeners($eventName)
     {
@@ -96,10 +84,11 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     protected function addInterfaceListeners($eventName, array $listeners = [])
     {
-        $c = \co::getUid();
+        $current = static::$corDict[\co::getUid()]['listeners'];
+
         foreach (class_implements($eventName) as $interface) {
-            if (isset($this->listeners[$c][$interface])) {
-                foreach ($this->listeners[$c][$interface] as $names) {
+            if (isset($current[$interface])) {
+                foreach ($current[$interface] as $names) {
                     $listeners = array_merge($listeners, (array)$names);
                 }
             }
@@ -108,25 +97,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         return $listeners;
     }
 
-    protected function createClassCallable($listener)
-    {
-        list($class, $method) = $this->parseClassCallable($listener);
 
-        if ($this->handlerShouldBeQueued($class)) {
-            return $this->createQueuedHandlerCallable($class, $method);
-        }
-
-        return [$this->container->make($class), $method];
-    }
-
-    protected function handlerWantsToBeQueued($class, $arguments)
-    {
-        if (method_exists($class, 'shouldQueue')) {
-            return $this->container->make($class)->shouldQueue($arguments[0]);
-        }
-
-        return true;
-    }
 
     public function forget($event)
     {
@@ -140,8 +111,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     public function forgetPushed()
     {
-        $c = \co::getUid();
-        foreach ($this->listeners[$c] as $key => $value) {
+        foreach (static::$corDict[\co::getUid()]['listeners'] as $key => $value) {
             if (Str::endsWith($key, '_pushed')) {
                 $this->forget($key);
             }

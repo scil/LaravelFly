@@ -12,9 +12,15 @@ trait DirTest
 
         ob_start();
         $testRunner = new TestRunner();
-        $test = $testRunner->getTest($testsDir, '', 'Test.php');
-        $testRunner->doRun($test, ['stopOnError' => true], false);
-        return ob_get_clean();
+        $suit = $testRunner->getTest($testsDir, '', 'Test.php');
+        try {
+            $testRunner->doRun($suit, ['stopOnError' => false], false);
+        } catch (\ReflectionException $e) {
+            echo $e->getMessage();
+        }
+        $r= ob_get_clean();
+        file_put_contents('/vagrant/llll/abc',$r);
+        return $r;
     }
 
     function dirTestInProcess($init_func, $testsDir)
@@ -25,6 +31,7 @@ trait DirTest
         });
     }
 
+    // first include fly files, then do test
     function dirTestOnFlyFiles($testsDir, $app = false)
     {
         self::assertTrue(is_dir($testsDir), "ensure $testsDir exists");
