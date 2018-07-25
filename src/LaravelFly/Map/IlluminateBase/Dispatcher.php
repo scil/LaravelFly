@@ -1,4 +1,11 @@
 <?php
+/**
+ * add Dict, plus
+ * listeners cache
+ *      this var across multple requests, changed in any request would change this var
+ *          static $listenersStalbe = [];
+ *
+ */
 
 namespace LaravelFly\Map\IlluminateBase;
 
@@ -34,6 +41,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
             if (Str::contains($event, '*')) {
                 $this->setupWildcardListen($event, $listener);
             } else {
+                static::$listenersStalbe[$event] = false;
                 static::$corDict[\co::getUid()]['listeners'][$event][] = $this->makeListener($listener);
             }
         }
@@ -44,6 +52,12 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         static::$corDict[\co::getUid()]['wildcards'][$event][] = $this->makeListener($listener, true);
 
         static::$corDict[\co::getUid()]['wildcardsCache'] = [];
+
+        foreach (array_keys(static::$listenersStalbe) as $eventName) {
+            if (Str::is($event, $eventName)) {
+                static::$listenersStalbe[$eventName] = false;
+            }
+        }
     }
 
     public function hasListeners($eventName)
@@ -52,11 +66,16 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         return isset($current['listeners'][$eventName]) || isset($current['wildcards'][$eventName]);
     }
 
-
-
+    // hack
+    static $listenersStalbe = [];
 
     public function getListeners($eventName)
     {
+        // hack
+        static $cache = [];
+        if (!empty(static::$listenersStalbe[$eventName])) return $cache[$eventName];
+        static::$listenersStalbe[$eventName] = true;
+
         $listeners = static::$corDict[\co::getUid()]['listeners'][$eventName] ?? [];
 
         $listeners = array_merge(
@@ -64,7 +83,8 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
             static::$corDict[\co::getUid()]['wildcardsCache'][$eventName] ?? $this->getWildcardListeners($eventName)
         );
 
-        return class_exists($eventName, false)
+        // hack
+        return $cache[$eventName] = class_exists($eventName, false)
             ? $this->addInterfaceListeners($eventName, $listeners)
             : $listeners;
     }
@@ -96,8 +116,6 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
         return $listeners;
     }
-
-
 
     public function forget($event)
     {
