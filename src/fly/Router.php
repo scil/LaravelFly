@@ -1,7 +1,11 @@
 <?php
 /**
- * add Dict, plus 
- *  1. middlewareCacheByRoute and $this->middlewareStable , but note that this feature is totally useless when a route middleware is reg in a request.
+ * add Dict, plus
+ *  1. $middlewareCacheByRoute
+ *     and
+ *     $middlewareStable , // var across multple requests, changed in any request would change this var
+ *     note that this feature is totally useless when a route middleware may be registered in a request.
+ *
  *  2. middlewareCacheForObj
  */
 
@@ -550,16 +554,16 @@ class Router implements RegistrarContract, BindingRegistrar
             });
     }
 
-    protected $middlewareStable = false;
+    static $middlewareStable = false;
 
     public
     function gatherRouteMiddleware(Route $route)
     {
         //hack
-        static $middlewareCacheByRoute = [], $middlewareCacheForObj=[];
+        static $middlewareCacheByRoute = [], $middlewareCacheForObj = [];
         $id = spl_object_hash($route);
-        if ($this->middlewareStable && isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
-        $this->middlewareStable = true;
+        if (static::$middlewareStable && isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
+        static::$middlewareStable = true;
 
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
             $cid = \co::getUid();
@@ -568,19 +572,22 @@ class Router implements RegistrarContract, BindingRegistrar
 
         // return $this->sortMiddleware($middleware);
         // hack
-        return $middlewareCacheByRoute[$id] = array_map(function ($name)use(&$middlewareCacheForObj) {
+        return $middlewareCacheByRoute[$id] = array_map(function ($name) use (&$middlewareCacheForObj) {
 
             if (isset($middlewareCacheForObj[$name])) {
                 return $middlewareCacheForObj[$name];
             }
 
-            // avoid middlewares with parameters because the execution of obj middleware do not support parameters
-            //  see: Pipleline::carry()
+            /*
+             * avoid middlewares with parameters because the execution of obj middleware do not support parameters defined with :
+             * see: Pipleline::carry()
+             *      $parameters = [$passable, $stack];
+             */
             if (mb_strpos($name, ':') === false) {
                 return $middlewareCacheForObj[$name] = $this->container->make($name);
             }
 
-            return $name;
+            return $middlewareCacheForObj[$name] = $name;
 
         }, $this->sortMiddleware($middleware));
 
@@ -678,7 +685,7 @@ class Router implements RegistrarContract, BindingRegistrar
         static::$corDict[\co::getUid()]['middleware'][$name] = $class;
 
         // hack
-        $this->middlewareStable = false;
+        static::$middlewareStable = false;
 
         return $this;
     }
@@ -709,7 +716,7 @@ class Router implements RegistrarContract, BindingRegistrar
 
 
         // hack
-        $this->middlewareStable = false;
+        static::$middlewareStable = false;
 
         return $this;
     }
@@ -730,7 +737,7 @@ class Router implements RegistrarContract, BindingRegistrar
         if (isset(static::$corDict[$cid]['middlewareGroups'][$group]) && !in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
 
             // hack
-            $this->middlewareStable = false;
+            static::$middlewareStable = false;
 
             array_unshift(static::$corDict[$cid]['middlewareGroups'][$group], $middleware);
         }
@@ -758,7 +765,7 @@ class Router implements RegistrarContract, BindingRegistrar
         if (!in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
 
             // hack
-            $this->middlewareStable = false;
+            static::$middlewareStable = false;
 
             static::$corDict[$cid]['middlewareGroups'][$group][] = $middleware;
         }
