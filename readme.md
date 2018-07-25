@@ -38,7 +38,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 [Commands: Start, Reload & Debug](https://github.com/scil/LaravelFly/wiki/Commands)
 
-[Coding Guideline](https://github.com/scil/LaravelFly/wiki/Coding-Guideline)
+[Coding Guideline](https://github.com/scil/LaravelFly/wiki/Coding-Requirement)
 
 [Events about LaravelFly](doc/events.md)
 

@@ -35,7 +35,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
     /**
      * you can set the corresponding service to be true if you use it.
      */
-    "redis" => false,
+    'redis' => false,
     'filesystem.cloud' => false,
     'broadcast' => false,
 

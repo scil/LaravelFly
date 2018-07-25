@@ -1,8 +1,10 @@
 <?php
 /**
  * add Dict, plus
- * listeners cache which is across multple requests, changed in any request would change this var
+ * listeners cache which is across multple requests, changes in any request would change this var
  *          static $listenersStalbe = [];
+ *      this cache may not have performance when Wildcard listeners are added in requests, because :
+ *          foreach (array_keys(static::$listenersStalbe) as $eventName) {
  *
  */
 
