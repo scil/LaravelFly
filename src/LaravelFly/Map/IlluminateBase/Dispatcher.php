@@ -3,8 +3,8 @@
  * add Dict, plus
  * listeners cache which is across multple requests, changes in any request would change this var
  *          static $listenersStalbe = [];
- *      this cache may not have performance when Wildcard listeners are added in requests, because :
- *          foreach (array_keys(static::$listenersStalbe) as $eventName) {
+ *      this cache will not have performance when Wildcard listeners are added in requests, because :
+ *          static::$wildStable
  *
  */
 
@@ -54,11 +54,8 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
         static::$corDict[\co::getUid()]['wildcardsCache'] = [];
 
-        foreach (array_keys(static::$listenersStalbe) as $eventName) {
-            if (Str::is($event, $eventName)) {
-                static::$listenersStalbe[$eventName] = false;
-            }
-        }
+        // hack
+        static::$wildStable = false;
     }
 
     public function hasListeners($eventName)
@@ -69,13 +66,15 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     // hack
     static $listenersStalbe = [];
+    static $wildStable = false;
 
     public function getListeners($eventName)
     {
         // hack
         static $cache = [];
-        if (!empty(static::$listenersStalbe[$eventName])) return $cache[$eventName];
+        if (static::$wildStable && !empty(static::$listenersStalbe[$eventName])) return $cache[$eventName];
         static::$listenersStalbe[$eventName] = true;
+        static::$wildStable = true;
 
         $listeners = static::$corDict[\co::getUid()]['listeners'][$eventName] ?? [];
 
@@ -123,8 +122,15 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         $cid = \co::getUid();
         if (Str::contains($event, '*')) {
             unset(static::$corDict[$cid]['wildcards'][$event]);
+
+            // hack
+            static::$wildStable = false;
+
         } else {
             unset(static::$corDict[$cid]['listeners'][$event]);
+
+            //hack
+            static::$listenersStalbe[$event] = false;
         }
     }
 
