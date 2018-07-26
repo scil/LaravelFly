@@ -29,13 +29,13 @@ class DatabaseSessionHandler extends \Illuminate\Session\DatabaseSessionHandler
         $session = (object)$this->getQuery()->find($sessionId);
 
         if ($this->expired($session)) {
-            static::$corDict[\co::getUid()]['exists'] = true;
+            static::$corDict[\Co::getUid()]['exists'] = true;
 
             return '';
         }
 
         if (isset($session->payload)) {
-            static::$corDict[\co::getUid()]['exists'] = true;
+            static::$corDict[\Co::getUid()]['exists'] = true;
 
             return base64_decode($session->payload);
         }
@@ -47,7 +47,7 @@ class DatabaseSessionHandler extends \Illuminate\Session\DatabaseSessionHandler
     {
         $payload = $this->getDefaultPayload($data);
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         if (!static::$corDict[$cid]['exists']) {
             $this->read($sessionId);
@@ -64,7 +64,7 @@ class DatabaseSessionHandler extends \Illuminate\Session\DatabaseSessionHandler
 
     public function setExists($value)
     {
-        static::$corDict[\co::getUid()]['exists'] = $value;
+        static::$corDict[\Co::getUid()]['exists'] = $value;
 
         return $this;
     }

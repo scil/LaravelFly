@@ -52,7 +52,7 @@ class Factory extends \Illuminate\View\Factory
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
         foreach ($keys as $key => $value) {
             static::$corDict[$cid]['shared'][$key] = $value;
         }
@@ -62,22 +62,22 @@ class Factory extends \Illuminate\View\Factory
 
     public function shared($key, $default = null)
     {
-        return Arr::get(static::$corDict[\co::getUid()]['shared'], $key, $default);
+        return Arr::get(static::$corDict[\Co::getUid()]['shared'], $key, $default);
     }
 
     public function getShared()
     {
-        return static::$corDict[\co::getUid()]['shared'];
+        return static::$corDict[\Co::getUid()]['shared'];
     }
 
     public function incrementRender()
     {
-        static::$corDict[\co::getUid()]['renderCount']++;
+        static::$corDict[\Co::getUid()]['renderCount']++;
     }
 
     public function decrementRender()
     {
-        static::$corDict[\co::getUid()]['renderCount']--;
+        static::$corDict[\Co::getUid()]['renderCount']--;
     }
 
     /**
@@ -87,12 +87,12 @@ class Factory extends \Illuminate\View\Factory
      */
     public function doneRendering()
     {
-        return static::$corDict[\co::getUid()]['renderCount'] == 0;
+        return static::$corDict[\Co::getUid()]['renderCount'] == 0;
     }
 
     public function flushState()
     {
-        static::$corDict[\co::getUid()]['renderCount'] = 0;
+        static::$corDict[\Co::getUid()]['renderCount'] = 0;
 
         $this->flushSections();
         $this->flushStacks();

@@ -44,7 +44,7 @@ trait ManagesComponents
     public function startComponent($name, array $data = [])
     {
         if (ob_start()) {
-            $cid = \co::getUid();
+            $cid = \Co::getUid();
             static::$corDict[$cid]['componentStack'][] = $name;
 
             static::$corDict[$cid]['componentData'][$this->currentComponent($cid)] = $data;
@@ -60,7 +60,7 @@ trait ManagesComponents
      */
     public function renderComponent()
     {
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         $name = array_pop(static::$corDict[$cid]['componentStack']);
 
@@ -91,7 +91,7 @@ trait ManagesComponents
      */
     public function slot($name, $content = null)
     {
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
         if (count(func_get_args()) === 2) {
             static::$corDict[$cid]['slots'][$this->currentComponent($cid)][$name] = $content;
         } else {
@@ -110,7 +110,7 @@ trait ManagesComponents
      */
     public function endSlot()
     {
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
         last(static::$corDict[$cid]['componentStack']);
 
         $currentSlot = array_pop(

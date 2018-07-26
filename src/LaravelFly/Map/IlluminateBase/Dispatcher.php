@@ -43,16 +43,16 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
                 $this->setupWildcardListen($event, $listener);
             } else {
                 static::$listenersStalbe[$event] = false;
-                static::$corDict[\co::getUid()]['listeners'][$event][] = $this->makeListener($listener);
+                static::$corDict[\Co::getUid()]['listeners'][$event][] = $this->makeListener($listener);
             }
         }
     }
 
     protected function setupWildcardListen($event, $listener)
     {
-        static::$corDict[\co::getUid()]['wildcards'][$event][] = $this->makeListener($listener, true);
+        static::$corDict[\Co::getUid()]['wildcards'][$event][] = $this->makeListener($listener, true);
 
-        static::$corDict[\co::getUid()]['wildcardsCache'] = [];
+        static::$corDict[\Co::getUid()]['wildcardsCache'] = [];
 
         // hack
         static::$wildStable = false;
@@ -60,7 +60,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     public function hasListeners($eventName)
     {
-        $current = static::$corDict[\co::getUid()];
+        $current = static::$corDict[\Co::getUid()];
         return isset($current['listeners'][$eventName]) || isset($current['wildcards'][$eventName]);
     }
 
@@ -76,11 +76,11 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         static::$listenersStalbe[$eventName] = true;
         static::$wildStable = true;
 
-        $listeners = static::$corDict[\co::getUid()]['listeners'][$eventName] ?? [];
+        $listeners = static::$corDict[\Co::getUid()]['listeners'][$eventName] ?? [];
 
         $listeners = array_merge(
             $listeners,
-            static::$corDict[\co::getUid()]['wildcardsCache'][$eventName] ?? $this->getWildcardListeners($eventName)
+            static::$corDict[\Co::getUid()]['wildcardsCache'][$eventName] ?? $this->getWildcardListeners($eventName)
         );
 
         // hack
@@ -93,18 +93,18 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     {
         $wildcards = [];
 
-        foreach (static::$corDict[\co::getUid()]['wildcards'] as $key => $listeners) {
+        foreach (static::$corDict[\Co::getUid()]['wildcards'] as $key => $listeners) {
             if (Str::is($key, $eventName)) {
                 $wildcards = array_merge($wildcards, $listeners);
             }
         }
 
-        return static::$corDict[\co::getUid()]['wildcardsCache'][$eventName] = $wildcards;
+        return static::$corDict[\Co::getUid()]['wildcardsCache'][$eventName] = $wildcards;
     }
 
     protected function addInterfaceListeners($eventName, array $listeners = [])
     {
-        $current = static::$corDict[\co::getUid()]['listeners'];
+        $current = static::$corDict[\Co::getUid()]['listeners'];
 
         foreach (class_implements($eventName) as $interface) {
             if (isset($current[$interface])) {
@@ -119,7 +119,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     public function forget($event)
     {
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
         if (Str::contains($event, '*')) {
             unset(static::$corDict[$cid]['wildcards'][$event]);
 
@@ -136,7 +136,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     public function forgetPushed()
     {
-        foreach (static::$corDict[\co::getUid()]['listeners'] as $key => $value) {
+        foreach (static::$corDict[\Co::getUid()]['listeners'] as $key => $value) {
             if (Str::endsWith($key, '_pushed')) {
                 $this->forget($key);
             }
@@ -146,12 +146,12 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     protected function resolveQueue()
     {
-        return call_user_func(static::$corDict[\co::getUid()]['queueResolver']);
+        return call_user_func(static::$corDict[\Co::getUid()]['queueResolver']);
     }
 
     public function setQueueResolver(callable $resolver)
     {
-        static::$corDict[\co::getUid()]['queueResolver'] = $resolver;
+        static::$corDict[\Co::getUid()]['queueResolver'] = $resolver;
 
         return $this;
     }

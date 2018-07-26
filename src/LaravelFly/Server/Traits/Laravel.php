@@ -11,7 +11,7 @@ Trait Laravel
      * For APP_TYPE=='worker', an laravel application instance living always with a worker, not the server.
      *
      * In Mode Map, it can't be made living always with the server,
-     * because most of Coroutine-Friendly Services are made only by \co::getUid()
+     * because most of Coroutine-Friendly Services are made only by \Co::getUid()
      * without using swoole_server::$worker_id, they can not distinguish coroutines in different workers.
      *
      * @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application

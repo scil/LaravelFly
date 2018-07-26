@@ -36,7 +36,7 @@ class AuthManagerSame extends \Illuminate\Auth\AuthManager
     {
         $name = $name ?: $this->getDefaultDriver();
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
         return static::$corDict[$cid]['guards'][$name] ??
             (static::$corDict[$cid]['guards'][$name] = $this->resolve($name));
     }
@@ -50,19 +50,19 @@ class AuthManagerSame extends \Illuminate\Auth\AuthManager
 // https://asklagbox.com/blog/unboxing-laravel-authentication#the-user-resolver
         $this->setDefaultDriver($name);
 
-        static::$corDict[\co::getUid()]['userResolver'] = function ($name = null) {
+        static::$corDict[\Co::getUid()]['userResolver'] = function ($name = null) {
             return $this->guard($name)->user();
         };
     }
 
     public function userResolver()
     {
-        return static::$corDict[\co::getUid()]['userResolver'];
+        return static::$corDict[\Co::getUid()]['userResolver'];
     }
 
     public function resolveUsersUsing(Closure $userResolver)
     {
-        static::$corDict[\co::getUid()]['userResolver'] = $userResolver;
+        static::$corDict[\Co::getUid()]['userResolver'] = $userResolver;
 
         return $this;
     }

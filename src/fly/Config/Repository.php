@@ -41,7 +41,7 @@ class Repository implements ArrayAccess, ConfigContract
      */
     public function has($key)
     {
-        return Arr::has(static::$corDict[\co::getUid()]['items'], $key);
+        return Arr::has(static::$corDict[\Co::getUid()]['items'], $key);
     }
 
     /**
@@ -57,7 +57,7 @@ class Repository implements ArrayAccess, ConfigContract
             return $this->getMany($key);
         }
 
-        return Arr::get(static::$corDict[\co::getUid()]['items'] , $key, $default);
+        return Arr::get(static::$corDict[\Co::getUid()]['items'] , $key, $default);
     }
 
     /**
@@ -75,7 +75,7 @@ class Repository implements ArrayAccess, ConfigContract
                 list($key, $default) = [$default, null];
             }
 
-            $config[$key] = Arr::get(static::$corDict[\co::getUid()]['items'], $key, $default);
+            $config[$key] = Arr::get(static::$corDict[\Co::getUid()]['items'], $key, $default);
         }
 
         return $config;
@@ -93,7 +93,7 @@ class Repository implements ArrayAccess, ConfigContract
         $keys = is_array($key) ? $key : [$key => $value];
 
         foreach ($keys as $key => $value) {
-            Arr::set(static::$corDict[\co::getUid()]['items'], $key, $value);
+            Arr::set(static::$corDict[\Co::getUid()]['items'], $key, $value);
         }
     }
 
@@ -136,7 +136,7 @@ class Repository implements ArrayAccess, ConfigContract
      */
     public function all()
     {
-        return static::$corDict[\co::getUid()]['items'];
+        return static::$corDict[\Co::getUid()]['items'];
     }
 
     /**

@@ -30,7 +30,7 @@ class FileViewFinder implements ViewFinderInterface
 
     public function find($name)
     {
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         if (isset(static::$corDict[$cid]['views'][$name])) {
             return static::$corDict[$cid]['views'][$name];
@@ -121,7 +121,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function addLocation($location)
     {
-        static::$corDict[\co::getUid()]['paths'][] = $location;
+        static::$corDict[\Co::getUid()]['paths'][] = $location;
     }
 
     /**
@@ -132,7 +132,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function prependLocation($location)
     {
-        array_unshift(static::$corDict[\co::getUid()]['paths'], $location);
+        array_unshift(static::$corDict[\Co::getUid()]['paths'], $location);
     }
 
     /**
@@ -146,7 +146,7 @@ class FileViewFinder implements ViewFinderInterface
     {
         $hints = (array)$hints;
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         if (isset(static::$corDict[$cid]['hints'][$namespace])) {
             $hints = array_merge(static::$corDict[$cid]['hints'][$namespace], $hints);
@@ -166,7 +166,7 @@ class FileViewFinder implements ViewFinderInterface
     {
         $hints = (array)$hints;
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         if (isset(static::$corDict[$cid]['hints'][$namespace])) {
             $hints = array_merge($hints, static::$corDict[$cid]['hints'][$namespace]);
@@ -184,7 +184,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function replaceNamespace($namespace, $hints)
     {
-        static::$corDict[\co::getUid()]['hints'][$namespace] = (array)$hints;
+        static::$corDict[\Co::getUid()]['hints'][$namespace] = (array)$hints;
     }
 
     /**
@@ -220,8 +220,8 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function flush()
     {
-        var_dump('flush', static::$corDict[\co::getUid()]['views']);
-        static::$corDict[\co::getUid()]['views'] = [];
+        var_dump('flush', static::$corDict[\Co::getUid()]['views']);
+        static::$corDict[\Co::getUid()]['views'] = [];
     }
 
     /**
@@ -241,7 +241,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function getPaths()
     {
-        return static::$corDict[\co::getUid()]['paths'];
+        return static::$corDict[\Co::getUid()]['paths'];
     }
 
     /**
@@ -251,7 +251,7 @@ class FileViewFinder implements ViewFinderInterface
      */
     public function getHints()
     {
-        return static::$corDict[\co::getUid()]['hints'];
+        return static::$corDict[\Co::getUid()]['hints'];
     }
 
     /**

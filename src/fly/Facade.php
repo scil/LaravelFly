@@ -63,7 +63,7 @@ abstract class Facade
     {
         $name = static::getFacadeAccessor();
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         $mock = static::isMock($cid)
             ? static::$resolvedInstance[$cid][$name]
@@ -131,7 +131,7 @@ abstract class Facade
      */
     public static function swap($instance)
     {
-        static::$resolvedInstance[\co::getUid()][static::getFacadeAccessor()] = $instance;
+        static::$resolvedInstance[\Co::getUid()][static::getFacadeAccessor()] = $instance;
 
         if (isset(static::$app)) {
             static::$app->instance(static::getFacadeAccessor(), $instance);
@@ -172,7 +172,7 @@ abstract class Facade
             return $name;
         }
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         if (isset(static::$resolvedInstance[$cid][$name])) {
             return static::$resolvedInstance[$cid][$name];
@@ -189,7 +189,7 @@ abstract class Facade
      */
     public static function clearResolvedInstance($name)
     {
-        unset(static::$resolvedInstance[\co::getUid()][$name]);
+        unset(static::$resolvedInstance[\Co::getUid()][$name]);
     }
 
     /**
@@ -199,7 +199,7 @@ abstract class Facade
      */
     public static function clearResolvedInstances()
     {
-        static::$resolvedInstance[\co::getUid()] = [];
+        static::$resolvedInstance[\Co::getUid()] = [];
     }
 
     /**

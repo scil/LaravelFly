@@ -235,12 +235,12 @@ class Application extends \Illuminate\Foundation\Application
 
     public function resetServiceProviders()
     {
-        static::$corDict[\co::getUid()]['serviceProviders'] = [];
+        static::$corDict[\Co::getUid()]['serviceProviders'] = [];
     }
 
     public function bootInRequest()
     {
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
         if (static::$corDict[$cid]['bootedInRequest']) {
             return;
         }
@@ -266,7 +266,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function addDeferredServices(array $services)
     {
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
         static::$corDict[$cid]['deferredServices'] = array_merge(static::$corDict[$cid]['deferredServices'], $services);
     }
 }

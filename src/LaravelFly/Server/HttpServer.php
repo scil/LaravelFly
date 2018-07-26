@@ -87,7 +87,7 @@ class HttpServer extends Common implements ServerInterface
     {
 //        static $i = 0; $TARGET = 200;$i++;if ($i == $TARGET) memprof_enable();
 
-        $cid = \co::getUid();
+        $cid = \Co::getUid();
 
         $this->app->initForRequestCorontine($cid);
 

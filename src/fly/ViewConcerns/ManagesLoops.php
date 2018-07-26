@@ -19,7 +19,7 @@ trait ManagesLoops
 
         $length = is_array($data) || $data instanceof Countable ? count($data) : null;
 
-        $cid=\co::getUid();
+        $cid=\Co::getUid();
 
         $parent = Arr::last(static::$corDict[$cid]['loopsStack']);
 
@@ -42,7 +42,7 @@ trait ManagesLoops
      */
     public function incrementLoopIndices()
     {
-        $cid=\co::getUid();
+        $cid=\Co::getUid();
 
         $loop = static::$corDict[$cid]['loopsStack'][$index = count(static::$corDict[$cid]['loopsStack']) - 1];
 
@@ -62,7 +62,7 @@ trait ManagesLoops
      */
     public function popLoop()
     {
-        array_pop(static::$corDict[\co::getUid()]['loopsStack']);
+        array_pop(static::$corDict[\Co::getUid()]['loopsStack']);
     }
 
     /**
@@ -72,7 +72,7 @@ trait ManagesLoops
      */
     public function getLastLoop()
     {
-        if ($last = Arr::last(static::$corDict[\co::getUid()]['loopsStack'])) {
+        if ($last = Arr::last(static::$corDict[\Co::getUid()]['loopsStack'])) {
             return (object) $last;
         }
     }
@@ -84,6 +84,6 @@ trait ManagesLoops
      */
     public function getLoopStack()
     {
-        return static::$corDict[\co::getUid()]['loopsStack'];
+        return static::$corDict[\Co::getUid()]['loopsStack'];
     }
 }
