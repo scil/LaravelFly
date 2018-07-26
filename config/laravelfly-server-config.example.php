@@ -155,7 +155,9 @@ return [
     /**
      * The max number of connection the server could handle at the same time.
      *
-     * max_conn should be less than ulimit -n max_conn should be more than (serv->worker_num + SwooleG.task_worker_num) * 2 + 32
+     * should be less than ulimit -n
+     * should be more than (worker_num + task_worker_num) * 2 + 32
+     *
      * the default value of max_conn is ulimit -n
      */
     // large number needs large memory! Please test different numbers on your server.

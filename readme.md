@@ -48,7 +48,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 ## A simple ab test 
 
- `ab -k -n 1000 -c 10 http://zc.test/green `
+ `ab -k -n 1000 -c 10 http://zc.test
 
 .   | fpm |  Fly Mode Simple | Fly Mode Map(using coroutine)
 ------------ | ------------ | ------------- | ------------- 
@@ -63,10 +63,11 @@ Time taken ≈ | 325 | 195  | 30
 <div>
 
 
-* A visit to http://zc.test/green relates to 5 Models and 5 db query.
+* A visit to http://zc.test relates to 5 Models and 5 db query.
 * env:   
-ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
-php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
+  - ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
+  - php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
+  - 'max_conn' => 1024
 * Test date : 2018/02
 
 </div>
