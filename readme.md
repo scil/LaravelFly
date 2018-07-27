@@ -19,6 +19,8 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
   
 - Extra speed improvements such as middleeares cache, view path cache.
 
+- View server info at /laravel-fly/info. (This feture is under dev and more infomations will be available.)
+
 ## Quick Start
 
 1.`pecl install swoole`   
@@ -122,6 +124,7 @@ LaravelFly Mode Simple | slow | service providers reg on work and boot in reques
 
 - [x] add events
 - [x] watch code changes and hot reload
+- [x] supply server info. default url is: /laravel-fly/info
 - [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
 - [ ] websocket
