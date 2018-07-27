@@ -100,6 +100,8 @@ class Common
     protected $kernelClass = \LaravelFly\Kernel::class;
 
 
+    protected $colorize = true;
+
     public function __construct($dispatcher = null)
     {
         $this->dispatcher = $dispatcher ?: new EventDispatcher();
@@ -132,7 +134,6 @@ class Common
         return array_merge([
             'mode' => 'Map',
             'conf' => null, // server config file
-            'colorize' => true,
         ], $d);
     }
 
@@ -230,11 +231,9 @@ class Common
         if ($options['early_laravel']) $this->startLaravel();
 
         if ($this->options['daemonize'])
-            $this->options['colorize'] = false;
+            $this->colorize = false;
 
         $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
-
-        unset($options['colorize']);
 
         $swoole->set($options);
 
@@ -333,7 +332,7 @@ class Common
 
     function colorize($text, $status)
     {
-        if (!$this->getConfig('colorize')) return $text;
+        if (!$this->colorize) return $text;
 
         $out = "";
         switch ($status) {
