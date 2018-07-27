@@ -40,7 +40,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "LaravelFly\\Providers\\CommandsServiceProvider"
+        "LaravelFly\\Providers\\ServiceProvider"
       ],
       "aliases": {
       }

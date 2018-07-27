@@ -2,9 +2,9 @@
 
 namespace LaravelFly\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as Base;
 
-class CommandsServiceProvider extends ServiceProvider
+class ServiceProvider extends Base
 {
     public function register()
     {

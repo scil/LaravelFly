@@ -259,6 +259,13 @@ return [
             Illuminate\Contracts\Debug\ExceptionHandler::class => true,
         ],
 
+
+
+        /*
+         * LaravelFly
+         */
+
+        LaravelFly\Providers\RouteServiceProvider::class=>[],
     ],
 
     /**
