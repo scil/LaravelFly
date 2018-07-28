@@ -33,8 +33,11 @@ return [
     /**
      * useless providers. For Mode Simple, Map
      *
-     * There providers will be only removed from config('app.providers')
-     * not from  config('laravelfly.providers_on_worker') or  config('laravelfly.providers_in_request')
+     * These providers are useless if they are not enabled in
+     * config('laravelfly.providers_on_worker') or
+     * config('laravelfly.providers_in_request')
+     *
+     * There providers will be removed from config('app.providers')
      */
     'providers_ignore' => array_merge([
 

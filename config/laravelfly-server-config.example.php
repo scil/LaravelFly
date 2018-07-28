@@ -99,11 +99,11 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
     'config' => false,
 
     /**
-     * set true if middlewares are added before any requests, or same middlewares are added in all requests.
+     * set true if middlewares keep same in all requests.
      *
      * Middlewares may be changed by Route::middleware
      *
-     * No need worry about same middlewares are added multiple times,
+     * No need worry about same middlewares are added in requests multiple times,
      * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
      *          if (array_search($middleware, $this->middleware) === false)
      *

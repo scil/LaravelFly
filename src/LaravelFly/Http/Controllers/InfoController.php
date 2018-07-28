@@ -56,22 +56,23 @@ class InfoController extends BaseController
 
         $eventR = new \ReflectionClass('LaravelFly\Map\IlluminateBase\Dispatcher');
         $d = $eventR->getStaticProperties()['corDict'];
-        $allL = $d[\Swoole\Coroutine::getuid()]['listeners'];
-        $allWildcards = $d[\Swoole\Coroutine::getuid()]['wildcards'];
+        
+        $allCurrent = $d[\Swoole\Coroutine::getuid()]['listeners'];
+        $allWildcardsCurrent = $d[\Swoole\Coroutine::getuid()]['wildcards'];
 
 
-        $r['all without empty in current request'] = $this->_getEventsListenersInfo($allL)[0];
-        $r['wildcards in current request'] = $this->_getEventsListenersInfo($allWildcards)[0];
+        $r['all without wildcard or empty in current request'] = $this->_getEventsListenersInfo($allCurrent)[0];
+        $r['wildcards in current request'] = $this->_getEventsListenersInfo($allWildcardsCurrent)[0];
 
         return $r;
     }
 
-    protected function _getEventsListenersInfo($listenersByE)
+    protected function _getEventsListenersInfo($listenersByEventName)
     {
         $empty = [];
         $has = [];
 
-        foreach ($listenersByE as $eventName => $listeners) {
+        foreach ($listenersByEventName as $eventName => $listeners) {
             if ($listeners) {
                 $has[$eventName] = $this->_getListenersInfo($listeners);
 
@@ -86,11 +87,21 @@ class InfoController extends BaseController
     protected function _getListenersInfo($listeners)
     {
         foreach ($listeners as $listener) {
+
             $r = new \ReflectionFunction($listener);
             $bound = $r->getStaticVariables();
 
-            if (is_callable($bound['listener'])) {
 
+            if (is_array($bound['listener'])) {
+                $r2= new \ReflectionMethod( $bound['listener'][0],$bound['listener'][1]);
+
+                $current[] = [
+                    'class' => get_class($bound['listener'][0]),
+                    'method' => $bound['listener'][1],
+                    'file' => $r2->getFileName(),
+                    'wildcard' => $bound['wildcard'],
+                ];
+            } elseif (is_callable($bound['listener'])) {
                 $r2 = new \ReflectionFunction($bound['listener']);
 
                 $current[] = [

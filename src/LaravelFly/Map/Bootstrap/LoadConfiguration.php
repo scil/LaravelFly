@@ -101,9 +101,6 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
             }
 
-            //todo just for debug
-//             $psOnWork = array_diff($psOnWork,$psIgnore);
-
             $left = array_diff(
                 array_merge($appConfig['app.providers'], $app->make(PackageManifest::class)->providers()),
                 $providersReplaced,
@@ -115,15 +112,17 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
             if ($left) {
                 $psAcross = array_merge($psAcross, $left);
-                $left = implode("\n", $left);
+                $left_count = count($left);
+                $left = implode(",  ", $left);
 
-                echo "[INFO] These providers not listed in config('laravel.providers_on_worker'):
-         $left
-        They will be registered before any request and be booted in each request\n";
+                echo "[INFO] $left_count providers not listed in config('laravel') and treated as across providers:
+         $left \n";
             }
 
 
-            $allClone = implode(", ", array_merge(LARAVELFLY_SERVICES['routes'] ? ['url(UrlGenerator)'] : ['url(UrlGenerator)', 'routes'], $cloneServices));
+            $allClone = implode(", ", array_merge(
+                    LARAVELFLY_SERVICES['routes'] ? ['url(UrlGenerator)'] : ['url(UrlGenerator)', 'routes'],
+                    $cloneServices));
             echo \LaravelFly\Fly::getServer()->colorize(
                 "[NOTE] services to be cloned in each request: [$allClone, ]. An object in your middlewares, service provider or somewhere else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_for_clone').\n",
                 'NOTE'
