@@ -97,11 +97,6 @@ Trait Laravel
         // the fake request is useless, but harmless too
         // $this->app->forgetInstance('request');
 
-        if (LARAVELFLY_SERVICES['kernel']) {
-            $this->kernel->instanceMiddlewares();
-        }
-
-
         printf("[INFO] event laravel.ready with $this->appClass (pid %u)\n", getmypid());
 
         // the 'request' here is different form FpmHttpServer
