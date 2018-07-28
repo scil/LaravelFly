@@ -71,8 +71,11 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     public function getListeners($eventName)
     {
         // hack
-        static $cache = [];
-        if (static::$wildStable && !empty(static::$listenersStalbe[$eventName])) return $cache[$eventName];
+        static $cache = [], $used = 0;
+        if (static::$wildStable && !empty(static::$listenersStalbe[$eventName])) {
+            ++$used;
+            return $cache[$eventName];
+        }
         static::$listenersStalbe[$eventName] = true;
         static::$wildStable = true;
 

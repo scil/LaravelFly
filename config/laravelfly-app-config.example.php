@@ -10,13 +10,16 @@ return [
     /**
      * If use cache file for config/laravel.php always.
      *
-     * If true, Laravelfly will always use cache file laravelfly_ps_simple.php or
-     * laravelfly_ps_map.php and laravelfly_aliases.php
+     * If true, Laravelfly will always use cache file
+     *  laravelfly_ps_map.php
+     * or
+     *  laravelfly_ps_simple.php
+     * and laravelfly_aliases.php
      * under bootstrap/cache/ when the files exist. If not exist, Laravelfly will create them.
      *
      * It's better to set it to false in dev env , set true and run `php artisan config:clear` before starting LaravelFly in production env
      */
-     'config_cache_always' => $IN_PRODUCTION,
+    'config_cache_always' => $IN_PRODUCTION,
     // 'config_cache_always' => true,
 
     /**
@@ -25,7 +28,7 @@ return [
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
      */
-    'view_compile_1' => LARAVELFLY_SERVICES['view.finder'] && $IN_PRODUCTION,
+    'view_compile_1' => $IN_PRODUCTION && LARAVELFLY_SERVICES['view.finder'],
 
     /**
      * useless providers. For Mode Simple, Map
@@ -38,7 +41,7 @@ return [
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         Fideloper\Proxy\TrustedProxyServiceProvider::class,
-        LaravelFly\Providers\CommandsServiceProvider::class,
+        LaravelFly\Providers\ServiceProvider::class,
         'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
 
     ], LARAVELFLY_SERVICES['broadcast'] ? [] : [
@@ -260,12 +263,11 @@ return [
         ],
 
 
-
         /*
          * LaravelFly
          */
 
-        LaravelFly\Providers\RouteServiceProvider::class=>[],
+        LaravelFly\Providers\RouteServiceProvider::class => [],
     ],
 
     /**
