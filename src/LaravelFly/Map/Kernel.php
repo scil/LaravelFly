@@ -77,7 +77,7 @@ class Kernel extends HttpKernel
 
         return (new Pipeline($this->app))
             ->send($request)
-            ->through($this->app->shouldSkipMiddleware() ? [] : $this->getParsedMiddlewares())
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
             ->then($this->dispatchToRouter());
     }
 
@@ -90,25 +90,5 @@ class Kernel extends HttpKernel
 
             return $this->router->dispatch($request);
         };
-    }
-
-    /**
-     * middlewars are frozened when the first request goes into Pipeline
-     *
-     * @var array
-     */
-    static $middlewareInstances = [];
-
-    protected function getParsedMiddlewares()
-    {
-        return static::$middlewareInstances ?: (static::$middlewareInstances = $this->parseMiddlewares());
-    }
-
-    protected function parseMiddlewares()
-    {
-
-        return array_map(function ($name) {
-            return $this->app->make($name);
-        }, $this->middleware);
     }
 }

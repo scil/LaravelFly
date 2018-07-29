@@ -561,7 +561,7 @@ class Router implements RegistrarContract, BindingRegistrar
     function gatherRouteMiddleware(Route $route)
     {
         //hack
-        static $middlewareCacheByRoute = [], $middlewareCacheForObj = [];
+        static $middlewareCacheByRoute = [];
         $id = spl_object_hash($route);
         if (static::$middlewareStable && isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
         static::$middlewareStable = true;
@@ -571,26 +571,7 @@ class Router implements RegistrarContract, BindingRegistrar
             return (array)MiddlewareNameResolver::resolve($name, static::$corDict[$cid]['middleware'], static::$corDict[$cid]['middlewareGroups']);
         })->flatten();
 
-        // return $this->sortMiddleware($middleware);
-        // hack
-        return $middlewareCacheByRoute[$id] = array_map(function ($name) use (&$middlewareCacheForObj) {
-
-            if (isset($middlewareCacheForObj[$name])) {
-                return $middlewareCacheForObj[$name];
-            }
-
-            /*
-             * avoid middlewares with parameters because the execution of obj middleware do not support parameters defined with :
-             * see: Pipleline::carry()
-             *      $parameters = [$passable, $stack];
-             */
-            if (mb_strpos($name, ':') === false) {
-                return $middlewareCacheForObj[$name] = $this->container->make($name);
-            }
-
-            return $middlewareCacheForObj[$name] = $name;
-
-        }, $this->sortMiddleware($middleware));
+        return $middlewareCacheByRoute[$id] = $this->sortMiddleware($middleware);
 
     }
 
