@@ -69,8 +69,8 @@ class Kernel extends HttpKernel
     {
         $this->app->instance('request', $request);
 
-        // todo
-        Facade::clearResolvedInstance('request');
+        // moved to  LaravelFly\Server\Traits\Laravel::startLaravel. After that, no need to clear in each request.
+        // Facade::clearResolvedInstance('request');
 
         // replace $this->bootstrap();
         $this->app->bootInRequest();
@@ -81,14 +81,4 @@ class Kernel extends HttpKernel
             ->then($this->dispatchToRouter());
     }
 
-    protected function dispatchToRouter()
-    {
-        return function ($request) {
-            //todo
-            //?  why?  request has been inserted
-            $this->app->instance('request', $request);
-
-            return $this->router->dispatch($request);
-        };
-    }
 }

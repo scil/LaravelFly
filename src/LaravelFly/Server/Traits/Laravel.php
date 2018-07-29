@@ -3,6 +3,7 @@
 namespace LaravelFly\Server\Traits;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Illuminate\Support\Facades\Facade;
 
 Trait Laravel
 {
@@ -96,6 +97,7 @@ Trait Laravel
 
         // the fake request is useless, but harmless too
         // $this->app->forgetInstance('request');
+        Facade::clearResolvedInstance('request');
 
         printf("[INFO] event laravel.ready with $this->appClass (pid %u)\n", getmypid());
 

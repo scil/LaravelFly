@@ -287,9 +287,7 @@ return [
                 'closure' => function () {
                     // $this here is app('hash'), a newly cloned instance of HashManager
                     foreach ($this->getDrivers() as $name => $drive) {
-                        // var_dump($name); debug_zval_dump($drive);
                         $this->drivers[$name] = clone $drive;
-                        // debug_zval_dump($this->drivers[$name] );
                     }
                 },
             ],

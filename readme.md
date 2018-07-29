@@ -96,7 +96,7 @@ The main difference is that in laravel-swoole user's code will be processed by a
  .  | speed |technique | every service is in control |  every service provider is in control | work to maintaining relations of cloned objects to avoid Stale Reference 
 ------------ |------------ | ------------ | ------------- | ------------- | ------------- 
 laravel-swoole  | slow | clone app contaniner and objects to make them safe |  yes | no | more work (app,event...are cloned)
-LaravelFly Mode Map | fast | refactor most official objects to make them safe on their own |  yes  | yes  | few work (only url and routes are cloned)
+LaravelFly Mode Map | fast | refactor most official objects to make them safe on their own |  yes  | yes  | few work (only url is cloned by default)
 LaravelFly Mode Simple | slow | service providers reg on work and boot in requests | yes | yes | no work 
 
 
