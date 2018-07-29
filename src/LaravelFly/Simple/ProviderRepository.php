@@ -60,6 +60,7 @@ class ProviderRepository extends \Illuminate\Foundation\ProviderRepository
 
         // this if is necessary
         if ($manifest['deferred']) {
+            // hack, not deferred any more
             // $this->app->addDeferredServices($this->deferred = $manifest['deferred']);
             foreach ($manifest['deferred'] as $provider) {
                 $this->app->register($provider);

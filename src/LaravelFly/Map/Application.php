@@ -2,8 +2,10 @@
 
 namespace LaravelFly\Map;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use LaravelFly\Map\IlluminateBase\EventServiceProvider;
 use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
@@ -172,9 +174,13 @@ class Application extends \Illuminate\Foundation\Application
     public function registerConfiguredProvidersBootOnWorker()
     {
 
-        //todo study official registerConfiguredProviders
+        $providers = Collection::make($this->providersToBootOnWorker)
+            ->partition(function ($provider) {
+                return Str::startsWith($provider, ['Illuminate\\','LaravelFly\\']);
+            });
+
         $providerRepository = new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker());
-        $providerRepository->loadForWorker($this->providersToBootOnWorker);
+        $providerRepository->loadForWorker($providers->collapse()->toArray());
 
     }
 
@@ -246,9 +252,13 @@ class Application extends \Illuminate\Foundation\Application
          */
         // $this->fireAppCallbacks($this->bootingCallbacks);
 
-        array_walk($this->acrossServiceProviders, function ($p) {
+        // make a new array var, because it maybe changed by array_walk
+        $across = $this->acrossServiceProviders;
+
+        array_walk($across, function ($p) {
             $this->bootProvider($p);
         });
+
         array_walk(static::$corDict[$cid]['serviceProviders'], function ($p) {
             $this->bootProvider($p);
         });

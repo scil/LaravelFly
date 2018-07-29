@@ -74,10 +74,11 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     protected $namespace;
 
-    protected static $arrayAttriForObj=['resolved','bindings','methodBindings','instances','aliases','abstractAliases','extenders','tags','buildStack','with','contextual','reboundCallbacks','globalResolvingCallbacks','globalAfterResolvingCallbacks','resolvingCallbacks','afterResolvingCallbacks',
-       'bootingCallbacks','bootedCallbacks','terminatingCallbacks','serviceProviders','loadedProviders','deferredServices'
-        ];
-    protected static $normalAttriForObj=['hasBeenBootstrapped'=>false,'booted'=>false];
+    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+        'bootingCallbacks', 'bootedCallbacks', 'terminatingCallbacks', 'serviceProviders', 'loadedProviders', 'deferredServices'
+    ];
+    protected static $normalAttriForObj = ['hasBeenBootstrapped' => false, 'booted' => false];
+
     /**
      * Create a new Illuminate application instance.
      *
