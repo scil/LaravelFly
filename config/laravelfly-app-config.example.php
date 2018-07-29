@@ -167,7 +167,8 @@ return [
         Illuminate\Foundation\Providers\FoundationServiceProvider::class => 'across',
 
         Illuminate\Hashing\HashServiceProvider::class => [
-            'hash' => !empty(LARAVELFLY_SERVICES['hash']) ? true : 'clone',
+            // 'hash' => !empty(LARAVELFLY_SERVICES['hash']) ? true : 'clone',
+            'hash' => true, // no need to clone it when empty(LARAVELFLY_SERVICES['hash'], as changed props not belongs to 'hash', but to drivers
             'hash.driver',
         ],
 
@@ -274,20 +275,22 @@ return [
     ],
 
     /**
-     * handle relations about cloned services to avoid Stale Reference. For Mode Map
+     * handle relations about cloned objects to avoid Stale Reference. For Mode Map
      *
      * clone and closure run in each request.
      */
     'update_for_clone' => [
 
-        // for cloned hash
+        // for hash
         !empty(LARAVELFLY_SERVICES['hash']) ? false :
             [
                 'this' => 'hash',
                 'closure' => function () {
-                    // $this here is app('hash'), a newly cloned instance of HashManager
+                    // $this here is app('hash'), the instance of HashManager
+                    // by default, $name is bcrypt and argon
                     foreach ($this->getDrivers() as $name => $drive) {
                         $this->drivers[$name] = clone $drive;
+                        // debug_zval_dump($this->drivers[$name] );
                     }
                 },
             ],
