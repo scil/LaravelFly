@@ -25,11 +25,6 @@ class Application extends \Illuminate\Foundation\Application
     protected $bootedOnWorker = false;
 
     /**
-     * @var bool
-     */
-//    protected $bootedInRequest = [];
-
-    /**
      * @var array
      */
     protected $providersToBootOnWorker = [];
@@ -55,7 +50,6 @@ class Application extends \Illuminate\Foundation\Application
     protected static $normalAttriForObj = [
         'hasBeenBootstrapped' => false,
         'booted' => false,
-        'bootedInRequest' => false,
     ];
 
     public function __construct($basePath = null)
@@ -241,7 +235,7 @@ class Application extends \Illuminate\Foundation\Application
     public function bootInRequest()
     {
         $cid = \Co::getUid();
-        if (static::$corDict[$cid]['bootedInRequest']) {
+        if (static::$corDict[$cid]['booted']) {
             return;
         }
 
@@ -259,7 +253,7 @@ class Application extends \Illuminate\Foundation\Application
             $this->bootProvider($p);
         });
 
-        static::$corDict[$cid]['bootedInRequest'] = static::$corDict[$cid]['booted'] = true;
+        static::$corDict[$cid]['booted'] = true;
 
         $this->fireAppCallbacks(static::$corDict[$cid]['bootedCallbacks']);
     }
