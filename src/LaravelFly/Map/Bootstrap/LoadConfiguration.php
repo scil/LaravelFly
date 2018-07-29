@@ -111,11 +111,12 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
             );
 
             if ($left) {
-                $psAcross = array_merge($psAcross, $left);
+//                $psAcross = array_merge($psAcross, $left);
+                $psInRequest = array_merge($psInRequest, $left);
                 $left_count = count($left);
                 $left = implode(",  ", $left);
 
-                echo "[INFO] $left_count providers not listed in config('laravel') and treated as across providers:
+                echo "[INFO] $left_count providers not listed in config('laravelfly') and treated as providers_in_request:
          $left \n";
             }
 
