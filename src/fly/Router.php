@@ -1,13 +1,12 @@
 <?php
 /**
  * add Dict, plus
- *  1. $middlewareCacheByRoute
- *     and
+ *     $middlewareCacheByRoute
+ *   and
  *     $middlewareStable ,
- *     note that this feature is totally useless when a route middleware may be registered in a request.
- *     so vars are across multple requests, changed in any request would change this var
+ *   note that this feature is totally useless when a route middleware may be registered in a request.
+ *   so vars are across multple requests, changed in any request would change this var
  *
- *  2. middlewareCacheForObj
  */
 
 namespace Illuminate\Routing;
