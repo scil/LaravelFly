@@ -588,8 +588,6 @@ class Router implements RegistrarContract, BindingRegistrar
             static::$middlewareStable = true;
         }
 
-        var_dump('compute middleware');
-
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
             $cid = \Co::getUid();
             return (array)MiddlewareNameResolver::resolve($name, static::$corDict[$cid]['middleware'], static::$corDict[$cid]['middlewareGroups']);
