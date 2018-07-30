@@ -13,14 +13,23 @@ class ProvidersAndServicesOnWork
         $app->bootOnWorker();
         $app->makeCFServices();
 
+        $config = $app->make('config');
+
+        if (LARAVELFLY_SERVICES['kernel']) {
+
+            $app->setSingletonMiddlewares(
+                $config->get('laravelfly.singleton_middlewares', [])
+            );
+        }
+
         $router = $app->make('router');
 
         $router->setSingletonMiddlewares(
-            $app->make('config')->get('laravelfly.singleton_route_middlewares', [])
+            $config->get('laravelfly.singleton_route_middlewares', [])
         );
 
-        if( LARAVELFLY_SERVICES['routes'] &&  LARAVELFLY_SERVICES['kernel']){
-           $router->enableMiddlewareAlwaysStable();
+        if (LARAVELFLY_SERVICES['routes'] && LARAVELFLY_SERVICES['kernel']) {
+            $router->enableMiddlewareAlwaysStable();
         }
     }
 }

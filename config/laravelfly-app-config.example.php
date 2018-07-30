@@ -331,6 +331,14 @@ return [
         //todo
 //        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ],
+    // only helpful when LARAVELFLY_SERVICES['kernel']===true
+    'singleton_middlewares' => [
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\TrustProxies::class,
+    ],
 
     /**
      * Which properties of base services need to backup. Only for Mode Simple

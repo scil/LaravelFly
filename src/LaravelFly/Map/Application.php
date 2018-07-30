@@ -273,4 +273,72 @@ class Application extends \Illuminate\Foundation\Application
         $cid = \Co::getUid();
         static::$corDict[$cid]['deferredServices'] = array_merge(static::$corDict[$cid]['deferredServices'], $services);
     }
+
+    public function canStable($name, $whitelist)
+    {
+        /*
+         * avoid middlewares with parameters because the execution of obj middleware do not support parameters defined with ':'
+         * see: Pipleline::carry()
+         *      $parameters = [$passable, $stack];
+         */
+        if (mb_strpos($name, ':') !== false) {
+            //todo add test
+            return false;
+        }
+
+        $concrete = $this->make($name);
+
+        if(in_array($name, $whitelist)) {
+            return $concrete;
+        }
+
+        try {
+            $reflector = new \ReflectionClass($concrete);
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        if (!$reflector->isInstantiable()) {
+            return $concrete;
+        }
+
+        $constructor = $reflector->getConstructor();
+
+        // no constructor
+        if ($constructor === null) {
+            return $concrete;
+        }
+
+
+        // no parameters?  but there maybe app->make() in the body of the constructor
+//        $dependencies = $constructor->getParameters();
+//        if (!$dependencies) return $concrete;
+
+        // no more going into the parameters
+//        foreach ($dependencies as $dependency) {
+//            $c = $dependency->getClass();
+//        }
+
+        return false;
+
+    }
+
+    static $singletonMiddlewares =[];
+
+    public function setSingletonMiddlewares(array $singletonMiddlewares): void
+    {
+        self::$singletonMiddlewares = $singletonMiddlewares;
+    }
+
+    function parseMiddlewares($m)
+    {
+        return array_map(function ($name) {
+            if($this->canStable($name, static::$singletonMiddlewares)){
+
+                return $this->app->make($name);
+            }
+            return $name;
+        }, $m);
+    }
+
 }

@@ -621,60 +621,12 @@ class Router implements RegistrarContract, BindingRegistrar
             if (isset($cacheForObj[$one])) {
                 return $cacheForObj[$one];
             }
-            return $cacheForObj[$one] = $this->canStable($one) ?: $one;
+            return $cacheForObj[$one] = $this->container->canStable($one, static::$singletonMiddlewares) ?: $one;
 
         }, $this->sortMiddleware($middleware));
 
     }
 
-    protected function canStable($name)
-    {
-        /*
-         * avoid middlewares with parameters because the execution of obj middleware do not support parameters defined with ':'
-         * see: Pipleline::carry()
-         *      $parameters = [$passable, $stack];
-         */
-        if (mb_strpos($name, ':') !== false) {
-            return false;
-        }
-
-        $concrete = $this->container->make($name);
-
-        if(in_array($name,static::$singletonMiddlewares)) {
-            print("$name\n");
-            return $concrete;
-        }
-
-        try {
-            $reflector = new \ReflectionClass($concrete);
-        } catch (\Throwable $e) {
-            return false;
-        }
-
-        if (!$reflector->isInstantiable()) {
-            return $concrete;
-        }
-
-        $constructor = $reflector->getConstructor();
-
-        // no constructor
-        if ($constructor === null) {
-            return $concrete;
-        }
-
-
-        // no parameters?  but there maybe app->make() in the body of the constructor
-//        $dependencies = $constructor->getParameters();
-//        if (!$dependencies) return $concrete;
-
-        // no more going into the parameters
-//        foreach ($dependencies as $dependency) {
-//            $c = $dependency->getClass();
-//        }
-
-        return false;
-
-    }
 
     protected
     function sortMiddleware(Collection $middlewares)
