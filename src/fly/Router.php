@@ -56,6 +56,16 @@ class Router implements RegistrarContract, BindingRegistrar
 
     protected static $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns', 'groupStack'];
 
+    //hack
+    static $singletonMiddlewares=[];
+    /**
+     * @param array $singletonMiddlewares
+     */
+    public static function setSingletonMiddlewares(array $singletonMiddlewares): void
+    {
+        self::$singletonMiddlewares = $singletonMiddlewares;
+    }
+
 
     public function __construct(Dispatcher $events, Container $container = null)
     {
@@ -560,17 +570,16 @@ class Router implements RegistrarContract, BindingRegistrar
     function gatherRouteMiddleware(Route $route)
     {
         //hack
-        static $middlewareCacheByRoute = [];
+        static $cacheByRoute = [];
         $id = version_compare(PHP_VERSION, '7.2.0', '>=') ? spl_object_id($route) : spl_object_hash($route);
-        eval(tinker());
 
         if (LARAVELFLY_SERVICES['routes']) {
 
-            if (isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
+            if (isset($cacheByRoute[$id])) return $cacheByRoute[$id];
 
         } else {
 
-            if (static::$middlewareStable && isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
+            if (static::$middlewareStable && isset($cacheByRoute[$id])) return $cacheByRoute[$id];
 
             static::$middlewareStable = true;
         }
@@ -582,7 +591,67 @@ class Router implements RegistrarContract, BindingRegistrar
             return (array)MiddlewareNameResolver::resolve($name, static::$corDict[$cid]['middleware'], static::$corDict[$cid]['middlewareGroups']);
         })->flatten();
 
-        return $middlewareCacheByRoute[$id] = $this->sortMiddleware($middleware);
+        // return $middlewareCacheByRoute[$id] = $this->sortMiddleware($middleware);
+
+        return $cacheByRoute[$id] = array_map(function ($one) {
+
+            static $cacheForObj = [];
+
+            if (isset($cacheForObj[$one])) {
+                return $cacheForObj[$one];
+            }
+            return $cacheForObj[$one] = $this->canStable($one) ?: $one;
+
+        }, $this->sortMiddleware($middleware));
+
+    }
+
+    protected function canStable($name)
+    {
+        /*
+         * avoid middlewares with parameters because the execution of obj middleware do not support parameters defined with ':'
+         * see: Pipleline::carry()
+         *      $parameters = [$passable, $stack];
+         */
+        if (mb_strpos($name, ':') !== false) {
+            return false;
+        }
+
+        $concrete = $this->container->make($name);
+
+        if(in_array($name,static::$singletonMiddlewares)) {
+            print("$name\n");
+            return $concrete;
+        }
+
+        try {
+            $reflector = new \ReflectionClass($concrete);
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        if (!$reflector->isInstantiable()) {
+            return $concrete;
+        }
+
+        $constructor = $reflector->getConstructor();
+
+        // no constructor
+        if ($constructor === null) {
+            return $concrete;
+        }
+
+
+        // no parameters?  but there maybe app->make() in the body of the constructor
+//        $dependencies = $constructor->getParameters();
+//        if (!$dependencies) return $concrete;
+
+        // no more going into the parameters
+//        foreach ($dependencies as $dependency) {
+//            $c = $dependency->getClass();
+//        }
+
+        return false;
 
     }
 

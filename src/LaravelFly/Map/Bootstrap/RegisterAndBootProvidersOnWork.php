@@ -13,5 +13,8 @@ class RegisterAndBootProvidersOnWork
         $app->bootOnWorker();
         $app->makeCFServices();
 
+        $app->make('router')::setSingletonMiddlewares(
+            $app->make('config')->get('laravelfly.singleton_route_middlewares', [])
+        );
     }
 }
