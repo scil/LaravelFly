@@ -693,7 +693,7 @@ class Container implements ArrayAccess, ContainerContract
         // hand back the results of the functions, which allows functions to be
         // used as resolvers for more fine-tuned resolution of these objects.
         if ($concrete instanceof Closure) {
-            return $concrete($this, $this->getLastParameterOverride($cid));
+            return $concrete($this, $this->getLastParameterOverride());
         }
 
         $reflector = new ReflectionClass($concrete);
@@ -746,8 +746,8 @@ class Container implements ArrayAccess, ContainerContract
             // If this dependency has a override for this particular build we will use
             // that instead as the value. Otherwise, we will continue with this run
             // of resolutions and let reflection attempt to determine the result.
-            if ($this->hasParameterOverride($dependency, $cid)) {
-                $results[] = $this->getParameterOverride($dependency, $cid);
+            if ($this->hasParameterOverride($dependency)) {
+                $results[] = $this->getParameterOverride($dependency);
 
                 continue;
             }
@@ -769,10 +769,10 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \ReflectionParameter $dependency
      * @return bool
      */
-    protected function hasParameterOverride($dependency, $cid)
+    protected function hasParameterOverride($dependency)
     {
         return array_key_exists(
-            $dependency->name, $this->getLastParameterOverride($cid)
+            $dependency->name, $this->getLastParameterOverride()
         );
     }
 
@@ -782,9 +782,9 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \ReflectionParameter $dependency
      * @return mixed
      */
-    protected function getParameterOverride($dependency, $cid)
+    protected function getParameterOverride($dependency)
     {
-        return $this->getLastParameterOverride($cid)[$dependency->name];
+        return $this->getLastParameterOverride()[$dependency->name];
     }
 
     /**
@@ -792,7 +792,7 @@ class Container implements ArrayAccess, ContainerContract
      *
      * @return array
      */
-    protected function getLastParameterOverride($cid)
+    protected function getLastParameterOverride()
     {
         return count($this->with) ? end($this->with) : [];
     }
