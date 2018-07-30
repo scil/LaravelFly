@@ -130,9 +130,6 @@ class Application extends \Illuminate\Foundation\Application
         //this should be the last line, otherwise $this->make('events') can not work
         parent::unsetForRequestCorontine($cid);
 
-        // no refactor made for buildStack and with. I think these lines useless. Just for safety.
-        $this->buildStack = [];
-        $this->with = [];
     }
 
     public function setProvidersToBootOnWorker($providers)
