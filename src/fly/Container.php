@@ -29,14 +29,16 @@ class Container implements ArrayAccess, ContainerContract
     //todo why public?
 //    public $contextual = [];
 
-    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'
+    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'
 
         // no refactor for coroutine
         // 'buildStack',
+        // 'with',
 
     ];
 
     protected $buildStack = [];
+    protected $with = [];
 
 
     function __construct()
@@ -563,7 +565,7 @@ class Container implements ArrayAccess, ContainerContract
             return static::$corDict[$cid]['instances'][$abstract];
         }
 
-        static::$corDict[$cid]['with'][] = $parameters;
+        $this->with[] = $parameters;
 
         $concrete = $this->getConcrete($abstract, $cid);
 
@@ -597,7 +599,7 @@ class Container implements ArrayAccess, ContainerContract
         // we will be ready to return back the fully constructed class instance.
         static::$corDict[$cid]['resolved'][$abstract] = true;
 
-        array_pop(static::$corDict[$cid]['with']);
+        array_pop($this->with);
 
         return $object;
     }
@@ -792,7 +794,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function getLastParameterOverride($cid)
     {
-        return count(static::$corDict[$cid]['with']) ? end(static::$corDict[$cid]['with']) : [];
+        return count($this->with) ? end($this->with) : [];
     }
 
     /**

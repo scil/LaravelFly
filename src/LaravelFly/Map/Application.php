@@ -40,10 +40,11 @@ class Application extends \Illuminate\Foundation\Application
     protected $cloneServices = [];
     protected $updateForClone = [];
 
-    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
 
         // no refactor for coroutine
         // 'buildStack',
+        // 'with',
 
         'bootingCallbacks',
         'bootedCallbacks',
@@ -106,10 +107,10 @@ class Application extends \Illuminate\Foundation\Application
 
         $this->make('events')->dispatch('request.corinit', [$cid]);
 
-        foreach($this->cloneServices as $service){
+        foreach ($this->cloneServices as $service) {
             $this->instance($service, clone $this->make($service));
         }
-        foreach ($this->updateForClone as $item ){
+        foreach ($this->updateForClone as $item) {
             $item['closure']->call($this->make($item['this']));
         }
     }
@@ -129,8 +130,9 @@ class Application extends \Illuminate\Foundation\Application
         //this should be the last line, otherwise $this->make('events') can not work
         parent::unsetForRequestCorontine($cid);
 
-        // no refactor made for buildStack. I think this line useless. Just for safety.
+        // no refactor made for buildStack and with. I think these lines useless. Just for safety.
         $this->buildStack = [];
+        $this->with = [];
     }
 
     public function setProvidersToBootOnWorker($providers)
@@ -147,7 +149,7 @@ class Application extends \Illuminate\Foundation\Application
 
     public function setCloneServices($services, $update)
     {
-        if ($services){
+        if ($services) {
             $this->cloneServices = $services;
         }
 
@@ -182,7 +184,7 @@ class Application extends \Illuminate\Foundation\Application
 
         $providers = Collection::make($this->providersToBootOnWorker)
             ->partition(function ($provider) {
-                return Str::startsWith($provider, ['Illuminate\\','LaravelFly\\']);
+                return Str::startsWith($provider, ['Illuminate\\', 'LaravelFly\\']);
             });
 
         $providerRepository = new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker());
@@ -294,7 +296,7 @@ class Application extends \Illuminate\Foundation\Application
 
         $concrete = $this->make($name);
 
-        if(in_array($name, $whitelist)) {
+        if (in_array($name, $whitelist)) {
             return $concrete;
         }
 
@@ -329,7 +331,7 @@ class Application extends \Illuminate\Foundation\Application
 
     }
 
-    static $singletonMiddlewares =[];
+    static $singletonMiddlewares = [];
 
     public function setSingletonMiddlewares(array $singletonMiddlewares): void
     {
@@ -339,7 +341,7 @@ class Application extends \Illuminate\Foundation\Application
     function parseMiddlewares($m)
     {
         return array_map(function ($name) {
-            if($this->canStable($name, static::$singletonMiddlewares)){
+            if ($this->canStable($name, static::$singletonMiddlewares)) {
 
                 return $this->app->make($name);
             }
