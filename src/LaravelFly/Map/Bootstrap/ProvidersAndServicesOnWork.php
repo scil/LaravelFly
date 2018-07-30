@@ -4,7 +4,7 @@ namespace LaravelFly\Map\Bootstrap;
 
 use LaravelFly\Map\Application;
 
-class RegisterAndBootProvidersOnWork
+class ProvidersAndServicesOnWork
 {
     public function bootstrap(Application $app)
     {

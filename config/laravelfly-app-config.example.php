@@ -302,6 +302,30 @@ return [
         ]
     ],
 
+    'singleton_route_middlewares' => [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        // todo
+//        \Illuminate\Session\Middleware\StartSession::class,
+        //todo
+//        \Illuminate\Session\Middleware\AuthenticateSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+        //todo
+//        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        //todo
+//        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        //todo
+//        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        //todo
+//        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+    ],
 
     /**
      * Which properties of base services need to backup. Only for Mode Simple
