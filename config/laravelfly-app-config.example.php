@@ -310,8 +310,7 @@ return [
     'singleton_route_middlewares' => [
         \App\Http\Middleware\EncryptCookies::class,
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-        // todo
-//        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\Session\Middleware\StartSession::class, // hacked by LaravelFly\Map\Illuminate\Session\StartSession
         //todo
 //        \Illuminate\Session\Middleware\AuthenticateSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,

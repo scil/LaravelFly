@@ -22,7 +22,7 @@ class SessionServiceProvider extends \Illuminate\Session\SessionServiceProvider
 
         $this->app->singleton(\Illuminate\Session\Middleware\StartSession::class, function ($app) {
             // hack
-            return new StartSession($this->app->make('session'));
+            return new StartSession($app->make('session'));
         });
 
     }
