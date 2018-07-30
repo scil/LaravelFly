@@ -84,13 +84,19 @@ class Kernel extends HttpKernel
         );
 
         foreach ($middlewares as $middleware) {
-            if (!is_string($middleware)) {
+            /**
+             * hack: middlewares not only string, maybe objects now,
+             */
+            if (is_string($middleware)) {
+                list($name) = $this->parseMiddleware($middleware);
+
+                $instance = $this->app->make($name);
+
+            } elseif (is_object($middleware)) {
+                $instance = $middleware;
+            }else{
                 continue;
             }
-
-            list($name) = $this->parseMiddleware($middleware);
-
-            $instance = $this->app->make($name);
 
             if (method_exists($instance, 'terminate')) {
                 $instance->terminate($request, $response);

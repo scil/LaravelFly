@@ -94,4 +94,35 @@ class Kernel extends HttpKernel
         return static::$middlewareInstances ?: (static::$middlewareInstances = $this->app->parseMiddlewares($this->middleware));
     }
 
+    /**
+     * hack: middlewares not only string, maybe objects now,
+     */
+    protected function terminateMiddleware($request, $response)
+    {
+        $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
+            $this->gatherRouteMiddleware($request),
+            // hack
+            // $this->middleware
+            static::$middlewareInstances
+        );
+
+        foreach ($middlewares as $middleware) {
+            if (is_string($middleware)) {
+                list($name) = $this->parseMiddleware($middleware);
+
+                $instance = $this->app->make($name);
+
+            } elseif (is_object($middleware)) {
+                $instance = $middleware;
+            }else{
+                continue;
+            }
+
+
+            if (method_exists($instance, 'terminate')) {
+                $instance->terminate($request, $response);
+            }
+        }
+    }
+
 }
