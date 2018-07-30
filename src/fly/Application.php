@@ -684,7 +684,6 @@ class Application extends \Illuminate\Container\Container implements Application
     {
         $abstract = $this->getAlias($abstract);
 
-        //todo remove deferredServices?
         $cid = \Co::getUid();
         if (isset(static::$corDict[$cid]['deferredServices'][$abstract]) && !isset(static::$corDict[$cid]['instances'][$abstract])) {
             $this->loadDeferredProvider($abstract);

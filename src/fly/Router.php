@@ -2,10 +2,10 @@
 /**
  * add Dict, plus
  *     $middlewareCacheByRoute
- *   and
- *     $middlewareStable ,
- *   note that this feature is totally useless when a route middleware may be registered in a request.
+ *   note that this cache is totally useless when a route middleware may be registered in a request.
  *   so vars are across multple requests, changed in any request would change this var
+ *
+ * update: when LARAVELFLY_SERVICES['routes'], $middlewareStable is useless and cache is used always
  *
  */
 
@@ -561,9 +561,21 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         //hack
         static $middlewareCacheByRoute = [];
-        $id = spl_object_hash($route);
-        if (static::$middlewareStable && isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
-        static::$middlewareStable = true;
+        $id = version_compare(PHP_VERSION, '7.2.0', '>=') ? spl_object_id($route) : spl_object_hash($route);
+        eval(tinker());
+
+        if (LARAVELFLY_SERVICES['routes']) {
+
+            if (isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
+
+        } else {
+
+            if (static::$middlewareStable && isset($middlewareCacheByRoute[$id])) return $middlewareCacheByRoute[$id];
+
+            static::$middlewareStable = true;
+        }
+
+        var_dump('compute middleware');
 
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
             $cid = \Co::getUid();
@@ -666,7 +678,7 @@ class Router implements RegistrarContract, BindingRegistrar
         static::$corDict[\Co::getUid()]['middleware'][$name] = $class;
 
         // hack
-        static::$middlewareStable = false;
+        LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
 
         return $this;
     }
@@ -695,9 +707,8 @@ class Router implements RegistrarContract, BindingRegistrar
     {
         static::$corDict[\Co::getUid()]['middlewareGroups'][$name] = $middleware;
 
-
         // hack
-        static::$middlewareStable = false;
+        LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
 
         return $this;
     }
@@ -718,7 +729,7 @@ class Router implements RegistrarContract, BindingRegistrar
         if (isset(static::$corDict[$cid]['middlewareGroups'][$group]) && !in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
 
             // hack
-            static::$middlewareStable = false;
+            LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
 
             array_unshift(static::$corDict[$cid]['middlewareGroups'][$group], $middleware);
         }
@@ -746,7 +757,7 @@ class Router implements RegistrarContract, BindingRegistrar
         if (!in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
 
             // hack
-            static::$middlewareStable = false;
+            LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
 
             static::$corDict[$cid]['middlewareGroups'][$group][] = $middleware;
         }
