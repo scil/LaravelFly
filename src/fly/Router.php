@@ -1,11 +1,15 @@
 <?php
 /**
  * add Dict, plus
- *     $middlewareCacheByRoute
+ *
+ * 1.    $middlewareCacheByRoute
  *   note that this cache is totally useless when a route middleware may be registered in a request.
  *   so vars are across multple requests, changed in any request would change this var
  *
- * update: when LARAVELFLY_SERVICES['routes'], $middlewareStable is useless and cache is used always
+ *   update: when LARAVELFLY_SERVICES['routes'], $middlewareStable is useless and cache is used always
+ *
+ * 2.   $singletonMiddlewares
+ *
  *
  */
 

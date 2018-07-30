@@ -109,7 +109,7 @@ LaravelFly Mode Simple | slow | service providers reg on work and boot in reques
 - [x] Watching maintenance mode using swoole_event_add. No need to check file storage/framework/down in every request.
 - [x] ~~Cache for global middlewares objects. Kernel::parseMiddlewares, only when LARAVELFLY_SERVICES['kernel'] is true.~~ because maybe the middleware may bind an object which maybe become a stale reference.
 - [x] Cache for route middlewares. $cacheByRoute in Router::gatherRouteMiddleware, only useful when all route middleaes are reg on worker.
-- [x] Cache for route middlewares objects. $cacheForObj in Router::gatherRouteMiddleware, avoid creating instances repeatly.
+- [x] Cache for route middlewares objects. $singletonMiddlewares and $cacheForObj in Router::gatherRouteMiddleware, avoid creating instances repeatly.
 - [x] Cache for event listeners. $listenersStalbe in LaravelFly\Map\IlluminateBase\Dispatcher
 - [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
 - [x] Mysql coroutine
