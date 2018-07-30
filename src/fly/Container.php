@@ -29,7 +29,14 @@ class Container implements ArrayAccess, ContainerContract
     //todo why public?
 //    public $contextual = [];
 
-    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'];
+    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks'
+
+        // no refactor for coroutine
+        // 'buildStack',
+
+    ];
+
+    protected $buildStack = [];
 
 
     function __construct()
@@ -651,8 +658,8 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function findInContextualBindings($abstract, $cid)
     {
-        if (isset(static::$corDict[$cid]['contextual'][end(static::$corDict[$cid]['buildStack'])][$abstract])) {
-            return static::$corDict[$cid]['contextual'][end(static::$corDict[$cid]['buildStack'])][$abstract];
+        if (isset(static::$corDict[$cid]['contextual'][end($this->buildStack)][$abstract])) {
+            return static::$corDict[$cid]['contextual'][end($this->buildStack)][$abstract];
         }
     }
 
@@ -693,10 +700,10 @@ class Container implements ArrayAccess, ContainerContract
         // an abstract type such as an Interface of Abstract Class and there is
         // no binding registered for the abstractions so we need to bail out.
         if (!$reflector->isInstantiable()) {
-            return $this->notInstantiable($concrete, $cid);
+            return $this->notInstantiable($concrete);
         }
 
-        static::$corDict[$cid]['buildStack'][] = $concrete;
+        $this->buildStack[] = $concrete;
 
         $constructor = $reflector->getConstructor();
 
@@ -704,7 +711,7 @@ class Container implements ArrayAccess, ContainerContract
         // we can just resolve the instances of the objects right away, without
         // resolving any other types or dependencies out of these containers.
         if (is_null($constructor)) {
-            array_pop(static::$corDict[$cid]['buildStack']);
+            array_pop($this->buildStack);
 
             return new $concrete;
         }
@@ -718,7 +725,7 @@ class Container implements ArrayAccess, ContainerContract
             $dependencies, $cid
         );
 
-        array_pop(static::$corDict[$cid]['buildStack']);
+        array_pop($this->buildStack);
 
         return $reflector->newInstanceArgs($instances);
     }
@@ -843,10 +850,10 @@ class Container implements ArrayAccess, ContainerContract
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    protected function notInstantiable($concrete, $cid)
+    protected function notInstantiable($concrete)
     {
-        if (!empty(static::$corDict[$cid]['buildStack'])) {
-            $previous = implode(', ', static::$corDict[$cid]['buildStack']);
+        if (! empty($this->buildStack)) {
+            $previous = implode(', ', $this->buildStack);
 
             $message = "Target [$concrete] is not instantiable while building [$previous].";
         } else {

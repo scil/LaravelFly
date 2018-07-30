@@ -40,7 +40,10 @@ class Application extends \Illuminate\Foundation\Application
     protected $cloneServices = [];
     protected $updateForClone = [];
 
-    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+
+        // no refactor for coroutine
+        // 'buildStack',
 
         'bootingCallbacks',
         'bootedCallbacks',
@@ -125,6 +128,9 @@ class Application extends \Illuminate\Foundation\Application
 
         //this should be the last line, otherwise $this->make('events') can not work
         parent::unsetForRequestCorontine($cid);
+
+        // no refactor made for buildStack. I think this line useless. Just for safety.
+        $this->buildStack = [];
     }
 
     public function setProvidersToBootOnWorker($providers)

@@ -74,7 +74,11 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     protected $namespace;
 
-    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'buildStack', 'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+    protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags',  'with', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
+
+        // no refactor for coroutine
+        // 'buildStack',
+
         'bootingCallbacks', 'bootedCallbacks', 'terminatingCallbacks', 'serviceProviders', 'loadedProviders', 'deferredServices'
     ];
     protected static $normalAttriForObj = ['hasBeenBootstrapped' => false, 'booted' => false];
@@ -1088,7 +1092,7 @@ class Application extends \Illuminate\Container\Container implements Application
         parent::flush();
         $cid = \Co::getUid();
 
-        static::$corDict[$cid]['buildStack'] = [];
+        $this->buildStack = [];
         static::$corDict[$cid]['loadedProviders'] = [];
         static::$corDict[$cid]['bootedCallbacks'] = [];
         static::$corDict[$cid]['bootingCallbacks'] = [];
