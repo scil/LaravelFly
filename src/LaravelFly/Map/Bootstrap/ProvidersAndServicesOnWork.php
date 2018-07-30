@@ -13,8 +13,14 @@ class ProvidersAndServicesOnWork
         $app->bootOnWorker();
         $app->makeCFServices();
 
-        $app->make('router')::setSingletonMiddlewares(
+        $router = $app->make('router');
+
+        $router->setSingletonMiddlewares(
             $app->make('config')->get('laravelfly.singleton_route_middlewares', [])
         );
+
+        if( LARAVELFLY_SERVICES['routes'] &&  LARAVELFLY_SERVICES['kernel']){
+           $router->enableMiddlewareAlwaysStable();
+        }
     }
 }

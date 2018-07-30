@@ -101,11 +101,17 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
     /**
      * set true if middlewares keep same in all requests.
      *
-     * Middlewares may be changed by Route::middleware
+     * Middlewares may be changed by Kernel::middleware
      *
      * No need worry about same middlewares are added in requests multiple times,
-     * because there's a check in Illuminate\Foundation\Http::pushMiddleware or prependMiddleware:
+     * because there's a check in Illuminate\Foundation\Http\Kernel::pushMiddleware or prependMiddleware:
      *          if (array_search($middleware, $this->middleware) === false)
+     *
+     * if both of items 'router' and 'kernel' in LARAVELFLY_SERVICES are true, it's supposed that
+     * both of application's middlewares and route middleware keep same,
+     * so Router will make unchanged caches `$cacheByRoute` for middlewares of every route.
+     * code: `$router->enableMiddlewareAlwaysStable()`
+     *
      *
      */
     'kernel' => false,

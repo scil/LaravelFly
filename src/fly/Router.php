@@ -6,7 +6,8 @@
  *   note that this cache is totally useless when a route middleware may be registered in a request.
  *   so vars are across multple requests, changed in any request would change this var
  *
- *   update: when LARAVELFLY_SERVICES['routes'], $middlewareStable is useless and cache is used always
+ *   update: when LARAVELFLY_SERVICES['kernel'] && LARAVELFLY_SERVICES['routes'], $middlewareStable is useless and cache is used always
+ *        $middlewareAlwaysStable
  *
  * 2.   $singletonMiddlewares
  *
@@ -65,7 +66,7 @@ class Router implements RegistrarContract, BindingRegistrar
     /**
      * @param array $singletonMiddlewares
      */
-    public static function setSingletonMiddlewares(array $singletonMiddlewares): void
+    public function setSingletonMiddlewares(array $singletonMiddlewares): void
     {
         self::$singletonMiddlewares = $singletonMiddlewares;
     }
@@ -85,6 +86,7 @@ class Router implements RegistrarContract, BindingRegistrar
         ];
         $this->initOnWorker(false);
     }
+
 
     public function initForRequestCorontine($cid)
     {
@@ -570,20 +572,37 @@ class Router implements RegistrarContract, BindingRegistrar
 
     static $middlewareStable = false;
 
+    static $middlewareAlwaysStable = false;
+
+    /**
+     * @param bool $middlewareAlwaysStable
+     */
+    public function enableMiddlewareAlwaysStable(): void
+    {
+        self::$middlewareAlwaysStable = true;
+    }
+
     public
     function gatherRouteMiddleware(Route $route)
     {
         //hack
-        static $cacheByRoute = [];
+        static $cacheByRoute = [], $used = 0;
         $id = version_compare(PHP_VERSION, '7.2.0', '>=') ? spl_object_id($route) : spl_object_hash($route);
 
-        if (LARAVELFLY_SERVICES['routes']) {
+        if (self::$middlewareAlwaysStable) {
 
-            if (isset($cacheByRoute[$id])) return $cacheByRoute[$id];
+            if (isset($cacheByRoute[$id])) {
+                ++$used;
+                return $cacheByRoute[$id];
+            }
 
         } else {
 
-            if (static::$middlewareStable && isset($cacheByRoute[$id])) return $cacheByRoute[$id];
+            if (static::$middlewareStable && isset($cacheByRoute[$id]))
+            {
+                ++$used;
+                return $cacheByRoute[$id];
+            }
 
             static::$middlewareStable = true;
         }
@@ -749,7 +768,7 @@ class Router implements RegistrarContract, BindingRegistrar
         static::$corDict[\Co::getUid()]['middleware'][$name] = $class;
 
         // hack
-        LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
+        self::$middlewareAlwaysStable || (static::$middlewareStable = false);
 
         return $this;
     }
@@ -779,7 +798,7 @@ class Router implements RegistrarContract, BindingRegistrar
         static::$corDict[\Co::getUid()]['middlewareGroups'][$name] = $middleware;
 
         // hack
-        LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
+        self::$middlewareAlwaysStable || (static::$middlewareStable = false);
 
         return $this;
     }
@@ -800,7 +819,7 @@ class Router implements RegistrarContract, BindingRegistrar
         if (isset(static::$corDict[$cid]['middlewareGroups'][$group]) && !in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
 
             // hack
-            LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
+            self::$middlewareAlwaysStable || (static::$middlewareStable = false);
 
             array_unshift(static::$corDict[$cid]['middlewareGroups'][$group], $middleware);
         }
@@ -828,7 +847,7 @@ class Router implements RegistrarContract, BindingRegistrar
         if (!in_array($middleware, static::$corDict[$cid]['middlewareGroups'][$group])) {
 
             // hack
-            LARAVELFLY_SERVICES['routes'] || (static::$middlewareStable = false);
+            self::$middlewareAlwaysStable || (static::$middlewareStable = false);
 
             static::$corDict[$cid]['middlewareGroups'][$group][] = $middleware;
         }

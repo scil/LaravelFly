@@ -302,6 +302,11 @@ return [
         ]
     ],
 
+    /**
+     * these middlewares are instanced only one time.  For Mode Map.
+     *
+     * References bound in these middlewars are COROUTINE-FRIENDLY services.
+     */
     'singleton_route_middlewares' => [
         \App\Http\Middleware\EncryptCookies::class,
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
