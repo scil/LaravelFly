@@ -59,7 +59,13 @@ class Router implements RegistrarContract, BindingRegistrar
         // see below
     ];
 
-    protected static $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns', 'groupStack'];
+    protected static $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns',
+
+        // no refactor for coroutine
+        // 'groupStack'
+    ];
+
+    protected $groupStack = [];
 
     public function __construct(Dispatcher $events, Container $container = null)
     {
@@ -293,25 +299,23 @@ class Router implements RegistrarContract, BindingRegistrar
 
     public function group(array $attributes, $routes)
     {
-        $cid = \Co::getUid();
-
-        $this->updateGroupStack($attributes, $cid);
+        $this->updateGroupStack($attributes);
 
         // Once we have updated the group stack, we'll load the provided routes and
         // merge in the group's attributes when the routes are created. After we
         // have created the routes, we will pop the attributes off the stack.
         $this->loadRoutes($routes);
 
-        array_pop(static::$corDict[$cid]['groupStack']);
+        array_pop($this->groupStack);
     }
 
-    protected function updateGroupStack(array $attributes, $cid)
+    protected function updateGroupStack(array $attributes)
     {
-        if (!empty(static::$corDict[$cid]['groupStack'])) {
-            $attributes = RouteGroup::merge($attributes, end(static::$corDict[$cid]['groupStack']));
+        if (!empty($this->groupStack)) {
+            $attributes = RouteGroup::merge($attributes, end($this->groupStack));
         }
 
-        static::$corDict[$cid]['groupStack'][] = $attributes;
+        $this->groupStack[] = $attributes;
     }
 
     /**
@@ -322,7 +326,7 @@ class Router implements RegistrarContract, BindingRegistrar
      */
     public function mergeWithLastGroup($new)
     {
-        return RouteGroup::merge($new, end(static::$corDict[\Co::getUid()]['groupStack']));
+        return RouteGroup::merge($new, end($this->groupStack));
     }
 
     protected function loadRoutes($routes)
@@ -338,9 +342,8 @@ class Router implements RegistrarContract, BindingRegistrar
 
     public function getLastGroupPrefix()
     {
-        $cid = \Co::getUid();
-        if (!empty(static::$corDict[$cid]['groupStack'])) {
-            $last = end(static::$corDict[$cid]['groupStack']);
+        if (!empty($this->groupStack)) {
+            $last = end($this->groupStack);
 
             return $last['prefix'] ?? '';
         }
@@ -355,12 +358,12 @@ class Router implements RegistrarContract, BindingRegistrar
 
     protected function createRoute($methods, $uri, $action)
     {
-        $cid = \Co::getUid();
+
         // If the route is routing to a controller we will parse the route action into
         // an acceptable array format before registering it and creating this route
         // instance itself. We need to build the Closure that will call this out.
         if ($this->actionReferencesController($action)) {
-            $action = $this->convertToControllerAction($action, $cid);
+            $action = $this->convertToControllerAction($action);
         }
 
         $route = $this->newRoute(
@@ -374,7 +377,7 @@ class Router implements RegistrarContract, BindingRegistrar
             $this->mergeGroupAttributesIntoRoute($route);
         }
 
-        $this->addWhereClausesToRoute($route, $cid);
+        $this->addWhereClausesToRoute($route);
 
         return $route;
     }
@@ -388,7 +391,7 @@ class Router implements RegistrarContract, BindingRegistrar
         return false;
     }
 
-    protected function convertToControllerAction($action, $cid)
+    protected function convertToControllerAction($action)
     {
         if (is_string($action)) {
             $action = ['uses' => $action];
@@ -397,8 +400,8 @@ class Router implements RegistrarContract, BindingRegistrar
         // Here we'll merge any group "uses" statement if necessary so that the action
         // has the proper clause for this property. Then we can simply set the name
         // of the controller on the action and return the action array for usage.
-        if (!empty(static::$corDict[$cid]['groupStack'])) {
-            $action['uses'] = $this->prependGroupNamespace($action['uses'], $cid);
+        if (!empty($this->groupStack)) {
+            $action['uses'] = $this->prependGroupNamespace($action['uses']);
         }
 
         // Here we will set this controller name on the action array just so we always
@@ -409,9 +412,9 @@ class Router implements RegistrarContract, BindingRegistrar
         return $action;
     }
 
-    protected function prependGroupNamespace($class, $cid)
+    protected function prependGroupNamespace($class)
     {
-        $group = end(static::$corDict[$cid]['groupStack']);
+        $group = end($this->groupStack);
 
         return isset($group['namespace']) && strpos($class, '\\') !== 0
             ? $group['namespace'] . '\\' . $class : $class;
@@ -435,10 +438,10 @@ class Router implements RegistrarContract, BindingRegistrar
         return trim(trim($this->getLastGroupPrefix(), '/') . '/' . trim($uri, '/'), '/') ?: '/';
     }
 
-    protected function addWhereClausesToRoute($route, $cid)
+    protected function addWhereClausesToRoute($route)
     {
         $route->where(array_merge(
-            static::$corDict[$cid]['patterns'], $route->getAction()['where'] ?? []
+            static::$corDict[\Swoole\Coroutine::getuid()]['patterns'], $route->getAction()['where'] ?? []
         ));
 
         return $route;
@@ -838,7 +841,7 @@ class Router implements RegistrarContract, BindingRegistrar
      */
     public function hasGroupStack()
     {
-        return !empty(static::$corDict[\Co::getUid()]['groupStack']);
+        return ! empty($this->groupStack);
     }
 
     /**
@@ -848,7 +851,7 @@ class Router implements RegistrarContract, BindingRegistrar
      */
     public function getGroupStack()
     {
-        return static::$corDict[\Co::getUid()]['groupStack'];
+        return $this->groupStack;
     }
 
     public function input($key, $default = null)
