@@ -43,7 +43,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     {
         $this->app->singleton('blade.compiler', function () {
             if(config('laravelfly.view_compile_1'))
-                // hack
+                // hack: Cache for view compiled path.
                 return new BladeCompiler_1(
                     $this->app['files'], $this->app['config']['view.compiled']
                 );

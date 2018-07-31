@@ -1,5 +1,7 @@
 <?php
 /**
+ * hack: Cache for view compiled path.
+ *
  * add cache for view compiled file path
  *
  * overwrite the methods of the abstract class Illuminate\View\Compilers\Compiler

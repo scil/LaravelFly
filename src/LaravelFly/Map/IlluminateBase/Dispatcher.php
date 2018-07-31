@@ -1,7 +1,7 @@
 <?php
 /**
- * add Dict, plus
- * listeners cache which is across multple requests, changes in any request would change this var
+ * add Dict, plus hack: Cache for event listeners
+ *     listeners cache which is across multple requests, changes in any request would change this var
  *          static $listenersStalbe = [];
  *      this cache will not have performance when Wildcard listeners are added in requests, because :
  *          static::$wildStable
@@ -54,7 +54,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
         static::$corDict[\Co::getUid()]['wildcardsCache'] = [];
 
-        // hack
+        // hack: Cache for event listeners
         static::$wildStable = false;
     }
 
@@ -64,13 +64,13 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         return isset($current['listeners'][$eventName]) || isset($current['wildcards'][$eventName]);
     }
 
-    // hack
+    // hack: Cache for event listeners
     static $listenersStalbe = [];
     static $wildStable = false;
 
     public function getListeners($eventName)
     {
-        // hack
+        // hack: Cache for event listeners
         static $cache = [], $used = 0;
         if (static::$wildStable && !empty(static::$listenersStalbe[$eventName])) {
             ++$used;
@@ -86,7 +86,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
             static::$corDict[\Co::getUid()]['wildcardsCache'][$eventName] ?? $this->getWildcardListeners($eventName)
         );
 
-        // hack
+        // hack: Cache for event listeners
         return $cache[$eventName] = class_exists($eventName, false)
             ? $this->addInterfaceListeners($eventName, $listeners)
             : $listeners;
@@ -126,13 +126,13 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         if (Str::contains($event, '*')) {
             unset(static::$corDict[$cid]['wildcards'][$event]);
 
-            // hack
+            // hack: Cache for event listeners
             static::$wildStable = false;
 
         } else {
             unset(static::$corDict[$cid]['listeners'][$event]);
 
-            //hack
+            // hack: Cache for event listeners
             static::$listenersStalbe[$event] = false;
         }
     }

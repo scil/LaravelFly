@@ -77,19 +77,31 @@ class Kernel extends HttpKernel
 
         return (new Pipeline($this->app))
             ->send($request)
+            // hack: Cache for kernel middlewares objects.
             // ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
             ->through($this->app->shouldSkipMiddleware() ? [] : $this->getParsedKernelMiddlewares())
             ->then($this->dispatchToRouter());
     }
 
     /**
+     * hack: Cache for kernel middlewares objects.
      * middlewars are frozened when the first request goes into Pipeline
-     *
      * @var array
      */
     static $parsedKernelMiddlewares = [];
+
+    /**
+     * hack: Cache for terminateMiddleware objects.
+     * only kernel middlewares here
+     * @var array
+     */
     static $parsedTerminateMiddlewares = [];
 
+    /**
+     * @return array
+     * hack: Cache for kernel middlewares objects.
+     * hack: Cache for terminateMiddleware objects.
+     */
     protected function getParsedKernelMiddlewares():array
     {
         return static::$parsedKernelMiddlewares ?:
@@ -97,7 +109,9 @@ class Kernel extends HttpKernel
     }
 
     /**
-     * hack: middlewares not only string, maybe objects now,
+     * hack: Cache for terminateMiddleware objects.
+     * including kernel middlewares and route middlewares
+     *
      */
     protected function terminateMiddleware($request, $response)
     {
@@ -110,6 +124,7 @@ class Kernel extends HttpKernel
         );
 
         foreach ($middlewares as $middleware) {
+            // hack: middlewares not only string, maybe objects now,
             if (is_string($middleware)) {
                 list($name) = $this->parseMiddleware($middleware);
 
@@ -134,6 +149,7 @@ class Kernel extends HttpKernel
     //hack
 
     /**
+     * hack: Cache for terminateMiddleware objects.
      * @param $request
      * @return array  mixed of objects(middlwares's instances) and strings(middleware's name)
      */

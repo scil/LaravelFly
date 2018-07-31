@@ -1,6 +1,6 @@
 <?php
 /**
- * only for 'log_cache'
+ * only for 'log_cache'.  hack: Cache for Log
  */
 
 /*
@@ -152,7 +152,7 @@ class StreamHandler extends AbstractProcessingHandler
             flock($this->stream, LOCK_EX);
         }
 
-        // hack
+        // hack: Cache for Log
         //$this->streamWrite($this->stream, $record);
         $this->cacheWrite();
 
@@ -161,7 +161,7 @@ class StreamHandler extends AbstractProcessingHandler
         }
     }
 
-    // hack
+    // hack: Cache for Log
     public function cacheWrite()
     {
         fwrite($this->stream, implode('', $this->flyCache) . PHP_EOL);

@@ -583,11 +583,18 @@ class Router implements RegistrarContract, BindingRegistrar
         self::$middlewareAlwaysStable = true;
     }
 
+    /**
+     * @param Route $route
+     * @param bool $terminal hack: Cache for terminateMiddleware objects.
+     * @return array|mixed
+     */
     public
     function gatherRouteMiddleware(Route $route, $terminal = false)
     {
         //hack
-        static $cacheByRoute = [], $used = 0, $cacheForterminate = [];
+        static $used = 0,
+        $cacheByRoute = [],  // hack: Cache for route middlewares.
+        $cacheForterminate = [];// hack: Cache for terminateMiddleware objects. only route middlewares here, no kernel middlewares
 
         $id = version_compare(PHP_VERSION, '7.2.0', '>=') ? spl_object_id($route) : spl_object_hash($route);
 
@@ -616,6 +623,7 @@ class Router implements RegistrarContract, BindingRegistrar
 
         return $cacheByRoute[$id] = array_map(function ($one) use (&$cacheForterminate, $id) {
 
+            // hack: Cache for route middlewares objects.
             static $cacheForObj = [];
 
             if (isset($cacheForObj[$one])) {
@@ -624,6 +632,10 @@ class Router implements RegistrarContract, BindingRegistrar
 
             // store object (middleware's instance)
             if ($instance = $this->container->canStable($one, static::$singletonMiddlewares)) {
+                /**
+                 * hack: Cache for terminateMiddleware objects.
+                 * @var array
+                 */
                 if (method_exists($instance, 'terminate')) {
                     $cacheForterminate[$id][] = $instance;
                 }
@@ -631,7 +643,7 @@ class Router implements RegistrarContract, BindingRegistrar
             }
 
             // store string (middleware's name)
-            $cacheForterminate[$id][] = $one;
+            $cacheForterminate[$id][] = $one; // hack: Cache for terminateMiddleware objects.
             return $cacheForObj[$one] = $one;
 
         }, $this->sortMiddleware($middleware));
