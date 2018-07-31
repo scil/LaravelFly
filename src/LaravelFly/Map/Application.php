@@ -221,9 +221,9 @@ class Application extends \Illuminate\Foundation\Application
         foreach ($this->CFServices as $service) {
             if ($this->bound($service)) $this->make($service);
             else {
-                echo \LaravelFly\Fly::getServer()->colorize(
-                    "[NOTE] $service not bound\n",
-                    'NOTE');
+                \LaravelFly\Fly::getServer()->echo(
+                    "$service not bound",
+                    'NOTE',true);
             }
         }
     }

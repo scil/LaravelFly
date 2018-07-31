@@ -144,6 +144,16 @@ return [
     'tinker' => false,
 
     /**
+     * log message level
+     *
+     * 0: ERR
+     * 1: ERR, WARN
+     * 2: ERR, WARN, NOTE
+     * 3: ERR, WARN, NOTE, INFO
+     */
+    'echo_level' => 1,
+
+    /**
      * this is not for \LaravelFly\Server\WebSocketServer which always uses '0.0.0.0'
      * extend it and overwrite its __construct() if you need different listen_ip,
      */

@@ -20,12 +20,12 @@ Trait DispatchRequestByQuery
         if (empty($options['dispatch_by_query'])) return;
 
         if ($options['worker_num'] == 1) {
-            echo '[INFO] worker_num is 1, dispatch_by_query is useless', PHP_EOL;
+            $this->echo('worker_num is 1, dispatch_by_query is useless','INFO');
             return;
         }
 
         if (isset($options['dispatch_func'])) {
-            echo '[INFO] dispatch_func is set, dispatch_by_query is disabled', PHP_EOL;
+            $this->echo('dispatch_func is set, dispatch_by_query is disabled','INFO');
             return;
         }
 
@@ -42,21 +42,21 @@ Trait DispatchRequestByQuery
             // 'id' or 'Id', neither 'pid' or 'Pid'
             if (strlen($matches[1]) === 2) {
                 $id = (int)($matches[2]) % $swoole_server->setting['worker_num'];
-                echo "[INFO] dispatch worker $id by worker-id={$matches[2]}\n";
+                $this->echo("dispatch worker $id by worker-id={$matches[2]}",'INFO');
                 return $id;
             }
 
             foreach ($swoole_server->fly->getWorkerIds() as $row) {
                 if ($row['pid'] == $matches[2]) {
                     $id = $row['id'];
-                    echo "[INFO] dispatch worker $id by worker-pid={$matches[2]}\n";
+                    $this->echo("dispatch worker $id by worker-pid={$matches[2]}");
                     return $id;
                 }
             }
 
         }
 
-        echo "[INFO] dispatch worker by $fd % {$swoole_server->setting['worker_num']}\n";
+        $this->echo("dispatch worker by $fd % {$swoole_server->setting['worker_num']}");
         return $fd % $swoole_server->setting['worker_num'];
     }
 

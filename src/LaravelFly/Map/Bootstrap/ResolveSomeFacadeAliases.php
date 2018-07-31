@@ -77,7 +77,7 @@ class ResolveSomeFacadeAliases
 
             file_put_contents($cacheFile, '<?php return ' . var_export($aliases, true) . ';' . PHP_EOL);
 
-            echo "[INFO] cache created: $cacheFile\n";
+            \LaravelFly\Fly::getServer()->echo("cache created: $cacheFile");
 
         }
 

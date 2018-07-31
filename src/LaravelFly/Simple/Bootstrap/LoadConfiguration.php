@@ -22,10 +22,10 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         $configCacheAlways = $appConfig['laravelfly.config_cache_always'];
 
         if ($configCacheAlways && file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
-            echo \LaravelFly\Fly::getServer()->colorize(
-                "[NOTE] include: $cacheFile
-                if any configs or composer.json changed, please re-run 'php artisan config:clear'\n",
-                'NOTE'
+            \LaravelFly\Fly::getServer()->echo(
+                "include: $cacheFile
+                if any configs or composer.json changed, please re-run 'php artisan config:clear'",
+                'NOTE',true
             );
             list('psAcross' => $psAcross,
                 'psInRequest' => $psInRequest) = require $cacheFile;
@@ -52,7 +52,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                     ], true) .
                     ';' . PHP_EOL);
 
-                echo "[INFO] cache created: $cacheFile\n";
+                \LaravelFly\Fly::getServer()->echo("cache created: $cacheFile",'INFO');
 
             }
 

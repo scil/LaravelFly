@@ -28,7 +28,9 @@ try {
 } catch (Exception $e) {
     exit("config file not be loaded: $config_file");
 }
-echo "[INFO] conf: $config_file\n";
+
+if ($options['echo_level'] ?? 0 >= 3)
+    echo "[INFO] conf: $config_file\n";
 
 if ($argv[1] == 'start') {
     goto start;

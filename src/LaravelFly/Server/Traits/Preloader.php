@@ -20,23 +20,23 @@ Trait Preloader
 
     protected function preInclude()
     {
-        echo "[INFO] include pre-files", PHP_EOL;
+        $this->echo("include pre-files");
 
         foreach ($this->getClassFiles() as $f) {
             try {
                 $file = realpath($f);
                 if (!is_string($file) || empty($file)) {
-                    echo "..[WARN] Invalid pre-include filename $f provided.\n";
+                    $this->echo(".. Invalid pre-include filename $f provided.",'WARN');
                     continue;
                 }
 
                 if (!is_readable($file)) {
-                    echo "..[WARN] Cannot open pre-include $f for reading.\n";
+                    $this->echo(".. Cannot open pre-include $f for reading.",'WARN');
                     continue;
                 }
 
                 include $file;
-            } catch (VisitorExceptionInterface $e) {
+            } catch (\Exception $e) {
                 //
             }
         }

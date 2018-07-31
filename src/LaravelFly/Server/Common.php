@@ -102,6 +102,16 @@ class Common
 
     protected $colorize = true;
 
+    /**
+     * log message level
+     *
+     * 0: ERR
+     * 1: ERR, WARN
+     * 2: ERR, WARN, NOTE
+     * 3: ERR, WARN, NOTE, INFO
+     */
+    protected $echoLevel = 3;
+
     public function __construct($dispatcher = null)
     {
         $this->dispatcher = $dispatcher ?: new EventDispatcher();
@@ -173,9 +183,10 @@ class Common
         )) {
 
             $kernelClass = \LaravelFly\Kernel::class;
-            echo $this->colorize(
-                "[WARN] LaravelFly default kernel used: $kernelClass, 
-      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md\n", 'WARNING'
+            $this->echo(
+                "LaravelFly default kernel used: $kernelClass, 
+      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md",
+                'WARNING', true
             );
         }
         $this->kernelClass = $kernelClass;
@@ -232,6 +243,9 @@ class Common
 
         if ($this->options['daemonize'])
             $this->colorize = false;
+
+        if ($this->options['echo_level'])
+            $this->echoLevel = (int)$this->options['echo_level'];
 
         $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
@@ -330,24 +344,49 @@ class Common
         $this->atomicMemory[$name]->set((int)$value);
     }
 
+    function echo($text, $status = 'INFO', $color = false)
+    {
+        switch ($status) {
+            case 'INFO':
+                $level = 3;
+                break;
+            case 'NOTE':
+                $level = 2;
+                break;
+            case 'WARN':
+                $level = 1;
+                break;
+            case 'ERR':
+                $level = 0;
+                break;
+            default:
+                $level = 0;
+        }
+        if ($level <= $this->echoLevel) {
+            $text = "[$status] $text\n";
+            echo $color ? $this->colorize($text, $status) : $text;
+        }
+
+    }
+
     function colorize($text, $status)
     {
         if (!$this->colorize) return $text;
 
         $out = "";
         switch ($status) {
-            case "SUCCESS":
-                $out = "[42m"; //Green background
-                break;
-            case "FAILURE":
-                $out = "[41m"; //Red background
-                break;
-            case "WARNING":
+            case "WARN":
                 $out = "[41m"; //Red background
                 break;
             case "NOTE":
                 $out = "[43m"; //Yellow background
                 // $out = "[44m"; //Blue background
+                break;
+            case "SUCCESS":
+                $out = "[42m"; //Green background
+                break;
+            case "ERR":
+                $out = "[41m"; //Red background
                 break;
             default:
                 throw new Exception("Invalid status: " . $status);

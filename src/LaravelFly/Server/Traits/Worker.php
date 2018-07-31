@@ -21,7 +21,7 @@ Trait Worker
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
     {
-        printf("[INFO] event worker.starting for id %u (pid %u)\n", $worker_id, getmypid());
+        $this->echo("event worker.starting for id $worker_id in pid ".getmypid());
 
         $this->dispatcher->dispatch('worker.starting',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]));
@@ -36,7 +36,7 @@ Trait Worker
         $this->dispatcher->dispatch('worker.ready',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
-        echo "[INFO] event worker.ready for id $worker_id\n";
+        $this->echo("event worker.ready for id $worker_id");
 
     }
 
@@ -53,6 +53,8 @@ Trait Worker
         if ($this->getConfig('watch_down')) $this->watchDownFile();
 
         if ($this->getConfig('watch')) $this->watchForHotReload($swoole_server);
+
+        echo "\nServer ready for accepting requests!\n";
     }
 
     protected function watchForHotReload($swoole_server)
@@ -60,7 +62,7 @@ Trait Worker
 
         if (!function_exists('inotify_init')) return;
 
-        echo "[INFO] watch for hot reload.\n";
+        $this->echo("watch for hot reload.");
 
         $fd = inotify_init();
 
@@ -73,11 +75,7 @@ Trait Worker
         foreach ($this->getConfig('watch') as $item) {
 
             if (!file_exists($item)) {
-                echo "[WARN] not exists: $item.\n";
-                echo $this->colorize(
-                    "[WARN]  not exists: $item.\n",
-                    'WARNING'
-                );
+                $this->echo("not exists: $item.",'WARN');
                 continue;
             }
 
@@ -102,7 +100,7 @@ Trait Worker
                 if ($timer !== null) $swoole_server->clearTimer($timer);
 
                 $timer = $swoole_server->after($delay, function () use ($swoole_server) {
-                    echo "[INFO] hot reload\n";
+                    $this->echo("hot reload");
                     $swoole_server->reload();
                 });
 
@@ -128,7 +126,8 @@ Trait Worker
 
         $downFile = $dir . '/down';
 
-        echo "[INFO] watch $downFile.\n";
+        $this->echo("watch $downFile");
+
 
         if (function_exists('inotify_init')) {
 
@@ -152,7 +151,7 @@ Trait Worker
 
     public function onWorkerStop(\swoole_server $server, int $worker_id)
     {
-        echo "[INFO] event worker.stopped for id $worker_id, statcache and opcache cleaned later\n";
+        $this->echo("event worker.stopped for id $worker_id, statcache and opcache cleaned later");
 
         $this->dispatcher->dispatch('worker.stopped',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));

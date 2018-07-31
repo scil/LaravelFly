@@ -22,10 +22,10 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         $configCacheAlways = $appConfig['laravelfly.config_cache_always'];
 
         if ($configCacheAlways && file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
-            echo \LaravelFly\Fly::getServer()->colorize(
-                "[NOTE] include: $cacheFile
-                if any configs or composer.json changed, please re-run 'php artisan config:clear'\n",
-                'NOTE'
+            \LaravelFly\Fly::getServer()->echo(
+                "include: $cacheFile
+                if any configs or composer.json changed, please re-run 'php artisan config:clear'",
+                'NOTE', true
             );
             list('CFServices' => $CFServices,
                 'cloneServices' => $cloneServices,
@@ -116,18 +116,18 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $left_count = count($left);
                 $left = implode(",  ", $left);
 
-                echo "[INFO] $left_count providers not listed in config('laravelfly') and treated as across providers:
-         $left \n";
+                \LaravelFly\Fly::getServer()->echo("$left_count providers not listed in config('laravelfly') and treated as across providers:
+         $left",'NOTE',true);
             }
 
 
             $allClone = implode(", ", array_merge(
-                    LARAVELFLY_SERVICES['routes'] ? ['url(UrlGenerator)'] : ['url(UrlGenerator)', 'routes'],
+                LARAVELFLY_SERVICES['routes'] ? ['url(UrlGenerator)'] : ['url(UrlGenerator)', 'routes'],
                 LARAVELFLY_SERVICES['hash'] ? [] : ['drivers in app("hash")'],
-                    $cloneServices));
-            echo \LaravelFly\Fly::getServer()->colorize(
-                "[NOTE] services to be cloned in each request: [$allClone, ]. An object in your service providers or controllers or any where else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_for_clone').\n",
-                'NOTE'
+                $cloneServices));
+            \LaravelFly\Fly::getServer()->echo(
+                "services to be cloned in each request: [$allClone, ]. An object in your service providers or controllers or any where else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_for_clone').",
+                'NOTE', true
             );
 
             if ($configCacheAlways) {
@@ -143,7 +143,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                     ], true) .
                     ';' . PHP_EOL);
 
-                echo "[INFO] cache created: $cacheFile\n";
+                \LaravelFly\Fly::getServer()->echo("cache created: $cacheFile", 'INFO');
 
             }
 

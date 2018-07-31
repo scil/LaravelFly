@@ -25,8 +25,6 @@ class Fly
         if (null === $dispatcher)
             $dispatcher = new EventDispatcher();
 
-        echo "[INFO] server dispatcher created\n";
-
         $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
         static::$server = new $class($dispatcher);

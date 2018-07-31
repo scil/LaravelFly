@@ -99,7 +99,7 @@ Trait Laravel
         // $this->app->forgetInstance('request');
         Facade::clearResolvedInstance('request');
 
-        printf("[INFO] event laravel.ready with $this->appClass (pid %u)\n", getmypid());
+        $this->echo("event laravel.ready with $this->appClass in pid ".getmypid());
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);
