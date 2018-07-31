@@ -3,10 +3,8 @@
 namespace LaravelFly\Map;
 
 use Exception;
-use Illuminate\Routing\Router;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Facades\Facade;
 use Illuminate\Foundation\Http\Events;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -23,21 +21,22 @@ class Kernel extends HttpKernel
 
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-//        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+
+        // \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
         \LaravelFly\Map\Bootstrap\LoadConfiguration::class,
+
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
 
         \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
 
-//        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-//        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        // \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        // \Illuminate\Foundation\Bootstrap\BootProviders::class,
         \LaravelFly\Map\Bootstrap\RegisterAcrossProviders::class,
         \LaravelFly\Map\Bootstrap\ProvidersAndServicesOnWork::class,
         \LaravelFly\Map\Bootstrap\ResolveSomeFacadeAliases::class,
         \LaravelFly\Map\Bootstrap\ResetServiceProviders::class,
 
     ];
-
 
     public function handle($request)
     {
@@ -112,6 +111,9 @@ class Kernel extends HttpKernel
      * hack: Cache for terminateMiddleware objects.
      * including kernel middlewares and route middlewares
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Response  $response
+     * @return void
      */
     protected function terminateMiddleware($request, $response)
     {
@@ -146,11 +148,9 @@ class Kernel extends HttpKernel
         }
     }
 
-    //hack
-
     /**
      * hack: Cache for terminateMiddleware objects.
-     * @param $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array  mixed of objects(middlwares's instances) and strings(middleware's name)
      */
     protected function gatherRouteTerminateMiddleware($request):array
