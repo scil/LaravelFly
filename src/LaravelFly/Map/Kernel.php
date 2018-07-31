@@ -78,7 +78,7 @@ class Kernel extends HttpKernel
         return (new Pipeline($this->app))
             ->send($request)
             // ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-            ->through($this->app->shouldSkipMiddleware() ? [] : $this->getParsedMiddlewares())
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->getParsedKernelMiddlewares())
             ->then($this->dispatchToRouter());
     }
 
@@ -87,13 +87,13 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    static $middlewareInstances = [];
-    static $terminateMiddlewareInstances = [];
+    static $parsedKernelMiddlewares = [];
+    static $parsedTerminateMiddlewares = [];
 
-    protected function getParsedMiddlewares()
+    protected function getParsedKernelMiddlewares():array
     {
-        return static::$middlewareInstances ?:
-            (static::$middlewareInstances = $this->app->parseMiddlewares($this->middleware,static::$terminateMiddlewareInstances));
+        return static::$parsedKernelMiddlewares ?:
+            (static::$parsedKernelMiddlewares = $this->app->parseKernelMiddlewares($this->middleware,static::$parsedTerminateMiddlewares));
     }
 
     /**
@@ -106,7 +106,7 @@ class Kernel extends HttpKernel
             // $this->gatherRouteMiddleware($request),
             $this->gatherRouteTerminateMiddleware($request),
             // $this->middleware
-            static::$terminateMiddlewareInstances
+            static::$parsedTerminateMiddlewares
         );
 
         foreach ($middlewares as $middleware) {

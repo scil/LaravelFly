@@ -82,7 +82,7 @@ class Kernel extends HttpKernel
     }
 
     //hack
-    protected function gatherRouteTerminateMiddleware($request)
+    protected function gatherRouteTerminateMiddleware($request):array
     {
         if ($route = $request->route()) {
             return $this->router->gatherRouteMiddleware($route,true);
@@ -94,7 +94,9 @@ class Kernel extends HttpKernel
     protected function terminateMiddleware($request, $response)
     {
         $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
+            // hack
             $this->gatherRouteTerminateMiddleware($request),
+            // no cache for kernel middlewares when !LARAVELFLY_SERVICES['kernel'], it's different from src/LaravelFly/Map/Kernel.php
             static::$corDict[\Co::getUid()]['middleware']
         );
 

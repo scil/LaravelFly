@@ -336,14 +336,14 @@ class Application extends \Illuminate\Foundation\Application
     }
 
     /**
-     * @param $m
-     * @param $ter save terminate middlewares
+     * @param array $m Kernel::middleware, not route middlewares
+     * @param array $ter save terminate middlewares
      * @return array mix of objects(canStable) and strings(can not stable)
      */
-    function parseMiddlewares($m, &$ter):array
+    function parseKernelMiddlewares($m, &$ter): array
     {
 
-        return array_map(function ($name) use(&$ter) {
+        return array_map(function ($name) use (&$ter) {
             if ($this->canStable($name, static::$singletonMiddlewares)) {
 
                 $instance = $this->app->make($name);
