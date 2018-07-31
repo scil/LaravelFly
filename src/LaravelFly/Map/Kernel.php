@@ -88,10 +88,12 @@ class Kernel extends HttpKernel
      * @var array
      */
     static $middlewareInstances = [];
+    static $terminateMiddlewareInstances = [];
 
     protected function getParsedMiddlewares()
     {
-        return static::$middlewareInstances ?: (static::$middlewareInstances = $this->app->parseMiddlewares($this->middleware));
+        return static::$middlewareInstances ?:
+            (static::$middlewareInstances = $this->app->parseMiddlewares($this->middleware,static::$terminateMiddlewareInstances));
     }
 
     /**
@@ -100,10 +102,11 @@ class Kernel extends HttpKernel
     protected function terminateMiddleware($request, $response)
     {
         $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
-            $this->gatherRouteMiddleware($request),
             // hack
+            // $this->gatherRouteMiddleware($request),
+            $this->gatherRouteTerminateMiddleware($request),
             // $this->middleware
-            static::$middlewareInstances
+            static::$terminateMiddlewareInstances
         );
 
         foreach ($middlewares as $middleware) {
@@ -118,11 +121,30 @@ class Kernel extends HttpKernel
                 continue;
             }
 
+//            var_dump(get_class($instance));
+//            var_dump(\Request::url());
+//            eval(tinker());
 
             if (method_exists($instance, 'terminate')) {
                 $instance->terminate($request, $response);
             }
         }
     }
+
+    //hack
+
+    /**
+     * @param $request
+     * @return array  mixed of objects(middlwares's instances) and strings(middleware's name)
+     */
+    protected function gatherRouteTerminateMiddleware($request):array
+    {
+        if ($route = $request->route()) {
+            return $this->router->gatherRouteMiddleware($route,true);
+        }
+
+        return [];
+    }
+
 
 }

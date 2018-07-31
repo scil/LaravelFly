@@ -62,7 +62,8 @@ class Router implements RegistrarContract, BindingRegistrar
     protected static $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns', 'groupStack'];
 
     //hack
-    static $singletonMiddlewares=[];
+    static $singletonMiddlewares = [];
+
     /**
      * @param array $singletonMiddlewares
      */
@@ -583,45 +584,55 @@ class Router implements RegistrarContract, BindingRegistrar
     }
 
     public
-    function gatherRouteMiddleware(Route $route)
+    function gatherRouteMiddleware(Route $route, $terminal = false)
     {
         //hack
-        static $cacheByRoute = [], $used = 0;
+        static $cacheByRoute = [], $used = 0, $cacheForterminate = [];
+
         $id = version_compare(PHP_VERSION, '7.2.0', '>=') ? spl_object_id($route) : spl_object_hash($route);
 
-        if (self::$middlewareAlwaysStable) {
+        if ((self::$middlewareAlwaysStable || static::$middlewareStable)
+            &&
+            isset($cacheByRoute[$id])) {
 
-            if (isset($cacheByRoute[$id])) {
-                ++$used;
-                return $cacheByRoute[$id];
-            }
+            ++$used;
+            return $terminal ? $cacheForterminate[$id] : $cacheByRoute[$id];
+            // return $cacheByRoute[$id];
 
-        } else {
-
-            if (static::$middlewareStable && isset($cacheByRoute[$id]))
-            {
-                ++$used;
-                return $cacheByRoute[$id];
-            }
-
-            static::$middlewareStable = true;
         }
+
+        self::$middlewareAlwaysStable || (static::$middlewareStable = true);
 
         $middleware = collect($route->gatherMiddleware())->map(function ($name) {
             $cid = \Co::getUid();
             return (array)MiddlewareNameResolver::resolve($name, static::$corDict[$cid]['middleware'], static::$corDict[$cid]['middlewareGroups']);
         })->flatten();
 
-        // return $middlewareCacheByRoute[$id] = $this->sortMiddleware($middleware);
 
-        return $cacheByRoute[$id] = array_map(function ($one) {
+        // if no cache found for current route's terminal middlewares, return just now. no more making any cache.
+        if ($terminal) {
+            return $this->sortMiddleware($middleware);
+        }
+
+        return $cacheByRoute[$id] = array_map(function ($one) use (&$cacheForterminate, $id) {
 
             static $cacheForObj = [];
 
             if (isset($cacheForObj[$one])) {
                 return $cacheForObj[$one];
             }
-            return $cacheForObj[$one] = $this->container->canStable($one, static::$singletonMiddlewares) ?: $one;
+
+            // store object (middleware's instance)
+            if ($instance = $this->container->canStable($one, static::$singletonMiddlewares)) {
+                if (method_exists($instance, 'terminate')) {
+                    $cacheForterminate[$id][] = $instance;
+                }
+                return $cacheForObj[$one] = $instance;
+            }
+
+            // store string (middleware's name)
+            $cacheForterminate[$id][] = $one;
+            return $cacheForObj[$one] = $one;
 
         }, $this->sortMiddleware($middleware));
 

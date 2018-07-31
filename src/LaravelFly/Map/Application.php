@@ -335,15 +335,27 @@ class Application extends \Illuminate\Foundation\Application
         self::$singletonMiddlewares = $singletonMiddlewares;
     }
 
-    function parseMiddlewares($m)
+    /**
+     * @param $m
+     * @param $ter save terminate middlewares
+     * @return array mix of objects(canStable) and strings(can not stable)
+     */
+    function parseMiddlewares($m, &$ter):array
     {
-        return array_map(function ($name) {
+
+        return array_map(function ($name) use(&$ter) {
             if ($this->canStable($name, static::$singletonMiddlewares)) {
 
-                return $this->app->make($name);
+                $instance = $this->app->make($name);
+                if (method_exists($instance, 'terminate')) {
+                    $ter[] = $instance;
+                }
+                return $instance;
             }
+            $ter[] = $name;
             return $name;
         }, $m);
+
     }
 
 }

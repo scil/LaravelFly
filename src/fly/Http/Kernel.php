@@ -1,4 +1,9 @@
 <?php
+/**
+ * Dict
+ * plus
+ * gatherRouteTerminateMiddleware // search 'hack' in this file
+ */
 
 namespace LaravelFly\Map;
 
@@ -76,10 +81,20 @@ class Kernel extends HttpKernel
         return $this;
     }
 
+    //hack
+    protected function gatherRouteTerminateMiddleware($request)
+    {
+        if ($route = $request->route()) {
+            return $this->router->gatherRouteMiddleware($route,true);
+        }
+
+        return [];
+    }
+
     protected function terminateMiddleware($request, $response)
     {
         $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
-            $this->gatherRouteMiddleware($request),
+            $this->gatherRouteTerminateMiddleware($request),
             static::$corDict[\Co::getUid()]['middleware']
         );
 
