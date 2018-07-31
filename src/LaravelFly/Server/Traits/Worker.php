@@ -7,6 +7,11 @@ use Storage;
 
 Trait Worker
 {
+    /**
+     * only for echo msg
+     * @var bool
+     */
+    protected $notReady = true;
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
@@ -21,7 +26,7 @@ Trait Worker
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
     {
-        $this->echo("event worker.starting for id $worker_id in pid ".getmypid());
+        $this->echo("event worker.starting for id $worker_id in pid " . getmypid());
 
         $this->dispatcher->dispatch('worker.starting',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id]));
@@ -54,7 +59,10 @@ Trait Worker
 
         if ($this->getConfig('watch')) $this->watchForHotReload($swoole_server);
 
-        echo "\nServer ready for accepting requests!\n";
+        if ($this->notReady) {
+            $this->notReady = false;
+            echo "\nServer ready for accepting requests!\n";
+        }
     }
 
     protected function watchForHotReload($swoole_server)
@@ -75,7 +83,7 @@ Trait Worker
         foreach ($this->getConfig('watch') as $item) {
 
             if (!file_exists($item)) {
-                $this->echo("not exists: $item.",'WARN');
+                $this->echo("not exists: $item.", 'WARN');
                 continue;
             }
 
