@@ -61,18 +61,6 @@ class Router implements RegistrarContract, BindingRegistrar
 
     protected static $arrayAttriForObj = ['middleware', 'middlewareGroups', 'middlewarePriority', 'binders', 'patterns', 'groupStack'];
 
-    // hack: Cache for route middlewares objects.
-    static $singletonMiddlewares = [];
-
-    /**
-     * hack: Cache for route middlewares objects.
-     * @param array $middlewares
-     */
-    public function setSingletonMiddlewares(array $middlewares): void
-    {
-        self::$singletonMiddlewares = $middlewares;
-    }
-
     public function __construct(Dispatcher $events, Container $container = null)
     {
         $this->events = $events;
@@ -613,6 +601,18 @@ class Router implements RegistrarContract, BindingRegistrar
 
         }, $this->sortMiddleware($middleware));
 
+    }
+
+    // hack: Cache for route middlewares objects.
+    static $singletonMiddlewares = [];
+
+    /**
+     * hack: Cache for route middlewares objects.
+     * @param array $middlewares
+     */
+    public function setSingletonMiddlewares(array $middlewares): void
+    {
+        self::$singletonMiddlewares = $middlewares;
     }
 
 
