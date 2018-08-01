@@ -2,15 +2,8 @@
 
 namespace LaravelFly\Map\Illuminate\Database;
 
-use Faker\Factory as FakerFactory;
-use Faker\Generator as FakerGenerator;
-//use Illuminate\Database\DatabaseManager;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Contracts\Queue\EntityResolver;
-//use Illuminate\Database\Connectors\ConnectionFactory;
-use Illuminate\Database\Eloquent\QueueEntityResolver;
-use Illuminate\Database\Eloquent\Factory as EloquentFactory;
+use Hhxsv5\LaravelS\Illuminate\Database\ConnectionFactory;
+use Hhxsv5\LaravelS\Illuminate\Database\DatabaseManager;
 
 class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvider
 {
@@ -28,7 +21,7 @@ class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvid
     {
         // hack
         $this->app->singleton('db.factory', function ($app) {
-            return new Connectors\ConnectionFactory($app);
+            return new ConnectionFactory($app);
         });
 
         // hack
