@@ -39,6 +39,7 @@ class SuperGlobalVarsTest extends MapTestCase
        -path ./vendor/predis/predis/examples  -prune -o   \
        -path ./vendor/scil/laravel-fly -prune -o   \
        -path ./vendor/scil/laravel-fly-local -prune -o   \
+       -path ./vendor/hhxsv5/laravel-s -prune -o   \
        -path ./vendor/sebastian/global-state -prune -o   \
        -path  ./vendor/symfony/http-foundation/Tests  -prune -o  \
        -path ./vendor/symfony/http-foundation  -prune -o  \

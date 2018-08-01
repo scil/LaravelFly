@@ -40,7 +40,7 @@ class FlyFilesTest extends MapTestCase
         foreach ($map as $f => $originLocation) {
             self::assertEquals(true, is_file($this->flyDir . $f), "{$this->flyDir}.$f");
             self::assertEquals(true, is_file($this->backOfficalDir . $f));
-            //var_dump($originLocation);
+            // var_dump(static::$workingRoot . $originLocation);
             self::assertEquals(true, is_file(static::$workingRoot . $originLocation));
         }
     }

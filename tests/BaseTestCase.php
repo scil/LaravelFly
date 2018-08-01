@@ -3,6 +3,7 @@
 
 /**
  ** first:
+ ** cd laravel_fly_root && composer update
  ** cd laravel_project_root
  *
  ** Mode simple
@@ -85,7 +86,6 @@ abstract class BaseTestCase extends TestCase
         static::$default = array_merge([
             'mode' => 'Map',
             'conf' => null, // server config file
-            'colorize' => true,
         ], $d);
     }
 

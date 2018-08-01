@@ -61,9 +61,19 @@ class ObjectsInWorkerTest extends MapTestCase
     ];
 
     protected $allStaticProperties = [
-        'app' => ['instance'],
-        'Illuminate\Foundation\Container' => ['instance'],
-        'router' => ['macros', 'verbs'],
+        'app' => [
+            'instance',
+            'singletonMiddlewares'
+        ],
+        'Illuminate\Foundation\Container' => [
+            'instance',
+            'singletonMiddlewares'
+        ],
+        'router' => ['macros',
+            'middlewareAlwaysStable',
+            'middlewareStable',
+            'singletonMiddlewares',
+            'verbs'],
         'files' => ['macros'],
         'view' => ['parentPlaceholder'],
         'url' => ['macros'],
@@ -82,7 +92,11 @@ class ObjectsInWorkerTest extends MapTestCase
             'trustedHostPatterns',
             'trustedHosts',
             'trustedProxies',
-        ]
+        ],
+
+        'events' => [
+            'listenersStalbe', 'wildStable'
+        ],
     ];
 
     static function initConfig()
@@ -107,49 +121,54 @@ class ObjectsInWorkerTest extends MapTestCase
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
-        $r = self::createFlyServerInProcess(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1], function ($server) use ($chan) {
+        $r = self::createFlyServerInProcess(
+            [
+                'LARAVELFLY_MODE' => 'Map',
+            ],
+            ['worker_num' => 1],
+            function ($server) use ($chan) {
 
-            $dispatcher = $server->getDispatcher();
+                $dispatcher = $server->getDispatcher();
 
-            $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($chan) {
-                $appR = new \ReflectionObject($event['app']);
-                $corDictR = $appR->getProperty('corDict');
-                $corDictR->setAccessible(true);
-                $instances = $corDictR->getValue()[WORKER_COROUTINE_ID]['instances'];
+                $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($chan) {
+                    $appR = new \ReflectionObject($event['app']);
+                    $corDictR = $appR->getProperty('corDict');
+                    $corDictR->setAccessible(true);
+                    $instances = $corDictR->getValue()[WORKER_COROUTINE_ID]['instances'];
 
-                $chan->push(array_keys($instances));
+                    $chan->push(array_keys($instances));
 
-                $allStaticProperties = [];
-                foreach ($instances as $name => $instance) {
-                    if (!is_object($instance)) continue;
-                    $instanceR = new \ReflectionObject($instance);
-                    $staticProperties = array_keys($instanceR->getStaticProperties());
-                    if ($staticProperties) {
-                        $clean = array_diff($staticProperties, ['corDict', 'corStaticDict',
-                            'normalAttriForObj', 'arrayAttriForObj', 'normalStaticAttri', 'arrayStaticAttri'
-                        ]);
-                        if ($clean) {
-                            sort($clean); // force it index from 0 ,otherwise self::assertEqual fail
-                            $allStaticProperties[$name] = $clean;
+                    $allStaticProperties = [];
+                    foreach ($instances as $name => $instance) {
+                        if (!is_object($instance)) continue;
+                        $instanceR = new \ReflectionObject($instance);
+                        $staticProperties = array_keys($instanceR->getStaticProperties());
+                        if ($staticProperties) {
+                            $clean = array_diff($staticProperties, ['corDict', 'corStaticDict',
+                                'normalAttriForObj', 'arrayAttriForObj', 'normalStaticAttri', 'arrayStaticAttri'
+                            ]);
+                            if ($clean) {
+                                sort($clean); // force it index from 0 ,otherwise self::assertEqual fail
+                                $allStaticProperties[$name] = $clean;
+                            }
                         }
                     }
-                }
-                $chan->push($allStaticProperties);
+                    $chan->push($allStaticProperties);
 
-                $bladeR = new \ReflectionClass(BladeCompiler_1::class);
-                $s = $bladeR->getStaticProperties();
-                if ($s) {
-                    $names = array_keys($s);
-                    $chan->push($names);
-                }
+                    $bladeR = new \ReflectionClass(BladeCompiler_1::class);
+                    $s = $bladeR->getStaticProperties();
+                    if ($s) {
+                        $names = array_keys($s);
+                        $chan->push($names);
+                    }
 
 //                $event['server']->getSwooleServer()->shutdown();
-            });
+                });
 
-            $server->start();
+                $server->start();
 
 
-        }, 8);
+            }, 8);
 
     }
 
@@ -164,7 +183,7 @@ class ObjectsInWorkerTest extends MapTestCase
         var_dump(array_diff($instances, $this->instances));
 
         sort($instances);
-        $exp =  $this->instances;
+        $exp = $this->instances;
         sort($exp);
         //self::assertEquals($exp, $instances);
 
