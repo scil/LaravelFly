@@ -19,13 +19,13 @@ class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvid
      */
     protected function registerConnectionServices()
     {
-        // hack
         $this->app->singleton('db.factory', function ($app) {
+            // hack
             return new ConnectionFactory($app);
         });
 
-        // hack
         $this->app->singleton('db', function ($app) {
+            // hack
             return new DatabaseManager($app, $app['db.factory']);
         });
 
