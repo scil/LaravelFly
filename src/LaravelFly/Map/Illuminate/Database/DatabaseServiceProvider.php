@@ -2,7 +2,7 @@
 
 namespace LaravelFly\Map\Illuminate\Database;
 
-use Hhxsv5\LaravelS\Illuminate\Database\ConnectionFactory;
+//use Hhxsv5\LaravelS\Illuminate\Database\ConnectionFactory;
 use Hhxsv5\LaravelS\Illuminate\Database\DatabaseManager;
 
 class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvider
