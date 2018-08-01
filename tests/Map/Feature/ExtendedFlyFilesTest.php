@@ -12,6 +12,9 @@ class ExtendedFlyFilesTest extends MapTestCase
         'extended/partfile/CookieJarSame.php' => '/vendor/laravel/framework/src/Illuminate/Cookie/CookieJar.php',
 
         'extended/partfile/CookieSessionHandler.php' => '/vendor/laravel/framework/src/Illuminate/Session/CookieSessionHandler.php',
+        'extended/partfile/DatabaseSessionHandler.php' => '/vendor/laravel/framework/src/Illuminate/Session/DatabaseSessionHandler.php',
+
+        'extended/partfile/Compiler.php' => '/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php',
     ];
 
     var $map = [
@@ -46,6 +49,31 @@ class ExtendedFlyFilesTest extends MapTestCase
 
     ];
 
+    function testPart()
+    {
+        $this->assertEquals(5, count($this->partFileMap));
+        foreach ($this->partFileMap as $partFile => $offcial) {
+            $partFile = $this->backOfficalDir . $partFile;
+            $offcial = static::$laravelAppRoot . $offcial;
+            $parts = explode('===A===', file_get_contents($partFile));
+            $full = file_get_contents($offcial);
+            $full = preg_replace('/\s+/',' ',$full);
+            foreach ($parts as $part) {
+                $this->difOnePart($part, $full, $partFile);
+            }
+
+        }
+
+    }
+
+    function difOnePart($part, $full,$file)
+    {
+        $part = preg_replace('/\s+/',' ',$part);
+
+        $pos = strpos($full,$part);
+        // var_dump($pos);
+        self::assertNotFalse($pos,"$part\n\nin:\n$file");
+    }
 
     function testFiles()
     {
