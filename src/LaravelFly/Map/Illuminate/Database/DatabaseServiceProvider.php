@@ -26,16 +26,12 @@ class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvid
      */
     protected function registerConnectionServices()
     {
-        // The connection factory is used to create the actual connection instances on
-        // the database. We will inject the factory into the manager so that it may
-        // make the connections while they are actually needed and not of before.
+        // hack
         $this->app->singleton('db.factory', function ($app) {
-            return new \LaravelFly\Map\Illuminate\Database\Connectors\ConnectionFactory($app);
+            return new Connectors\ConnectionFactory($app);
         });
 
-        // The database manager is used to resolve various connections, since multiple
-        // connections might be managed. It also implements the connection resolver
-        // interface which may be used by other components requiring connections.
+        // hack
         $this->app->singleton('db', function ($app) {
             return new DatabaseManager($app, $app['db.factory']);
         });
@@ -45,33 +41,5 @@ class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvid
         });
     }
 
-    /**
-     * Register the Eloquent factory instance in the container.
-     *
-     * @return void
-     */
-    protected function registerEloquentFactory()
-    {
-        $this->app->singleton(FakerGenerator::class, function ($app) {
-            return FakerFactory::create($app['config']->get('app.faker_locale', 'en_US'));
-        });
 
-        $this->app->singleton(EloquentFactory::class, function ($app) {
-            return EloquentFactory::construct(
-                $app->make(FakerGenerator::class), $this->app->databasePath('factories')
-            );
-        });
-    }
-
-    /**
-     * Register the queueable entity resolver implementation.
-     *
-     * @return void
-     */
-    protected function registerQueueableEntityResolver()
-    {
-        $this->app->singleton(EntityResolver::class, function () {
-            return new QueueEntityResolver;
-        });
-    }
 }

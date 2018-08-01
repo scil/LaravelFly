@@ -11,7 +11,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 - Same codes can run on PHP-FPM or LaravelFly
 
-- To be absolutely safe, put your code under control.
+- To be absolutely safe, put your code under control. Coroutine is fully supported (code execution can jump from one request to another).
 
 - A laravel service that made before any requests can 
   - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it COROUTINE-FRIENDLY SERVICE 
@@ -98,6 +98,10 @@ The main difference is that in laravel-swoole user's code will be processed by a
 laravel-swoole  | slow | clone app contaniner and objects to make them safe |  yes | no | more work (app,event...are cloned)
 LaravelFly Mode Map | fast | refactor most official objects to make them safe on their own |  yes  | yes  | few work (only url is cloned by default)
 LaravelFly Mode Simple | slow | service providers reg on work and boot in requests | yes | yes | no work 
+
+### 2. [laravel-s](https://github.com/hhxsv5/laravel-s)
+
+Same technique and problems as laravel-swoole. And neither support coroutine jumping (from one request to another request). 
 
 
 ## Todo About Improvement
