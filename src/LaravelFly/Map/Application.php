@@ -200,7 +200,7 @@ class Application extends \Illuminate\Foundation\Application
         return $this->bootstrapPath() . '/cache/laravelfly_services_across.json';
     }
 
-    public function registerConfiguredProvidersBootOnWorker()
+    public function registerWorkerProviders()
     {
 
         $providers = Collection::make($this->providersToBootOnWorker)
@@ -209,6 +209,7 @@ class Application extends \Illuminate\Foundation\Application
             });
 
         $providerRepository = new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathBootOnWorker());
+
         $providerRepository->loadForWorker($providers->collapse()->toArray());
 
     }
@@ -270,6 +271,9 @@ class Application extends \Illuminate\Foundation\Application
 
     }
 
+    /**
+     * for the proper execution of registerConfiguredProvidersInRequest
+     */
     public function resetServiceProviders()
     {
         $this->backedServiceProviders = array_merge(

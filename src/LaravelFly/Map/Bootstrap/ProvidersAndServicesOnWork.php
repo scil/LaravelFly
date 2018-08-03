@@ -9,7 +9,7 @@ class ProvidersAndServicesOnWork
     public function bootstrap(Application $app)
     {
 
-        $app->registerConfiguredProvidersBootOnWorker();
+        $app->registerWorkerProviders();
         $app->bootOnWorker();
         $app->makeCFServices();
 

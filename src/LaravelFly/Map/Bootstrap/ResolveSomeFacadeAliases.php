@@ -16,7 +16,6 @@ class ResolveSomeFacadeAliases
         // and Schema::getFacadeAccessor() returns an object, there's no need to resolve it
         'Schema',
 
-        //why 'url' has made? when? \Illuminate\Routing\RoutingServiceProvider
         // 'url' is cloned in each request, so there's no need to resolve it
         'URL',
     ];

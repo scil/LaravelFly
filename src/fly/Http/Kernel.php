@@ -42,7 +42,7 @@ class Kernel extends HttpKernel
         \LaravelFly\Map\Bootstrap\RegisterAcrossProviders::class,
         \LaravelFly\Map\Bootstrap\ProvidersAndServicesOnWork::class,
         \LaravelFly\Map\Bootstrap\ResolveSomeFacadeAliases::class,
-        \LaravelFly\Map\Bootstrap\ResetServiceProviders::class,
+        \LaravelFly\Map\Bootstrap\CleanServiceProvidersOrFacade::class,
 
     ];
 
