@@ -32,9 +32,9 @@ class Kernel extends HttpKernel
         // \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
         // \Illuminate\Foundation\Bootstrap\BootProviders::class,
         \LaravelFly\Map\Bootstrap\RegisterAcrossProviders::class,
-        \LaravelFly\Map\Bootstrap\ProvidersAndServicesOnWork::class,
+        \LaravelFly\Map\Bootstrap\OnWork::class,
         \LaravelFly\Map\Bootstrap\ResolveSomeFacadeAliases::class,
-        \LaravelFly\Map\Bootstrap\CleanServiceProvidersOrFacade::class,
+        \LaravelFly\Map\Bootstrap\CleanOnWorker::class,
 
     ];
 
@@ -68,7 +68,7 @@ class Kernel extends HttpKernel
     {
         $this->app->instance('request', $request);
 
-        // moved to CleanServiceProvidersOrFacade. After that, no much need to clear in each request.
+        // moved to \LaravelFly\Map\Bootstrap\CleanOnWorker. After that, no much need to clear in each request.
         // Facade::clearResolvedInstance('request');
 
         // replace $this->bootstrap();
@@ -101,18 +101,18 @@ class Kernel extends HttpKernel
      * hack: Cache for kernel middlewares objects.
      * hack: Cache for terminateMiddleware objects.
      */
-    protected function getParsedKernelMiddlewares():array
+    protected function getParsedKernelMiddlewares(): array
     {
         return static::$parsedKernelMiddlewares ?:
-            (static::$parsedKernelMiddlewares = $this->app->parseKernelMiddlewares($this->middleware,static::$parsedTerminateMiddlewares));
+            (static::$parsedKernelMiddlewares = $this->app->parseKernelMiddlewares($this->middleware, static::$parsedTerminateMiddlewares));
     }
 
     /**
      * hack: Cache for terminateMiddleware objects.
      * including kernel middlewares and route middlewares
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Http\Response  $response
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Response $response
      * @return void
      */
     protected function terminateMiddleware($request, $response)
@@ -120,13 +120,16 @@ class Kernel extends HttpKernel
         $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
             // hack
             // $this->gatherRouteMiddleware($request),
-            $this->gatherRouteTerminateMiddleware($request),
+            $this->app->gatherRouteTerminateMiddleware($request),
+
             // $this->middleware
             static::$parsedTerminateMiddlewares
         );
 
         foreach ($middlewares as $middleware) {
-            // hack: middlewares not only string, maybe objects now,
+            /**
+             * hack: middlewares not only string, maybe objects now,
+             */
             if (is_string($middleware)) {
                 list($name) = $this->parseMiddleware($middleware);
 
@@ -134,32 +137,14 @@ class Kernel extends HttpKernel
 
             } elseif (is_object($middleware)) {
                 $instance = $middleware;
-            }else{
+            } else {
                 continue;
             }
-
-//            var_dump(get_class($instance));
-//            var_dump(\Request::url());
-//            eval(tinker());
 
             if (method_exists($instance, 'terminate')) {
                 $instance->terminate($request, $response);
             }
         }
-    }
-
-    /**
-     * hack: Cache for terminateMiddleware objects.
-     * @param  \Illuminate\Http\Request  $request
-     * @return array  mixed of objects(middlwares's instances) and strings(middleware's name)
-     */
-    protected function gatherRouteTerminateMiddleware($request):array
-    {
-        if ($route = $request->route()) {
-            return $this->router->gatherRouteMiddleware($route,true);
-        }
-
-        return [];
     }
 
 

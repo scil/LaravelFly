@@ -425,6 +425,20 @@ class Application extends \Illuminate\Foundation\Application
 
     }
 
+    /**
+     * hack: Cache for terminateMiddleware objects.
+     * @param  \Illuminate\Http\Request $request
+     * @return array  mixed of objects(middlwares's instances) and strings(middleware's name)
+     */
+    function gatherRouteTerminateMiddleware($request): array
+    {
+        if ($route = $request->route()) {
+            return $this->router->gatherRouteMiddleware($route, true);
+        }
+
+        return [];
+    }
+
 
     //BEGIN for bootingCallbacks
     //the prop, bootingCallbacks's refactor is made for Map\Application, but kept in fly\Application

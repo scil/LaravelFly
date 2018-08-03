@@ -5,7 +5,7 @@ namespace LaravelFly\Map\Bootstrap;
 use LaravelFly\Map\Application;
 use Illuminate\Support\Facades\Facade;
 
-class CleanServiceProvidersOrFacade
+class CleanOnWorker
 {
     public function bootstrap(Application $app)
     {
