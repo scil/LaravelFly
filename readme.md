@@ -17,7 +17,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
   - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it COROUTINE-FRIENDLY SERVICE 
   - or to be cloned in each request (one instance in one request).LaravelFly named it CLONE SERVICE. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference).
   
-- Extra speed improvements such as middleeares cache, view path cache.
+- Extra speed improvements such as middlewares cache, view path cache.
 
 - View server info at /laravel-fly/info. (This feture is under dev and more infomations will be available.)
 
@@ -101,7 +101,9 @@ LaravelFly Mode Simple | slow | service providers reg on work and boot in reques
 
 ### 2. [laravel-s](https://github.com/hhxsv5/laravel-s)
 
-Same technique and problems as laravel-swoole. And neither support coroutine jumping (from one request to another request). 
+Many great features!
+
+About data pollution? Same technique and problems as laravel-swoole. And neither support coroutine jumping (from one request to another request). 
 
 
 ## Todo About Improvement
@@ -117,13 +119,11 @@ Same technique and problems as laravel-swoole. And neither support coroutine jum
 - [x] Cache for terminateMiddleware objects.
 - [x] Cache for event listeners. $listenersStalbe in LaravelFly\Map\IlluminateBase\Dispatcher
 - [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
-- [x] Mysql coroutine
+- [x] Mysql coroutine. Old code dropped, laravel-s used.
 - [ ] Mysql connection pool
 - [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
-- [ ] safe: router, remove middleware?
 - [ ] safe: auth, remove some props?
-- [ ] check memory usage in Mode Map
 
 ## Other Todo
 

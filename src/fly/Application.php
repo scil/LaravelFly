@@ -80,7 +80,8 @@ class Application extends \Illuminate\Container\Container implements Application
         // 'buildStack',
         // 'with',
 
-        'bootingCallbacks', 'bootedCallbacks', 'terminatingCallbacks', 'serviceProviders', 'loadedProviders', 'deferredServices'
+        'bootingCallbacks',
+        'bootedCallbacks', 'terminatingCallbacks', 'serviceProviders', 'loadedProviders', 'deferredServices'
     ];
     protected static $normalAttriForObj = ['hasBeenBootstrapped' => false, 'booted' => false];
 

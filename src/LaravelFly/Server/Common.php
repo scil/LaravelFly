@@ -92,7 +92,7 @@ class Common
     /**
      * @var string
      */
-    protected $appClass;
+    protected $appClass = '\LaravelFly\Map\Application';
 
     /**
      * @var string
@@ -170,10 +170,12 @@ class Common
             $options['pid_file'] = $this->root . '/bootstrap/laravel-fly-' . $options['listen_port'] . '.pid';
         }
 
-        $this->appClass = '\LaravelFly\\' . $options['mode'] . '\Application';
+        $appClass = '\LaravelFly\\' . $options['mode'] . '\Application';
 
-        if (!class_exists($this->appClass)) {
-            die("[ERROR] Mode set in config file not valid\n");
+        if (class_exists($appClass)) {
+            $this->appClass = $appClass;
+        } else {
+            $this->echo("Mode in config file not valid, no appClass $appClass\n",'WARN',true);
         }
 
         $kernelClass = $options['kernel'] ?? 'App\Http\Kernel';
@@ -186,7 +188,7 @@ class Common
             $this->echo(
                 "LaravelFly default kernel used: $kernelClass, 
       please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md",
-                'WARNING', true
+                'WARN', true
             );
         }
         $this->kernelClass = $kernelClass;

@@ -150,7 +150,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         }
 
 
-        // 'app.providers' only hold providers across
+        // 'app.providers' only hold across providers
         $appConfig['app.providers'] = $psAcross;
 
         $app->makeManifestForProvidersInRequest($psInRequest);

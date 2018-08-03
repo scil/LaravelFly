@@ -97,6 +97,7 @@ Trait Laravel
 
         // the fake request is useless, but harmless too
         // $this->app->forgetInstance('request');
+        
         Facade::clearResolvedInstance('request');
 
         $this->echo("event laravel.ready with $this->appClass in pid ".getmypid());
