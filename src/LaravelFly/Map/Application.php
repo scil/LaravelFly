@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Map;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +36,13 @@ class Application extends \Illuminate\Foundation\Application
      * @var \Illuminate\Support\ServiceProvider[]
      */
     protected $acrossServiceProviders = [];
+
+    /**
+     * only for method: getProviders($provider)
+     *
+     * @var \Illuminate\Support\ServiceProvider[]
+     */
+    protected $backedServiceProviders = [];
 
     /**
      * @var string[]
@@ -177,7 +185,11 @@ class Application extends \Illuminate\Foundation\Application
             (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPathAcross()))
                 ->load($providers);
 
-            $this->acrossServiceProviders = static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'];
+            $this->backedServiceProviders = $this->acrossServiceProviders =
+                static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'];
+
+            // foreach ($this->backedServiceProviders as $p) {echo get_class($p), "\n";}
+
             static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'] = $serviceProvidersBack;
         }
 
@@ -258,7 +270,31 @@ class Application extends \Illuminate\Foundation\Application
 
     public function resetServiceProviders()
     {
-        static::$corDict[\Co::getUid()]['serviceProviders'] = [];
+        $this->backedServiceProviders = array_merge(
+            static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'],
+            $this->backedServiceProviders
+        );
+
+        //foreach ($this->backedServiceProviders as $p) {echo get_class($p), "\n";}
+
+        static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'] = [];
+    }
+
+    /**
+     * because resetServiceProviders
+     */
+    public function getProviders($provider)
+    {
+        $name = is_string($provider) ? $provider : get_class($provider);
+
+        return Arr::where(
+            array_merge(
+                $this->backedServiceProviders,
+                static::$corDict[\Swoole\Coroutine::getuid()]['serviceProviders']
+            ),
+            function ($value) use ($name) {
+                return $value instanceof $name;
+            });
     }
 
     public function bootInRequest()

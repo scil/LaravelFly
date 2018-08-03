@@ -45,6 +45,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Fideloper\Proxy\TrustedProxyServiceProvider::class,
         LaravelFly\Providers\ServiceProvider::class,
+        Hhxsv5\LaravelS\Illuminate\LaravelSServiceProvider::class,
         'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
 
     ], LARAVELFLY_SERVICES['broadcast'] ? [] : [
