@@ -27,17 +27,28 @@ class Application extends \Illuminate\Foundation\Application
     protected $bootedOnWorker = false;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $providersToBootOnWorker = [];
 
     /**
-     * @var array
+     * @var \Illuminate\Support\ServiceProvider[]
      */
     protected $acrossServiceProviders = [];
 
+    /**
+     * @var string[]
+     */
     protected $CFServices = [];
+
+    /**
+     * @var string[]
+     */
     protected $cloneServices = [];
+
+    /**
+     * @var array[]
+     */
     protected $updateForClone = [];
 
     protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
@@ -45,8 +56,11 @@ class Application extends \Illuminate\Foundation\Application
         // no refactor for coroutine
         // 'buildStack',
         // 'with',
+        //
+        //this prop, bootingCallbacks's refactor is made in fly\Application,
+        //but not made for Map\Application(as it only used onworker)
+        // 'bootingCallbacks',
 
-        'bootingCallbacks',
         'bootedCallbacks',
         'terminatingCallbacks',
         'serviceProviders',
@@ -57,6 +71,8 @@ class Application extends \Illuminate\Foundation\Application
         'hasBeenBootstrapped' => false,
         'booted' => false,
     ];
+
+    protected $bootingCallbacks = [];
 
     public function __construct($basePath = null)
     {
@@ -132,31 +148,27 @@ class Application extends \Illuminate\Foundation\Application
 
     }
 
-    public function setProvidersToBootOnWorker($providers)
+    public function setProvidersToBootOnWorker(array $providers)
     {
-        if ($providers)
-            $this->providersToBootOnWorker = $providers;
+        $this->providersToBootOnWorker = $providers;
     }
 
-    public function setCFServices($services)
+    public function setCFServices(array $services)
     {
-        if ($services)
-            $this->CFServices = $services;
+        $this->CFServices = $services;
     }
 
-    public function setCloneServices($services, $update)
+    public function setCloneServices(array $services, array $update)
     {
-        if ($services) {
-            $this->cloneServices = $services;
-        }
+        $this->cloneServices = $services;
 
-        if ($update)
-            $this->updateForClone = $update;
+        $this->updateForClone = $update;
     }
 
     public function registerAcrossProviders()
     {
 
+        // after LoadConfiguration,  'app.providers' only hold across providers
         if ($providers = $this->make('config')->get('app.providers')) {
             $serviceProvidersBack = static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'];
             static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'] = [];
@@ -194,6 +206,11 @@ class Application extends \Illuminate\Foundation\Application
         return $this->bootstrapPath() . '/cache/laravelfly_services_on_worker.json';
     }
 
+    public function boot()
+    {
+
+    }
+
     public function bootOnWorker()
     {
 
@@ -201,7 +218,8 @@ class Application extends \Illuminate\Foundation\Application
             return;
         }
 
-        $this->fireAppCallbacks(static::$corDict[WORKER_COROUTINE_ID]['bootingCallbacks']);
+        // $this->fireAppCallbacks(static::$corDict[WORKER_COROUTINE_ID]['bootingCallbacks']);
+        $this->fireAppCallbacks($this->bootingCallbacks);
 
         array_walk(static::$corDict[WORKER_COROUTINE_ID]['serviceProviders'], function ($p) {
 //            print_r(get_class($p));echo " -- \n";
@@ -223,7 +241,7 @@ class Application extends \Illuminate\Foundation\Application
             else {
                 \LaravelFly\Fly::getServer()->echo(
                     "$service not bound",
-                    'NOTE',true);
+                    'NOTE', true);
             }
         }
     }
@@ -357,5 +375,33 @@ class Application extends \Illuminate\Foundation\Application
         }, $m);
 
     }
+
+
+    //BEGIN for bootingCallbacks
+    //the prop, bootingCallbacks's refactor is made for Map\Application, but kept in fly\Application
+    public function booting($callback)
+    {
+        $this->bootingCallbacks[] = $callback;
+    }
+
+    public function flush()
+    {
+        parent::flush();
+        $cid = \Co::getUid();
+
+        $this->buildStack = [];
+        static::$corDict[$cid]['loadedProviders'] = [];
+        static::$corDict[$cid]['bootedCallbacks'] = [];
+        // static::$corDict[$cid]['bootingCallbacks'] = [];
+        $this->bootingCallbacks = [];
+        static::$corDict[$cid]['deferredServices'] = [];
+        static::$corDict[$cid]['reboundCallbacks'] = [];
+        static::$corDict[$cid]['serviceProviders'] = [];
+        static::$corDict[$cid]['resolvingCallbacks'] = [];
+        static::$corDict[$cid]['afterResolvingCallbacks'] = [];
+        static::$corDict[$cid]['globalResolvingCallbacks'] = [];
+    }
+    //END for bootingCallbacks
+
 
 }
