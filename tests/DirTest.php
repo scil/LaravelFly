@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Tests;
 
+use LaravelFly\Server\Common;
 use PHPUnit\TextUI\TestRunner;
 
 trait DirTest
@@ -18,8 +19,8 @@ trait DirTest
         } catch (\ReflectionException $e) {
             echo $e->getMessage();
         }
-        $r= ob_get_clean();
-        file_put_contents('/vagrant/llll/abc',$r);
+        $r = ob_get_clean();
+//        file_put_contents('/vagrant/llll/abc',$r);
         return $r;
     }
 
@@ -31,37 +32,47 @@ trait DirTest
         });
     }
 
+    protected function _includeFlyFiles($makeApp = false)
+    {
+        $constances = [
+            'WORKER_COROUTINE_ID' => -1,
+            'LARAVELFLY_SERVICES' => [
+                'config' => false,
+                'kernel' => false,
+                'hash' => false,
+                'view.finder' => false,
+
+            ]
+        ];
+        foreach ($constances as $name => $val) {
+            define($name, $val);
+        }
+
+        $options = ['mode' => 'Map', 'log_cache' => true,];
+
+        \LaravelFly\Server\Common::includeFlyFiles($options);
+
+        if ($makeApp) {
+            $commonServer = new \LaravelFly\Server\Common();
+            $commonServer->_makeLaravelApp();
+            $appR = new \ReflectionProperty(Common::class,'app');
+            $appR->setAccessible(true);
+            $app = $appR->getValue($commonServer);
+            return $app;
+        }
+
+    }
+
     // first include fly files, then do test
-    function dirTestOnFlyFiles($testsDir, $app = false)
+    function dirTestOnFlyFiles($testsDir, $makeApp = false)
     {
         self::assertTrue(is_dir($testsDir), "ensure $testsDir exists");
 
-        return $this->dirTestInProcess(function () use ($app) {
+        $init = function () use ($makeApp) {
+            $this->_includeFlyFiles($makeApp);
+        };
 
-            $constances = [
-                'WORKER_COROUTINE_ID' => -1,
-                'LARAVELFLY_SERVICES' => [
-                    'config' => false,
-                    'kernel' => false,
-                    'hash' => false,
-                    'view.finder' => false,
-
-                ]
-            ];
-            foreach ($constances as $name => $val) {
-                define($name, $val);
-            }
-
-            $options = ['mode' => 'Map', 'log_cache' => true,];
-
-            \LaravelFly\Server\Common::includeFlyFiles($options);
-
-            if ($app) {
-                $commonServer = new \LaravelFly\Server\Common();
-                $commonServer->_makeLaravelApp();
-            }
-
-        }, $testsDir);
+        return $this->dirTestInProcess($init, $testsDir);
 
     }
 
@@ -70,7 +81,7 @@ trait DirTest
 
         self::assertTrue(is_dir($testsDir), "ensure $testsDir exists");
 
-        return $this->dirTestInProcess(function ()  {
+        $init = function () {
 
             static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], [
                 'worker_num' => 1,
@@ -78,7 +89,9 @@ trait DirTest
                 // EARLY
                 'early_laravel' => true
             ]);
-        }, $testsDir);
+        };
+
+        return $this->dirTestInProcess($init , $testsDir);
 
 
     }

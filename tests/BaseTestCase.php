@@ -3,7 +3,9 @@
 
 /**
  ** first:
- ** cd laravel_fly_root && composer update
+ ** cd laravel_fly_root
+ ** git clone -b 5.6 https://github.com/laravel/framework.git /vagrant/www/zc/vendor/scil/laravel-fly-local/vendor/laravel/framework
+ ** // composer update
  ** cd laravel_project_root
  *
  ** Mode simple
@@ -162,6 +164,7 @@ abstract class BaseTestCase extends TestCase
 
     static function processGetArray($func, $waittime=1)
     {
+//        return self::process($func, $waittime);
         return json_decode(self::process($func, $waittime), true);
     }
 
@@ -176,10 +179,9 @@ abstract class BaseTestCase extends TestCase
         require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
         require_once __DIR__ . "/swoole_src_tests/include/lib/curl_concurrency.php";
 
-        ob_start();
         $pm = new \ProcessManager;
 
-        $chan = new \Swoole\Channel(1024 * 256);
+        $chan = new \Swoole\Channel(1024 * 1024 * 3);
 
         $pm->childFunc = function () use ($func, $pm, $chan) {
             $r = $func();
@@ -188,18 +190,20 @@ abstract class BaseTestCase extends TestCase
             } else {
                 $chan->push($r);
             }
+            // sleep(1);
             $pm->wakeup();
 
         };
         // server can not be made in parentFunc,because parentFunc run in current process
         $pm->parentFunc = function ($pid) use ($chan, $waittime) {
-            sleep($waittime);
             echo $chan->pop();
+            sleep($waittime);
             \swoole_process::kill($pid);
         };
         $pm->childFirst();
-        $pm->run();
 
+        ob_start();
+        $pm->run();
         return ob_get_clean();
     }
 
