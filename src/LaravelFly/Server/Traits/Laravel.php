@@ -37,7 +37,7 @@ Trait Laravel
     public function _makeLaravelApp()
     {
 
-        /** @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application $app */
+        /** @var $app \LaravelFly\Map\Application|\LaravelFly\Simple\Application */
         $this->app = $app = new $this->appClass($this->root);
 
         /** @var \LaravelFly\Server\ServerInterface|\LaravelFly\Server\HttpServer|\LaravelFly\Server\FpmHttpServer $this */
@@ -99,6 +99,8 @@ Trait Laravel
         // $this->app->forgetInstance('request');
         
         Facade::clearResolvedInstance('request');
+        //'url' has made? when? \Illuminate\Routing\RoutingServiceProvider
+        Facade::clearResolvedInstance('url');
 
         $this->echo("event laravel.ready with $this->appClass in pid ".getmypid());
 

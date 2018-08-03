@@ -9,10 +9,15 @@ use LaravelFly\Map\Application;
 class ResolveSomeFacadeAliases
 {
     protected $black = [
+        // there's a new request in each request, so there's no need to resolve it
         'Request',
-        // ReflectionMethod invoke leads to black hole
+
+        // in swoole <4.0, ReflectionMethod invoke leads to black hole
+        // and Schema::getFacadeAccessor() returns an object, there's no need to resolve it
         'Schema',
-        //todo why 'url' has made? when? \Illuminate\Routing\RoutingServiceProvider
+
+        //why 'url' has made? when? \Illuminate\Routing\RoutingServiceProvider
+        // 'url' is cloned in each request, so there's no need to resolve it
         'URL',
     ];
 
@@ -47,6 +52,9 @@ class ResolveSomeFacadeAliases
             $app->make(PackageManifest::class)->aliases()));
 
         foreach ($all as $staticClass) {
+            /**
+             * @var $staticClass string
+             */
             if (in_array($staticClass, $this->black)) {
                 continue;
             }
@@ -64,7 +72,6 @@ class ResolveSomeFacadeAliases
 
             if (is_object($facadeAccessor)) {
                 // such as \Illuminate\Support\Facades\Blade
-                // todo
                 continue;
             }
 
@@ -88,6 +95,9 @@ class ResolveSomeFacadeAliases
     public function bootstrap(Application $app)
     {
         foreach ($this->getAliases($app) as $staticClass) {
+            /**
+             * @var $staticClass \Illuminate\Support\Facades\Facade
+             */
             $staticClass::getFacadeRoot();
         }
     }

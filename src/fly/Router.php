@@ -587,7 +587,7 @@ class Router implements RegistrarContract, BindingRegistrar
             }
 
             // store object (middleware's instance)
-            if ($instance = $this->container->canStable($one, static::$singletonMiddlewares)) {
+            if ($instance = $this->container->getStableMiddlewareInstance($one, static::$singletonMiddlewares)) {
                 /**
                  * hack: Cache for terminateMiddleware objects.
                  * @var array

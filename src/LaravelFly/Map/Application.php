@@ -218,6 +218,9 @@ class Application extends \Illuminate\Foundation\Application
         return $this->bootstrapPath() . '/cache/laravelfly_services_on_worker.json';
     }
 
+    /**
+     * please use bootOnWorker or bootInRequest instead
+     */
     public function boot()
     {
 
@@ -249,11 +252,10 @@ class Application extends \Illuminate\Foundation\Application
     public function makeCFServices()
     {
         foreach ($this->CFServices as $service) {
-            if ($this->bound($service)) $this->make($service);
-            else {
-                \LaravelFly\Fly::getServer()->echo(
-                    "$service not bound",
-                    'NOTE', true);
+            if ($this->bound($service)) {
+                $this->make($service);
+            } else {
+                \LaravelFly\Fly::getServer()->echo("$service not bound", 'NOTE', true);
             }
         }
     }
@@ -281,6 +283,7 @@ class Application extends \Illuminate\Foundation\Application
     }
 
     /**
+     * overwrite
      * because resetServiceProviders
      */
     public function getProviders($provider)
@@ -333,7 +336,13 @@ class Application extends \Illuminate\Foundation\Application
         static::$corDict[$cid]['deferredServices'] = array_merge(static::$corDict[$cid]['deferredServices'], $services);
     }
 
-    public function canStable($name, $whitelist)
+    /**
+     * if a middleware can live in a whole of worker
+     * @param $name string
+     * @param $whitelist array
+     * @return object|null
+     */
+    public function getStableMiddlewareInstance($name, $whitelist)
     {
         /*
          * avoid middlewares with parameters because the execution of obj middleware do not support parameters defined with ':'
@@ -342,7 +351,7 @@ class Application extends \Illuminate\Foundation\Application
          */
         if (mb_strpos($name, ':') !== false) {
             //todo add test
-            return false;
+            return null;
         }
 
         $concrete = $this->make($name);
@@ -354,7 +363,7 @@ class Application extends \Illuminate\Foundation\Application
         try {
             $reflector = new \ReflectionClass($concrete);
         } catch (\Throwable $e) {
-            return false;
+            return null;
         }
 
         if (!$reflector->isInstantiable()) {
@@ -378,37 +387,37 @@ class Application extends \Illuminate\Foundation\Application
 //            $c = $dependency->getClass();
 //        }
 
-        return false;
+        return null;
 
     }
 
     static $singletonMiddlewares = [];
 
-    public function setSingletonMiddlewares(array $singletonMiddlewares): void
+    public function setSingletonMiddlewares(array $middlewares)
     {
-        self::$singletonMiddlewares = $singletonMiddlewares;
+        self::$singletonMiddlewares = $middlewares;
     }
 
     /**
-     * @param array $m Kernel::middleware, not route middlewares
-     * @param array $ter save terminate middlewares
-     * @return array mix of objects(canStable) and strings(can not stable)
+     * @param array $middlewares Kernel::middleware, not route middlewares
+     * @param array $termi save terminate middlewares
+     * @return array mix of objects(getStableMiddlewareInstance) and strings(can not stable)
      */
-    function parseKernelMiddlewares($m, &$ter): array
+    function parseKernelMiddlewares($middlewares, &$termi): array
     {
 
-        return array_map(function ($name) use (&$ter) {
-            if ($this->canStable($name, static::$singletonMiddlewares)) {
+        return array_map(function ($name) use (&$termi) {
+            if ($this->getStableMiddlewareInstance($name, static::$singletonMiddlewares)) {
 
                 $instance = $this->app->make($name);
                 if (method_exists($instance, 'terminate')) {
-                    $ter[] = $instance;
+                    $termi[] = $instance;
                 }
                 return $instance;
             }
-            $ter[] = $name;
+            $termi[] = $name;
             return $name;
-        }, $m);
+        }, $middlewares);
 
     }
 
