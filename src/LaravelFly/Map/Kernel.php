@@ -68,7 +68,7 @@ class Kernel extends HttpKernel
     {
         $this->app->instance('request', $request);
 
-        // moved to \LaravelFly\Map\Bootstrap\CleanOnWorker. After that, no much need to clear in each request.
+        // moved to \LaravelFly\Map\Bootstrap\CleanOnWorker. After that, no need to clear in each request.
         // Facade::clearResolvedInstance('request');
 
         // replace $this->bootstrap();

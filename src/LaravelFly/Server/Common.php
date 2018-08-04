@@ -176,7 +176,7 @@ class Common
         if (class_exists($appClass)) {
             $this->appClass = $appClass;
         } else {
-            $this->echo("Mode in config file not valid, no appClass $appClass\n",'WARN',true);
+            $this->echo("Mode in config file not valid, no appClass $appClass\n", 'WARN', true);
         }
 
         $kernelClass = $options['kernel'] ?? 'App\Http\Kernel';
@@ -202,7 +202,7 @@ class Common
     static function includeFlyFiles(&$options)
     {
         // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Backup
-        if (defined('LARAVELFLY_SERVICES') && !LARAVELFLY_SERVICES['config'])
+        if (empty(LARAVELFLY_SERVICES['config']))
             include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
         static $mapLoaded = false;
@@ -212,7 +212,7 @@ class Common
 
             $mapLoaded = true;
 
-            if (defined('LARAVELFLY_SERVICES') && !(LARAVELFLY_SERVICES['kernel'] ?? true))
+            if (empty(LARAVELFLY_SERVICES['kernel']))
                 include_once __DIR__ . '/../../fly/Http/Kernel.php';
 
             foreach (static::mapFlyFiles as $f => $offical) {
