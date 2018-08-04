@@ -18,7 +18,7 @@ use Mockery\Exception;
 use ReflectionClass;
 use ReflectionProperty;
 
-class ApplicationTest extends BaseTestCase
+class PropsTest extends BaseTestCase
 {
     var $appProps = [
 
@@ -168,7 +168,7 @@ class ApplicationTest extends BaseTestCase
     {
         $actual = $this->getPropsInProcess($class, $args);
 
-        $this->assertSame(array_diff($expect, $actual), array_diff($actual, $expect));
+        $this->assertSame(array_diff($expect, $actual), array_diff($actual, $expect),"please edit Simple\Application or config('laravelfly.BaseServices')");
     }
 
     function getPropsInProcess($class, $args)

@@ -20,7 +20,7 @@ trait DirTest
             echo $e->getMessage();
         }
         $r = ob_get_clean();
-//        file_put_contents('/vagrant/llll/abc',$r);
+        // file_put_contents('/vagrant/test_ob_abc',$r);
         return $r;
     }
 
