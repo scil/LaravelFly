@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Simple;
+namespace LaravelFly\Backup;
 
 use Illuminate\Config\Repository;
 use Illuminate\Events\EventServiceProvider;

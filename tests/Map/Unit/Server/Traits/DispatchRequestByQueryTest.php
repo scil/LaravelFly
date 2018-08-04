@@ -31,7 +31,7 @@ class DispatchRequestByQueryTest extends Base
             $options = [
                 'worker_num' => $one['worker_num'],
                 'pre_include' => false,
-                'mode' => 'Simple',
+                'mode' => 'Backup',
                 'dispatch_by_query' => true,
                 'listen_port' => 9891 + $step,
             ];
@@ -67,7 +67,7 @@ class DispatchRequestByQueryTest extends Base
                 'dispatch_by_query' => true,
                 'worker_num' => $one['worker_num'],
                 'pre_include' => false,
-                'mode' => 'Simple',
+                'mode' => 'Backup',
                 'listen_port' => 9991 + $step,
             ];
 

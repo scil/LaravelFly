@@ -23,7 +23,7 @@ class WorkerTest extends Base
         $options = [
             // use two process for two workers, worker 0 used for watchDownFile, worker 1 used for phpunit
             'worker_num' => 2,
-            'mode' => 'Simple',
+            'mode' => 'Backup',
             'listen_port' => 9503,
             'daemonize' => false,
             'log_file' => $appRoot . '/storage/logs/swoole.log',

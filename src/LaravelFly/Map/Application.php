@@ -12,7 +12,7 @@ use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
 
 use Illuminate\Filesystem\Filesystem;
-use LaravelFly\Simple\ProviderRepository;
+use LaravelFly\Backup\ProviderRepository;
 
 class Application extends \Illuminate\Foundation\Application
 {

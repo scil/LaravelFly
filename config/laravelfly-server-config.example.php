@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Map, Simple or FpmLike
+ * Map, Backup or FpmLike
  *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  */
@@ -20,7 +20,7 @@ const HONEST_IN_CONSOLE = false;
 
 /**
  * Configuration about some of services on worker, booted before any requests.
- * main for Mode Mape with exceptions 'config' and 'kernel' which are also for Mode Simple.
+ * main for Mode Mape with exceptions 'config' and 'kernel' which are also for Mode Backup.
  *
  * Setting them to true can save some memory or speed up a little.
  * For More configurations go to config('laravelfly.providers_on_worker')
@@ -84,7 +84,7 @@ const LARAVELFLY_SERVICES = [
     /**
      * set true if items in app('config') keep same in different requests,
      * othersize leave it false because
-     * for Mode Simple, it's necessary to restore its origin value after each request.
+     * for Mode Backup, it's necessary to restore its origin value after each request.
      * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
      *
      * In most cases, it's not necessary to set it false. Except for old versions of Debugbar
@@ -318,7 +318,7 @@ return [
     /**
      *
      * Tip One:
-     * make sure this kernel class extends \LaravelFly\Simple\Kernel or
+     * make sure this kernel class extends \LaravelFly\Backup\Kernel or
      * \LaravelFly\Map\Kernel, otherwise \LaravelFly\Kernel::class is used.
      *
      * A simple way it to edit app/Http/Kernel.php like the guide in
@@ -331,7 +331,7 @@ return [
      * If not,
      *      set `'kernel' => false ,` in LARAVELFLY_SERVICES
      * and
-     *   for Mode Simple
+     *   for Mode Backup
      *      add the not safe properties to BaseServices['\Illuminate\Contracts\Http\Kernel::class'] in config/laravelfly.php
      *   for Mode Map
      *      add `

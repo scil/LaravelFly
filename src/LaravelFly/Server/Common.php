@@ -181,7 +181,7 @@ class Common
 
         $kernelClass = $options['kernel'] ?? 'App\Http\Kernel';
         if (!(
-            (LARAVELFLY_MODE === 'Simple' && is_subclass_of($kernelClass, \LaravelFly\Simple\Kernel::class)) ||
+            (LARAVELFLY_MODE === 'Backup' && is_subclass_of($kernelClass, \LaravelFly\Backup\Kernel::class)) ||
             (LARAVELFLY_MODE === 'Map' && is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))
         )) {
 
@@ -201,9 +201,9 @@ class Common
 
     static function includeFlyFiles(&$options)
     {
-        // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Simple
+        // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Backup
         if (defined('LARAVELFLY_SERVICES') && !LARAVELFLY_SERVICES['config'])
-            include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Simple') . 'Repository.php';
+            include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
         static $mapLoaded = false;
         static $logLoaded = false;

@@ -15,8 +15,8 @@
         </testsuite>
 
 
-        <testsuite name="LaravelFly_Simple_Unit">
-            <file>./tests/Simple/Unit/PropsTest.php</file>
+        <testsuite name="LaravelFly_Backup_Unit">
+            <file>./tests/Backup/Unit/PropsTest.php</file>
         </testsuite>
 
 

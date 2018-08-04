@@ -20,7 +20,7 @@ class Repository implements ArrayAccess, ConfigContract
 
 
     /**
-     * @var array configs changed during a request used by LaravelFly Mode Simple
+     * @var array configs changed during a request used by LaravelFly Mode Backup
      *
      * added by scil
      */

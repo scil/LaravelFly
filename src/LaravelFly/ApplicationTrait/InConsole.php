@@ -6,7 +6,7 @@ use Illuminate\Events\EventServiceProvider;
 //use LaravelFly\Routing\RoutingServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
-use LaravelFly\Simple\ProviderRepositoryInRequest;
+use LaravelFly\Backup\ProviderRepositoryInRequest;
 
 trait InConsole
 {

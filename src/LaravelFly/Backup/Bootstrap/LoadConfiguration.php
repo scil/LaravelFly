@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Simple\Bootstrap;
+namespace LaravelFly\Backup\Bootstrap;
 
 use Illuminate\Foundation\PackageManifest;
 use Illuminate\Contracts\Foundation\Application;

@@ -5,7 +5,7 @@ namespace LaravelFly\Http\Controllers;
 class InfoController extends BaseController
 {
     /**
-     * @var \LaravelFly\Map\Application | \LaravelFly\Simple\Application
+     * @var \LaravelFly\Map\Application | \LaravelFly\Backup\Application
      */
     var $app;
     var $server;

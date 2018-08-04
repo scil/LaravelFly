@@ -31,7 +31,7 @@ return [
     'view_compile_1' => $IN_PRODUCTION && LARAVELFLY_SERVICES['view.finder'],
 
     /**
-     * useless providers. For Mode Simple, Map
+     * useless providers. For Mode Backup, Map
      *
      * These providers are useless if they are not enabled in
      * config('laravelfly.providers_on_worker') or
@@ -57,7 +57,7 @@ return [
     ),
 
     /**
-     * Providers to reg and boot in each request.For Mode Simple, Map
+     * Providers to reg and boot in each request.For Mode Backup, Map
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -341,7 +341,7 @@ return [
     ],
 
     /**
-     * Which properties of base services need to backup. Only for Mode Simple
+     * Which properties of base services need to backup. Only for Mode Backup
      *
      * See: Illuminate\Foundation\Application::registerBaseServiceProviders
      */

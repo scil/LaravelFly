@@ -5,7 +5,7 @@
  * Time: 22:15
  */
 
-namespace LaravelFly\Tests\Simple\Unit;
+namespace LaravelFly\Tests\Backup\Unit;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Foundation\Application;
@@ -168,7 +168,7 @@ class PropsTest extends BaseTestCase
     {
         $actual = $this->getPropsInProcess($class, $args);
 
-        $this->assertSame(array_diff($expect, $actual), array_diff($actual, $expect),"please edit Simple\Application or config('laravelfly.BaseServices')");
+        $this->assertSame(array_diff($expect, $actual), array_diff($actual, $expect),"please edit Backup\Application or config('laravelfly.BaseServices')");
     }
 
     function getPropsInProcess($class, $args)

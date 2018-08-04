@@ -8,8 +8,8 @@
  ** // composer update
  ** cd laravel_project_root
  *
- ** Mode simple
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Simple_Unit
+ ** Mode Backup
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Backup_Unit
  *
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit

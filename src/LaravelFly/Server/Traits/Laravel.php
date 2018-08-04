@@ -14,19 +14,19 @@ Trait Laravel
      * because most of Coroutine-Friendly Services are made only by \Co::getUid()
      * without using swoole_server::$worker_id, they can not distinguish coroutines in different workers.
      *
-     * @var \LaravelFly\Map\Application|\LaravelFly\Simple\Application
+     * @var \LaravelFly\Map\Application|\LaravelFly\Backup\Application
      */
     protected $app;
 
     /**
      * An laravel kernel instance living always with a worker.
      *
-     * @var \LaravelFly\Map\Kernel|\LaravelFly\Simple\Kernel
+     * @var \LaravelFly\Map\Kernel|\LaravelFly\Backup\Kernel
      */
     protected $kernel;
 
     /**
-     * @return \LaravelFly\Map\Application|\LaravelFly\Simple\Application
+     * @return \LaravelFly\Map\Application|\LaravelFly\Backup\Application
      */
     public function getApp()
     {
@@ -36,7 +36,7 @@ Trait Laravel
     public function _makeLaravelApp()
     {
 
-        /** @var $app \LaravelFly\Map\Application|\LaravelFly\Simple\Application */
+        /** @var $app \LaravelFly\Map\Application|\LaravelFly\Backup\Application */
         $this->app = $app = new $this->appClass($this->root);
 
         /** @var \LaravelFly\Server\ServerInterface|\LaravelFly\Server\HttpServer|\LaravelFly\Server\FpmHttpServer $this */
@@ -69,7 +69,7 @@ Trait Laravel
          * instance a fake request then bootstrap
          *
          * new UrlGenerator need a request.
-         * In Mode Simple, no worry about it's fake, because
+         * In Mode Backup, no worry about it's fake, because
          * app['url']->request will update when app['request'] changes, as rebinding is used
          * <code>
          * <?php
