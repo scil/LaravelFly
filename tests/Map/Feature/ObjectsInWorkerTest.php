@@ -4,10 +4,10 @@ namespace LaravelFly\Tests\Map\Feature;
 
 use Dotenv\Loader;
 use LaravelFly\Map\Illuminate\View\BladeCompiler_1;
-use LaravelFly\Tests\Map\MapTestCase;
+use LaravelFly\Tests\BaseTestCase as Base;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class ObjectsInWorkerTest extends MapTestCase
+class ObjectsInWorkerTest extends Base
 {
 
     protected $instances = [
@@ -123,7 +123,6 @@ class ObjectsInWorkerTest extends MapTestCase
 
         $r = self::createFlyServerInProcess(
             [
-                'LARAVELFLY_MODE' => 'Map',
             ],
             ['worker_num' => 1],
             function ($server) use ($chan) {

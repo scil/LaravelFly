@@ -3,10 +3,10 @@
 namespace LaravelFly\Tests\Map\Feature;
 
 use LaravelFly\Server\Common;
-use LaravelFly\Tests\Map\MapTestCase;
+use LaravelFly\Tests\BaseTestCase as Base;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class StreamHandlerTest extends MapTestCase
+class StreamHandlerTest extends Base
 {
 
     function test()
@@ -15,7 +15,7 @@ class StreamHandlerTest extends MapTestCase
 
         static::$chan = $chan = new \Swoole\Channel(1024 * 256);
 
-        $r = self::createFlyServerInProcess(['LARAVELFLY_MODE' => 'Map'], ['worker_num' => 1, 'pre_include' => false,], function ($server) use ($chan) {
+        $r = self::createFlyServerInProcess([], ['worker_num' => 1, 'pre_include' => false,], function ($server) use ($chan) {
             $dispatcher = $server->getDispatcher();
 
             $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($chan) {

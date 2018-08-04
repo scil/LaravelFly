@@ -5,7 +5,7 @@
 
 namespace LaravelFly\Tests\Map\LaravelTests;
 
-use LaravelFly\Tests\Map\MapTestCase as Base;
+use LaravelFly\Tests\BaseTestCase as Base;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 
@@ -64,7 +64,7 @@ class TestCase extends Base
 
     }
 
-    function testViewInWorker()
+    private function testViewInWorker()
     {
         $testsDir = $this->copyAndSed('/View');
 
@@ -77,7 +77,7 @@ class TestCase extends Base
 
     }
 
-    private function testFoundationInWorker()
+    function testFoundationInWorker()
     {
 //        $testsDir = $this->copyAndSed('/Foundation');
         $testsDir = static::$laravelTestsDir . '/Foundation';

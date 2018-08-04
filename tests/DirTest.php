@@ -36,6 +36,7 @@ trait DirTest
     {
         $constances = [
             'WORKER_COROUTINE_ID' => -1,
+            'LARAVELFLY_MODE' => 'Map',
             'LARAVELFLY_SERVICES' => [
                 'config' => false,
                 'kernel' => false,
@@ -83,7 +84,7 @@ trait DirTest
 
         $init = function () {
 
-            static::makeNewFlyServer(['LARAVELFLY_MODE' => 'Map'], [
+            static::makeNewFlyServer([], [
                 'worker_num' => 1,
                 'listen_port' => 9601,
                 // EARLY

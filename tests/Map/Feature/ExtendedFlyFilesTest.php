@@ -2,9 +2,9 @@
 
 namespace LaravelFly\Tests\Map\Feature;
 
-use LaravelFly\Tests\Map\MapTestCase;
+use LaravelFly\Tests\BaseTestCase as Base;
 
-class ExtendedFlyFilesTest extends MapTestCase
+class ExtendedFlyFilesTest extends Base
 {
 
     var $partFileMap = [

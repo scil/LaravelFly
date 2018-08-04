@@ -65,6 +65,12 @@ abstract class BaseTestCase extends TestCase
 
     protected $backOfficalDir = __DIR__ . '/offcial_files/';
 
+    /**
+     * @var \Swoole\Channel
+     */
+    static protected $chan;
+
+
     static function setUpBeforeClass()
     {
 

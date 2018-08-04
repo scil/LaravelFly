@@ -3,11 +3,11 @@
 namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
 use Illuminate\Support\Facades\Artisan;
-use LaravelFly\Tests\Map\MapTestCase;
+use LaravelFly\Tests\BaseTestCase as Base;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 
-class WorkerTest extends MapTestCase
+class WorkerTest extends Base
 
 {
 

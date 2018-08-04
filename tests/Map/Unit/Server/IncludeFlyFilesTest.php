@@ -3,9 +3,9 @@
 
 namespace LaravelFly\Tests\Map\Unit;
 
-use LaravelFly\Tests\Map\MapTestCase;
+use LaravelFly\Tests\BaseTestCase as Base;
 
-class IncludeFlyFilesTest extends MapTestCase
+class IncludeFlyFilesTest extends Base
 {
 
     function testInitEnv()

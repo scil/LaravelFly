@@ -3,9 +3,9 @@
 
 namespace LaravelFly\Tests\Map\Feature;
 
-use LaravelFly\Tests\Map\MapTestCase;
+use LaravelFly\Tests\BaseTestCase as Base;
 
-class FlyFilesTest extends MapTestCase
+class FlyFilesTest extends Base
 {
 
     static $map;
