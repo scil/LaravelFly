@@ -14,9 +14,9 @@ trait InConsole
     {
         if (defined('HONEST_IN_CONSOLE')) {
             return HONEST_IN_CONSOLE;
-        } else {
-            return parent::runningInConsole();
         }
+
+        return parent::runningInConsole();
     }
 
 

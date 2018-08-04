@@ -18,9 +18,7 @@ if (!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
  * Set it true, Application::runningInConsole() return true, and DebugBar can not start.
  * If you use FpmLike, must keep it false.
  */
-if (!defined('HONEST_IN_CONSOLE')) define('HONEST_IN_CONSOLE',
-    false
-);
+const HONEST_IN_CONSOLE = false;
 
 /**
  * Configuration about some of services on worker, booted before any requests.
