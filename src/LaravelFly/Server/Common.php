@@ -139,7 +139,8 @@ class Common
 
     public function getDefaultConfig()
     {
-        $d = include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
+        // why @ ? For the errors like : Constant LARAVELFLY_MODE already defined
+        $d = @ include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
 
         return array_merge([
             'mode' => 'Map',

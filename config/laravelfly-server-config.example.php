@@ -1,13 +1,11 @@
 <?php
 
 /**
- * Simple, Map,  FpmLike
+ * Map, Simple or FpmLike
  *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  */
-if (!defined('LARAVELFLY_MODE')) define('LARAVELFLY_MODE',
-    'Map'
-);
+const LARAVELFLY_MODE = 'Map';
 
 /**
  * honest that application is running in cli mode.
@@ -28,7 +26,7 @@ const HONEST_IN_CONSOLE = false;
  * For More configurations go to config('laravelfly.providers_on_worker')
  *
  */
-if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
+const LARAVELFLY_SERVICES = [
 
     /**
      * you can set the corresponding service to be true if you use it.
@@ -114,7 +112,7 @@ if (!defined('LARAVELFLY_SERVICES')) define('LARAVELFLY_SERVICES', [
      */
     'kernel' => false,
 
-]);
+];
 
 /**
  * this array is used for swoole server,
