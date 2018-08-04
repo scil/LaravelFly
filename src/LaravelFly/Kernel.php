@@ -8,10 +8,10 @@ namespace LaravelFly;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 if (defined('LARAVELFLY_MODE')) {
-    if (LARAVELFLY_MODE === 'Simple') {
-        class WhichKernel extends \LaravelFly\Simple\Kernel{}
-    } elseif (LARAVELFLY_MODE === 'Map') {
+    if (LARAVELFLY_MODE === 'Map') {
         class WhichKernel extends \LaravelFly\Map\Kernel{}
+    } elseif (LARAVELFLY_MODE === 'Simple') {
+        class WhichKernel extends \LaravelFly\Simple\Kernel{}
     } elseif (LARAVELFLY_MODE === 'FpmLike') {
         class WhichKernel extends HttpKernel{}
     }

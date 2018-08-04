@@ -3,9 +3,6 @@
  * GLOBAL functions and constances
  */
 
-if(!defined('WORKER_COROUTINE_ID')){
-    define('WORKER_COROUTINE_ID',1);
-}
 
 if (!function_exists('tinker')) {
     /**

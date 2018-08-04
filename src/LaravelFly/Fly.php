@@ -39,7 +39,9 @@ class Fly
     static protected function initEnv($options)
     {
         if ($options['early_laravel'] ?? false)
-            define('WORKER_COROUTINE_ID', -1);
+            require_once __DIR__ . '/../constants-1.php';
+        else
+            require_once __DIR__ . '/../constants.php';
 
         require_once __DIR__ . '/../functions.php';
 

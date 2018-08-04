@@ -11,7 +11,6 @@ use Exception;
 use Illuminate\Routing\Router;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Facades\Facade;
 use Illuminate\Foundation\Http\Events;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
