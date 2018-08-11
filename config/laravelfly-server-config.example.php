@@ -178,7 +178,9 @@ return [
     // like pm.max_requests in php-fpm
     'max_request' => 500,
 
-    // set it to false when debug, otherwise true
+    // set it to false when debug, otherwise true. 
+    // But if you make use of systemd to manage laravelfly, keep it false always. see: https://github.com/scil/LaravelFly/wiki/systemd
+    //
     // if you use tinker(), daemonize is disabled always.
     'daemonize' => false,
 
