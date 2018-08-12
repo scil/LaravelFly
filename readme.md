@@ -13,9 +13,9 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 - To be absolutely safe, put your code under control. Coroutine is fully supported (code execution can jump from one request to another).
 
-- A laravel service that made before any requests can 
-  - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it COROUTINE-FRIENDLY SERVICE 
-  - or to be cloned in each request (one instance in one request).LaravelFly named it CLONE SERVICE. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference).
+- A laravel service can be made before any requests. There are two types:
+  - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it  **worker service** or **worker object** or **COROUTINE-FRIENDLY SERVICE**.
+  - or to be cloned in each request (one instance in one request).LaravelFly named it **CLONE SERVICE**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference).
   
 - Extra speed improvements such as middlewares cache, view path cache.
 
