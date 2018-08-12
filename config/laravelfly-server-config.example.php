@@ -265,6 +265,7 @@ return [
      */
     'log_cache' => 5,
 
+
     /**
      * if you use more than one workers, you can control which worker handle a request
      * by sending query parameter or header
@@ -288,7 +289,10 @@ return [
      */
     'dispatch_by_query' => false,
 
+
     /**
+     * set user and group to run swoole worker process.
+     *
      * only works when running LaravelFly as root:
      *      sudo php vendor/scil/laravel-fly/bin/fly start
      *
@@ -297,16 +301,31 @@ return [
      * It's not appropriate that the user/group can read a dir/file such as '/www/app/some',but can not read the the root /www
      *
      * If you use watch, disable these, or ensure the user here is a member of group root
-     * /
-     * // 'user' => 'www-data',
-     * // 'group' => 'www-data',
-     *
-     * //'log_file' => '/data/log/swoole.log',
-     *
-     * /** Set the output buffer size in the memory.
+     * */
+    // 'user' => 'www-data',
+    // 'group' => 'www-data',
+
+
+    /**
+     * swoole log, not laravel log.
+     */
+    // 'log_file' => __DIR__ . '/storage/logs/swoole.log',
+
+
+     /**
+     * Set the output buffer size in the memory.
      * The default value is 2M. The data to send can't be larger than buffer_output_size every times.
      */
-    //'buffer_output_size' => 32 * 1024 *1024, // byte in unit
+    // 'buffer_output_size' => 32 * 1024 *1024, // byte in unit
+
+
+    /**
+     * By default the max size of POST data/file is 10 MB which is restricted by package_max_length.
+     *
+     * swoole will joint the data received from the client amd store the data in memory before recevicing the whole package.
+     * So to limit the usage of memory, decrease it.
+     */
+    // 'package_max_length' => 10 * 1024 * 1024, // byte in unit
 
 
     /**
@@ -316,6 +335,7 @@ return [
      * default is under <project_root>/bootstrap/
      */
     //'pid_file' => '/run/laravelfly/pid',
+
 
     /**
      *
