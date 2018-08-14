@@ -2,6 +2,7 @@
 
 namespace LaravelFly;
 
+use LaravelFly\Exception\LaravelFlyException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Fly
@@ -23,6 +24,9 @@ class Fly
         static::initEnv($options);
 
         $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
+
+        if(!is_subclass_of($class, \LaravelFly\Server\ServerInterface::class))
+            throw new LaravelFlyException("wrong server config 'server': ${options['server']} ");
 
         static::$server = new $class($dispatcher);
 
