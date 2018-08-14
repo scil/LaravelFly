@@ -52,13 +52,13 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
  `ab -k -n 1000 -c 10 http://zc.test
 
-.   | fpm |  Fly Mode Backup | Fly Mode Map(using coroutine)
------------- | ------------ | ------------- | ------------- 
-Requests per second   | 3 |  5  | 34
-Time taken ≈ | 325 | 195  | 30
-  50%  | 2538|   167  | 126
-  80%  |   3213|  383   | 187
-  99%   | 38584| 33720  | 3903
+.   | fpm  | Fly Mode Map(using coroutine)
+------------ | ------------ | ------------- 
+Requests per second   | 3    | 34
+Time taken ≈ | 325  | 30
+  50%  | 2538  | 126
+  80%  | 3213  | 187
+  99%  | 38584 | 3903
 
 <details>
 <summary>Test Env</summary>
