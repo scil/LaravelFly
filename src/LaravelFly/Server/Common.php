@@ -112,7 +112,7 @@ class Common
      */
     protected $echoLevel = 3;
 
-    public function __construct($dispatcher = null)
+    public function __construct(EventDispatcher $dispatcher = null)
     {
         $this->dispatcher = $dispatcher ?: new EventDispatcher();
 

@@ -22,9 +22,6 @@ class Fly
 
         static::initEnv($options);
 
-        if (null === $dispatcher)
-            $dispatcher = new EventDispatcher();
-
         $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
         static::$server = new $class($dispatcher);
