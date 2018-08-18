@@ -16,8 +16,8 @@ U;
     die($msg);
 }
 
-$root = realpath(__DIR__ . '/../../../..');
-$config_file = $argc == 3 ? $argv[2] : $root . '/fly.conf.php';
+$basePath = realpath(__DIR__ . '/../../../..');
+$config_file = $argc == 3 ? $argv[2] : $basePath . '/fly.conf.php';
 
 try {
     if (!is_file($config_file)) {
@@ -37,7 +37,7 @@ if ($argv[1] == 'start') {
 }
 
 if (!isset($options['pid_file'])) {
-    $pid_file = $root . '/bootstrap/laravel-fly-' . $options['listen_port'] . '.pid';
+    $pid_file = $basePath . '/bootstrap/laravel-fly-' . $options['listen_port'] . '.pid';
 } else {
     $pid_file = $options['pid_file'] . '-' . $options['listen_port'];
 }
@@ -71,7 +71,7 @@ switch ($argv[1]) {
 exit();
 
 start:
-include $root . '/vendor/autoload.php';
+include $basePath . '/vendor/autoload.php';
 
 // prevent errors if eval(tinker()); left in project code
 if (empty($options['tinker']) && !function_exists('tinker')) {
@@ -80,6 +80,6 @@ if (empty($options['tinker']) && !function_exists('tinker')) {
     }
 }
 
-unset($root, $config_file, $pid_file, $pid);
+unset($basePath, $config_file, $pid_file, $pid);
 \LaravelFly\Fly::getServer($options)->start();
 

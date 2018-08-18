@@ -122,6 +122,8 @@ const LARAVELFLY_SERVICES = [
  */
 return [
     /**
+     * A server name which must implements \LaravelFly\Server\ServerInterface
+     *
      * provided by LaravelFly:
      *      \LaravelFly\Server\HttpServer::class
      *      \LaravelFly\Server\WebSocketServer::class  // still under dev
