@@ -23,10 +23,13 @@ class Fly
 
         static::initEnv($options);
 
+        if (!in_array(LARAVELFLY_MODE, ['Map', 'Backup', 'FpmLike']))
+            die("const LARAVELFLY_MODE must be one of ['Map', 'Backup', 'FpmLike']\n");
+
         $class = LARAVELFLY_MODE === 'FpmLike' ? \LaravelFly\Server\FpmHttpServer::class : $options['server'];
 
-        if(!is_subclass_of($class, \LaravelFly\Server\ServerInterface::class))
-            throw new LaravelFlyException("wrong server config 'server': ${options['server']} ");
+        if (!is_subclass_of($class, \LaravelFly\Server\ServerInterface::class))
+            die("wrong server config 'server': ${options['server']} \n");
 
         static::$server = new $class($dispatcher);
 
