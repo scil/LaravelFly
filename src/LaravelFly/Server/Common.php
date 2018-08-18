@@ -125,12 +125,9 @@ class Common
 
     public function config(array $options)
     {
-        if (empty($options['mode']) && defined('LARAVELFLY_MODE')) $options['mode'] = LARAVELFLY_MODE;
+        if (empty($options['mode']))  $options['mode'] = LARAVELFLY_MODE;
 
-
-        $default = $this->getDefaultConfig();
-
-        $this->options = array_merge($default, $options);
+        $this->options = array_merge($this->getDefaultConfig(), $options);
 
         $this->parseOptions($this->options);
 
