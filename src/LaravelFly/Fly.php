@@ -2,7 +2,7 @@
 
 namespace LaravelFly;
 
-use LaravelFly\Exception\LaravelFlyException;
+use LaravelFly\Server\ServerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Fly
@@ -17,7 +17,7 @@ class Fly
      * @param array $options
      * @param EventDispatcher $dispatcher
      */
-    static function init(array $options, EventDispatcher $dispatcher = null)
+    static function init(array $options, EventDispatcher $dispatcher = null): ServerInterface
     {
         if (self::$server) return self::$server;
 
@@ -55,7 +55,7 @@ class Fly
 
     }
 
-    public static function getServer($options = null)
+    public static function getServer($options = null):ServerInterface
     {
 
         if (!self::$server) {

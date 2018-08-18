@@ -53,12 +53,12 @@ class WorkerTest extends Base
                  *
                  * if only one worker,closure added by swoole_event_add in watchDownFile() only run
                  * after the closure here finish
-                 * $server->getMemory('isDown') will not change.
+                 * $server->getAtomicMemory('isDown') will not change.
                  *
                  */
                 if ($event['workerid'] === 0) return;
 
-//                self::assertEquals(0, $server->getMemory('isDown'));
+//                self::assertEquals(0, $server->getAtomicMemory('isDown'));
                 $r[] = $server->getMemory('isDown');
 
                 passthru("cd $appRoot && php artisan down");
@@ -66,8 +66,8 @@ class WorkerTest extends Base
 //                self::assertEquals(1, $app->isDownForMaintenance());
                 $r[] = $app->isDownForMaintenance();
 
-//                file_put_contents($server->path('storage/framework/ok3'), $server->getMemory('isDown'));
-//                self::assertEquals(1, $server->getMemory('isDown'));
+//                file_put_contents($server->path('storage/framework/ok3'), $server->getAtomicMemory('isDown'));
+//                self::assertEquals(1, $server->getAtomicMemory('isDown'));
                 $r[] = $server->getMemory('isDown');
 
 
@@ -77,7 +77,7 @@ class WorkerTest extends Base
                 $r[] = $app->isDownForMaintenance();
 
                 sleep(1);
-//                self::assertEquals(0, $server->getMemory('isDown'));
+//                self::assertEquals(0, $server->getAtomicMemory('isDown'));
                 $r[] = $server->getMemory('isDown');
 
 

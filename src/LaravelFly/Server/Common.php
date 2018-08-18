@@ -3,10 +3,9 @@
 namespace LaravelFly\Server;
 
 use swoole_atomic;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-// this is necessary for  const mapFlyFiles where LARAVELFLY_SERVICES is used
+// this is necessary for const mapFlyFiles where LARAVELFLY_SERVICES is used
 if (!defined('LARAVELFLY_SERVICES')) include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
 
 class Common
@@ -278,13 +277,13 @@ class Common
     public function start()
     {
 
-        if (!method_exists('\co', 'getUid'))
+        if (!method_exists('\Co', 'getUid'))
             die("[ERROR] pecl install swoole or enable swoole.use_shortname.\n");
 
 
         if ($this->getConfig('watch_down')) {
 
-            $this->addMemory('isDown', new swoole_atomic(0));
+            $this->addAtomicMemory('isDown', new swoole_atomic(0));
         }
 
         try {
@@ -326,7 +325,7 @@ class Common
         return $path ? "{$this->root}/$path" : $this->root;
     }
 
-    public function getMemory(string $name): ?int
+    public function getAtomicMemory(string $name): ?int
     {
         if ($this->atomicMemory[$name] ?? null) {
             return $this->atomicMemory[$name]->get();
@@ -337,12 +336,12 @@ class Common
     /**
      * @param array $memory
      */
-    public function addMemory(string $name, swoole_atomic $atom)
+    public function addAtomicMemory(string $name, swoole_atomic $atom)
     {
         $this->atomicMemory[$name] = $atom;
     }
 
-    function setMemory(string $name, $value)
+    function setAtomicMemory(string $name, $value)
     {
         $this->atomicMemory[$name]->set((int)$value);
     }

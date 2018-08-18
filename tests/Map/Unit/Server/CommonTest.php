@@ -151,6 +151,6 @@ class CommonTest extends BaseTestCase
     function testGetMemory()
     {
         $server = static::getCommonServerNoSwoole();
-        self::assertEquals(null, $server->getMemory('no-exist'));
+        self::assertEquals(null, $server->getAtomicMemory('no-exist'));
     }
 }

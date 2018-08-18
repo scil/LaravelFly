@@ -2,9 +2,6 @@
 
 namespace LaravelFly\Server;
 
-use LaravelFly\Server\Event\WorkerStarted;
-use Symfony\Component\EventDispatcher\GenericEvent;
-
 class HttpServer extends Common implements ServerInterface
 {
 
