@@ -26,7 +26,7 @@ class ConfigCacheCommand extends \Illuminate\Foundation\Console\ConfigCacheComma
             $this->error("LaravelFly server conf file not exists: $serverConfigFile");
 
         // var $basePath is useful, can be used in $serverConfigFile
-        $basePath = $this->getApplication()->basePath();
+        $basePath = $this->getApplication()->getLaravel()->basePath();
         include $serverConfigFile;
         $this->info("[LaravelFly] server conf file $serverConfigFile included.");
 
