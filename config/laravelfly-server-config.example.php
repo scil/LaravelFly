@@ -1,4 +1,5 @@
 <?php
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Map, Backup or FpmLike
@@ -251,6 +252,26 @@ return [
      */
     'early_laravel' => false,
 
+    /**
+     * a function executes before laravelfly server starts
+     *
+     * It can be used to share memory, add listeners to LaravleFly events
+     */
+    'before_start_func' => function () {
+
+        // memory share
+        // $this is the instance of the 'server'
+        // $this->newIntegerMemory('hits', new swoole_atomic(0));
+
+
+        // event
+        // $this->getDispatcher()->addListener('worker.starting', function (GenericEvent $event) {
+        //    echo "There files can not be hot reloaded, because they are included before worker starting\n";
+        //    var_dump(get_included_files());
+        // });
+
+    },
+
 
     /**
      * In each worker process, Larave log will not write log files until the number of log records reach 'log_cache'
@@ -314,7 +335,7 @@ return [
     // 'log_file' => __DIR__ . '/storage/logs/swoole.log',
 
 
-     /**
+    /**
      * Set the output buffer size in the memory.
      * The default value is 2M. The data to send can't be larger than buffer_output_size every times.
      */

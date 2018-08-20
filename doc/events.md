@@ -29,7 +29,7 @@ $dispatcher = \LaravelFly\Fly::getServer()->getDispatcher();
 
 $dispatcher->addListener('worker.starting', function (GenericEvent $event) {
     echo "There files can not be hot reloaded, because they are included before worker starting\n";
-    var_dump(get_included_files())
+    var_dump(get_included_files());
 });
 
 $dispatcher->addListener('laravel.ready', function (GenericEvent $event) {

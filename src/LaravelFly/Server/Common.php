@@ -2,6 +2,7 @@
 
 namespace LaravelFly\Server;
 
+use swoole_atomic;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 // this is necessary for const mapFlyFiles where LARAVELFLY_SERVICES is used
@@ -268,6 +269,9 @@ class Common
 
     public function start()
     {
+        if(is_callable($this->options['before_start_func'])){
+            $this->options['before_start_func']->call($this);
+        }
 
         if (!method_exists('\Co', 'getUid'))
             die("[ERROR] pecl install swoole or enable swoole.use_shortname.\n");
@@ -275,7 +279,7 @@ class Common
 
         if ($this->getConfig('watch_down')) {
 
-            $this->addAtomicMemory('isDown', new swoole_atomic(0));
+            $this->newIntegerMemory('isDown', new swoole_atomic(0));
         }
 
         try {

@@ -145,7 +145,7 @@ Trait Worker
             swoole_event_add($fd, function () use ($fd, $downFile) {
                 $events = inotify_read($fd);
                 if ($events && $events[0]['name'] === 'down') {
-                    $this->setAtomicMemory('isDown', file_exists($downFile));
+                    $this->setIntegerMemory('isDown', file_exists($downFile));
                 }
             });
 
