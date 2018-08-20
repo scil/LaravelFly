@@ -4,8 +4,8 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 ## Version Compatibility
 
-- Laravel 5.6.*
-- swoole >4.0
+- Laravel 5.6.* (just some changes in src/fly to port to 5.5)
+- Swoole >4.0
 
 ## Features
 
@@ -13,13 +13,13 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 - To be absolutely safe, put your code under control. Coroutine is fully supported (code execution can jump from one request to another).
 
-- A laravel service can be made before any requests. There are two types:
+- Laravel services or any other objexts can be made before any requests. There are two types:
   - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE/OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
-  - or to be cloned in each request (one instance in one request).LaravelFly named it **CLONE SERVICE/OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used rarely by LaravelFly, while used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s).
+  - to be cloned in each request (one instance in one request).LaravelFly named it **CLONE SERVICE/OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used rarely by LaravelFly, while used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s).
   
 - Extra speed improvements such as middlewares cache, view path cache.
 
-- View server info at /laravel-fly/info. (This feture is under dev and more infomations will be available.)
+- Check server info at /laravel-fly/info. (This feture is under dev and more infomations will be available.)
 
 ## Quick Start
 
@@ -30,7 +30,7 @@ Suggest: `pecl install inotify`
 2.`composer require "scil/laravel-fly":"dev-master"`
 
 3.`php vendor/scil/laravel-fly/bin/fly start`   
-If you enable `eval(tinker())` and see an error about mkdir, please start LaravelFly using sudo.
+If you enable `eval(tinker())` and see an error about mkdir, you can start LaravelFly with sudo.
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
 
