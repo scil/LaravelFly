@@ -33,10 +33,14 @@ trait ShareInteger
         return null;
     }
 
-    function setIntegerMemory(string $name, $value)
+    function setIntegerMemory(string $name, $value, $when = null)
     {
         if (array_key_exists($name, $this->integerMemory))
-            $this->integerMemory[$name]->set((int)$value);
+            if ($when) {
+                $this->integerMemory[$name]->cmpset($when, (int)$value);
+            } else {
+                $this->integerMemory[$name]->set((int)$value);
+            }
     }
 
 }
