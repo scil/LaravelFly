@@ -16,7 +16,7 @@ trait ShareInteger
      */
     var $integerMemory = [];
 
-    public function addIntegerMemory(string $name, swoole_atomic $atom)
+    public function newIntegerMemory(string $name, swoole_atomic $atom)
     {
         $this->integerMemory[$name] = $atom;
     }
@@ -35,12 +35,23 @@ trait ShareInteger
 
     function setIntegerMemory(string $name, $value, $when = null)
     {
-        if (array_key_exists($name, $this->integerMemory))
+        if (array_key_exists($name, $this->integerMemory)) {
             if ($when) {
-                $this->integerMemory[$name]->cmpset($when, (int)$value);
-            } else {
-                $this->integerMemory[$name]->set((int)$value);
+                return $this->integerMemory[$name]->cmpset($when, (int)$value);
             }
+            $this->integerMemory[$name]->set((int)$value);
+        }
     }
 
+    function addIntegerMemory(string $name, $value)
+    {
+        if (array_key_exists($name, $this->integerMemory))
+            $this->integerMemory[$name]->add((int)$value);
+    }
+
+    function subIntegerMemory(string $name, $value)
+    {
+        if (array_key_exists($name, $this->integerMemory))
+            $this->integerMemory[$name]->sub((int)$value);
+    }
 }
