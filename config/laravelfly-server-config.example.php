@@ -255,7 +255,8 @@ return [
     /**
      * a function executes before laravelfly server starts
      *
-     * It can be used to share memory, add listeners to LaravleFly events
+     * It can be used to share memory, or add listeners to
+     * LaravleFly events (https://github.com/scil/LaravelFly/wiki/events)
      */
     'before_start_func' => function () {
 
