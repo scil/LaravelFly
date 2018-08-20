@@ -2,7 +2,6 @@
 
 namespace LaravelFly\Server;
 
-use swoole_atomic;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 // this is necessary for const mapFlyFiles where LARAVELFLY_SERVICES is used
@@ -15,6 +14,7 @@ class Common
     use Traits\Tinker;
     use Traits\Worker;
     use Traits\Laravel;
+    use Traits\ShareInteger;
 
     /**
      * where laravel app located
@@ -82,11 +82,6 @@ class Common
      * @var \swoole_http_server
      */
     var $swoole;
-
-    /**
-     * @var [\swoole_atomic] save shared actomic info across processes
-     */
-    var $atomicMemory = [];
 
     /**
      * @var string
@@ -322,26 +317,6 @@ class Common
         return $path ? "{$this->root}/$path" : $this->root;
     }
 
-    public function getAtomicMemory(string $name): ?int
-    {
-        if ($this->atomicMemory[$name] ?? null) {
-            return $this->atomicMemory[$name]->get();
-        }
-        return null;
-    }
-
-    /**
-     * @param array $memory
-     */
-    public function addAtomicMemory(string $name, swoole_atomic $atom)
-    {
-        $this->atomicMemory[$name] = $atom;
-    }
-
-    function setAtomicMemory(string $name, $value)
-    {
-        $this->atomicMemory[$name]->set((int)$value);
-    }
 
     function echo($text, $status = 'INFO', $color = false)
     {

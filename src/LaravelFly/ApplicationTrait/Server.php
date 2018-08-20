@@ -24,6 +24,11 @@ trait Server
         return $this->server;
     }
 
+    public function getSwooleServer(): \swoole_server
+    {
+        return $this->server->swoole;
+    }
+
     /**
      * @param \LaravelFly\Server\ServerInterface|\LaravelFly\Server\FpmHttpServer|\LaravelFly\Server\HttpServer $server
      */

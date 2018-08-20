@@ -152,7 +152,7 @@ Trait Worker
         } else {
 
             swoole_timer_tick(1000, function () use ($downFile) {
-                $this->atomicMemory['isDown']->set((int)file_exists($downFile));
+                $this->integerMemory['isDown']->set((int)file_exists($downFile));
             });
         }
     }
