@@ -42,16 +42,11 @@ class Fly
 
     static protected function initEnv($options)
     {
-        if ($options['early_laravel'] ?? false)
-            require_once __DIR__ . '/../constants-1.php';
-        else
-            require_once __DIR__ . '/../constants.php';
 
         require_once __DIR__ . '/../functions.php';
 
         if (class_exists('NunoMaduro\Collision\Provider'))
             (new \NunoMaduro\Collision\Provider)->register();
-
 
     }
 

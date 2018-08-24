@@ -244,6 +244,8 @@ class Common
 
         $this->swoole = $swoole = new \swoole_http_server($options['listen_ip'], $options['listen_port']);
 
+        $options['enable_coroutine'] = false;
+
         $swoole->set($options);
 
         $this->setListeners();

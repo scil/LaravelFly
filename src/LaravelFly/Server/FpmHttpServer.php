@@ -19,6 +19,7 @@ class FpmHttpServer extends Common implements ServerInterface
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
+        go(function () use ($request, $response) {
 
         /** @var \LaravelFly\FpmLike\Application $app */
         $app = new $this->appClass($this->root);
@@ -50,6 +51,8 @@ class FpmHttpServer extends Common implements ServerInterface
         $this->swooleResponse($response, $laravel_response);
 
         $kernel->terminate($laravel_request, $laravel_response);
+
+        });
     }
 
 }
