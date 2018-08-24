@@ -4,6 +4,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 /**
  * Map, Backup or FpmLike
  *
+ * Backup: only for study. see Design Rule at https://github.com/scil/LaravelFly/wiki/Design-Rule
+ *
  * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
  */
 const LARAVELFLY_MODE = 'Map';
