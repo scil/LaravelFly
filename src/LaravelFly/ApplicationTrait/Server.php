@@ -46,7 +46,7 @@ trait Server
         if ($watch === null) {
             $watch = $this->getServer()->getConfig('watch_down');
         }
-        return $watch ? $this->server->getAtomicMemory('isDown') : parent::isDownForMaintenance();
+        return $watch ? $this->server->getIntegerMemory('isDown') : parent::isDownForMaintenance();
     }
 
 }

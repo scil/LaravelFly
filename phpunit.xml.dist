@@ -10,13 +10,8 @@
          processIsolation="false"
          stopOnFailure="true">
     <testsuites>
-        <testsuite name="LaravelFly_Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
-
-
-        <testsuite name="LaravelFly_Backup_Unit">
-            <file>./tests/Backup/Unit/PropsTest.php</file>
+        <testsuite name="LaravelFly_tmp">
+            <file>./tests/Map/Unit/FlyTest.php</file>
         </testsuite>
 
 
@@ -26,10 +21,6 @@
             <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
             <file>./tests/Map/Unit/Server/CommonTest.php</file>
-        </testsuite>
-
-        <testsuite name="LaravelFly_tmp">
-            <file>./tests/Map/Unit/FlyTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Feature">
@@ -42,6 +33,10 @@
 
         <testsuite name="LaravelFly_Map_LaravelTests">
             <file>./tests/Map/LaravelTests/TestCase.php</file>
+        </testsuite>
+
+        <testsuite name="LaravelFly_Backup">
+            <file>./tests/Backup/Unit/PropsTest.php</file>
         </testsuite>
 
     </testsuites>

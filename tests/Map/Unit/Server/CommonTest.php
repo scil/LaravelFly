@@ -38,7 +38,6 @@ class CommonTest extends BaseTestCase
     }
 
 
-
     function testInit()
     {
         $server = static::getCommonServerNoSwoole();
@@ -76,7 +75,6 @@ class CommonTest extends BaseTestCase
         $this->resetServerConfigAndDispatcher($server);
 
 
-
         $server->config([]);
 
         $actual = $server->getConfig();
@@ -85,7 +83,9 @@ class CommonTest extends BaseTestCase
         self::assertEquals('Map', $actual['mode']);
 
         unset($actual['pid_file']);
-        self::assertEquals(static::$default, $actual);
+        $d = static::$default;
+        unset($actual['before_start_func'], $d['before_start_func']);
+        self::assertEquals($d, $actual);
 
 
     }
@@ -151,6 +151,6 @@ class CommonTest extends BaseTestCase
     function testGetMemory()
     {
         $server = static::getCommonServerNoSwoole();
-        self::assertEquals(null, $server->getAtomicMemory('no-exist'));
+        self::assertEquals(null, $server->getIntegerMemory('no-exist'));
     }
 }

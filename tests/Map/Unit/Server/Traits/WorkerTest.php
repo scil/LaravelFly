@@ -3,6 +3,7 @@
 namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
 use Illuminate\Support\Facades\Artisan;
+use LaravelFly\Server\HttpServer;
 use LaravelFly\Tests\BaseTestCase as Base;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -23,7 +24,7 @@ class WorkerTest extends Base
         $options = [
             // use two process for two workers, worker 0 used for watchDownFile, worker 1 used for phpunit
             'worker_num' => 2,
-            'mode' => 'Backup',
+            'mode' => 'Map',
             'listen_port' => 9503,
             'daemonize' => false,
             'log_file' => $appRoot . '/storage/logs/swoole.log',
@@ -33,7 +34,7 @@ class WorkerTest extends Base
 
         $mychan = static::$chan = new \Swoole\Channel(1024 * 256);
 
-        $r = self::createFlyServerInProcess($constances,$options, function ($server) use ($appRoot, $options,  $mychan) {
+        $r = self::createFlyServerInProcess($constances,$options, function (HttpServer $server) use ($appRoot, $options,  $mychan) {
 
 
             $dispatcher = $server->getDispatcher();
@@ -59,7 +60,7 @@ class WorkerTest extends Base
                 if ($event['workerid'] === 0) return;
 
 //                self::assertEquals(0, $server->getIntegerMemory('isDown'));
-                $r[] = $server->getMemory('isDown');
+                $r[] = $server->getIntegerMemory('isDown');
 
                 passthru("cd $appRoot && php artisan down");
                 sleep(1);
@@ -68,7 +69,7 @@ class WorkerTest extends Base
 
 //                file_put_contents($server->path('storage/framework/ok3'), $server->getIntegerMemory('isDown'));
 //                self::assertEquals(1, $server->getIntegerMemory('isDown'));
-                $r[] = $server->getMemory('isDown');
+                $r[] = $server->getIntegerMemory('isDown');
 
 
                 passthru("cd $appRoot && php artisan up");
@@ -78,7 +79,7 @@ class WorkerTest extends Base
 
                 sleep(1);
 //                self::assertEquals(0, $server->getIntegerMemory('isDown'));
-                $r[] = $server->getMemory('isDown');
+                $r[] = $server->getIntegerMemory('isDown');
 
 
                 $mychan->push(json_encode($r));

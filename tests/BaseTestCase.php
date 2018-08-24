@@ -8,15 +8,15 @@
  ** // composer update
  ** cd laravel_project_root
  *
- ** Mode Backup
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Backup_Unit
- *
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit
  *
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature
  *
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
+ *
+ ** Mode Backup
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Backup
  *
  ** example for debugging with gdb:
  * gdb ~/php/7.1.14root/bin/php       // this php is a debug versioin, see D:\vagrant\ansible\files\scripts\php-debug\
@@ -117,12 +117,14 @@ abstract class BaseTestCase extends TestCase
 
         if (!isset($options['pre_include']))
             $options['pre_include'] = false;
+
         if (!isset($options['listen_port'])) {
             $options['listen_port'] = 9022 + $step;
             ++$step;
         }
 
-        $file_options = require $config_file;
+        // why @ ? For the errors like : Constant LARAVELFLY_MODE already defined
+        $file_options = @ include $config_file;
 
         $options = array_merge($file_options, $options);
 
