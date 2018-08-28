@@ -11,6 +11,7 @@
          stopOnFailure="true">
     <testsuites>
         <testsuite name="LaravelFly_tmp">
+            <file>./tests/Map/Unit/Server/HttpServerTest.php</file>
         </testsuite>
 
 

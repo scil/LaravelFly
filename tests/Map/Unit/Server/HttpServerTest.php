@@ -22,18 +22,29 @@ class HttpServerTest extends BaseTestCase
     function test()
     {
         $this->requestTest(
-            function () {
-                return \Request::path();
-            },
-            'laravelfly-test/test1',
-            'test1'
+            [
+                static::baseUrl . 'test1' => function () {
+                    return \Request::path();
+                },
+                static::baseUrl . 'test2' => function () {
+                    return \Request::query('name');
+                },
+            ],
+            [
+                'test1' => 'laravelfly-test/test1',
+                'test2?name=scil' => 'scil',
+            ]
         );
+
     }
 
-    function requestTest($func, $result, $endUrl = 'test1')
+    function requestTest($routes, $curlPair)
     {
 
-        $appRoot = static::$laravelAppRoot;
+        foreach ($curlPair as $url => $result) {
+            $urls[] = static::curlBaseUrl . $url;
+            $results [] = $result;
+        }
 
         $constances = [
         ];
@@ -46,25 +57,22 @@ class HttpServerTest extends BaseTestCase
             'pre_include' => false,
         ];
 
-        $routeUrl = static::baseUrl . $endUrl;
+        $r = self::request($constances, $options, $urls,
 
-        $r = self::request($constances, $options,
 
-            [
-                static::curlBaseUrl.$endUrl,
-            ],
+            function (HttpServer $server) use ($routes) {
 
-            function (HttpServer $server) use ($routeUrl, $func) {
-
-                $server->getDispatcher()->addListener('worker.ready', function () use ($routeUrl, $func) {
-                    \Route::get($routeUrl, $func);
+                $server->getDispatcher()->addListener('worker.ready', function () use ($routes) {
+                    foreach ($routes as $url => $func) {
+                        \Route::get($url, $func);
+                    }
                 });
 
                 $server->start();
 
             }, 3);
 
-        self::assertEquals($result, $r);
+        self::assertEquals(implode("\n",$results), $r);
     }
 
 }
