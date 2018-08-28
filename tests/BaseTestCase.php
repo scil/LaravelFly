@@ -26,6 +26,7 @@
 
 namespace LaravelFly\Tests;
 
+use LaravelFly\Server\Common;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\TextUI\TestRunner;
 use PHPUnit\Framework\Test;
@@ -64,9 +65,9 @@ abstract class BaseTestCase extends TestCase
     static protected $workingRoot;
     static protected $laravelAppRoot;
 
-    protected $flyDir = __DIR__ . '/../src/fly/';
+    static $flyDir = __DIR__ . '/../src/fly/';
 
-    protected $backOfficalDir = __DIR__ . '/offcial_files/';
+    static $backOfficalDir = __DIR__ . '/offcial_files/';
 
     /**
      * @var \Swoole\Channel
@@ -76,6 +77,11 @@ abstract class BaseTestCase extends TestCase
 
     static function setUpBeforeClass()
     {
+
+        $mainVersion = Common::getApplicationVersion();
+        static::$flyDir .= $mainVersion.'/';
+        static::$backOfficalDir .= $mainVersion.'/';
+
 
         if (!AS_ROOT) {
             static::$laravelAppRoot = static::$workingRoot = realpath(__DIR__ . '/../../../..');

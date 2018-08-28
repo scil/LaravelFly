@@ -28,6 +28,8 @@ class Common
      */
     protected $options;
 
+    static $laravelMainVersion;
+
     const mapFlyFiles = [
         'Container.php' =>
             '/vendor/laravel/framework/src/Illuminate/Container/Container.php',
@@ -121,7 +123,7 @@ class Common
 
     public function config(array $options)
     {
-        if (empty($options['mode']))  $options['mode'] = LARAVELFLY_MODE;
+        if (empty($options['mode'])) $options['mode'] = LARAVELFLY_MODE;
 
         $this->options = array_merge($this->getDefaultConfig(), $options);
 
@@ -191,14 +193,34 @@ class Common
         $this->dispatchRequestByQuery($options);
     }
 
+    static function getApplicationVersion($full = false): ?string
+    {
+        if(static::$laravelMainVersion) return static::$laravelMainVersion;
+
+        $file = realpath(__DIR__ .
+            '/../../../../../../vendor/laravel/framework/src/Illuminate/Foundation/Application.php');
+
+        if (!is_file($file)) return null;
+
+        if (preg_match("/const VERSION = '(\d+)\.(\d+)\.(\d+)';/", file_get_contents($file), $r)) {
+            static::$laravelMainVersion = "$r[1].$r[2]";
+            return $full ? "$r[1].$r[2].$r[3]" : "$r[1].$r[2]";
+        }
+        return null;
+    }
+
     static function includeFlyFiles(&$options)
     {
+        $v = static::getApplicationVersion();
 
-        $flyBaseDir = __DIR__ . '/../../fly/';
+        $flyBaseDir = __DIR__ . '/../../fly/' . $v . '/';
+
+        if(!is_dir($flyBaseDir))
+            die("[ERROR] reactor not made for current Laravel version $v.\n");
 
         // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Backup
         if (empty(LARAVELFLY_SERVICES['config']))
-            include_once $flyBaseDir.'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
+            include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
         static $mapLoaded = false;
         static $logLoaded = false;
@@ -208,7 +230,7 @@ class Common
             $mapLoaded = true;
 
             if (empty(LARAVELFLY_SERVICES['kernel']))
-                include_once $flyBaseDir.'Http/Kernel.php';
+                include_once $flyBaseDir . 'Http/Kernel.php';
 
             foreach (static::mapFlyFiles as $f => $offical) {
                 require $flyBaseDir . $f;
@@ -223,7 +245,7 @@ class Common
         if (is_int($options['log_cache']) && $options['log_cache'] > 1) {
 
             foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
-                require $flyBaseDir. $f;
+                require $flyBaseDir . $f;
             }
 
         } else {
@@ -274,7 +296,7 @@ class Common
 
     public function start()
     {
-        if(is_callable($this->options['before_start_func'])){
+        if (is_callable($this->options['before_start_func'])) {
             $this->options['before_start_func']->call($this);
         }
 
