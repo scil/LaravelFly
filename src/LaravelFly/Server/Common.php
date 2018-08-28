@@ -193,9 +193,12 @@ class Common
 
     static function includeFlyFiles(&$options)
     {
+
+        $flyBaseDir = __DIR__ . '/../../fly/';
+
         // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Backup
         if (empty(LARAVELFLY_SERVICES['config']))
-            include_once __DIR__ . '/../../fly/Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
+            include_once $flyBaseDir.'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
         static $mapLoaded = false;
         static $logLoaded = false;
@@ -205,10 +208,10 @@ class Common
             $mapLoaded = true;
 
             if (empty(LARAVELFLY_SERVICES['kernel']))
-                include_once __DIR__ . '/../../fly/Http/Kernel.php';
+                include_once $flyBaseDir.'Http/Kernel.php';
 
             foreach (static::mapFlyFiles as $f => $offical) {
-                require __DIR__ . "/../../fly/" . $f;
+                require $flyBaseDir . $f;
             }
 
         }
@@ -220,7 +223,7 @@ class Common
         if (is_int($options['log_cache']) && $options['log_cache'] > 1) {
 
             foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
-                require __DIR__ . "/../../fly/" . $f;
+                require $flyBaseDir. $f;
             }
 
         } else {
