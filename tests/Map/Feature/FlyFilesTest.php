@@ -17,6 +17,7 @@ class FlyFilesTest extends Base
         $r= self::processGetArray(function (){
             return \LaravelFly\Server\Common::getAllFlyMap();
         });
+
          static::$map = $r;
     }
 
@@ -32,14 +33,14 @@ class FlyFilesTest extends Base
         self::assertEquals($flyFilesNumber, $number + 2);
 
         // 5 files in a dir,  2 Repository in a dir, and plus . an ..
-        self::assertEquals($flyFilesNumber - 4 -1 + 2, count(scandir($this->flyDir, SCANDIR_SORT_NONE)));
+        self::assertEquals($flyFilesNumber - 4 -1 + 2, count(scandir(static::$flyDir, SCANDIR_SORT_NONE)));
 
         // plus another kernel.php whoses class is App\Http\Kernel.php
-        self::assertEquals($flyFilesNumber - 4 -1  + 2 + 1, count(scandir($this->backOfficalDir, SCANDIR_SORT_NONE)));
+        self::assertEquals($flyFilesNumber - 4 -1  + 2 + 1, count(scandir(static::$backOfficalDir, SCANDIR_SORT_NONE)));
 
         foreach ($map as $f => $originLocation) {
-            self::assertEquals(true, is_file($this->flyDir . $f), "{$this->flyDir}.$f");
-            self::assertEquals(true, is_file($this->backOfficalDir . $f));
+            self::assertEquals(true, is_file(static::$flyDir . $f), static::$flyDir. $f);
+            self::assertEquals(true, is_file(static::$backOfficalDir . $f));
             // var_dump(static::$workingRoot . $originLocation);
             self::assertEquals(true, is_file(static::$workingRoot . $originLocation));
         }

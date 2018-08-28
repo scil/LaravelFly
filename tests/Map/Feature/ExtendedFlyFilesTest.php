@@ -53,7 +53,7 @@ class ExtendedFlyFilesTest extends Base
     {
         $this->assertEquals(5, count($this->partFileMap));
         foreach ($this->partFileMap as $partFile => $offcial) {
-            $partFile = $this->backOfficalDir . $partFile;
+            $partFile = static::$backOfficalDir . $partFile;
             $offcial = static::$laravelAppRoot . $offcial;
             $parts = explode('===A===', file_get_contents($partFile));
             $full = file_get_contents($offcial);

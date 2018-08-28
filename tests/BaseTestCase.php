@@ -65,9 +65,9 @@ abstract class BaseTestCase extends TestCase
     static protected $workingRoot;
     static protected $laravelAppRoot;
 
-    static $flyDir = __DIR__ . '/../src/fly/';
+    static $flyDir;
 
-    static $backOfficalDir = __DIR__ . '/offcial_files/';
+    static $backOfficalDir;
 
     /**
      * @var \Swoole\Channel
@@ -77,10 +77,12 @@ abstract class BaseTestCase extends TestCase
 
     static function setUpBeforeClass()
     {
+        $mainVersion = self::process(function () {
+            return Common::getApplicationVersion();
+        });
 
-        $mainVersion = Common::getApplicationVersion();
-        static::$flyDir .= $mainVersion.'/';
-        static::$backOfficalDir .= $mainVersion.'/';
+        static::$flyDir = __DIR__ . '/../src/fly/' . $mainVersion . '/';
+        static::$backOfficalDir = __DIR__ . '/offcial_files/' . $mainVersion . '/';
 
 
         if (!AS_ROOT) {
@@ -160,7 +162,7 @@ abstract class BaseTestCase extends TestCase
         $same = true;
 
         foreach ($map as $back => $offcial) {
-            $back = $this->backOfficalDir . $back;
+            $back = static::$backOfficalDir . $back;
             $offcial = static::$laravelAppRoot . $offcial;
             $cmdArguments = "$diffOPtions $back $offcial ";
 
@@ -179,13 +181,13 @@ abstract class BaseTestCase extends TestCase
 
     }
 
-    static function processGetArray($func, $waittime = 1):array
+    static function processGetArray($func, $waittime = 1): array
     {
 //        return self::process($func, $waittime);
         return json_decode(self::process($func, $waittime), true);
     }
 
-    static function process($funcInNewProcess, $waittime = 1):string
+    static function process($funcInNewProcess, $waittime = 1): string
     {
         return static::_process($funcInNewProcess, null, $waittime);
     }
@@ -196,7 +198,7 @@ abstract class BaseTestCase extends TestCase
      * @param int $waittime
      * @return string|int|boolean    it will json_encode array
      */
-    static function _process($funcInNewProcess, $func, $waittime = 1):string
+    static function _process($funcInNewProcess, $func, $waittime = 1): string
     {
 
 
@@ -231,7 +233,7 @@ abstract class BaseTestCase extends TestCase
         return ob_get_clean();
     }
 
-    static function createFlyServerInProcess($constances, $options, $serverFunc, $wait = 0):string
+    static function createFlyServerInProcess($constances, $options, $serverFunc, $wait = 0): string
     {
         return self::process(function () use ($constances, $options, $serverFunc) {
             $server = self::makeNewFlyServer($constances, $options);
@@ -241,7 +243,7 @@ abstract class BaseTestCase extends TestCase
 
     }
 
-    static function request($constances, $options, $urls, $serverFunc = null, $wait = 0):string
+    static function request($constances, $options, $urls, $serverFunc = null, $wait = 0): string
     {
         return self::_process(function () use ($constances, $options, $serverFunc) {
 
