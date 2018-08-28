@@ -577,6 +577,9 @@ class Router implements RegistrarContract, BindingRegistrar
             return $this->sortMiddleware($middleware);
         }
 
+        // by default , cache an empty array
+        $cacheForterminate[$id] = [];
+
         return $cacheByRoute[$id] = array_map(function ($one) use (&$cacheForterminate, $id) {
 
             // hack: Cache for route middlewares objects.
