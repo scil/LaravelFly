@@ -9,9 +9,9 @@
  ** cd laravel_project_root
  *
  ** Mode Map
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Unit
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Process
  *
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Feature
+ * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Other
  *
  * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
@@ -30,6 +30,9 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\TextUI\TestRunner;
 use PHPUnit\Framework\Test;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+
+require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
+require_once __DIR__ . "/swoole_src_tests/include/lib/curl_concurrency.php";
 
 /**
  * Class Base
@@ -170,42 +173,49 @@ abstract class BaseTestCase extends TestCase
 
     }
 
-    static function processGetArray($func, $waittime=1)
+    static function processGetArray($func, $waittime = 1):array
     {
 //        return self::process($func, $waittime);
         return json_decode(self::process($func, $waittime), true);
     }
 
+    static function process($funcInNewProcess, $waittime = 1):string
+    {
+        return static::_process($funcInNewProcess, null, $waittime);
+    }
+
+
     /**
-     * @param $func
+     * @param $funcInNewProcess
      * @param int $waittime
      * @return string|int|boolean    it will json_encode array
      */
-    static function process($func, $waittime = 1)
+    static function _process($funcInNewProcess, $func, $waittime = 1):string
     {
 
-        require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
-        require_once __DIR__ . "/swoole_src_tests/include/lib/curl_concurrency.php";
 
         $pm = new \ProcessManager;
 
         $chan = new \Swoole\Channel(1024 * 1024 * 3);
 
-        $pm->childFunc = function () use ($func, $pm, $chan) {
-            $r = $func();
+        $pm->childFunc = function () use ($funcInNewProcess, $pm, $chan) {
+            $r = $funcInNewProcess();
             if (is_array($r)) {
                 $chan->push(json_encode($r));
             } else {
                 $chan->push($r);
             }
-            // sleep(1);
             $pm->wakeup();
 
         };
         // server can not be made in parentFunc,because parentFunc run in current process
-        $pm->parentFunc = function ($pid) use ($chan, $waittime) {
+        $pm->parentFunc = function ($pid) use ($func, $chan, $waittime) {
             echo $chan->pop();
+
+            if (is_callable($func))
+                echo $func();
             sleep($waittime);
+
             \swoole_process::kill($pid);
         };
         $pm->childFirst();
@@ -215,15 +225,35 @@ abstract class BaseTestCase extends TestCase
         return ob_get_clean();
     }
 
-    static function createFlyServerInProcess($constances, $options, $func, $wait = 0)
+    static function createFlyServerInProcess($constances, $options, $serverFunc, $wait = 0):string
     {
-        return self::process(function () use ($constances, $options, $func) {
+        return self::process(function () use ($constances, $options, $serverFunc) {
             $server = self::makeNewFlyServer($constances, $options);
-            $r = $func($server);
-//            var_dump("result from func(server):",$r);
+            $r = $serverFunc($server);
             return $r;
         }, $wait);
 
     }
+
+    static function request($constances, $options, $urls, $serverFunc = null, $wait = 0):string
+    {
+        return self::_process(function () use ($constances, $options, $serverFunc) {
+
+            $server = self::makeNewFlyServer($constances, $options);
+
+            if (is_callable($serverFunc))
+                $r = $serverFunc($server);
+
+            return '';
+
+        }, function () use ($urls) {
+            $r = curl_concurrency($urls);
+
+            return implode("\n", $r);
+
+        }, $wait);
+
+    }
+
 }
 

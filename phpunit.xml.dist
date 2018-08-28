@@ -11,24 +11,26 @@
          stopOnFailure="true">
     <testsuites>
         <testsuite name="LaravelFly_tmp">
-            <file>./tests/Map/Unit/FlyTest.php</file>
         </testsuite>
 
 
-        <testsuite name="LaravelFly_Map_Unit">
+        <testsuite name="LaravelFly_Map_Process">
             <file>./tests/Map/Unit/FlyTest.php</file>
             <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
+            <file>./tests/Map/Unit/Server/HttpServerTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
-            <file>./tests/Map/Unit/Server/CommonTest.php</file>
-        </testsuite>
 
-        <testsuite name="LaravelFly_Map_Feature">
             <file>./tests/Map/Feature/FlyFilesTest.php</file>
             <file>./tests/Map/Feature/ExtendedFlyFilesTest.php</file>
             <file>./tests/Map/Feature/SuperGlobalVarsTest.php</file>
             <file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>
             <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
+
+        </testsuite>
+
+        <testsuite name="LaravelFly_Map_Other">
+            <file>./tests/Map/Unit/Server/CommonTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_LaravelTests">
