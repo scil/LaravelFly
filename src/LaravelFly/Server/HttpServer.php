@@ -11,8 +11,8 @@ class HttpServer extends Common implements ServerInterface
 
         $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
 
-        if ($this->getConfig('mode') === 'Map') {
-            $this->swoole->on('request', array($this, 'onMapRequest'));
+        if ($this->getConfig('mode') === 'Backup') {
+            $this->swoole->on('request', array($this, 'onBackupRequest'));
         } else {
             $this->swoole->on('request', array($this, 'onRequest'));
         }
@@ -47,7 +47,7 @@ class HttpServer extends Common implements ServerInterface
      * @param \swoole_http_response $response
      *
      */
-    public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
+    public function onBackupRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
         go(function () use ($request, $response) {
 
@@ -81,7 +81,7 @@ class HttpServer extends Common implements ServerInterface
         });
     }
 
-    public function onMapRequest(\swoole_http_request $request, \swoole_http_response $response)
+    public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
         go(function () use ($request, $response) {
 
