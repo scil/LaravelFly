@@ -3,6 +3,9 @@
  * Dict
  * plus
  * gatherRouteTerminateMiddleware // search 'hack' in this file
+ *
+ * dif with src/LaravelFly/Map/Kernel.php：
+ *  for LARAVELFLY_SERVICES['kernel'] === false
  */
 
 namespace LaravelFly\Map;
@@ -88,7 +91,7 @@ class Kernel extends HttpKernel
     public function handle($request)
     {
         try {
-            // moved to LaravelFlyServer::initAfterStart
+            // moved to LaravelFly\Server\HttpServer::start
             // $request::enableHttpMethodParameterOverride();
 
             $response = $this->sendRequestThroughRouter($request);
