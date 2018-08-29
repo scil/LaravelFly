@@ -4,7 +4,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 ## Version Compatibility
 
-- Laravel 5.6.* (just some changes in src/fly to port to 5.5)
+- Laravel 5.5 or 5.6
 - Swoole >4.0
 
 ## Features
