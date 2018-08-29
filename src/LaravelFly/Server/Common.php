@@ -232,7 +232,7 @@ class Common
             $mapLoaded = true;
 
             if (empty(LARAVELFLY_SERVICES['kernel']))
-                include_once $flyBaseDir . 'Http/Kernel.php';
+                include_once $flyBaseDir . '../Kernel.php';
 
             foreach (static::mapFlyFiles as $f => $offical) {
                 require $flyBaseDir . $f;
