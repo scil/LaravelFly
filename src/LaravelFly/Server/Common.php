@@ -193,12 +193,14 @@ class Common
         $this->dispatchRequestByQuery($options);
     }
 
-    static function getApplicationVersion($full = false): ?string
+    static function getApplicationVersion($full = false, $laravelProjectRoot = null): ?string
     {
-        if(static::$laravelMainVersion) return static::$laravelMainVersion;
+        if (static::$laravelMainVersion) return static::$laravelMainVersion;
 
-        $file = realpath(__DIR__ .
-            '/../../../../../../vendor/laravel/framework/src/Illuminate/Foundation/Application.php');
+        $laravelProjectRoot = $laravelProjectRoot ?: realpath(__DIR__ .
+            '/../../../../../..');
+
+        $file = $laravelProjectRoot. '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php';
 
         if (!is_file($file)) return null;
 
@@ -215,7 +217,7 @@ class Common
 
         $flyBaseDir = __DIR__ . '/../../fly/' . $v . '/';
 
-        if(!is_dir($flyBaseDir))
+        if (!is_dir($flyBaseDir))
             die("[ERROR] reactor not made for current Laravel version $v.\n");
 
         // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Backup

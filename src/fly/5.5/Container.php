@@ -197,7 +197,9 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function bindMethod($method, $callback)
     {
-        static::$corDict[\Co::getUid()]['methodBindings'][$this->parseBindMethod($method)] = $callback;
+        static::$corDict[\Co::getUid()]['methodBindings'][$method] = $callback;
+        // 5.6
+        // static::$corDict[\Co::getUid()]['methodBindings'][$this->parseBindMethod($method)] = $callback;
     }
 
     /**

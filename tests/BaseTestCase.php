@@ -5,22 +5,22 @@
  ** first:
  ** cd laravel_fly_root
  ** git clone -b 5.6 https://github.com/laravel/framework.git /vagrant/www/zc/vendor/scil/laravel-fly-local/vendor/laravel/framework
- ** // composer update
- ** cd laravel_project_root
+ ** composer update
+ ** //cd laravel_project_root
  *
  ** Mode Map
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Process
+ * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Process
  *
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_Other
+ * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Other
  *
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
+ * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
  ** Mode Backup
- * vendor/bin/phpunit  --stop-on-failure -c vendor/scil/laravel-fly/phpunit.xml.dist --testsuit LaravelFly_Backup
+ * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Backup
  *
  ** example for debugging with gdb:
  * gdb ~/php/7.1.14root/bin/php       // this php is a debug versioin, see D:\vagrant\ansible\files\scripts\php-debug\
- * r  ../../bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
+ * r  vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
  */
 
@@ -28,8 +28,6 @@ namespace LaravelFly\Tests;
 
 use LaravelFly\Server\Common;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\TextUI\TestRunner;
-use PHPUnit\Framework\Test;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
@@ -62,8 +60,8 @@ abstract class BaseTestCase extends TestCase
     /**
      * @var string
      */
-    static protected $workingRoot;
-    static protected $laravelAppRoot;
+    static protected $workingRoot = WORKING_ROOT;
+    static protected $laravelAppRoot = LARAVEL_APP_ROOT;
 
     static $flyDir;
 
@@ -77,25 +75,22 @@ abstract class BaseTestCase extends TestCase
 
     static function setUpBeforeClass()
     {
-        $mainVersion = self::process(function () {
-            return Common::getApplicationVersion();
+
+        $r = static::$laravelAppRoot;
+
+
+        if (!is_dir($r . '/app')) {
+            exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
+        }
+
+        $mainVersion = self::process(function () use($r) {
+            return Common::getApplicationVersion(false,$r);
         });
 
         static::$flyDir = __DIR__ . '/../src/fly/' . $mainVersion . '/';
         static::$backOfficalDir = __DIR__ . '/offcial_files/' . $mainVersion . '/';
 
 
-        if (!AS_ROOT) {
-            static::$laravelAppRoot = static::$workingRoot = realpath(__DIR__ . '/../../../..');
-            return;
-        }
-
-        static::$workingRoot = realpath(__DIR__ . '/..');
-        $r = static::$laravelAppRoot = realpath(static::$workingRoot . '/../../..');
-
-        if (!is_dir($r . '/app')) {
-            exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
-        }
 
 
         $d = static::processGetArray(function () {
@@ -164,6 +159,7 @@ abstract class BaseTestCase extends TestCase
         foreach ($map as $back => $offcial) {
             $back = static::$backOfficalDir . $back;
             $offcial = static::$laravelAppRoot . $offcial;
+
             $cmdArguments = "$diffOPtions $back $offcial ";
 
             unset($a);

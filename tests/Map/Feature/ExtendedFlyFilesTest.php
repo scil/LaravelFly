@@ -59,20 +59,20 @@ class ExtendedFlyFilesTest extends Base
             $full = file_get_contents($offcial);
             $full = preg_replace('/\s+/',' ',$full);
             foreach ($parts as $part) {
-                $this->difOnePart($part, $full, $partFile);
+                $this->difOnePart($part, $full, $partFile,$offcial);
             }
 
         }
 
     }
 
-    function difOnePart($part, $full,$file)
+    function difOnePart($part, $full,$file,$offcial)
     {
         $part = preg_replace('/\s+/',' ',$part);
 
         $pos = strpos($full,$part);
         // var_dump($pos);
-        self::assertNotFalse($pos,"$part\n\nin:\n$file");
+        self::assertNotFalse($pos,"$part\nin\n$file\nnot found in $offcial\n");
     }
 
     function testFiles()

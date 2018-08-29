@@ -286,14 +286,8 @@ class Router implements RegistrarContract, BindingRegistrar
      */
     public function apiResource($name, $controller, array $options = [])
     {
-        $only = ['index', 'show', 'store', 'update', 'destroy'];
-
-        if (isset($options['except'])) {
-            $only = array_diff($only, (array)$options['except']);
-        }
-
         return $this->resource($name, $controller, array_merge([
-            'only' => $only,
+            'only' => ['index', 'show', 'store', 'update', 'destroy'],
         ], $options));
     }
 
@@ -647,8 +641,6 @@ class Router implements RegistrarContract, BindingRegistrar
 
         if ($response instanceof PsrResponseInterface) {
             $response = (new HttpFoundationFactory)->createResponse($response);
-        } elseif ($response instanceof Model && $response->wasRecentlyCreated) {
-            $response = new JsonResponse($response, 201);
         } elseif (!$response instanceof SymfonyResponse &&
             ($response instanceof Arrayable ||
                 $response instanceof Jsonable ||

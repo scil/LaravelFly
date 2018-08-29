@@ -30,7 +30,7 @@ class Application extends \Illuminate\Container\Container implements Application
      *
      * @var string
      */
-    const VERSION = '5.6.28';
+    const VERSION = '5.5.40';
 
     /**
      * The base path for the Laravel installation.
@@ -66,6 +66,13 @@ class Application extends \Illuminate\Container\Container implements Application
      * @var string
      */
     protected $environmentFile = '.env';
+
+    /**
+     * A custom callback used to configure Monolog.
+     *
+     * @var callable|null
+     */
+    protected $monologConfigurator;
 
     /**
      * The application namespace.
@@ -440,7 +447,13 @@ class Application extends \Illuminate\Container\Container implements Application
         if (func_num_args() > 0) {
             $patterns = is_array(func_get_arg(0)) ? func_get_arg(0) : func_get_args();
 
-            return Str::is($patterns, $this['env']);
+               foreach ($patterns as $pattern) {
+                 if (Str::is($pattern, $this['env'])) {
+                     return true;
+                 }
+             }
+
+             return false;
         }
 
         return $this['env'];
@@ -533,20 +546,6 @@ class Application extends \Illuminate\Container\Container implements Application
             $provider->register();
         }
 
-        // If there are bindings / singletons set as properties on the provider we
-        // will spin through them and register them with the application, which
-        // serves as a convenience layer while registering a lot of bindings.
-        if (property_exists($provider, 'bindings')) {
-            foreach ($provider->bindings as $key => $value) {
-                $this->bind($key, $value);
-            }
-        }
-
-        if (property_exists($provider, 'singletons')) {
-            foreach ($provider->singletons as $key => $value) {
-                $this->singleton($key, $value);
-            }
-        }
 
         $this->markAsRegistered($provider, $cid);
 
@@ -998,6 +997,40 @@ class Application extends \Illuminate\Container\Container implements Application
     }
 
     /**
+     * Define a callback to be used to configure Monolog.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function configureMonologUsing(callable $callback)
+    {
+        $this->monologConfigurator = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the application has a custom Monolog configurator.
+     *
+     * @return bool
+     */
+    public function hasMonologConfigurator()
+    {
+        return ! is_null($this->monologConfigurator);
+    }
+
+    /**
+     * Get the custom Monolog configurator for the application.
+     *
+     * @return callable
+     */
+    public function getMonologConfigurator()
+    {
+        return $this->monologConfigurator;
+    }
+
+
+    /**
      * Get the current application locale.
      *
      * @return string
@@ -1058,7 +1091,7 @@ class Application extends \Illuminate\Container\Container implements Application
                      'filesystem.disk' => [\Illuminate\Contracts\Filesystem\Filesystem::class],
                      'filesystem.cloud' => [\Illuminate\Contracts\Filesystem\Cloud::class],
                      'hash' => [\Illuminate\Hashing\HashManager::class],
-                     'hash.driver' => [\Illuminate\Contracts\Hashing\Hasher::class],
+                     // 5.6 'hash.driver' => [\Illuminate\Contracts\Hashing\Hasher::class],
                      'translator' => [\Illuminate\Translation\Translator::class, \Illuminate\Contracts\Translation\Translator::class],
                      'log' => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
                      'mailer' => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],

@@ -37,13 +37,6 @@ class Dispatcher implements DispatcherContract
     protected $wildcards = [];
 
     /**
-     * The cached wildcard listeners.
-     *
-     * @var array
-     */
-    protected $wildcardsCache = [];
-
-    /**
      * The queue resolver instance.
      *
      * @var callable
@@ -89,8 +82,6 @@ class Dispatcher implements DispatcherContract
     protected function setupWildcardListen($event, $listener)
     {
         $this->wildcards[$event][] = $this->makeListener($listener, true);
-
-        $this->wildcardsCache = [];
     }
 
     /**
@@ -291,8 +282,7 @@ class Dispatcher implements DispatcherContract
         $listeners = $this->listeners[$eventName] ?? [];
 
         $listeners = array_merge(
-            $listeners,
-            $this->wildcardsCache[$eventName] ?? $this->getWildcardListeners($eventName)
+            $listeners, $this->getWildcardListeners($eventName)
         );
 
         return class_exists($eventName, false)
@@ -316,7 +306,7 @@ class Dispatcher implements DispatcherContract
             }
         }
 
-        return $this->wildcardsCache[$eventName] = $wildcards;
+        return $wildcards;
     }
 
     /**
