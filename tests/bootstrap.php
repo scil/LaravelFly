@@ -12,8 +12,8 @@ define('WORKING_ROOT', $AS_ROOT ? dirname(__DIR__) :
     dirname(__DIR__, 4));
 
 
-if (isset($_ENV['LARAVEL_PROJECT'])) {
-    define('LARAVEL_APP_ROOT', $_ENV['LARAVEL_PROJECT']);
+if (isset($_ENV['LARAVEL_PROJECT_ROOT'])) {
+    define('LARAVEL_APP_ROOT', $_ENV['LARAVEL_PROJECT_ROOT']);
 } else {
     define('LARAVEL_APP_ROOT',
         $AS_ROOT ? dirname(WORKING_ROOT, 3) : WORKING_ROOT);

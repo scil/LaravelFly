@@ -58,7 +58,7 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
 
-        <!--<env name="LARAVEL_PROJECT" value="/vagrant/www/laravel5.5"/>-->
+        <!--<env name="LARAVEL_PROJECT_ROOT" value="/vagrant/www/laravel5.5"/>-->
 
     </php>
 </phpunit>

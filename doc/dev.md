@@ -16,6 +16,12 @@
 If the project is in a VirtualBox shared dir, it may failed to symlinking to <fly_dev_dir>, the solution is https://www.virtualbox.org/ticket/10085#comment:32  
 `--prefer-source` to load laravel/framework/tests ( [How to download excluded paths via composer?](https://stackoverflow.com/questions/28169938/how-to-download-excluded-paths-via-composer) )
 
+## phpunit
+
+1. set this env var in <fly_dev_dir>/phpunit.xml.dist
+```
+        <env name="LARAVEL_PROJECT_ROOT" value=""/>
+```
 
 ## Bridge between Laravel and LaravelFly
 
