@@ -221,7 +221,7 @@ class Common
             die("[ERROR] refactor not made for current Laravel version $v.\n");
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
-        if (empty(LARAVELFLY_SERVICES['config']))
+        if (LARAVELFLY_MODE !== 'FpmLike' && empty(LARAVELFLY_SERVICES['config']))
             include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
         static $mapLoaded = false;

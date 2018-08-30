@@ -24,6 +24,8 @@ class FpmHttpServer extends Common implements ServerInterface
         /** @var \LaravelFly\FpmLike\Application $app */
         $app = new $this->appClass($this->root);
 
+        $app->setServer($this);
+
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             \App\Http\Kernel::class
