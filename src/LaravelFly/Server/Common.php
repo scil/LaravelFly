@@ -218,7 +218,7 @@ class Common
         $flyBaseDir = __DIR__ . '/../../fly/' . $v . '/';
 
         if (!is_dir($flyBaseDir))
-            die("[ERROR] reactor not made for current Laravel version $v.\n");
+            die("[ERROR] refactor not made for current Laravel version $v.\n");
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         if (empty(LARAVELFLY_SERVICES['config']))
