@@ -1,9 +1,10 @@
 <?php
 /**
- * add Dict, plus hack: Cache for event listeners
- *     listeners cache which is across multple requests, changes in any request would change this var
+ * add Dict, plus : Cache for event listeners $listenersCache
+ *      It is across multple requests,
+ *      Changes in any request would change this var
  *          static $listenersStalbe = [];
- *      this cache will not have performance when Wildcard listeners are added in requests, because :
+ *      This cache will not have performance effect when Wildcard listeners are added in requests, because :
  *          static::$wildStable
  *
  */
@@ -71,10 +72,10 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
     public function getListeners($eventName)
     {
         // hack: Cache for event listeners
-        static $cache = [], $used = 0;
+        static $listenersCache = [], $used = 0;
         if (static::$wildStable && !empty(static::$listenersStalbe[$eventName])) {
             ++$used;
-            return $cache[$eventName];
+            return $listenersCache[$eventName];
         }
         static::$listenersStalbe[$eventName] = true;
         static::$wildStable = true;
@@ -87,7 +88,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
         );
 
         // hack: Cache for event listeners
-        return $cache[$eventName] = class_exists($eventName, false)
+        return $listenersCache[$eventName] = class_exists($eventName, false)
             ? $this->addInterfaceListeners($eventName, $listeners)
             : $listeners;
     }

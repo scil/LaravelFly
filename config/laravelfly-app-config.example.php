@@ -77,12 +77,11 @@ return [
      *   - COROUTINE-FRIENDLY SERVICE
      *   - CLONE SERVICE
      *
-     * A COROUTINE-FRIENDLY SERVICE that must satisfy folling conditions:
-     *      1. singleton. A singleton service is made by by {@link Illuminate\Containe\Application::singleton()} or {@link Illuminate\Containe\Application::instance() }
-     *      2. its vars will not changed in any requests
-     *      3. if it has ref attibutes, like app['events'] has an attribubte `container`, the container must be also A COROUTINE-FRIENDLY SERVICE
+     * Read more about COROUTINE-FRIENDLY SERVICE at
+     * https://github.com/scil/LaravelFly/wiki/WORKER-OBJECT
      *
-     * CLONE SERVICE: any service can be a CLONE SERVICE, but take care of Stale Reference ([Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist))
+     * CLONE SERVICE: any service can be a CLONE SERVICE, but take care of
+     * Stale Reference ([Mode Map Safety Checklist](https://github.com/scil/LaravelFly/wiki/Mode-Map-Safety-Checklist))
      *
      * If a service is not a COROUTINE-FRIENDLY SERVICE, neither a CLONE SERVICE that Stale Reference handled,
      * it should not be made on worker.
