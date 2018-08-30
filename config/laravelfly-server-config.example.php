@@ -366,14 +366,11 @@ return [
     /**
      *
      * Tip One:
-     * make sure this kernel class extends
-     * \LaravelFly\Map\Kernel,
-     * or
-     * \LaravelFly\Backup\Kernel
+     * make sure this kernel class extends \LaravelFly\Map\Kernel or \LaravelFly\Backup\Kernel,
      * otherwise \LaravelFly\Kernel::class is used.
      *
      * A simple way it to edit app/Http/Kernel.php like the guide in
-     * https://github.com/scil/LaravelFly/blob/master/doc/config.md
+     * https://github.com/scil/LaravelFly/wiki/Configuration
      *
      * Tip Two:
      * Usually, the properties of this kernel are
@@ -392,6 +389,10 @@ return [
      */
     'kernel' => \App\Http\Kernel::class,
 
+    /**
+     * If your project uses an application which replaces Laravel official application, like OctoberCms,
+     * you can refactor it and write the new one here.
+     */
     'application'=> '\LaravelFly\\' . LARAVELFLY_MODE . '\Application',
 
 ];
