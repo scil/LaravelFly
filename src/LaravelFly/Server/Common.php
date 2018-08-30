@@ -200,7 +200,7 @@ class Common
         $laravelProjectRoot = $laravelProjectRoot ?: realpath(__DIR__ .
             '/../../../../../..');
 
-        $file = $laravelProjectRoot. '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php';
+        $file = $laravelProjectRoot . '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php';
 
         if (!is_file($file)) return null;
 
@@ -213,6 +213,8 @@ class Common
 
     static function includeFlyFiles(&$options)
     {
+        if (LARAVELFLY_MODE === 'FpmLike') return;
+
         $v = static::getApplicationVersion();
 
         $flyBaseDir = __DIR__ . '/../../fly/' . $v . '/';
@@ -221,7 +223,7 @@ class Common
             die("[ERROR] refactor not made for current Laravel version $v.\n");
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
-        if (LARAVELFLY_MODE !== 'FpmLike' && empty(LARAVELFLY_SERVICES['config']))
+        if (empty(LARAVELFLY_SERVICES['config']))
             include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
         static $mapLoaded = false;
