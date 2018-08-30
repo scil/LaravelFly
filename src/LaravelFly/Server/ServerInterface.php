@@ -2,10 +2,12 @@
 
 namespace LaravelFly\Server;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 interface ServerInterface
 {
 
-    public function getDispatcher();
+    public function getDispatcher(): EventDispatcher;
 
     public function config(array $options);
 
