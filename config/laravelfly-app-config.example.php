@@ -72,15 +72,12 @@ return [
      * only singleton services are useful and valid here.
      * a singeton service is like this:
      *     *   $this->app->singleton('hash', function ($app) { ... });
+     * or
+     *     *   $this->app->instance('hash', new Hash());
      *
      * There are two types of singleton services:
-     *   - COROUTINE-FRIENDLY SERVICE
-     *   - CLONE SERVICE
-     *
-     * Read more about COROUTINE-FRIENDLY SERVICE at
-     * https://github.com/scil/LaravelFly/wiki/WORKER-OBJECT
-     *
-     * CLONE SERVICE: any service can be a CLONE SERVICE, but take care of
+     *   - COROUTINE-FRIENDLY SERVICE:  https://github.com/scil/LaravelFly/wiki/WORKER-OBJECT
+     *   - CLONE SERVICE : any service can be a CLONE SERVICE, but take care of
      * Stale Reference https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference
      *
      * If a service is not a COROUTINE-FRIENDLY SERVICE, neither a CLONE SERVICE that Stale Reference fixed,
