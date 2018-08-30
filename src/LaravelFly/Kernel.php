@@ -1,6 +1,7 @@
 <?php
 /**
  * thie file is used only when \App\Http\Kernel not edited.
+ *  see 'Edit <project_root_dir>/app/Http/Kernel.php' at https://github.com/scil/LaravelFly/wiki/Configuration
  */
 
 namespace LaravelFly;

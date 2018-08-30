@@ -366,8 +366,11 @@ return [
     /**
      *
      * Tip One:
-     * make sure this kernel class extends \LaravelFly\Backup\Kernel or
-     * \LaravelFly\Map\Kernel, otherwise \LaravelFly\Kernel::class is used.
+     * make sure this kernel class extends
+     * \LaravelFly\Map\Kernel,
+     * or
+     * \LaravelFly\Backup\Kernel
+     * otherwise \LaravelFly\Kernel::class is used.
      *
      * A simple way it to edit app/Http/Kernel.php like the guide in
      * https://github.com/scil/LaravelFly/blob/master/doc/config.md
@@ -388,5 +391,7 @@ return [
      *
      */
     'kernel' => \App\Http\Kernel::class,
+
+    'application'=> '\LaravelFly\\' . LARAVELFLY_MODE . '\Application',
 
 ];

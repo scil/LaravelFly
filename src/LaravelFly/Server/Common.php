@@ -113,7 +113,7 @@ class Common
     {
         $this->dispatcher = $dispatcher ?: new EventDispatcher();
 
-        $this->root = realpath(__DIR__ . '/../../../../../..');
+        $this->root = dirname(__DIR__, 6);
 
         if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
             die("This doc root is not for a Laravel app: {$this->root} \n");
@@ -165,7 +165,7 @@ class Common
             $options['pid_file'] = $this->root . '/bootstrap/laravel-fly-' . $options['listen_port'] . '.pid';
         }
 
-        $appClass = '\LaravelFly\\' . $options['mode'] . '\Application';
+        $appClass = $options['application'] ?? '\LaravelFly\\' . $options['mode'] . '\Application';
 
         if (class_exists($appClass)) {
             $this->appClass = $appClass;
@@ -197,8 +197,7 @@ class Common
     {
         if (static::$laravelMainVersion) return static::$laravelMainVersion;
 
-        $laravelProjectRoot = $laravelProjectRoot ?: realpath(__DIR__ .
-            '/../../../../../..');
+        $laravelProjectRoot = $laravelProjectRoot ?: dirname(__DIR__, 6);
 
         $file = $laravelProjectRoot . '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php';
 
@@ -215,19 +214,19 @@ class Common
     {
         if (LARAVELFLY_MODE === 'FpmLike') return;
 
-        $v = static::getApplicationVersion();
+        $version = static::getApplicationVersion();
 
-        $flyBaseDir = __DIR__ . '/../../fly/' . $v . '/';
+        $flyBaseDir = __DIR__ . '/../../fly/' . $version . '/';
 
         if (!is_dir($flyBaseDir))
-            die("[ERROR] refactor not made for current Laravel version $v.\n");
+            die("[ERROR] refactor not made for current Laravel version $version.\n");
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         if (empty(LARAVELFLY_SERVICES['config']))
             include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
-        static $mapLoaded = false;
-        static $logLoaded = false;
+
+        static $mapLoaded = false, $logLoaded = false;
 
         if ($options['mode'] === 'Map' && !$mapLoaded) {
 
