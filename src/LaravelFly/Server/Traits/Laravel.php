@@ -155,9 +155,6 @@ Trait Laravel
 
         $response->status($laravel_response->getStatusCode());
 
-        // gzip use nginx
-        // $response->gzip(1);
-
         $response->end($laravel_response->getContent());
     }
 }
