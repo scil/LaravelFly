@@ -108,49 +108,5 @@ class HttpServer extends Common implements ServerInterface
         });
     }
 
-    /**
-     * @param \swoole_http_request $r
-     * @return \Illuminate\Http\Request
-     *
-     * from: Illuminate\Http\Request\createFromBase
-     */
-    public function createLaravelRequest(\swoole_http_request $r)
-    {
-        $server = [];
-
-        foreach ($r->server as $key => $value) {
-            $server[strtoupper($key)] = $value;
-        }
-
-        foreach ($r->header as $key => $value) {
-            $_key = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
-            $server[$_key] = $value;
-        }
-
-
-        $request = new \Illuminate\Http\Request(
-            $r->get ?? [],
-            $r->post ?? [],
-            [],
-            $r->cookie ?? [],
-            $r->files ?? [],
-            $server,
-            $r->rawContent() ?: null
-        );
-
-        /*
-         *
-         * from: Illuminate\Http\Request\createFromBase
-         *      $request->request = $request->getInputSource();
-         */
-        (function () {
-            $this->request = $this->getInputSource();
-        })->call($request);
-
-
-        return $request;
-
-    }
-
 
 }
