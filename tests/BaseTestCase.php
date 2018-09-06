@@ -29,6 +29,7 @@ namespace LaravelFly\Tests;
 use LaravelFly\Server\Common;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use LaravelFly\Server\HttpServer;
 
 require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
 require_once __DIR__ . "/swoole_src_tests/include/lib/curl_concurrency.php";
@@ -239,6 +240,7 @@ abstract class BaseTestCase extends TestCase
 
     }
 
+
     static function request($constances, $options, $urls, $serverFunc = null, $wait = 0): string
     {
         return self::_process(function () use ($constances, $options, $serverFunc) {
@@ -259,5 +261,48 @@ abstract class BaseTestCase extends TestCase
 
     }
 
+
+
+    const testPort = '9503';
+
+    const testBaseUrl = '/laravelfly-test/';
+
+    const testCurlBaseUrl = '127.0.0.1:' . (self::testPort) . self::testBaseUrl;
+
+    function requestForTest($routes, $curlPair)
+    {
+
+        foreach ($curlPair as $url => $result) {
+            $urls[] = static::testCurlBaseUrl . $url;
+            $results [] = $result;
+        }
+
+        $constances = [
+        ];
+
+        $options = [
+            'worker_num' => 1,
+            'mode' => 'Map',
+            'listen_port' => self::testPort,
+            'daemonize' => false,
+            'pre_include' => false,
+        ];
+
+        $r = self::request($constances, $options, $urls,
+
+            function (HttpServer $server) use ($routes) {
+
+                $server->getDispatcher()->addListener('worker.ready', function () use ($routes) {
+                    foreach ($routes as list($method, $url, $func)) {
+                        \Route::$method($url, $func);
+                    }
+                });
+
+                $server->start();
+
+            }, 3);
+
+        self::assertEquals(implode("\n", $results), $r);
+    }
 }
 
