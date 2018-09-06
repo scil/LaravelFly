@@ -269,13 +269,8 @@ abstract class BaseTestCase extends TestCase
 
     const testCurlBaseUrl = '127.0.0.1:' . (self::testPort) . self::testBaseUrl;
 
-    function requestForTest($routes, $curlPair)
+    function requestForTest($routes, $urls,$results)
     {
-
-        foreach ($curlPair as $url => $result) {
-            $urls[] = static::testCurlBaseUrl . $url;
-            $results [] = $result;
-        }
 
         $constances = [
         ];
