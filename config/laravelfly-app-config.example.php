@@ -8,7 +8,12 @@ use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 return [
 
-    // show server info at url /laravel-fly/info by default
+    /**
+     * show server info at url /laravel-fly/info by default
+     *
+     * It's better to view json response in Firefox, instead of Chrome or IE
+     */
+
     'web' => [
         'enable' => true,
         'prefix' => 'laravel-fly',

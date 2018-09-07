@@ -19,7 +19,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
   
 - Extra speed improvements such as middlewares cache, view path cache.
 
-- Check server info at /laravel-fly/info. (This feture is under dev and more infomations will be available.)
+- Check server info at /laravel-fly/info. It's better to view json response in Firefox, instead of Chrome or IE. (This feture is under dev and more infomations will be available.)
 
 ## Quick Start
 
