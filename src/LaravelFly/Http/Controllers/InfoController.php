@@ -23,7 +23,12 @@ class InfoController extends BaseController
         return [
             'server' => $this->serverInfo(),
             'laravel event listeners cache(in current worker process)' => $this->eventListenersCacheInfo(),
+            'header'=>$this->header(),
         ];
+    }
+
+    function header(){
+        return \Request::header();
     }
 
     function serverInfo()
@@ -48,11 +53,11 @@ class InfoController extends BaseController
         $methodR = new \ReflectionMethod('LaravelFly\Map\IlluminateBase\Dispatcher', 'getListeners');
         $statics = $methodR->getStaticVariables();
 
-        $r['cached used times'] = $statics['used'];
+        $result['cached used times'] = $statics['used'];
 
-        list($cached, $cachedEmpty) = $this->_getEventsListenersInfo($statics['cache']);
+        list($cached, $cachedEmpty) = $this->_getEventsListenersInfo($statics['listenersCache']);
         $cached['events with no listeners'] = $cachedEmpty;
-        $r['cached'] = $cached;
+        $result['cached'] = $cached;
 
         $eventR = new \ReflectionClass('LaravelFly\Map\IlluminateBase\Dispatcher');
         $d = $eventR->getStaticProperties()['corDict'];
@@ -61,10 +66,10 @@ class InfoController extends BaseController
         $allWildcardsCurrent = $d[\Swoole\Coroutine::getuid()]['wildcards'];
 
 
-        $r['all without wildcard or empty in current request'] = $this->_getEventsListenersInfo($allCurrent)[0];
-        $r['wildcards in current request'] = $this->_getEventsListenersInfo($allWildcardsCurrent)[0];
+        $result['non wildcard in current request'] = $this->_getEventsListenersInfo($allCurrent)[0];
+        $result['wildcards in current request'] = $this->_getEventsListenersInfo($allWildcardsCurrent)[0];
 
-        return $r;
+        return $result;
     }
 
     protected function _getEventsListenersInfo($listenersByEventName)
@@ -105,7 +110,7 @@ class InfoController extends BaseController
                 $r2 = new \ReflectionFunction($bound['listener']);
 
                 $current[] = [
-                    'this' => get_class($r2->getClosureThis()),
+                    'this' => (null!==$r2->getClosureThis())? get_class($r2->getClosureThis()):null,
                     'file' => $r2->getFileName(),
                     'wildcard' => $bound['wildcard'],
                 ];

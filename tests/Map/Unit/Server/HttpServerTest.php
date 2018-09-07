@@ -81,4 +81,30 @@ class HttpServerTest extends BaseTestCase
         );
 
     }
+
+    private function testHeader()
+    {
+        $this->requestForTest(
+            [
+                [
+                    'get',
+                    static::testBaseUrl . 'test1',
+                    function () {
+                        return \Request::header('REMOTE_ADDR') . \Request::header('SERVER_ADDR');
+                    }
+                ],
+            ],
+            [
+                [
+                    'url' => static::testCurlBaseUrl . 'test1',
+                    'options' => [
+                    ]
+                ]
+            ],
+            [
+                'laravelfly-test/test1',
+            ]
+        );
+
+    }
 }

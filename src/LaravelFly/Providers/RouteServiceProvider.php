@@ -20,11 +20,13 @@ class RouteServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
-        $config = $this->app['config']->get('laravelfly.route');
+        $config = $this->app['config']->get('laravelfly.web',[]);
+
+        if(empty($config['enable'])) return;
 
         $routeConfig = [
             'namespace' => 'LaravelFly\Http\Controllers',
-            'prefix' => !empty($config['prefix']) ? $config['prefix'] : 'laravel-fly',
+            'prefix' => $config['prefix'] ?? 'laravel-fly',
 //            'domain' => !empty($config['domain']) ? $config['domain'] : '',
 //            'middleware' => [DebugbarEnabled::class],
         ];

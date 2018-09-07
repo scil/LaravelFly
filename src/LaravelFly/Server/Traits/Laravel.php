@@ -135,33 +135,33 @@ Trait Laravel
     }
 
     /**
-     * @param \swoole_http_request $r
+     * @param \swoole_http_request $swoole_request
      * @return \Illuminate\Http\Request
      *
      * from: Illuminate\Http\Request\createFromBase
      */
-    public function createLaravelRequest(\swoole_http_request $r)
+    public function createLaravelRequest(\swoole_http_request $swoole_request)
     {
         $server = [];
 
-        foreach ($r->server as $key => $value) {
+        foreach ($swoole_request->server as $key => $value) {
             $server[strtoupper($key)] = $value;
         }
 
-        foreach ($r->header as $key => $value) {
+        foreach ($swoole_request->header as $key => $value) {
             $_key = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
             $server[$_key] = $value;
         }
 
 
         $request = new \Illuminate\Http\Request(
-            $r->get ?? [],
-            $r->post ?? [],
+            $swoole_request->get ?? [],
+            $swoole_request->post ?? [],
             [],
-            $r->cookie ?? [],
-            $r->files ?? [],
+            $swoole_request->cookie ?? [],
+            $swoole_request->files ?? [],
             $server,
-            $r->rawContent() ?: null
+            $swoole_request->rawContent() ?: null
         );
 
         /*

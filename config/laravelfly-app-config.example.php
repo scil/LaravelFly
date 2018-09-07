@@ -7,6 +7,13 @@ $IN_PRODUCTION = env('APP_ENV') === 'production' || env('APP_ENV') === 'product'
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 return [
+
+    // show server info at url /laravel-fly/info by default
+    'web' => [
+        'enable' => true,
+        'prefix' => 'laravel-fly',
+    ],
+
     /**
      * If use cache file for config/laravel.php always.
      *
