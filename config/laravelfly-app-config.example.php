@@ -209,15 +209,17 @@ return [
             \Illuminate\Session\Middleware\StartSession::class
         ],
 
-        Illuminate\Translation\TranslationServiceProvider::class => [
-            'translation.loader' => true,
-            'translator' => true,
-        ],
+        Illuminate\Translation\TranslationServiceProvider::class =>
+            LARAVELFLY_SERVICES['translation'] || LARAVELFLY_SERVICES['validator'] ? [
+                'translation.loader' => true,
+                'translator' => true,
+            ] : 'ignore',
 
-        Illuminate\Validation\ValidationServiceProvider::class => [
-            'validator' => true,
-            'validation.presence' => true,
-        ],
+        Illuminate\Validation\ValidationServiceProvider::class =>
+            LARAVELFLY_SERVICES['validator'] ? [
+                'validator' => true,
+                'validation.presence' => true,
+            ] : 'ignore',
 
         Illuminate\View\ViewServiceProvider::class => [
             '_replaced_by' => \LaravelFly\Map\Illuminate\View\ViewServiceProvider::class,

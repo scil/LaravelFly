@@ -1,4 +1,5 @@
 <?php
+
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -32,12 +33,13 @@ const HONEST_IN_CONSOLE = false;
 const LARAVELFLY_SERVICES = [
 
     /**
-     * you can set the corresponding service to be true if you use it.
+     * set the corresponding service to be true if you use it.
      */
     'redis' => false,
     'filesystem.cloud' => false,
     'broadcast' => false,
-
+    'translation' => true,
+    'validator'=> true,
 
     /**
      * you can set false if routes with same name do not keep same in different requests.
@@ -394,6 +396,6 @@ return [
      * If your project uses an application which replaces Laravel official application, like OctoberCms,
      * you can refactor it and write the new one here.
      */
-    'application'=> '\LaravelFly\\' . LARAVELFLY_MODE . '\Application',
+    'application' => '\LaravelFly\\' . LARAVELFLY_MODE . '\Application',
 
 ];

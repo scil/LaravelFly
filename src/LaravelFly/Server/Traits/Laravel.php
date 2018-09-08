@@ -90,6 +90,7 @@ Trait Laravel
             $this->kernel->bootstrap();
         } catch (\Throwable $e) {
             $msg=$e->getMessage();
+            echo $e->getTraceAsString();
             echo "[FLY ERROR] bootstrap: $msg\n";
             $server && $server->shutdown();
         }
