@@ -69,6 +69,8 @@ class Common
 
         ],
         'kernel' => [
+            // '../Kernel.php' =>
+            // match the dir structure of tests/offcial_files
             'Http/Kernel.php' =>
                 '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php'
 
