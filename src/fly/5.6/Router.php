@@ -345,7 +345,7 @@ class Router implements RegistrarContract, BindingRegistrar
         return '';
     }
 
-    protected function addRoute($methods, $uri, $action)
+    public function addRoute($methods, $uri, $action)
     {
         return static::$corDict[\Co::getUid()]['routes']->add($this->createRoute($methods, $uri, $action));
     }
