@@ -86,12 +86,13 @@ const LARAVELFLY_SERVICES = [
 
     /**
      * set true if items in app('config') keep same in different requests,
-     * othersize leave it false because
+     * othersize leave it false, because
      * for Mode Backup, it's necessary to restore its origin value after each request.
      * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
      *
-     * In most cases, it's not necessary to set it false. Except for old versions of Debugbar
-     * which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
+     * In most cases, it's not necessary to set it false. Some common exceptions:
+     *  1. you change the active language at runtime `App::setLocale($locale);`
+     *  2. old versions of Debugbar which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
      * restore its origin value to allow Debugbar continue work in other requests.
      *
      */
