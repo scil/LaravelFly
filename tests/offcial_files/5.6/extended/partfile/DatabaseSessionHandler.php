@@ -57,3 +57,54 @@ return $this;
 
 
 
+===A===
+
+
+{
+use InteractsWithTime;
+
+/**
+* The database connection instance.
+*
+* @var \Illuminate\Database\ConnectionInterface
+*/
+protected $connection;
+
+/**
+* The name of the session table.
+*
+* @var string
+*/
+protected $table;
+
+/**
+* The number of minutes the session should be valid.
+*
+* @var int
+*/
+protected $minutes;
+
+/**
+* The container instance.
+*
+* @var \Illuminate\Contracts\Container\Container
+*/
+protected $container;
+
+/**
+* The existence state of the session.
+*
+* @var bool
+*/
+protected $exists;
+
+/**
+* Create a new database session handler instance.
+*
+* @param  \Illuminate\Database\ConnectionInterface  $connection
+* @param  string  $table
+* @param  int  $minutes
+* @param  \Illuminate\Contracts\Container\Container|null  $container
+* @return void
+*/
+public function __construct(ConnectionInterface $connection, $table, $minutes, Container $container = null)

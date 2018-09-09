@@ -14,7 +14,12 @@ class ExtendedFlyFilesTest extends Base
         'extended/partfile/CookieSessionHandler.php' => '/vendor/laravel/framework/src/Illuminate/Session/CookieSessionHandler.php',
         'extended/partfile/DatabaseSessionHandler.php' => '/vendor/laravel/framework/src/Illuminate/Session/DatabaseSessionHandler.php',
 
+
         'extended/partfile/Compiler.php' => '/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php',
+
+        'extended/partfile/Translator.php' => '/vendor/laravel/framework/src/Illuminate/Translation/Translator.php',
+        'extended/partfile/FileLoader.php' => '/vendor/laravel/framework/src/Illuminate/Translation/FileLoader.php',
+
     ];
 
     var $map = [
@@ -51,7 +56,7 @@ class ExtendedFlyFilesTest extends Base
 
     function testPart()
     {
-        $this->assertEquals(5, count($this->partFileMap));
+        $this->assertEquals(7, count($this->partFileMap));
         foreach ($this->partFileMap as $partFile => $offcial) {
             $partFile = static::$backOfficalDir . $partFile;
             $offcial = static::$laravelAppRoot . $offcial;
