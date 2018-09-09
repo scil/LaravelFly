@@ -48,12 +48,12 @@ trait Dict
 
     }
 
-    protected function initForRequestCorontine($cid)
+    function initForRequestCorontine($cid)
     {
         static::$corDict[$cid] = static::$corDict[WORKER_COROUTINE_ID];
     }
 
-    protected function unsetForRequestCorontine(int $cid)
+    function unsetForRequestCorontine(int $cid)
     {
         unset(static::$corDict[$cid]);
     }
