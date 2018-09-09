@@ -109,8 +109,8 @@ return [
      *
      *        'singleton_service_3' => false, //  service will not be made on worker,
      *
-     *        'singleton_service_3' => 'clone', //  service will be a CLONE SERVICE, so there are more than one instances,
-     *                                          //  to avoid Stale Reference it's necessary to update relations if some objects have ref to the service,
+     *        'singleton_service_3' => 'clone', //  service will be a CLONE SERVICE, so there would be more than one instances in a worker process.
+     *                                          //  To avoid Stale Reference it's necessary to update relations if some objects have ref to the service,
      *                                          //  see config 'laravelfly.update_for_clone'
      *      ],
      *
@@ -211,6 +211,7 @@ return [
 
         Illuminate\Translation\TranslationServiceProvider::class =>
             LARAVELFLY_SERVICES['translation'] || LARAVELFLY_SERVICES['validator'] ? [
+                '_replaced_by' => LaravelFly\Map\Illuminate\Translation\TranslationServiceProvider::class,
                 'translation.loader' => true,
                 'translator' => true,
             ] : 'ignore',
@@ -298,7 +299,7 @@ return [
                 'this' => 'hash',
                 'closure' => function () {
                     // $this here is app('hash'), the instance of HashManager
-                    // by default, $name is bcrypt and argon
+                    // by default, $name is bcrypt and then argon
                     foreach ($this->getDrivers() as $name => $drive) {
                         $this->drivers[$name] = clone $drive;
                         // debug_zval_dump($this->drivers[$name] );
