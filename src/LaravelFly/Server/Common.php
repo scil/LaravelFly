@@ -52,12 +52,23 @@ class Common
         'Facade.php' =>
             '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
 
-        // otherwise on each boot of PaginationServiceProvider and NotificationServiceProvider,view paths would be appended to app('view')->finder->hints
-        // by  $this->loadViewsFrom forever
+        /**
+         * otherwise
+         * on each boot of PaginationServiceProvider and NotificationServiceProvider,
+         * view paths would be appended to app('view')->finder->hints by  $this->loadViewsFrom again and again
+        */
         'FileViewFinder' . (LARAVELFLY_SERVICES['view.finder'] ? 'SameView' : '') . '.php' =>
             '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
 
     ];
+
+    /**
+     * fly files included conditionally.
+     * this array is only for
+     * test tests/Map/Feature/FlyFilesTest.php
+     *
+     * @var array
+     */
     protected static $conditionFlyFiles = [
         'log_cache' => [
             'StreamHandler.php' =>
