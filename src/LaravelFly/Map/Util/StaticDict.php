@@ -11,8 +11,8 @@ trait StaticDict
     /**
      * @var array
      *
-     * protected static $normalStaticAttri=[];
-     * protected static $arrayStaticAttri=[];
+     // protected static $normalStaticAttri=[];
+     // protected static $arrayStaticAttri=[];
      *
      */
     protected static $corStaticDict = [];
@@ -20,12 +20,6 @@ trait StaticDict
 
     static public function initStaticForCorontine($cid, $listen = true)
     {
-        if ($cid > WORKER_COROUTINE_ID) {
-            static::$corStaticDict[$cid] = static::$corStaticDict[WORKER_COROUTINE_ID];
-            return;
-        }
-
-
         if (static::$arrayStaticAttri ?? false) {
             foreach (static::$arrayStaticAttri as $attri) {
                 static::$corStaticDict[WORKER_COROUTINE_ID][$attri] = [];
@@ -43,18 +37,23 @@ trait StaticDict
 
         if ($listen) {
             Container::getInstance()->make('events')->listen('request.corinit', function ($cid) {
-                static::initStaticForCorontine($cid);
+                static::initStaticForRequestCorontine($cid);
             });
 
             Container::getInstance()->make('events')->listen('request.corunset', function ($cid) {
-                static::delStaticForCoroutine($cid);
+                static::unsetStaticForRequestCorontine($cid);
             });
         }
 
 
     }
 
-    static function delStaticForCoroutine(int $cid)
+    static protected function initStaticForRequestCorontine($cid)
+    {
+        static::$corStaticDict[$cid] = static::$corStaticDict[WORKER_COROUTINE_ID];
+    }
+
+    static protected function unsetStaticForRequestCorontine(int $cid)
     {
         unset(static::$corStaticDict[$cid]);
     }
