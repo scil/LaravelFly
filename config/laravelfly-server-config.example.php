@@ -39,13 +39,36 @@ const LARAVELFLY_SERVICES = [
     'filesystem.cloud' => !'use',
     'broadcast' => !'use',
     'translator' => 'use',
-    'validator'=> 'use',
+    'validator' => 'use',
+
 
     /**
-     * you can set false if routes with same name do not keep same in different requests.
+     * set false if routes in routes/web.php not always same, so
+     * App\Providers\RouteServiceProvider should boot in each request.
      *
-     * Most cases, some Service Providers add same routes, like DebugBar(Barryvdh\Debugbar\ServiceProvider),
-     * so it's not necessary to set false because 'routes', 'allRoutes', 'nameList', 'actionList' are associate arrays.
+     * Try best to keep it true, as it makes routes cache useful.
+     *
+     * This is a route for localization.
+     *    Route::group(['prefix' => \Request::segment(1)], function() { ... }
+     * It makes routes/web.php dif and no route cache for them.
+     * A better refactor solution is to define all routes for all langs:
+     *    foreach(['es','fr','en'] as $prefix){
+     *       Route::group(['prefix' => $prefix], function() { ... }
+     *    }
+     *
+     */
+    'App\Providers\RouteServiceProvider' => true,
+
+    /**
+     * you can set false if routes with same name are not same in different requests.
+     * For example, set false when
+     *  ` Route::get('/welcome', 'Controller@welcome1');` in a request, but
+     *  ` Route::get('/welcome', 'Controller@welcome2');` in another request.
+     *
+     * If some Service Providers add same routes on each request,
+     * like DebugBar(Barryvdh\Debugbar\ServiceProvider), App\Providers\RouteServiceProvider
+     * it's not necessary to worry and set it false. Because 'routes', 'allRoutes', 'nameList', 'actionList' are associate arrays.
+     * Just make sure same name, same action.
      */
     'routes' => true,
 

@@ -266,7 +266,8 @@ return [
          * and
          *      App\Providers\RouteServiceProvider::map
          */
-        App\Providers\RouteServiceProvider::class => [],
+        App\Providers\RouteServiceProvider::class =>
+            !empty(LARAVELFLY_SERVICES['App\Providers\RouteServiceProvider']) ? [] : 'across',
 
 
         /*
