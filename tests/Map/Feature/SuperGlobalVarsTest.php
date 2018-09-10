@@ -60,7 +60,7 @@ class SuperGlobalVarsTest extends Base
 
     function testMonolog()
     {
-        $cmd =  'cd '. static::$workingRoot .'/vendor/monolog/monolog   && grep -E "\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md    . ';
+        $cmd =  'cd '. static::$laravelAppRoot .'/vendor/monolog/monolog   && grep -E "\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md    . ';
 
         ob_start();
         passthru($cmd);
@@ -76,7 +76,7 @@ F;
     function testSymfony()
     {
         // grep re explanation: starting  with [[:space:]] which not followed by / or * which are signs for comments
-        $cmd =  'cd '. static::$workingRoot .'/vendor/symfony/http-foundation  &&  grep -E "^[[:space:]]+[^/*[:space:]].*\b_(SERVER|GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md  --exclude-dir=Tests -n  . ';
+        $cmd =  'cd '. static::$laravelAppRoot .'/vendor/symfony/http-foundation  &&  grep -E "^[[:space:]]+[^/*[:space:]].*\b_(SERVER|GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md  --exclude-dir=Tests -n  . ';
 
         ob_start();
         passthru($cmd);

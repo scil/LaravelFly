@@ -61,7 +61,6 @@ abstract class BaseTestCase extends TestCase
     /**
      * @var string
      */
-    static protected $workingRoot = WORKING_ROOT;
     static protected $laravelAppRoot = LARAVEL_APP_ROOT;
 
     static $flyDir;
@@ -84,15 +83,8 @@ abstract class BaseTestCase extends TestCase
             exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
         }
 
-        $mainVersion = self::process(function () use($r) {
-            return Common::getApplicationVersion(false,$r);
-        });
-
-        static::$flyDir = __DIR__ . '/../src/fly/' . $mainVersion . '/';
-        static::$backOfficalDir = __DIR__ . '/offcial_files/' . $mainVersion . '/';
-
-
-
+        static::$flyDir = __DIR__ . '/../src/fly/';
+        static::$backOfficalDir = __DIR__ . '/offcial_files/';
 
         $d = static::processGetArray(function () {
             return include static::$laravelAppRoot . '/vendor/scil/laravel-fly/config/laravelfly-server-config.example.php';

@@ -1,22 +1,17 @@
 <?php
 
 if (is_file(__DIR__ . '/../vendor/autoload.php')) {
-    $AS_ROOT = true;
+    $AT_FLY_ROOT = true;
     $loader = require __DIR__ . '/../vendor/autoload.php';
 } else {
-    $AS_ROOT = false;
+    $AT_FLY_ROOT = false;
     $loader = require __DIR__ . '/../../../../vendor/autoload.php';
 }
-
-define('WORKING_ROOT', $AS_ROOT ? dirname(__DIR__) :
-    dirname(__DIR__, 4));
-
 
 if (isset($_ENV['LARAVEL_PROJECT_ROOT'])) {
     define('LARAVEL_APP_ROOT', $_ENV['LARAVEL_PROJECT_ROOT']);
 } else {
-    define('LARAVEL_APP_ROOT',
-        $AS_ROOT ? dirname(WORKING_ROOT, 3) : WORKING_ROOT);
+    define('LARAVEL_APP_ROOT', dirname(__DIR__, $AT_FLY_ROOT ? 4 : 1));
 }
 
 echo "laravel project is at " . LARAVEL_APP_ROOT . "\n";
