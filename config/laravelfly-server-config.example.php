@@ -38,7 +38,7 @@ const LARAVELFLY_SERVICES = [
     'redis' => false,
     'filesystem.cloud' => false,
     'broadcast' => false,
-    'translation' => true,
+    'translator' => true,
     'validator'=> true,
 
     /**
@@ -93,7 +93,7 @@ const LARAVELFLY_SERVICES = [
      * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
      *
      * In most cases, it's not necessary to set it false. Some common exceptions:
-     *  1. you change the active language at runtime `App::setLocale($locale);`
+     *  1. you change the active language in a request `App::setLocale($locale);`
      *  2. old versions of Debugbar which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
      * restore its origin value to allow Debugbar continue work in other requests.
      *

@@ -11,7 +11,7 @@
          stopOnFailure="true">
     <testsuites>
         <testsuite name="LaravelFly_tmp">
-            <file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>
+            <file>./tests/Map/Unit/Illuminate/Translation/TranslatorTest.php</file>
         </testsuite>
 
         <testsuite name="only_fly">

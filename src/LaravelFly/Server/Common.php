@@ -212,9 +212,16 @@ class Common
 
         $flyBaseDir = __DIR__ . '/../../../../laravel-fly-files/src/';
 
+
+        if (!empty(LARAVELFLY_SERVICES['translator'])) {
+            assert(LARAVELFLY_SERVICES['config'] === false,
+                "LARAVELFLY_SERVICES['config'] must be false when LARAVELFLY_SERVICES['translator'] is true ");
+        }
+
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
-        if (empty(LARAVELFLY_SERVICES['config']))
+        if (empty(LARAVELFLY_SERVICES['config'])) {
             include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
+        }
 
 
         static $mapLoaded = false, $logLoaded = false;

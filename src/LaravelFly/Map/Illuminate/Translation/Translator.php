@@ -8,6 +8,7 @@
 namespace LaravelFly\Map\Illuminate\Translation;
 
 
+use Illuminate\Contracts\Translation\Loader;
 use LaravelFly\Map\Util\Dict;
 
 class Translator extends \Illuminate\Translation\Translator
@@ -23,9 +24,10 @@ class Translator extends \Illuminate\Translation\Translator
     {
         $this->loader = $loader;
         static::$normalAttriForObj = [
-            'locale'=> $locale,
+            'locale' => $locale,
         ];
-        $this->initOnWorker( true);
+
+        $this->initOnWorker(true);
     }
 
     public function setLocale($locale)

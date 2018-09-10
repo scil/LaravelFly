@@ -210,7 +210,7 @@ return [
         ],
 
         Illuminate\Translation\TranslationServiceProvider::class =>
-            LARAVELFLY_SERVICES['translation'] || LARAVELFLY_SERVICES['validator'] ? [
+            LARAVELFLY_SERVICES['translator'] || LARAVELFLY_SERVICES['validator'] ? [
                 '_replaced_by' => LaravelFly\Map\Illuminate\Translation\TranslationServiceProvider::class,
                 'translation.loader' => true,
                 'translator' => true,

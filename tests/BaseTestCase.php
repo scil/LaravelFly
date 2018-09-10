@@ -83,8 +83,8 @@ abstract class BaseTestCase extends TestCase
             exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
         }
 
-        static::$flyDir = __DIR__ . '/../src/fly/';
-        static::$backOfficalDir = __DIR__ . '/offcial_files/';
+        static::$flyDir = FLY_ROOT. '/src/fly/';
+        static::$backOfficalDir = FLY_ROOT . '/tests/offcial_files/';
 
         $d = static::processGetArray(function () {
             return include static::$laravelAppRoot . '/vendor/scil/laravel-fly/config/laravelfly-server-config.example.php';
@@ -103,7 +103,7 @@ abstract class BaseTestCase extends TestCase
      * @param bool $swoole
      * @return \LaravelFly\Server\HttpServer|\LaravelFly\Server\ServerInterface
      */
-    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php')
+    static protected function makeNewFlyServer($constances = [], $options = [], $config_file = DEFAULT_SERVER_CONFIG_FILE)
     {
         static $step = 0;
 
@@ -261,7 +261,7 @@ abstract class BaseTestCase extends TestCase
 
     const testCurlBaseUrl = '127.0.0.1:' . (self::testPort) . self::testBaseUrl;
 
-    function requestForTest($routes, $urls,$results)
+    function requestAndTestAfterOnWorker($callback, $urls, $expect)
     {
 
         $constances = [
@@ -277,19 +277,30 @@ abstract class BaseTestCase extends TestCase
 
         $r = self::request($constances, $options, $urls,
 
-            function (HttpServer $server) use ($routes) {
+            function (HttpServer $server) use ($callback) {
 
-                $server->getDispatcher()->addListener('worker.ready', function () use ($routes) {
-                    foreach ($routes as list($method, $url, $func)) {
-                        \Route::$method($url, $func);
-                    }
+                $server->getDispatcher()->addListener('worker.ready', function () use ($callback) {
+                    $callback();
                 });
 
                 $server->start();
 
             }, 3);
 
-        self::assertEquals(implode("\n", $results), $r);
+        self::assertEquals(implode("\n", $expect), $r);
+    }
+
+    function requestAndTestAfterRoute($routes, $urls, $expect){
+
+        $callback = function () use($routes){
+
+            foreach ($routes as list($method, $url, $func)) {
+                \Route::$method($url, $func);
+            }
+        };
+
+        $this->requestAndTestAfterOnWorker($callback,$urls,$expect);
+
     }
 }
 
