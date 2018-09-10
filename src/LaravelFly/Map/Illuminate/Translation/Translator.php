@@ -48,7 +48,7 @@ class Translator extends \Illuminate\Translation\Translator
         // was not passed, we will use the default locales which was given to us when
         // the translator was instantiated. Then, we can load the lines and return.
         $locales = $fallback ? $this->localeArray($locale)
-            : [$locale ?: $this->getLocale()]; //hack
+            : [$locale ?: static::$corDict[\Co::getUid()]['locale']];
 
         foreach ($locales as $locale) {
             if (!is_null($line = $this->getLine(
@@ -71,8 +71,7 @@ class Translator extends \Illuminate\Translation\Translator
 
     public function getFromJson($key, array $replace = [], $locale = null)
     {
-        // hack
-        $locale = $locale ?: $this->getLocale();
+        $locale = $locale ?: static::$corDict[\Co::getUid()]['locale'];
 
         // For JSON translations, there is only one file per locale, so we will simply load
         // that file and then we will be ready to check the array for the key. These are
@@ -97,12 +96,12 @@ class Translator extends \Illuminate\Translation\Translator
 
     protected function localeArray($locale)
     {
-        return array_filter([$locale ?: $this->getLocale(), $this->fallback]);
+        return array_filter([$locale ?: static::$corDict[\Co::getUid()]['locale'], $this->fallback]);
     }
 
 
     protected function localeForChoice($locale)
     {
-        return $locale ?: $this->getLocale() ?: $this->fallback;
+        return $locale ?: static::$corDict[\Co::getUid()]['locale'] ?: $this->fallback;
     }
 }

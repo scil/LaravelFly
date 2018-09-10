@@ -33,13 +33,13 @@ const HONEST_IN_CONSOLE = false;
 const LARAVELFLY_SERVICES = [
 
     /**
-     * set the corresponding service to be true if you use it.
+     * set the corresponding service to be 'use' if you use it.
      */
-    'redis' => false,
-    'filesystem.cloud' => false,
-    'broadcast' => false,
-    'translator' => true,
-    'validator'=> true,
+    'redis' => !'use',
+    'filesystem.cloud' => !'use',
+    'broadcast' => !'use',
+    'translator' => 'use',
+    'validator'=> 'use',
 
     /**
      * you can set false if routes with same name do not keep same in different requests.

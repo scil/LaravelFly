@@ -60,7 +60,7 @@ return [
         Hhxsv5\LaravelS\Illuminate\LaravelSServiceProvider::class,
         'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
 
-    ], LARAVELFLY_SERVICES['broadcast'] ? [] : [
+    ], !!LARAVELFLY_SERVICES['broadcast'] ? [] : [
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Broadcasting\BroadcastManager::class,
         Illuminate\Contracts\Broadcasting\Broadcaster::class,
@@ -134,7 +134,7 @@ return [
         ],
 
         Illuminate\Broadcasting\BroadcastServiceProvider::class =>
-            LARAVELFLY_SERVICES['broadcast'] ? [
+            !!LARAVELFLY_SERVICES['broadcast'] ? [
                 Illuminate\Broadcasting\BroadcastManager::class,
                 Illuminate\Contracts\Broadcasting\Broadcaster::class,
             ] : 'ignore',
@@ -169,7 +169,7 @@ return [
         Illuminate\Filesystem\FilesystemServiceProvider::class => [
             'files' => true,
             'filesystem.disk' => true,
-            'filesystem.cloud' => LARAVELFLY_SERVICES['filesystem.cloud'],
+            'filesystem.cloud' => !!LARAVELFLY_SERVICES['filesystem.cloud'],
         ],
 
         /* This reg FormRequestServiceProvider, whose boot is related to request */
@@ -197,7 +197,7 @@ return [
         Illuminate\Queue\QueueServiceProvider::class => [],
 
         Illuminate\Redis\RedisServiceProvider::class => [
-            'redis' => LARAVELFLY_SERVICES['redis'],
+            'redis' => !!LARAVELFLY_SERVICES['redis'],
         ],
 
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
@@ -210,14 +210,14 @@ return [
         ],
 
         Illuminate\Translation\TranslationServiceProvider::class =>
-            LARAVELFLY_SERVICES['translator'] || LARAVELFLY_SERVICES['validator'] ? [
+            !!LARAVELFLY_SERVICES['translator'] || !!LARAVELFLY_SERVICES['validator'] ? [
                 '_replaced_by' => LaravelFly\Map\Illuminate\Translation\TranslationServiceProvider::class,
                 'translation.loader' => true,
                 'translator' => true,
             ] : 'ignore',
 
         Illuminate\Validation\ValidationServiceProvider::class =>
-            LARAVELFLY_SERVICES['validator'] ? [
+            !!LARAVELFLY_SERVICES['validator'] ? [
                 'validator' => true,
                 'validation.presence' => true,
             ] : 'ignore',
@@ -250,7 +250,7 @@ return [
         /* depends */
         App\Providers\AuthServiceProvider::class => 'across',
 
-        App\Providers\BroadcastServiceProvider::class => LARAVELFLY_SERVICES['broadcast'] ? [] : 'ignore',
+        App\Providers\BroadcastServiceProvider::class => !!LARAVELFLY_SERVICES['broadcast'] ? [] : 'ignore',
 
         /* depends */
         /**
