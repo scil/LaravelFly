@@ -24,37 +24,30 @@ class RouteServiceProvider extends \Illuminate\Support\ServiceProvider
 
         if(empty($config['enable'])) return;
 
+        $prefix = $config['prefix'] ?? 'laravel-fly';
+        \View::share('LARAVEL_FLY_PREFIX',$prefix);
+
+        $this->server = $this->app->getServer();
+        $swoole = $this->swoole = $this->server->getSwooleServer();
+        \View::share('WORKER_PID' , $swoole->worker_pid);
+        \View::share('WORKER_ID' , $swoole->worker_id);
+
+        \View::share('INFO_ITEMS',['info','header','eventListeners','routes']);
+
         $routeConfig = [
-            'namespace' => 'LaravelFly\Http\Controllers',
-            'prefix' => $config['prefix'] ?? 'laravel-fly',
+            'namespace' => 'LaravelFly\FrontEnd\Controllers',
+            'prefix' => $prefix,
 //            'domain' => !empty($config['domain']) ? $config['domain'] : '',
 //            'middleware' => [DebugbarEnabled::class],
+
         ];
 
+        $this->loadViewsFrom(__DIR__.'/../FrontEnd/views', 'laravel-fly');
+
         $this->getRouter()->group($routeConfig, function ($router) {
-            $router->get('info', [
+            $router->get('info/{sub?}', [
                 'uses' => 'InfoController@index',
                 'as' => 'laravelfly.info',
-            ]);
-
-            $router->get('clockwork/{id}', [
-                'uses' => 'OpenHandlerController@clockwork',
-                'as' => 'ugbar.clockwork',
-            ]);
-
-            $router->get('assets/stylesheets', [
-                'uses' => 'AssetController@css',
-                'as' => 'ugbar.assets.css',
-            ]);
-
-            $router->get('assets/javascript', [
-                'uses' => 'AssetController@js',
-                'as' => 'ugbar.assets.js',
-            ]);
-
-            $router->delete('cache/{key}/{tags?}', [
-                'uses' => 'CacheController@delete',
-                'as' => 'ugbar.cache.delete',
             ]);
         });
 

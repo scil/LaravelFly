@@ -43,17 +43,22 @@ const LARAVELFLY_SERVICES = [
 
 
     /**
-     * set false if routes in routes/web.php not always same, so
-     * App\Providers\RouteServiceProvider should boot in each request.
+     * set false if routes in routes/web.php not always same,
+     * like this in mcamara/laravel-localization
+     *      // LaravelLocalization::setLocale uses \Request::segment(1) which changes in each request
+     *      Route::group(['prefix' => LaravelLocalization::setLocale()], function() { ... } );
+     * so App\Providers\RouteServiceProvider should boot in each request.
      *
      * Try best to keep it true, as it makes routes cache useful.
      *
-     * This is a route for localization.
-     *    Route::group(['prefix' => \Request::segment(1)], function() { ... }
-     * It makes routes/web.php dif and no route cache for them.
-     * A better refactor solution is to define all routes for all langs:
-     *    foreach(['es','fr','en'] as $prefix){
-     *       Route::group(['prefix' => $prefix], function() { ... }
+     * For mcamara/laravel-localization, a refactor solution is to define all routes for all langs:
+     *    foreach(LaravelLocalization::getSupportedLocales() as $locale){
+     *       Route::group([
+     *          'prefix' => $locale,
+     *          'middleware' => [
+w    *            \App\Http\Middleware\SetLocale::class,// define this middleware to call LaravelLocalization::setLocale()
+     *          ],
+     *      ], function() { ... } );
      *    }
      *
      */
