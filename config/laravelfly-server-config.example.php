@@ -52,11 +52,11 @@ const LARAVELFLY_SERVICES = [
      * Try best to keep it true, as it makes routes cache useful.
      *
      * For mcamara/laravel-localization, a refactor solution is to define all routes for all langs:
-     *    foreach(LaravelLocalization::getSupportedLocales() as $locale){
+     *    foreach(LaravelLocalization::getSupportedLanguagesKeys() as $locale){
      *       Route::group([
      *          'prefix' => $locale,
      *          'middleware' => [
-w    *            \App\Http\Middleware\SetLocale::class,// define this middleware to call LaravelLocalization::setLocale()
+     *            \App\Http\Middleware\SetLocale::class,// define this middleware to call LaravelLocalization::setLocale()
      *          ],
      *      ], function() { ... } );
      *    }
@@ -108,25 +108,14 @@ w    *            \App\Http\Middleware\SetLocale::class,// define this middlewar
      * set true if same view name refers to same view files in different requests.
      *
      * some times, same view name refers to different file
-     * for example:
+     * example 1:
      *      view 'home' may points to 'guest_location/home.blade.php' for a guest ,
      *      while to 'admin_location/home.blade.php' for an admin
+     * example 2:
+     *      package mcamara/laravel-localization has a middleware LaravelLocalizationViewPath
+     *      which makes view('intro') point to resources/views/en/intro or  resources/views/fr/intro
      */
     'view.finder' => false,
-
-    /**
-     * set true if items in app('config') keep same in different requests,
-     * othersize leave it false, because
-     * for Mode Backup, it's necessary to restore its origin value after each request.
-     * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
-     *
-     * In most cases, it's not necessary to set it false. Some common exceptions:
-     *  1. you change the active language in a request `App::setLocale($locale);`
-     *  2. old versions of Debugbar which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
-     * restore its origin value to allow Debugbar continue work in other requests.
-     *
-     */
-    'config' => false,
 
     /**
      * set true if middlewares keep same in all requests.
