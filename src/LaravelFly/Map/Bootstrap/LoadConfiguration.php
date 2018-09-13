@@ -126,7 +126,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 LARAVELFLY_SERVICES['hash'] ? [] : ['drivers in app("hash")'],
                 $cloneServices));
             \LaravelFly\Fly::getServer()->echo(
-                "services to be cloned in each request: [$allClone, ]. An object in your service providers or controllers or any where else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_for_clone').",
+                "services to be cloned in each request: [$allClone, ]. An object in your service providers or controllers or any where else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_on_request').",
                 'NOTE', true
             );
 
@@ -162,9 +162,8 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         $update = [];
 
-        foreach ($appConfig['laravelfly.update_for_clone'] ?: [] as $item) {
-            // 'this' is userful , it allows closure access to protected props
-            if ($item && $item['this'] && $item['closure']) {
+        foreach ($appConfig['laravelfly.update_on_request'] ?: [] as $item) {
+            if (!empty($item['closure']) && is_callable($item['closure'])) {
                 $update[] = $item;
             }
         }

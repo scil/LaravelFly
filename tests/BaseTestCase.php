@@ -31,8 +31,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use LaravelFly\Server\HttpServer;
 
-require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
-require_once __DIR__ . "/swoole_src_tests/include/lib/curl_concurrency.php";
 
 /**
  * Class Base

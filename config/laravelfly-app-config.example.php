@@ -111,7 +111,7 @@ return [
      *
      *        'singleton_service_3' => 'clone', //  service will be a CLONE SERVICE, so there would be more than one instances in a worker process.
      *                                          //  To avoid Stale Reference it's necessary to update relations if some objects have ref to the service,
-     *                                          //  see config 'laravelfly.update_for_clone'
+     *                                          //  see config 'laravelfly.update_on_request'
      *      ],
      *
      *      proverder4=> false,           // this provider will not be booted on worker
@@ -292,7 +292,7 @@ return [
      *
      * clone and closure run in each request.
      */
-    'update_for_clone' => [
+    'update_on_request' => [
 
         // for hash
         !empty(LARAVELFLY_SERVICES['hash']) ? false :
@@ -310,7 +310,7 @@ return [
 
         // put one more updating item here
         [
-            // 'this' => 'name',
+            // 'this' => 'name',   // 'this' is optional, and userful when closure is accessing protected props
             // 'closure' => function () { },
         ]
     ],

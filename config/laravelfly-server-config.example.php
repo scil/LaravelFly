@@ -98,7 +98,7 @@ const LARAVELFLY_SERVICES = [
      * BcryptHasher's prop: rounds
      * ArgonHasher's props: memory,time,threads
      *
-     * You can control which driver, BcryptHasher or ArgonHasher to be cloned in config('laravelfly.update_for_clone')
+     * You can control which driver, BcryptHasher or ArgonHasher to be cloned in config('laravelfly.update_on_request')
      *
      * their values init with data from config('hashing.bcrypt') and config('hashing.argon')
      */

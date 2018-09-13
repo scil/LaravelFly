@@ -21,3 +21,7 @@ echo "laravel project is at " . LARAVEL_APP_ROOT . "\n";
 echo "default SERVER_CONFIG_FILE " . DEFAULT_SERVER_CONFIG_FILE. "\n";
 
 $loader->addPsr4("Illuminate\\Tests\\", __DIR__ . "/../vendor/laravel/framework/tests/");
+
+
+require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";
+require_once __DIR__ . "/swoole_src_tests/include/lib/curl_concurrency.php";
