@@ -11,9 +11,13 @@ class CleanOnWorker
     {
         $app->resetServiceProviders();
 
-        Facade::clearResolvedInstance('request');
+        $services = $app->make('config')->get('laravelfly.clean_Facade_on_work', []);
 
-        //'url' has made? when? \Illuminate\Routing\RoutingServiceProvider
-        Facade::clearResolvedInstance('url');
+        $services = array_unique(array_merge(['url', 'request'], $services));
+
+        foreach ($services as $service) {
+            Facade::clearResolvedInstance($service);
+        }
+
     }
 }
