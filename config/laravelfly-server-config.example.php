@@ -12,6 +12,11 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 const LARAVELFLY_MODE = 'Map';
 
 /**
+ * set it to false if you do not use any coroutine API, such as coroutine database API
+ */
+const LARAVELFLY_COROUTINE = true;
+
+/**
  * honest that application is running in cli mode.
  *
  * Some serivces, such as DebugBar, not run in cli mode.

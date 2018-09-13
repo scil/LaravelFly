@@ -92,7 +92,12 @@ class HttpServer extends Common implements ServerInterface
             $this->app->initForRequestCorontine($cid);
 
 
-            $laravel_request = $this->createLaravelRequest($request);
+            if (LARAVELFLY_COROUTINE)
+                $laravel_request = $this->createLaravelRequest($request);
+            else {
+                $this->setGlobal($request);
+                $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
+            }
 
             $laravel_response = $this->kernel->handle($laravel_request);
 
