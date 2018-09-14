@@ -296,7 +296,7 @@ return [
         LaravelFly\Providers\RouteServiceProvider::class => [],
     ],
 
-    'Facade_clean_on_work' => [
+    'clean_Facade_on_work' => [
 
         // a facke request instance made on work
         'request',
