@@ -122,9 +122,17 @@ return [
      */
     'providers_on_worker' => [
 
-        // this is not in config('app.providers') and registered in Application:;registerBaseServiceProviders
+        // this is not in config('app.providers') but registered in Application:;registerBaseServiceProviders
         Illuminate\Log\LogServiceProvider::class => [
             'log' => true,
+        ],
+
+        // this is not in config('app.providers') but registered in Application:;registerBaseServiceProviders
+        Illuminate\Routing\RoutingServiceProvider::class => [
+            'router' => true,
+            'url' => 'clone',
+            // todo
+            'redirect' => false,
         ],
 
         Illuminate\Auth\AuthServiceProvider::class => [

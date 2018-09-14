@@ -25,6 +25,8 @@ class ObjectsInWorkerTest extends Base
         'Illuminate\Foundation\PackageManifest',
         'events',
         'router',
+        'routes',
+        'url',
         'Illuminate\Contracts\Http\Kernel',
         'request',
         'config',
@@ -36,8 +38,6 @@ class ObjectsInWorkerTest extends Base
         'view',
 
         'Illuminate\Contracts\Auth\Access\Gate',
-        'routes',
-        'url',
         'Illuminate\Contracts\Debug\ExceptionHandler',
         'blade.compiler',
         'translation.loader',
@@ -184,7 +184,7 @@ class ObjectsInWorkerTest extends Base
         sort($instances);
         $exp = $this->instances;
         sort($exp);
-        //self::assertEquals($exp, $instances);
+//        self::assertEquals($exp, $instances);
 
     }
 
