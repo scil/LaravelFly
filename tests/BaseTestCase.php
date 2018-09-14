@@ -324,14 +324,16 @@ abstract class BaseTestCase extends TestCase
         self::assertEquals(implode("\n", $expect), $r);
     }
 
-    function requestAndTestAfterRoute($routes, $urls, $expect)
+    function requestAndTestAfterRoute($routes, $urls, $expect, $funcOnWork=null)
     {
 
-        $callback = function () use ($routes) {
+        $callback = function () use ($routes, $funcOnWork) {
 
             foreach ($routes as list($method, $url, $func)) {
                 \Route::$method($url, $func);
             }
+
+            if(is_callable($funcOnWork)) $funcOnWork();
         };
 
         $this->requestAndTestAfterOnWorker($callback, $urls, $expect);
