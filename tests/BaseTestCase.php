@@ -5,15 +5,16 @@
  * One
  **first:
  **   cd laravel_project_root
+ **   $xml = vendor/scil/laravel-fly/phpunit.xml.dist
  *
  ** Mode Map
- * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Process
+ * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_Process
  *
- * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Other
+ * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_Other
  *
  *
  ** Mode Backup
- * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Backup
+ * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Backup
  *
  *
  * Two
