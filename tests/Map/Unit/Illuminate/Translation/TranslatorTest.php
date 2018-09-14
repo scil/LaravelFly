@@ -11,6 +11,8 @@ class TranslatorTest extends BaseTestCase
 
     function testLocale()
     {
+        $default_locale = 'zh';
+
         $this->requestAndTestAfterRoute(
             [
                 [
@@ -42,8 +44,8 @@ class TranslatorTest extends BaseTestCase
                 static::testCurlBaseUrl . 'test2',
             ],
             [
-                'config: zh-cn -> en; trans: zh-cn -> en',
-                'config: zh-cn; trans: zh-cn'
+                "config: $default_locale -> en; trans: $default_locale -> en",
+                "config: $default_locale; trans: $default_locale"
             ]
         );
 

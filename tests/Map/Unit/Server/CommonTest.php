@@ -56,7 +56,9 @@ class CommonTest extends BaseTestCase
         $a = new \ReflectionProperty(static::$commonServerNoSwoole, 'appClass');
         $a->setAccessible(true);
 
-        foreach (['Map', 'Backup', 'FpmLike'] as $mode) {
+        foreach (['Map',
+                //     'Backup', 'FpmLike'
+                 ] as $mode) {
 
             $appClass = self::process(function () use ($mode, $a, $server) {
                 $server->config(['mode' => $mode, 'pre_include' => false]);

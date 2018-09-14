@@ -2,21 +2,26 @@
 
 
 /**
- ** first:
- ** cd laravel_fly_root
- ** git clone -b 5.6 https://github.com/laravel/framework.git /vagrant/www/zc/vendor/scil/laravel-fly-local/vendor/laravel/framework
- ** composer update
- ** //cd laravel_project_root
+ * One
+ **first:
+ **   cd laravel_project_root
  *
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Process
  *
  * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_Other
  *
- * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
  ** Mode Backup
  * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Backup
+ *
+ *
+ * Two
+ **first:
+ **   cd laravel_fly_root
+ **   git clone -b 5.6 https://github.com/laravel/framework.git /vagrant/www/zc/vendor/scil/laravel-fly-local/vendor/laravel/framework
+ **   composer update
+ * vendor/bin/phpunit  --stop-on-failure -c phpunit.xml.dist --testsuit LaravelFly_Map_LaravelTests
  *
  ** example for debugging with gdb:
  * gdb ~/php/7.1.14root/bin/php       // this php is a debug versioin, see D:\vagrant\ansible\files\scripts\php-debug\
@@ -70,6 +75,8 @@ abstract class BaseTestCase extends TestCase
      */
     static protected $chan;
 
+    static protected $chan_fail_file = '/tmp/phpunit_zc_chan';
+
 
     static function setUpBeforeClass()
     {
@@ -81,7 +88,7 @@ abstract class BaseTestCase extends TestCase
             exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
         }
 
-        static::$flyDir = FLY_ROOT. '/src/fly/';
+        static::$flyDir = FLY_ROOT . '/src/fly/';
         static::$backOfficalDir = FLY_ROOT . '/tests/offcial_files/';
 
         $d = static::processGetArray(function () {
@@ -124,6 +131,13 @@ abstract class BaseTestCase extends TestCase
         $file_options = @ include $config_file;
 
         $options = array_merge($file_options, $options);
+
+        if (empty($options['application'])) {
+            if ($options['mode'])
+                $options['application'] = '\LaravelFly\\' . $options['mode'] . '\Application';
+            elseif (defined(('LARAVELFLY_MODE')))
+                $options['application'] = '\LaravelFly\\' . LARAVELFLY_MODE . '\Application';
+        }
 
         $flyServer = \LaravelFly\Fly::init($options, null);
 
@@ -188,27 +202,45 @@ abstract class BaseTestCase extends TestCase
     static function _process($funcInNewProcess, $func, $waittime = 1): string
     {
 
+        static $chan = null;
+
+        if(is_file(static::$chan_fail_file))
+            @unlink(static::$chan_fail_file);
+
+        if (null === $chan)
+            $chan = new \Swoole\Channel(1024 * 256);
 
         $pm = new \ProcessManager;
 
-        $chan = new \Swoole\Channel(1024 * 1024 * 3);
 
         $pm->childFunc = function () use ($funcInNewProcess, $pm, $chan) {
             $r = $funcInNewProcess();
             if (is_array($r)) {
-                $chan->push(json_encode($r));
-            } else {
-                $chan->push($r);
+                $r = json_encode($r);
             }
+            // file_put_contents('/vagrant/www/zc/child_chan.tmp', $r);
+
+            // todo 为什么parent方面会pop不到数据？
+            // if($chan->push($r)===false)
+                file_put_contents(static::$chan_fail_file, $r);
+
             $pm->wakeup();
 
         };
         // server can not be made in parentFunc,because parentFunc run in current process
         $pm->parentFunc = function ($pid) use ($func, $chan, $waittime) {
-            echo $chan->pop();
+            $c = $chan->pop();
+
+            if(!$c && is_file(static::$chan_fail_file))
+                $c = file_get_contents(static::$chan_fail_file);
+
+
+            // file_put_contents('/vagrant/www/zc/parent_chan.tmp', $c);
+            echo $c;
 
             if (is_callable($func))
                 echo $func();
+
             sleep($waittime);
 
             \swoole_process::kill($pid);
@@ -217,17 +249,22 @@ abstract class BaseTestCase extends TestCase
 
         ob_start();
         $pm->run();
-        return ob_get_clean();
+        $r = ob_get_clean();
+        // file_put_contents('/vagrant/www/zc/process.tmp', $r);
+        return $r;
     }
 
     static function createFlyServerInProcess($constances, $options, $serverFunc, $wait = 0): string
     {
-        return self::process(function () use ($constances, $options, $serverFunc) {
+        $r = self::process(function () use ($constances, $options, $serverFunc) {
             $server = self::makeNewFlyServer($constances, $options);
             $r = $serverFunc($server);
             return $r;
         }, $wait);
 
+         // file_put_contents('/vagrant/www/zc/flyserver.tmp',$r);
+
+        return $r;
     }
 
 
@@ -250,7 +287,6 @@ abstract class BaseTestCase extends TestCase
         }, $wait);
 
     }
-
 
 
     const testPort = '9503';
@@ -288,16 +324,17 @@ abstract class BaseTestCase extends TestCase
         self::assertEquals(implode("\n", $expect), $r);
     }
 
-    function requestAndTestAfterRoute($routes, $urls, $expect){
+    function requestAndTestAfterRoute($routes, $urls, $expect)
+    {
 
-        $callback = function () use($routes){
+        $callback = function () use ($routes) {
 
             foreach ($routes as list($method, $url, $func)) {
                 \Route::$method($url, $func);
             }
         };
 
-        $this->requestAndTestAfterOnWorker($callback,$urls,$expect);
+        $this->requestAndTestAfterOnWorker($callback, $urls, $expect);
 
     }
 }

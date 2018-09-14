@@ -39,6 +39,8 @@ class SuperGlobalVarsTest extends Base
        -path ./vendor/predis/predis/examples  -prune -o   \
        -path ./vendor/scil/laravel-fly -prune -o   \
        -path ./vendor/scil/laravel-fly-local -prune -o   \
+       -path ./vendor/scil/laravel-fly-files -prune -o   \
+       -path ./vendor/scil/laravel-fly-files-local -prune -o   \
        -path ./vendor/hhxsv5/laravel-s -prune -o   \
        -path ./vendor/sebastian/global-state -prune -o   \
        -path  ./vendor/symfony/http-foundation/Tests  -prune -o  \
@@ -100,7 +102,7 @@ F;
 ./Session/Storage/NativeSessionStorage.php:227:            unset($_SESSION[$key]);
 ./Session/Storage/NativeSessionStorage.php:241:            $_SESSION = $session;
 ./Session/Storage/NativeSessionStorage.php:269:        $_SESSION = array();
-./Session/Storage/NativeSessionStorage.php:427:            $session = &$_SESSION;
+./Session/Storage/NativeSessionStorage.php:425:            $session = &$_SESSION;
 
 F;
         self::assertEquals($respect, $output);
@@ -113,6 +115,8 @@ F;
          -path  ./vendor/phpunit/phpunit -prune -o   \
          -path  ./vendor/scil/laravel-fly -prune -o    \
          -path  ./vendor/scil/laravel-fly-local -prune -o    \
+         -path ./vendor/scil/laravel-fly-files -prune -o   \
+         -path ./vendor/scil/laravel-fly-files-local -prune -o   \
          -path  ./vendor/swooletw  -prune  -o   \
          -path  ./vendor/symfony/http-foundation/Tests  -prune  -o   \
          -type f  \
@@ -126,7 +130,7 @@ F;
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:759:        return $this->request ?: Request::createFromGlobals();
+./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:761:        return $this->request ?: Request::createFromGlobals();
 ./vendor/laravel/framework/src/Illuminate/Http/Request.php:59:        return static::createFromBase(SymfonyRequest::createFromGlobals());
 ./vendor/symfony/http-foundation/Request.php:279:    public static function createFromGlobals()
 

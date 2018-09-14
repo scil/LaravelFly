@@ -2,13 +2,15 @@
 
 namespace LaravelFly\Tests\Map\Unit\Server\Traits;
 
+
+use LaravelFly\Server\HttpServer;
 use LaravelFly\Tests\BaseTestCase as Base;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class DispatchRequestByQueryTest extends Base
 {
-    function testDispatchCallbackByWorkerId()
+   private  function testDispatchCallbackByWorkerId()
     {
 
 
@@ -47,7 +49,7 @@ class DispatchRequestByQueryTest extends Base
         }
     }
 
-    function testDispatchCallbackByWorkerPid()
+   function testDispatchCallbackByWorkerPid()
     {
 
         $constances = [
@@ -68,11 +70,12 @@ class DispatchRequestByQueryTest extends Base
                 'worker_num' => $one['worker_num'],
                 'pre_include' => false,
                 'mode' => 'Backup',
+                'application' => \LaravelFly\Backup\Application::class,
                 'listen_port' => 9991 + $step,
             ];
 
 
-            $r = self::createFlyServerInProcess($constances, $options, function ($server) use ($one, $options) {
+            $r = self::createFlyServerInProcess($constances, $options, function (HttpServer $server) use ($one, $options) {
 
                 $server->config($options);
 
@@ -89,7 +92,8 @@ class DispatchRequestByQueryTest extends Base
                 $dispatcher->addListener('worker.ready', function (GenericEvent $event) use ($server) {
 
                     $ids = $server->getWorkerIds();
-                    if (count($ids) === $server->getConfig('worker_num')) {
+
+                    if ($ids->count() === $server->getConfig('worker_num')) {
 
                         $server->getSwooleServer()->shutdown();
                     }
@@ -103,19 +107,20 @@ class DispatchRequestByQueryTest extends Base
 
                 $a_line = $ids->get($selected_worker_id);
 
-                return json_encode([
+                // file_put_contents('/vagrant/www/zc/unit.tmp',$selected_worker_id.';'.$a_line['id']);
+
+                return [
                     'to_select' => $selected_worker_id,
                     'id' => $a_line['id'],
                     'selected' => $server->dispatch($server->getSwooleServer(),
                         $one['fd'], '',
                         sprintf($one['raw'], $a_line['pid'])
                     )
-                ]);
+                ];
 
 
             }, 1);
 
-//            $r = (int)last(explode("\n", $r));
 
             $r = json_decode($r);
 
