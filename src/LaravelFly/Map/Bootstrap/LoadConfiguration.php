@@ -118,17 +118,21 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
                 \LaravelFly\Fly::getServer()->echo("$left_count providers not listed in config('laravelfly') and treated as across providers:
          $left",'NOTE',true);
+                echo "\n";
             }
 
+            $cloneServices = array_diff($cloneServices, ['url']);
 
             $allClone = implode(", ", array_merge(
                 LARAVELFLY_SERVICES['routes'] ? ['url(UrlGenerator)'] : ['url(UrlGenerator)', 'routes'],
                 LARAVELFLY_SERVICES['hash'] ? [] : ['drivers in app("hash")'],
                 $cloneServices));
+
             \LaravelFly\Fly::getServer()->echo(
                 "services to be cloned in each request: [$allClone, ]. An object in your service providers or controllers or any where else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_on_request').",
                 'NOTE', true
             );
+            echo "\n";
 
             if ($configCacheAlways) {
 

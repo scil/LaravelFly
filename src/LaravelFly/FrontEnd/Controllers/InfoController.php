@@ -22,15 +22,21 @@ class InfoController extends BaseController
 
     }
 
-    protected function _getDictVars($class, array $props): array
+    protected function _getDictVars($obj, array $props, $cid = null): array
     {
-        $eventR = new \ReflectionClass($class);
-        $d = $eventR->getStaticProperties()['corDict'];
+
+        $instanceR = new \ReflectionClass($obj);
+        $d = $instanceR->getStaticProperties()['corDict'];
 
         foreach ($props as $prop) {
-            $r[] = $d[\Swoole\Coroutine::getuid()][$prop];
+            $r[] = $d[$cid ?: \Swoole\Coroutine::getuid()][$prop];
         }
         return $r;
+
+    }
+    protected function _getDictVarsOnWorker($obj, array $props): array
+    {
+        return $this->_getDictVars($obj,$props, WORKER_COROUTINE_ID);
 
     }
 
@@ -70,7 +76,6 @@ class InfoController extends BaseController
 
         $swoole = $this->swoole;
 
-
         $info = [
                 'master pid' => $swoole->master_pid,
                 'current worker pid' => $swoole->worker_pid,
@@ -83,6 +88,40 @@ class InfoController extends BaseController
     function routesInfo()
     {
         return $this->_getProtectVars(app('routes'), ['routes', 'allRoutes', 'nameList', 'actionList']);
+    }
+
+    function routesWorkerInfo()
+    {
+        if (LARAVELFLY_SERVICES['routes']) {
+            return [
+                [
+                    'caption' => "
+app('routes') alway ref to the same object, 
+<br>data same as routes, 
+<br>because LARAVELFLY_SERVICES['routes'] === true",
+                    'data' => [],
+                ]
+            ];
+        }
+
+        $obj = $this->_getWorkerService('routes');
+
+        if (!$obj) return [
+            ['caption' => 'no data', 'data' => [],]
+        ];
+
+        return $this->_getProtectVars($obj,
+            ['routes', 'allRoutes', 'nameList', 'actionList'], WORKER_COROUTINE_ID);
+    }
+
+    protected function _getWorkerService($name = null)
+    {
+        list($instances) = $this->_getDictVarsOnWorker(app(), ['instances']);
+
+        if ($name) return isset($instances[$name]) ? $instances[$name] : null;
+
+        return $instances;
+
     }
 
     protected function _getProtectVars(object $instance, array $props): array
@@ -223,10 +262,9 @@ class InfoController extends BaseController
                 foreach ($value as $key => $v) {
                     $v = static::renderValue($v, $deep + 1);
 
-                    if (strpos($v,'<br>') !== false){
+                    if (strpos($v, '<br>') !== false) {
                         $item[] = $padding . "$key:<br>" . $v;
-                    }
-                    else
+                    } else
                         $item[] = $padding . "$key: " . $v;
                 }
                 return implode("<br>", $item) . str_repeat('<br>', 1);

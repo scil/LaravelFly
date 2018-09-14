@@ -32,7 +32,7 @@ class RouteServiceProvider extends \Illuminate\Support\ServiceProvider
         \View::share('WORKER_PID' , $swoole->worker_pid);
         \View::share('WORKER_ID' , $swoole->worker_id);
 
-        \View::share('INFO_ITEMS',['info','header','eventListeners','routes']);
+        \View::share('INFO_ITEMS',['info','header','eventListeners','routes','routesWorker']);
 
         $routeConfig = [
             'namespace' => 'LaravelFly\FrontEnd\Controllers',
