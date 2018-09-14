@@ -259,16 +259,25 @@ return [
          */
         App\Providers\EventServiceProvider::class => 'across',
 
+        /* depends */
         /**
-         * its boot loads files routes/web.php and routes/api.php.
+         * set to 'across' if routes in routes/web.php or routes/api.php not always same,
+         * like this in mcamara/laravel-localization
+         *      // LaravelLocalization::setLocale uses \Request::segment(1) which changes in each request
+         *      Route::group(['prefix' => LaravelLocalization::setLocale()], function() { ... } );
+         * so App\Providers\RouteServiceProvider should boot in each request.
+         *
+         * Try best not to set it to 'across', then routes cache useful.
+         *
+         * background: its boot loads files routes/web.php and routes/api.php.
          * see:
          *      Illuminate\Foundation\Support\Providers\RouteServiceProvider::boot()
          * and
          *      App\Providers\RouteServiceProvider::map
+         *
          */
-        App\Providers\RouteServiceProvider::class =>
-            !empty(LARAVELFLY_SERVICES['App\Providers\RouteServiceProvider']) ? [] : 'across',
-
+        // App\Providers\RouteServiceProvider::class => 'across',
+        App\Providers\RouteServiceProvider::class => [],
 
         /*
          * Third Party

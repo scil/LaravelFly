@@ -46,29 +46,6 @@ const LARAVELFLY_SERVICES = [
     'translator' => 'use',
     'validator' => 'use',
 
-
-    /**
-     * set false if routes in routes/web.php not always same,
-     * like this in mcamara/laravel-localization
-     *      // LaravelLocalization::setLocale uses \Request::segment(1) which changes in each request
-     *      Route::group(['prefix' => LaravelLocalization::setLocale()], function() { ... } );
-     * so App\Providers\RouteServiceProvider should boot in each request.
-     *
-     * Try best to keep it true, as it makes routes cache useful.
-     *
-     * For mcamara/laravel-localization, a refactor solution is to define all routes for all langs:
-     *    foreach(LaravelLocalization::getSupportedLanguagesKeys() as $locale){
-     *       Route::group([
-     *          'prefix' => $locale,
-     *          'middleware' => [
-     *            \App\Http\Middleware\SetLocale::class,// define this middleware to call LaravelLocalization::setLocale()
-     *          ],
-     *      ], function() { ... } );
-     *    }
-     *
-     */
-    'App\Providers\RouteServiceProvider' => true,
-
     /**
      * you can set false if routes with same name are not same in different requests.
      * For example, set false when
