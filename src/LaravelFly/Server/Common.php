@@ -168,6 +168,8 @@ class Common
     {
         static::includeFlyFiles($options);
 
+        include_once __DIR__.'/../../MidKernel.php';
+
         // as earlier as possible
         if ($options['pre_include'])
             $this->preInclude();
