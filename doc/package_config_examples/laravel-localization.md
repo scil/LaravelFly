@@ -1,6 +1,11 @@
 
 [mcamara/laravel-localization](https://github.com/mcamara/laravel-localization)
 
+
+## Prepearation
+
+check some functions, according by [Checklist For Safety](https://github.com/scil/LaravelFly/wiki/Checklist-For-Safety)
+
 ``` 
 
 package_dir=vendor/mcamara/laravel-localization/src
@@ -17,8 +22,6 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 # vendor/mcamara/laravel-localization/src/Mcamara/LaravelLocalization/LaravelLocalization.php:184:            setlocale(LC_TIME, $regional . $suffix);
 # vendor/mcamara/laravel-localization/src/Mcamara/LaravelLocalization/LaravelLocalization.php:185:            setlocale(LC_MONETARY, $regional . $suffix);
 
-
-        
 
 ```
 
