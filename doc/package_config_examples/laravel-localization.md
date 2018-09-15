@@ -25,17 +25,17 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 
 ```
 
-## Simplest Solution: keep it a cross service and do not use coroutine
+# Solution 1: keep it a cross service and do not use coroutine
 
-### non-allowed functions
-
-(no)
-
-### non-allowed functions in some cases
+### Non-allowed functions
 
 (no)
 
-### do not use coroutine
+### Non-allowed functions in some cases
+
+(no)
+
+### Do not use coroutine
 
 1. ensure `const LARAVELFLY_COROUTINE = false; ` in fly.conf.php 
 
@@ -58,7 +58,7 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 
     ```
 
-## Solution 2: clone
+# Solution 2: clone
 
 mores steps based on Solution 1
 
@@ -99,7 +99,7 @@ mores steps based on Solution 1
 
 2. There may be references to app('laravellocalization') in any CLONE SERVICE or WORKER SERVICE, please update them if necessary.
 
-## Solution 3: clone and loads routes/web.php on work
+# Solution 3: clone and loads routes/web.php on work
 
 more steps bases on Solution 2.
 
