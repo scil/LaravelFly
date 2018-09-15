@@ -98,11 +98,14 @@ mores steps based on Solution 1
 
 ## Solution 3: clone and loads routes/web.php on work
 
-more steps bases on Solution 1.
+more steps bases on Solution 2.
 
 value: routes are parsed and cache can be used.
 
-1. config/laravelfly.php
+1. Do not use Caching routes provided by laravel-localization (php artisan route:trans:cache),   
+because LaravelFly will load all routes for all locales.
+
+2. config/laravelfly.php
    ```
 
     'providers_on_worker' => [
@@ -116,7 +119,7 @@ value: routes are parsed and cache can be used.
     
     ```
 
-2. define routes for all locales in routes/web.php
+3. define routes for all locales in routes/web.php
 ``` 
 
 $routesForAllLocal = function () {

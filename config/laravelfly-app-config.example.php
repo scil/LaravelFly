@@ -276,6 +276,7 @@ return [
          * so App\Providers\RouteServiceProvider should boot in each request.
          *
          * Try best not to set it to 'across', then routes cache useful.
+         * (this cache refers to php code in computer memory, not cache file produced by `artisan route:cache`)
          *
          * background: its boot loads files routes/web.php and routes/api.php.
          * see:
