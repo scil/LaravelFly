@@ -163,6 +163,15 @@ trait RouterMiddleware
             // hack: Cache for route middlewares objects.
             static $cacheForObj = [];
 
+            if (is_object($one) && method_exists($one, 'terminate')) {
+                $cacheForterminate[$id][] = $one;
+                return $one;
+            }
+
+            if (is_callable($one)) {
+                return $one;
+            }
+
             if (isset($cacheForObj[$one])) {
                 return $cacheForObj[$one];
             }
@@ -198,7 +207,6 @@ trait RouterMiddleware
     {
         self::$singletonMiddlewares = $middlewares;
     }
-
 
 
 }

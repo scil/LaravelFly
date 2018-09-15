@@ -95,6 +95,7 @@ Trait Laravel
             $server && $server->shutdown();
         }
 
+        // todo
         // the fake request is useless, but harmless too
         // $this->app->forgetInstance('request');
 

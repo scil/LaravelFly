@@ -117,7 +117,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $left = implode(",  ", $left);
 
                 \LaravelFly\Fly::getServer()->echo("$left_count providers not listed in config('laravelfly') and treated as across providers:
-         $left",'NOTE',true);
+         $left", 'NOTE', true);
                 echo "\n";
             }
 
@@ -167,7 +167,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
         $update = [];
 
         foreach ($appConfig['laravelfly.update_on_request'] ?: [] as $item) {
-            if (!empty($item['closure']) && is_callable($item['closure'])) {
+            if ($item && !empty($item['closure']) && is_callable($item['closure'])) {
                 $update[] = $item;
             }
         }
