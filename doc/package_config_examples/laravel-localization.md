@@ -80,7 +80,7 @@ mores steps based on Solution 1
 
 [x] NO static props
 
-[x] NO ref to other CLONE SERVICE
+[x] has ref to other CLONE SERVICE 'url'
 
 ```
    // config/laravelfly.php
@@ -108,9 +108,13 @@ mores steps based on Solution 1
         [
             'this' => 'laravellocalization',
             'closure' => function () {
+            
+                $this->url = app('url');
+                
                 app()->rebinding('request', function () {
                     $this->request = app('request');
                 });
+                
             }
         ],
     ],

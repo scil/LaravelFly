@@ -129,7 +129,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $cloneServices));
 
             \LaravelFly\Fly::getServer()->echo(
-                "services to be cloned in each request: [$allClone, ]. An object in your service providers or controllers or any where else should update references IF it is MADE BEFORE any requets AND has a relation WITH any of these services, see config('laravel.update_on_request').",
+                "CLONE SERVICES: [$allClone, ].",
                 'NOTE', true
             );
             echo "\n";
