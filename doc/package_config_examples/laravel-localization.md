@@ -29,22 +29,24 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 
 ### Non-allowed functions
 
-(no)
+[x] no
 
 ### Non-allowed functions in some cases
 
-(no)
+[x] (no)
 
-### Do not use coroutine
+### no coroutine
 
-1. ensure `const LARAVELFLY_COROUTINE = false; ` in fly.conf.php 
+[x]. ensure `const LARAVELFLY_COROUTINE = false; ` in fly.conf.php 
 
-~~2. `setlocale()` is used at the beginning of each request, so restore is not needed.~~
+[x] `setlocale()` is used at the beginning of each request, so restore is not needed with no coroutine used.
 
-### Across service providers
+### Across service provider
 
-1. config/laravelfly.php
-   ```
+[x] routes/web.php uses this package 
+
+```
+   // config/laravelfly.php
 
     'providers_on_worker' => [
     
@@ -56,14 +58,32 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
     ],
     
 
-    ```
+```
 
 # Solution 2: clone
 
 mores steps based on Solution 1
 
-1. config/laravelfly.php
-   ```
+[x] put service provides into 'providers_on_worker'
+
+[x] list singleton services providers by this packages: `Mcamara\LaravelLocalization\LaravelLocalization::class`
+
+[x] add `clone` to the singleton service
+
+[x] clean Facade for the singleton service
+
+[x] NO ref in other services
+
+[x] NO ref to this service in controllers
+
+[x] The service has a prop `request` needed to update.
+
+[x] NO static props
+
+[x] NO ref to other CLONE SERVICE
+
+```
+   // config/laravelfly.php
 
     'providers_on_worker' => [
     
@@ -95,7 +115,7 @@ mores steps based on Solution 1
         ],
     ],
 
-    ```
+```
 
 2. There may be references to app('laravellocalization') in any CLONE SERVICE or WORKER SERVICE, please update them if necessary.
 
