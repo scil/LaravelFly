@@ -75,7 +75,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 - Check server info at /laravel-fly/info. It's better to view json response in Firefox, instead of Chrome or IE. (This feture is under dev and more infomations will be available.)
 
-- No support for static files, so use it with other servers like nginx. [conf examples](/config)
+- No support for static files, so use it with other servers like nginx. [conf examples](https://github.com/scil/LaravelFly/#laravelfly-usability)
 
 - functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), but Laravel services are be used in `fly()` and `fly2()`.  The `fly2()` has the ability to change services of current request, e.g. registering a new event handler for current request.
 
