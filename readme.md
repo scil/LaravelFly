@@ -77,7 +77,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 - No support for static files, so use it with other servers like nginx. [conf examples](https://github.com/scil/LaravelFly/#laravelfly-usability)
 
-- functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), but Laravel services are be used in `fly()` and `fly2()`.  The `fly2()` has the ability to change services of current request, e.g. registering a new event handler for current request.
+- functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), but Laravel services are be used in `fly()` and `fly2()`.  The `fly2()` has the limited ability to change services of current request, e.g. registering a new event handler for current request. `fly2()` is not suggested.
 
 A coroutine starting in a request, can still live when the request ends. What's the effect of following route?    
 It responds with 'coroutine1; outer1; coroutine2; outer2; outer3',   
@@ -130,10 +130,10 @@ It is alse a safe sollution. It is light.It has supported Lumen and websocket. I
 
 The main difference is that in laravel-swoole user's code will be processed by a new `app` cloned from SwooleTW\Http\Server\Application::$application and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container. In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is used only to create `url` by default. LaravelFly makes most of laravel objects keep safe on their own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). 
 
- .  | speed |technique | every service is in control |  every service provider is in control | work to maintaining relations of cloned objects to avoid Stale Reference 
------------- |------------ | ------------ | ------------- | ------------- | ------------- 
-laravel-swoole  | slow | clone app contaniner and objects to make them safe |  yes | no | more work (app,event...are cloned)
-LaravelFly Mode Map | fast | refactor most official objects to make them safe on their own |  yes  | yes  | few work (only url is cloned by default)
+ .  | technique | work to maintaining relations of cloned objects to avoid Stale Reference 
+------------ |------------ | ------------ 
+laravel-swoole  | clone app contaniner and objects to make them safe | more work (as app,event...are cloned)
+LaravelFly Mode Map |  refactor most official objects to make them safe on their own | few work (as only url is cloned by default)
 
 ### 2. [laravel-s](https://github.com/hhxsv5/laravel-s)
 

@@ -87,6 +87,12 @@ trait Dict
 
     function unsetUserCoroutine2($parentId, $childId)
     {
+        /**
+         *
+         * low risk?
+         * Does \Co::getUid() has the possibility to return same number in a worker process? #1977
+         * https://github.com/swoole/swoole-src/issues/1977#issuecomment-422232642
+         */
         if (isset(static::$corDict[$parentId]))
             static::$corDict[$parentId] = static::$corDict[$childId];
 
