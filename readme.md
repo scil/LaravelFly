@@ -26,8 +26,8 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 - functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), but Laravel services are be used in `fly()` and `fly2()`.  The `fly2()` has the ability to change services of current request, e.g. registering a new event handler for current request.
 
 A coroutine starting in a request, can still live when the request ends. What's the effect of following route?    
-It responds with 'go1;outer1;go2;outer2;outer3',
-but it write log 'go1;outer1;go2;outer2;outer3;go2.end;go1.end'
+It responds with 'coroutine1;outer1;coroutine2;outer2;outer3',   
+but it write log 'coroutine1;outer1;coroutine2;outer2;outer3;coroutine2.end;coroutine1.end'
 ``` 
 
 Route::get('/fly', function () {
@@ -35,18 +35,18 @@ Route::get('/fly', function () {
     $a = [];
     
     fly(function () use (&$a) {
-        $a[] = 'go1';
+        $a[] = 'coroutine1';
         \co::sleep(2);
-        $a[] = 'go1.end';
+        $a[] = 'coroutine1.end';
         \Log::info(implode(';', $a));
     });
 
     $a[] = 'outer1';
 
     go(function () use (&$a) {
-        $a[] = 'go2';
+        $a[] = 'coroutine2';
         \co::sleep(1.2);
-        $a[] = 'go2.end';
+        $a[] = 'coroutine2.end';
     });
 
     $a[] = 'outer2';
