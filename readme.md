@@ -11,7 +11,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 - Same codes can run on PHP-FPM or LaravelFly
 
-- To be absolutely safe, put your code under control. Coroutine is fully supported (code execution can jump from one request to another).
+- To be absolutely safe, put your code under control. Coroutine is supported (code execution can jump from one request to another).
 
 - The majority of Laravel services or some other objects can be made before any requests. There are two types:
   - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE**, **WORKER OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
@@ -20,6 +20,45 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 - Extra speed improvements such as middlewares cache, view path cache.
 
 - Check server info at /laravel-fly/info. It's better to view json response in Firefox, instead of Chrome or IE. (This feture is under dev and more infomations will be available.)
+
+- No support for static files, so use it with other servers like nginx. [conf examples](/config)
+
+- functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), but Laravel services are be used in `fly()` and `fly2()`.  The `fly2()` has the ability to change services of current request, e.g. registering a new event handler for current request.
+
+A coroutine starting in a request, can still live when the request ends. What's the effect of following route?    
+It responds with 'go1;outer1;go2;outer2;outer3',
+but it write log 'go1;outer1;go2;outer2;outer3;go2.end;go1.end'
+``` 
+
+Route::get('/fly', function () {
+
+    $a = [];
+    
+    fly(function () use (&$a) {
+        $a[] = 'go1';
+        \co::sleep(2);
+        $a[] = 'go1.end';
+        \Log::info(implode(';', $a));
+    });
+
+    $a[] = 'outer1';
+
+    go(function () use (&$a) {
+        $a[] = 'go2';
+        \co::sleep(1.2);
+        $a[] = 'go2.end';
+    });
+
+    $a[] = 'outer2';
+
+    \co::sleep(1);
+
+    $a[] = 'outer3';
+
+    return implode(';', $a);
+
+});
+```
 
 ## Quick Start
 

@@ -18,3 +18,24 @@ if (!function_exists('tinker')) {
         return 'extract(\LaravelFly\Tinker\Shell::debug(get_defined_vars(), $this ?? null));';
     }
 }
+
+
+if (!function_exists('fly')) {
+    function fly($callback,$write=false)
+    {
+        /**
+         * @var \LaravelFly\Map\Application $app
+         */
+        static $app = null;
+        if (null === $app)
+            $app = \Illuminate\Container\Container::getInstance();
+
+        $app->fly($callback,$write);
+    }
+
+}
+if (!function_exists('fly2')) {
+   function fly2($callback){
+       \fly($callback,true);
+   }
+}

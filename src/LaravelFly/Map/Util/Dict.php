@@ -36,12 +36,28 @@ trait Dict
         }
 
         if ($listen) {
-            Container::getInstance()->make('events')->listen('request.corinit', function ($cid) {
+            $event = Container::getInstance()->make('events');
+
+            $event->listen('request.corinit', function ($cid) {
                 $this->initForRequestCorontine($cid);
             });
 
-            Container::getInstance()->make('events')->listen('request.corunset', function ($cid) {
+            $event->listen('request.corunset', function ($cid) {
                 $this->unsetForRequestCorontine($cid);
+            });
+
+
+            $event->listen('usercor.init', function ($parentId, $childId) {
+                $this->initUserCoroutine($parentId, $childId);
+            });
+
+            $event->listen('usercor.unset', function ($childId) {
+                $this->unsetUserCoroutine($childId);
+
+            });
+            $event->listen('usercor.unset2', function ($parentId, $childId) {
+                $this->unsetUserCoroutine2($parentId, $childId);
+
             });
         }
 
@@ -58,5 +74,23 @@ trait Dict
         unset(static::$corDict[$cid]);
     }
 
+    function initUserCoroutine($parentId, $childId)
+    {
+        static::$corDict[$childId] = static::$corDict[$parentId];
+    }
+
+    function unsetUserCoroutine($childId)
+    {
+
+        unset(static::$corDict[$childId]);
+    }
+
+    function unsetUserCoroutine2($parentId, $childId)
+    {
+        if (isset(static::$corDict[$parentId]))
+            static::$corDict[$parentId] = static::$corDict[$childId];
+
+        unset(static::$corDict[$childId]);
+    }
 
 }

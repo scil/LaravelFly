@@ -212,7 +212,7 @@ class Common
     {
         if (LARAVELFLY_MODE === 'FpmLike') return;
 
-        $flyBaseDir = __DIR__ . '/../../../../laravel-fly-files/src/';
+        $flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
 
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup

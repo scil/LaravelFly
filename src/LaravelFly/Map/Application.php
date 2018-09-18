@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use LaravelFly\Map\IlluminateBase\Dispatcher;
 use LaravelFly\Map\IlluminateBase\EventServiceProvider;
 use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Log\LogServiceProvider;
@@ -102,6 +103,61 @@ class Application extends \Illuminate\Foundation\Application
 
         $this->register(new RoutingServiceProvider($this));
     }
+
+    function fly($callback, $write = false)
+    {
+        $parentId = \Swoole\Coroutine::getuid();
+
+        \go(function () use ($parentId, $callback, $write) {
+            /**
+             * @var Dispatcher $event
+             */
+            static $event = null;
+
+            $childId = \Swoole\Coroutine::getuid();
+
+            $this->initUserCoroutine($parentId, $childId);
+            Facade::initUserCoroutine($parentId, $childId);
+
+            if (null === $event)
+                $event = $this->make('events');
+
+            $event->initUserCoroutine($parentId, $childId);
+            $this->make('router')->initUserCoroutine($parentId, $childId);
+
+            $event->dispatch('usercor.init', [$parentId, $childId]);
+
+            try {
+                $callback();
+            } catch (\Throwable $t) {
+                $msg = $t->getMessage();
+                echo $t->getTraceAsString();
+                echo "[FLY COROUTINE ERROR] $msg\n";
+            }
+
+            if ($write) {
+                $event->dispatch('usercor.unset2', [$parentId, $childId]);
+                $this->make('router')->unsetUserCoroutine2($parentId, $childId);
+                // no much necessary to support $write for Facade
+                Facade::unsetUserCoroutine($childId);
+                $event->unsetUserCoroutine2($parentId, $childId);
+                $this->unsetUserCoroutine2($parentId, $childId);
+            } else {
+                $event->dispatch('usercor.unset', [$childId]);
+                $this->make('router')->unsetUserCoroutine($childId);
+                Facade::unsetUserCoroutine($childId);
+                $event->unsetUserCoroutine($childId);
+                $this->unsetUserCoroutine($childId);
+
+            }
+        });
+    }
+
+    function fly2($callback)
+    {
+        $this->fly($callback, true);
+    }
+
 
     public function initForRequestCorontine($cid)
     {

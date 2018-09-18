@@ -11,7 +11,8 @@
          stopOnFailure="true">
     <testsuites>
         <testsuite name="LaravelFly_tmp">
-            <file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>
+            <file>./tests/Map/Unit/ApplicationCorTest.php</file>
+            <!--<file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>-->
             <!--<file>./tests/Map/Unit/Illuminate/Translation/TranslatorTest.php</file>-->
         </testsuite>
 
@@ -27,6 +28,7 @@
             <file>./tests/Map/Unit/Server/HttpServerTest.php</file>
             <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
             <file>./tests/Map/Unit/FlyTest.php</file>
+            <file>./tests/Map/Unit/ApplicationCorTest.php</file>
 
             <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
             <file>./tests/Map/Feature/FlyFilesTest.php</file>

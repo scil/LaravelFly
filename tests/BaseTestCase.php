@@ -205,7 +205,7 @@ abstract class BaseTestCase extends TestCase
 
         static $chan = null;
 
-        if(is_file(static::$chan_fail_file))
+        if (is_file(static::$chan_fail_file))
             @unlink(static::$chan_fail_file);
 
         if (null === $chan)
@@ -223,7 +223,7 @@ abstract class BaseTestCase extends TestCase
 
             // todo 为什么parent方面会pop不到数据？
             // if($chan->push($r)===false)
-                file_put_contents(static::$chan_fail_file, $r);
+            file_put_contents(static::$chan_fail_file, $r);
 
             $pm->wakeup();
 
@@ -232,7 +232,7 @@ abstract class BaseTestCase extends TestCase
         $pm->parentFunc = function ($pid) use ($func, $chan, $waittime) {
             $c = $chan->pop();
 
-            if(!$c && is_file(static::$chan_fail_file))
+            if (!$c && is_file(static::$chan_fail_file))
                 $c = file_get_contents(static::$chan_fail_file);
 
 
@@ -263,7 +263,7 @@ abstract class BaseTestCase extends TestCase
             return $r;
         }, $wait);
 
-         // file_put_contents('/vagrant/www/zc/flyserver.tmp',$r);
+        // file_put_contents('/vagrant/www/zc/flyserver.tmp',$r);
 
         return $r;
     }
@@ -296,7 +296,7 @@ abstract class BaseTestCase extends TestCase
 
     const testCurlBaseUrl = '127.0.0.1:' . (self::testPort) . self::testBaseUrl;
 
-    function requestAndTestAfterOnWorker($callback, $urls, $expect)
+    function requestAndTestAfterOnWorker($callback, $urls, $expect, $wait = 3)
     {
 
         $constances = [
@@ -320,25 +320,42 @@ abstract class BaseTestCase extends TestCase
 
                 $server->start();
 
-            }, 3);
+            }, $wait);
 
         self::assertEquals(implode("\n", $expect), $r);
     }
 
-    function requestAndTestAfterRoute($routes, $urls, $expect, $funcOnWork=null)
+    function requestAndTestAfterRoute(array $routes, array $urls, array $expect, $funcOnWork = null, $wait = 3)
     {
+        assert(count($urls) === count($expect));
 
         $callback = function () use ($routes, $funcOnWork) {
 
             foreach ($routes as list($method, $url, $func)) {
+
+                assert(in_array($method, ['get', 'post', 'put', 'delete']));
+                assert(is_string($url));
+                assert(is_callable($func));
+
                 \Route::$method($url, $func);
             }
 
-            if(is_callable($funcOnWork)) $funcOnWork();
+            if (is_callable($funcOnWork)) $funcOnWork();
         };
 
-        $this->requestAndTestAfterOnWorker($callback, $urls, $expect);
+        $this->requestAndTestAfterOnWorker($callback, $urls, $expect, $wait);
 
+    }
+
+    function getLastLog()
+    {
+
+        $log = file(LARAVEL_APP_ROOT . '/storage/logs/laravel.log');
+        $line = $log[count($log)-2];
+        $line = substr($line, strpos($line,'INFO')+6);
+        $line = trim($line);
+
+        return $line;
     }
 }
 

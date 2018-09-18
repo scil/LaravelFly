@@ -66,9 +66,11 @@ mores steps based on Solution 1
 
 [x] put service provides into 'providers_on_worker'
 
+[x] all middlewares can be think as WORKER SERVICE ( this prop not change in my project: `protected $except = [];` )
+    
 [x] list singleton services providers by this packages: `Mcamara\LaravelLocalization\LaravelLocalization::class`
 
-[x] add `clone` to the singleton service
+[x] add `clone` to this singleton service
 
 [x] clean Facade for the singleton service
 
@@ -117,6 +119,16 @@ mores steps based on Solution 1
                 
             }
         ],
+    ],
+
+    'singleton_route_middlewares' => [
+        ...
+        
+        \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class,
+        \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+        \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+        \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class
+        
     ],
 
 ```
