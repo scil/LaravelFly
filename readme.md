@@ -83,6 +83,7 @@ A coroutine starting in a request, can still live when the request ends. What's 
 It responds with 'coroutine1; outer1; coroutine2; outer2; outer3',   
 but it write log 'coroutine1; outer1; coroutine2; outer2; outer3; coroutine2.end; coroutine1.end'
 ``` 
+// ensure ` const LARAVELFLY_COROUTINE = true;` in fly.conf.php
 
 Route::get('/fly', function () {
 
