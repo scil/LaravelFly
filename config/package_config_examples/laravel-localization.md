@@ -2,6 +2,10 @@
 [mcamara/laravel-localization](https://github.com/mcamara/laravel-localization)
 
 
+package | solutions| involved
+ ---- | --- | -----
+ [mcamara/laravel-localization](https://github.com/scil/LaravelFly/blob/master/config/package_config_examples/laravel-localization.md) <br> ([offical](https://github.com/mcamara/laravel-localization) ) | 1. across (no coroutine) <br> 2. clone (no cor) <br> 3. clone and include routes on worker (no cor) | - routes/web.php  <br> - app('request')  <br>- Facade
+
 ## Prepearation
 
 check some functions, according by [Checklist For Safety](https://github.com/scil/LaravelFly/wiki/Checklist-For-Safety)
@@ -18,9 +22,11 @@ grep  -H -n -r -E "\bflush\(|\bob_flush\("  $package_dir
 grep  -H -n -r -E "\binclude_once\(|\brequire_once\("  $package_dir 
 
 grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exception_handler\(|\bset_error_handler\("  $package_dir
-# output:
+#output:
 # vendor/mcamara/laravel-localization/src/Mcamara/LaravelLocalization/LaravelLocalization.php:184:            setlocale(LC_TIME, $regional . $suffix);
 # vendor/mcamara/laravel-localization/src/Mcamara/LaravelLocalization/LaravelLocalization.php:185:            setlocale(LC_MONETARY, $regional . $suffix);
+#so:
+# It's better not to use coroutine.
 
 
 ```

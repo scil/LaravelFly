@@ -21,21 +21,27 @@ if (!function_exists('tinker')) {
 
 
 if (!function_exists('fly')) {
-    function fly($callback,$write=false)
-    {
-        /**
-         * @var \LaravelFly\Map\Application $app
-         */
-        static $app = null;
-        if (null === $app)
-            $app = \Illuminate\Container\Container::getInstance();
+    if (LARAVELFLY_COROUTINE) {
 
-        $app->fly($callback,$write);
+        function fly($callback, $write = false)
+        {
+            /**
+             * @var \LaravelFly\Map\Application $app
+             */
+            static $app = null;
+            if (null === $app)
+                $app = \Illuminate\Container\Container::getInstance();
+
+            $app->fly($callback, $write);
+        }
     }
 
 }
 if (!function_exists('fly2')) {
-   function fly2($callback){
-       \fly($callback,true);
-   }
+    if (LARAVELFLY_COROUTINE) {
+        function fly2($callback)
+        {
+            \fly($callback, true);
+        }
+    }
 }

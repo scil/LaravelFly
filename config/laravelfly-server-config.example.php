@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 const LARAVELFLY_MODE = 'Map';
 
 /**
- * set it to false if you do not use any coroutine API, such as coroutine database API
+ * set it to false if you do not use any coroutine API, such as coroutine database API, go(), fly() or fly2()
  */
 const LARAVELFLY_COROUTINE = true;
 

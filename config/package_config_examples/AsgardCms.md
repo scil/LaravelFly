@@ -1,17 +1,19 @@
 
-AsgardCms is a modular multilingual CMS built with Laravel 5
+[AsgardCms](https://github.com/AsgardCms/Platform) is a modular multilingual CMS built with Laravel 5
 
 ## install AsgardCms
 https://asgardcms.com/install
 
-## edit config/laravelfly.php
+## config/laravelfly.php
 1 add its ServiceProvider name to the `providers_in_request` array
 ```
 Modules\Core\Providers\AsgardServiceProvider::class,
 ```
 
-## asgard/app/Providers/AppServiceProvider.php 
-comment this line:
+## hack
+edit asgard/app/Providers/AppServiceProvider.php 
+
+comment these lines to stop AsgardCms enable Debugbar:
 ```
 		if ($this->app->environment() == 'local') {
 			$this->app->register('Barryvdh\Debugbar\ServiceProvider');

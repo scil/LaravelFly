@@ -37,7 +37,7 @@ Time taken ≈ | 325  | 30
 ## Quick Start
 
 1.`pecl install swoole`   
-Make sure `extension=swoole.so` in config file for php cli.   
+Make sure `extension=swoole.so` in config file for php cli, not for fpm.   
 Suggest: `pecl install inotify`   
 
 2.`composer require "scil/laravel-fly":"dev-master"`
@@ -77,7 +77,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 - No support for static files, so use it with other servers like nginx. [conf examples](https://github.com/scil/LaravelFly/#laravelfly-usability)
 
-- functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), but Laravel services are be used in `fly()` and `fly2()`.  The `fly2()` has the limited ability to change services of current request, e.g. registering a new event handler for current request. `fly2()` is not suggested.
+- functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), plus Laravel services can be used in `fly()` and `fly2()`.  The `fly2()` has the limited ability to change services in current request, e.g. registering a new event handler for current request. `fly2()` is not suggested.
 
 A coroutine starting in a request, can still live when the request ends. What's the effect of following route?    
 It responds with 'coroutine1; outer1; coroutine2; outer2; outer3',   
@@ -89,10 +89,17 @@ Route::get('/fly', function () {
     $a = [];
     
     fly(function () use (&$a) {
+    
         $a[] = 'coroutine1';
         \co::sleep(2);
         $a[] = 'coroutine1.end';
         \Log::info(implode('; ', $a));
+        
+        // Eloquent can be used even if current request has ended.
+        // $user = new User();
+        // $user->name = implode('; ',$a);
+        // $user->save();
+        
     });
 
     $a[] = 'outer1';
@@ -133,7 +140,9 @@ The main difference is that in laravel-swoole user's code will be processed by a
  .  | technique | work to maintaining relations of cloned objects to avoid Stale Reference 
 ------------ |------------ | ------------ 
 laravel-swoole  | clone app contaniner and objects to make them safe | more work (as app,event...are cloned)
-LaravelFly Mode Map |  refactor most official objects to make them safe on their own | few work (as only url is cloned by default)
+LaravelFly Mode Map |  refactor most official objects to make them safe on their own | few work ( only url is cloned by default)
+
+In LaravelFly, another benefit of non-cloned objects is allowing some improvements, such as event listeners cache, route middlewares cache.
 
 ### 2. [laravel-s](https://github.com/hhxsv5/laravel-s)
 
@@ -167,6 +176,7 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] watch code changes and hot reload
 - [x] supply server info. default url is: /laravel-fly/info
 - [x] function fly()
+- [ ] try ocramius/generated-hydrator for laravel-fly/info when its version 3 is ready (it will require nikic/php-parser v4 which is needed by others)
 - [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)
 - [ ] websocket
