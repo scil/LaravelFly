@@ -35,7 +35,7 @@ return [
     // 'config_cache_always' => true,
 
     /**
-     * For each worker, if a view file is compiled max one time. Only For Mode Map
+     * For each worker, if a view file is compiled max one time.
      *
      * If true, Laravel not know a view file changed until the swoole workers restart.
      * It's good for production env.
@@ -43,7 +43,7 @@ return [
     'view_compile_1' => $IN_PRODUCTION && LARAVELFLY_SERVICES['view.finder'],
 
     /**
-     * useless providers. For Mode Backup, Map
+     * useless providers.
      *
      * These providers are useless if they are not enabled in
      * config('laravelfly.providers_on_worker') or
@@ -69,7 +69,7 @@ return [
     ),
 
     /**
-     * Providers to reg and boot in each request.For Mode Backup, Map
+     * Providers to reg and boot in each request.
      *
      * There providers will be removed from app('config')['app.providers'] on worker, before any requests
      */
@@ -78,7 +78,7 @@ return [
 
 
     /**
-     * providers to reg and boot on worker, before any request. only for Mode Map
+     * providers to reg and boot on worker, before any request.
      *
      * you can also supply singleton services to made on worker
      * only singleton services are useful and valid here.
@@ -193,11 +193,6 @@ return [
 
         Illuminate\Notifications\NotificationServiceProvider::class => 'across',
 
-        /**
-         * some static props like currentPathResolver, ... in Illuminate\Pagination\AbstractPaginator
-         * in most cases they keep same.
-         * if not same, `use StaticDict` is needed to convert AbstractPaginator in Map Mode.
-         */
         Illuminate\Pagination\PaginationServiceProvider::class => [],
 
         Illuminate\Pipeline\PipelineServiceProvider::class => [],
@@ -377,94 +372,6 @@ return [
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-    ],
-
-    /**
-     * Which properties of base services need to backup. Only for Mode Backup
-     *
-     * See: Illuminate\Foundation\Application::registerBaseServiceProviders
-     */
-    'BaseServices' => [
-
-        \Illuminate\Contracts\Http\Kernel::class => LARAVELFLY_SERVICES['kernel'] ? [] : [
-
-            'middleware',
-
-            /** depends
-             * put new not safe properties here
-             */
-            // 'newProp1', 'newProp2',
-
-        ],
-        /* Illuminate\Events\EventServiceProvider::class : */
-        'events' => [
-            'listeners', 'wildcards', 'wildcardsCache', 'queueResolver',
-        ],
-
-        /* Illuminate\Routing\RoutingServiceProvider::class : */
-        'router' => [
-            /** depends
-             * Uncomment them if it's not same on each request. They may be changed by Route::middleware
-             */
-            // 'middleware','middlewareGroups','middlewarePriority',
-
-            /** depends */
-            // 'binders',
-
-            /** depends */
-            // 'patterns',
-
-
-            /** not necessary to backup,
-             * // 'groupStack',
-             */
-
-            /** not necessary to backup,
-             * it will be changed during next request
-             * // 'current',
-             */
-
-            /** not necessary to backup,
-             * the ref to app('request') will be released during next request
-             * //'currentRequest',
-             */
-
-            /* Illuminate\Routing\RouteCollection */
-            'obj.routes' => LARAVELFLY_SERVICES['routes'] ? [] : [
-                'routes', 'allRoutes', 'nameList', 'actionList',
-            ],
-        ], /* end 'router' */
-
-        'url' => [
-            /* depends */
-            // 'forcedRoot', 'forceScheme',
-            // 'rootNamespace',
-            // 'sessionResolver','keyResolver',
-            // 'formatHostUsing','formatPathUsing',
-
-            /** not necessary to backup,
-             *
-             * the ref to app('request') will be released during next request;
-             * and no need set request for `url' on every request , because there is a $app->rebinding for request:
-             *      $app->rebinding( 'request', $this->requestRebinder() )
-             *
-             * // 'request',
-             *
-             * auto reset when request is updated ( setRequest )
-             * // 'routeGenerator','cachedRoot', 'cachedSchema',
-             *
-             * same as 'request'
-             * // 'routes'
-             */
-        ],
-
-
-        /** nothing need to backup
-         *
-         * // 'redirect' => false,
-         * // 'routes' => false,
-         * // 'log' => false,
-         */
     ],
 ];
 

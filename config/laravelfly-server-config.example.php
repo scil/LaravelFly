@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  *
  * Backup: only for study. see Design Rule at https://github.com/scil/LaravelFly/wiki/Design-Rule
  *
- * FpmLike: like php-fpm, objects are made in each request.Warning: currently there's no
+ * FpmLike: like php-fpm, objects are made in each request. Just for fun.
  */
 const LARAVELFLY_MODE = 'Map';
 
@@ -386,19 +386,19 @@ return [
      * If not,
      *      set `'kernel' => false ,` in LARAVELFLY_SERVICES
      * and
-     *   for Mode Backup
-     *      add the not safe properties to BaseServices['\Illuminate\Contracts\Http\Kernel::class'] in config/laravelfly.php
      *   for Mode Map
      *      add `
      *          use Dict` or `use StaticDict`
      *      to your Kernel class and make some changes like vendor/scil/laravel-fly/src/Http/Kernel.php
+     *   for Mode Backup
+     *      add the not safe properties to BaseServices['\Illuminate\Contracts\Http\Kernel::class'] in config/laravelfly.php
      *
      */
     'kernel' => \App\Http\Kernel::class,
 
     /**
      * If your project uses an application which replaces Laravel official application, like OctoberCms,
-     * you can refactor it and write the new one here.
+     * you can refactor it and put the new one here.
      */
     'application' => '\LaravelFly\\' . LARAVELFLY_MODE . '\Application',
 

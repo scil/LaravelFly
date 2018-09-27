@@ -168,7 +168,7 @@ class PropsTest extends BaseTestCase
     {
         $actual = $this->getPropsInProcess($class, $args);
 
-        $this->assertSame(array_diff($expect, $actual), array_diff($actual, $expect),"please edit Backup\Application or config('laravelfly.BaseServices')");
+        $this->assertSame(array_diff($expect, $actual), array_diff($actual, $expect),"please edit Backup\Application or SetBackupForBaseServices::getConfig");
     }
 
     function getPropsInProcess($class, $args)
