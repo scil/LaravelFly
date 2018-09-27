@@ -253,7 +253,7 @@ return [
          * if some executions always be same in each request,
          * suggest to create a new AppServiceProvider whoes reg and boot are both executed on worker.
          */
-        // App\Providers\WorkerAppServiceProvider::class => [],
+        // App\Providers\AppWorker_ServiceProvider::class => [],
 
         /* depends */
         App\Providers\AuthServiceProvider::class => 'across',

@@ -12,7 +12,12 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 const LARAVELFLY_MODE = 'Map';
 
 /**
- * set it to false if you do not use any coroutine API, such as coroutine database API, go(), fly() or fly2()
+ * keep it to true if you use coroutine,
+ * such as Swoole\Runtime::enableCorotuine(), coroutine database API, go(), fly() or fly2().
+ *
+ * coroutine brings extra requirements:
+ * 1. https://github.com/scil/LaravelFly/wiki/Checklist-For-Safety#b-using-coroutine
+ * 2.for WORKER SERVICE https://github.com/scil/LaravelFly/wiki/Checklist-for-speed#b-using-coroutine
  */
 const LARAVELFLY_COROUTINE = true;
 

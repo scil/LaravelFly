@@ -1,4 +1,7 @@
 <?php
+/**
+ * try to use artisan to boot server, but how to use the hacked Application file?
+ */
 
 namespace LaravelFly;
 
@@ -9,7 +12,7 @@ use Throwable;
 class Command extends \Illuminate\Console\Command
 {
 
-    protected $signature = '
+    protected $signature = 'laravelfly:server 
     {action? : start|stop|reload|restart}
     {--c|conf : server conf file, default is <laravel_app_root>/fly.conf.php}
     {--h|help}
