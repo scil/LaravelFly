@@ -79,7 +79,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 - No support for static files, so use it with other servers like nginx. [conf examples](https://github.com/scil/LaravelFly/#laravelfly-usability)
 
-- functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), plus Laravel services can be used in `fly()` and `fly2()`.  The `fly2()` has the limited ability to change services in current request, e.g. registering a new event handler for current request. `fly2()` is not suggested.
+- functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), plus Laravel services can be used in `fly()` and `fly2()` without closure.  The `fly2()` has the limited ability to change services in current request, e.g. registering a new event handler for current request. `fly2()` is not suggested. 
 
 A coroutine starting in a request, can still live when the request ends. What's the effect of following route?    
 It responds with 'coroutine1; outer1; coroutine2; outer2; outer3',   
@@ -106,8 +106,11 @@ Route::get('/fly', function () {
     });
 
     $a[] = 'outer1';
+    
 
-    go(function () use (&$a) {
+    // go() can use laravel service  with closure
+    $log = app('log');
+    go(function () use (&$a, $log) {
         $a[] = 'coroutine2';
         \co::sleep(1.2);
         $a[] = 'coroutine2.end';
@@ -168,7 +171,7 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] Cache for event listeners. $listenersStalbe in LaravelFly\Map\IlluminateBase\Dispatcher
 - [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
 - [x] Mysql coroutine. Old code dropped, laravel-s used.
-- [ ] Mysql connection pool
+- [x] db connection pool
 - [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] safe: auth, remove some props?

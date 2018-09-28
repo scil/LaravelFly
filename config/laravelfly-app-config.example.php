@@ -165,7 +165,8 @@ return [
         ],
 
         Illuminate\Database\DatabaseServiceProvider::class => [
-            '_replaced_by' => LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class,
+            '_replaced_by' =>
+                LARAVELFLY_COROUTINE ? LaravelFly\Map\Illuminate\Database\DatabaseServiceProvider::class : false,
             'db.factory',
             'db'
         ],

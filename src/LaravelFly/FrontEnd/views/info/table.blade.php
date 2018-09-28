@@ -2,7 +2,7 @@
 
 @section('content')
     <table class="table">
-        @include('laravel-fly::partials.table',['caption'=>$caption,'data'=>$data])
+        @include('laravel-fly::partials.table',['caption'=>$caption,'data'=>$info])
     </table>
 @stop
 

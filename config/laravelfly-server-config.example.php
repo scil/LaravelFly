@@ -73,7 +73,7 @@ const LARAVELFLY_SERVICES = [
     'cookie' => false,
 
     /**
-     * you can set true if prop customCreators with same name keep same.
+     * you can set true if prop customCreators with same key keep same.
      * customCreators is of associate array,
      * it can be changed by AuthManager::extend or app('auth')->extend
      *
@@ -81,7 +81,7 @@ const LARAVELFLY_SERVICES = [
     'auth' => false,
 
     /**
-     * set false if values of props of hash drivers not keep same in different requests.
+     * set false if props of hash drivers not keep same in different requests.
      * BcryptHasher's prop: rounds
      * ArgonHasher's props: memory,time,threads
      *
@@ -175,6 +175,22 @@ return [
 
     // max number of coroutines handled by a worker in the same time
     'max_coro_num' => 20,
+
+    /**
+     * default pool size for each type of connections in a worker process
+     *
+     * you can overwrite this value in config/databases.php, e.g.
+     *      'mysql' => [
+     *          'driver' => 'mysql',
+     *          'poolsize' => 20,
+     *          ....
+     *      ],
+     *
+     * note: for each type of connections, mysql, sqlite, pgsql or something else,
+     * there's only one connection available in each request.
+     *
+     */
+    'poolsize'=> LARAVELFLY_COROUTINE ? 10 : 0,
 
     /**
      * The max number of connection the server could handle at the same time.
