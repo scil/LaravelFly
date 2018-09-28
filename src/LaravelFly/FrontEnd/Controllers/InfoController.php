@@ -72,15 +72,19 @@ class InfoController extends BaseController
     {
         $tables = [];
 
+        $defaultPoolsize = \LaravelFly\Fly::getServer()->getConfig('poolsize');
+
         // connection info
         foreach (config('database.connections') as $name => $config) {
 
+            $size =  $config['poolsize'] ?? $defaultPoolsize;
+            
             $driver = $config['driver'];
             list($info, $columns) = $this->_getConnectionInfo($name, $driver, $config);
 
             $tables[] = [
 
-                'caption' => $info ? "connections of $driver" : " no info for $driver",
+                'caption' =>  "connections of $driver (poolsize: $size)",
                 'table_type' => 'grid',
                 'columns' => $columns,
                 'data' => $info,
