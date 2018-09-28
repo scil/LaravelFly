@@ -2,6 +2,8 @@
 
 namespace LaravelFly\Map\Illuminate\Database;
 
+use LaravelFly\Map\Illuminate\Redis\RedisManager;
+
 class Pool
 {
     /**
@@ -10,29 +12,36 @@ class Pool
     protected $pool;
 
     /**
-     * @var \Closure
+     * @var DatabaseManager|RedisManager
      */
-    protected $maker;
+    protected $db;
 
-    public function __construct($name, DatabaseManager $db, $size = 20)
+    /**
+     * @var string $name
+     */
+    protected $name;
+
+    public function __construct($name, $db, $size = 20)
     {
+        $this->name = $name;
 
-        list($database, $type) = $db->parseConnName($name);
+        assert(method_exists($db,'makeOneConn'));
+
+        /**
+         * @var DatabaseManager| RedisManager $db
+         */
+        $this->db = $db;
 
         $this->pool = new \Swoole\Coroutine\Channel($size);
 
-        $this->maker = function () use ($db, $database, $type) {
-            return $db->makeOneConn($database, $type);
-        };
-
         for ($i = 0; $i < $size; $i++) {
-            $this->put($db->makeOneConn($database, $type));
+            $this->put($this->makeConn());
         }
     }
 
     function makeConn()
     {
-        return $this->{'maker'}();
+        return $this->db->makeOneConn($this->name);
 
     }
 
@@ -44,7 +53,7 @@ class Pool
     public function put($conn)
     {
         // pool->push must be in a coroutine
-        go(function()use($conn){
+        go(function () use ($conn) {
             $this->pool->push($conn);
         });
     }
