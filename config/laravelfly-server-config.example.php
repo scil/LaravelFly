@@ -189,6 +189,7 @@ return [
      * note: for each item in  config('database.connections') or config('database.redis'),
      * mysql, sqlite, pgsql, redis, or something else,
      * there's only one connection available in each request.
+     * But if you use `fly()` or `fly2()`, you can use connections more than one.
      *
      */
     'poolsize'=> LARAVELFLY_COROUTINE ? 10 : 0,

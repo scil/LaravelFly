@@ -3,6 +3,7 @@
 namespace LaravelFly\Map\Illuminate\Redis;
 
 use LaravelFly\Map\Illuminate\Database\ConnectionsTrait;
+use LaravelFly\Map\Illuminate\Redis\Connection\EnsureConnected;
 
 class RedisManager extends \Illuminate\Redis\RedisManager
 {
@@ -28,23 +29,16 @@ class RedisManager extends \Illuminate\Redis\RedisManager
     }
 
     /**
-     * only ensureConnected when request end, not user coroutine end
+     * first ensureConnected then put back
+     *
      * @param $cid
      */
-    function requestCorUnset($cid){
-        $this->reconnectAndPutBack($cid);
-        unset($this->connections[$cid]);
-    }
-
-    /**
-     * swooleredis or predis has no auto-reconnect
-     * @param $cid
-     */
-    function reconnectAndPutBack($cid)
+    function putBack($cid)
     {
 
         foreach ($this->connections[$cid] as $name => $conn) {
             /**
+             * swooleredis or predis has no auto-reconnect
              * @var EnsureConnected $conn
              */
             $conn->ensureConnected();
@@ -86,7 +80,7 @@ class RedisManager extends \Illuminate\Redis\RedisManager
                 return new Connector\PredisConnector();
             case 'phpredis':
                 return new Connector\PhpRedisConnector();
-            case 'swooleredis':
+            case 'swoole_redis':
                 return new Connector\SwooleRedisConnector();
 
         }

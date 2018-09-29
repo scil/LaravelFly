@@ -27,13 +27,14 @@ trait ConnectionsTrait
         $event = Container::getInstance()->make('events');
 
         $event->listen('request.corinit', function ($cid) {
-            $this->connections[$cid] = $this->connections[WORKER_COROUTINE_ID];
+            $this->connections[$cid] = [];
         });
         $event->listen('request.corunset', function ($cid) {
-            $this->requestCorUnset($cid);
+            $this->putBack($cid);
+            unset($this->connections[$cid]);
         });
         $event->listen('usercor.init', function ($parentId, $childId) {
-            $this->connections[$childId] = $this->connections[$parentId];
+            $this->connections[$childId] = [];
         });
 
         $event->listen('usercor.unset', function ($childId) {
@@ -42,20 +43,10 @@ trait ConnectionsTrait
 
         });
         $event->listen('usercor.unset2', function ($parentId, $childId) {
-            $this->connections[$parentId] = $this->connections[$childId];
+            $this->putBack($childId);
             unset($this->connections[$childId]);
         });
 
-    }
-
-    /**
-     * this method can be overwrited
-     * @param $cid
-     */
-    function requestCorUnset($cid)
-    {
-        $this->putBack($cid);
-        unset($this->connections[$cid]);
     }
 
     function putBack($cid)
