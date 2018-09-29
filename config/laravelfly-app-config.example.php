@@ -233,6 +233,18 @@ return [
 
 
         /*
+         * LaravelFly
+         *
+         */
+
+        /**
+         * /laravel-fly/info
+         */
+        LaravelFly\Providers\RouteServiceProvider::class => [],
+
+
+
+        /*
          * Application Service Providers...
          */
 
@@ -294,11 +306,6 @@ return [
         ],
 
 
-        /*
-         * LaravelFly
-         */
-
-        LaravelFly\Providers\RouteServiceProvider::class => [],
     ],
 
     'clean_Facade_on_work' => [
