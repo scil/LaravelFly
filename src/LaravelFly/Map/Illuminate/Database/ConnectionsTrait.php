@@ -30,7 +30,7 @@ trait ConnectionsTrait
             $this->connections[$cid] = $this->connections[WORKER_COROUTINE_ID];
         });
         $event->listen('request.corunset', function ($cid) {
-            $this->putBack($cid);
+            $this->requestCorUnset($cid);
         });
         $event->listen('usercor.init', function ($parentId, $childId) {
             $this->connections[$childId] = $this->connections[$parentId];
@@ -38,6 +38,7 @@ trait ConnectionsTrait
 
         $event->listen('usercor.unset', function ($childId) {
             $this->putBack($childId);
+            unset($this->connections[$childId]);
 
         });
         $event->listen('usercor.unset2', function ($parentId, $childId) {
@@ -47,11 +48,22 @@ trait ConnectionsTrait
 
     }
 
+    /**
+     * this method can be overwrited
+     * @param $cid
+     */
+    function requestCorUnset($cid)
+    {
+        $this->putBack($cid);
+        unset($this->connections[$cid]);
+    }
+
     function putBack($cid)
     {
         foreach ($this->connections[$cid] as $name => $conn) {
-            // no worry about disconnected connections, because laravel will reconnect it when using it
+            // for Illuminate/Database  no worry about disconnected connections, because laravel will reconnect it when using it
             $this->pools[$name]->put($conn);
         }
     }
+
 }

@@ -186,7 +186,8 @@ return [
      *          ....
      *      ],
      *
-     * note: for each type of connections, mysql, sqlite, pgsql or something else,
+     * note: for each item in  config('database.connections') or config('database.redis'),
+     * mysql, sqlite, pgsql, redis, or something else,
      * there's only one connection available in each request.
      *
      */

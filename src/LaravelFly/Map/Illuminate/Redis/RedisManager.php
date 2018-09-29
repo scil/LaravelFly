@@ -1,9 +1,10 @@
 <?php
+
 namespace LaravelFly\Map\Illuminate\Redis;
 
 use LaravelFly\Map\Illuminate\Database\ConnectionsTrait;
 
-class RedisManager extends  \Illuminate\Redis\RedisManager
+class RedisManager extends \Illuminate\Redis\RedisManager
 {
     use ConnectionsTrait;
 
@@ -20,10 +21,35 @@ class RedisManager extends  \Illuminate\Redis\RedisManager
 
     public function __construct($driver, array $config)
     {
-        parent::__construct($driver,$config);
+        parent::__construct($driver, $config);
 
         $this->initConnections(app('config')['database.redis']);
 
+    }
+
+    /**
+     * only ensureConnected when request end, not user coroutine end
+     * @param $cid
+     */
+    function requestCorUnset($cid){
+        $this->reconnectAndPutBack($cid);
+        unset($this->connections[$cid]);
+    }
+
+    /**
+     * swooleredis or predis has no auto-reconnect
+     * @param $cid
+     */
+    function reconnectAndPutBack($cid)
+    {
+
+        foreach ($this->connections[$cid] as $name => $conn) {
+            /**
+             * @var EnsureConnected $conn
+             */
+            $conn->ensureConnected();
+            $this->pools[$name]->put($conn);
+        }
     }
 
     public function connection($name = null)
@@ -43,12 +69,26 @@ class RedisManager extends  \Illuminate\Redis\RedisManager
 
     function makeOneConn($name)
     {
-        return  $this->resolve($name);
+        return $this->resolve($name);
     }
 
 
     public function connections()
     {
         return $this->connections[\Swoole\Coroutine::getuid()];
+    }
+
+
+    protected function connector()
+    {
+        switch ($this->driver) {
+            case 'predis':
+                return new Connector\PredisConnector();
+            case 'phpredis':
+                return new Connector\PhpRedisConnector();
+            case 'swooleredis':
+                return new Connector\SwooleRedisConnector();
+
+        }
     }
 }
