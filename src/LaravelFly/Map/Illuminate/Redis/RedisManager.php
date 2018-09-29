@@ -80,7 +80,7 @@ class RedisManager extends \Illuminate\Redis\RedisManager
                 return new Connector\PredisConnector();
             case 'phpredis':
                 return new Connector\PhpRedisConnector();
-            case 'swoole_redis':
+            case 'swoole-redis':
                 return new Connector\SwooleRedisConnector();
 
         }

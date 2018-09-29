@@ -73,7 +73,7 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
   - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE**, **WORKER OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
   - to be cloned in each request (one instance in one request).LaravelFly named it **CLONE SERVICE** or **CLONE OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s),  while used rarely by LaravelFly.
   
-- Extra speed improvements such as middlewares cache, view path cache.
+- Extra speed improvements such as connection pool, middlewares cache, view path cache.
 
 - Check server info at /laravel-fly/info. It's better to view json response in Firefox, instead of Chrome or IE. (This feture is under dev and more infomations will be available.)
 
@@ -171,7 +171,8 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] Cache for event listeners. $listenersStalbe in LaravelFly\Map\IlluminateBase\Dispatcher
 - [x] Cache for view compiled path. LARAVELFLY_SERVICES['view.finder'] or  App config 'view_compile_1'
 - [x] Mysql coroutine. Old code dropped, laravel-s used.
-- [x] db connection pool
+- [x] db connection pool and redis connection pool. In `fly()` or `fly2()`, connections to be used would be fetched from pool, not inherit the same connections from request coroutine. code: `$this->connections[$childId] = [];` in ConnectionsTrait.php
+- [x] swoole redis driver
 - [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] safe: auth, remove some props?
