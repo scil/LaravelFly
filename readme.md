@@ -173,6 +173,7 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] Mysql coroutine. Old code dropped, laravel-s used.
 - [x] db connection pool and redis connection pool. In `fly()` or `fly2()`, connections to be used would be fetched from pool, not inherit the same connections from request coroutine. code: `$this->connections[$childId] = [];` in ConnectionsTrait.php
 - [x] swoole redis driver
+- [ ] swoole redis driver: how to use `errMsg` `errCode`
 - [ ] event: wildcardsCache? keep in memory，no clean?
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] safe: auth, remove some props?

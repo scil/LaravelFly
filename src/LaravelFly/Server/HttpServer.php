@@ -29,7 +29,7 @@ class HttpServer extends Common implements ServerInterface
 
         $this->workerStartHead($server, $worker_id);
 
-        if (!$this->getConfig('early_laravel')) $this->startLaravel();
+        if (!$this->getConfig('early_laravel')) $this->startLaravel($server);
 
         if (0 == $worker_id) {
             $this->workerZeroStartTail($server);

@@ -46,6 +46,8 @@ class Kernel extends HttpKernel
 
             $response = $this->sendRequestThroughRouter($request);
 
+//        } catch (\Swoole\ExitException $e) {
+//            var_dump($e);
         } catch (Exception $e) {
             $this->reportException($e);
 

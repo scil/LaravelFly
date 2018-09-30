@@ -5,7 +5,7 @@ namespace LaravelFly\Server;
 use swoole_atomic;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-// this is necessary for const mapFlyFiles where LARAVELFLY_SERVICES is used
+// in testing, this is necessary because const mapFlyFiles use LARAVELFLY_SERVICES
 if (!defined('LARAVELFLY_SERVICES')) include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
 
 class Common

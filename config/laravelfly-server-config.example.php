@@ -174,7 +174,8 @@ return [
     'worker_num' => 4,
 
     // max number of coroutines handled by a worker in the same time
-    'max_coro_num' => 20,
+    // you can change 20 to a larger number, such as 3000 which is the default value of swoole server
+    'max_coro_num' => LARAVELFLY_COROUTINE ? 20 : 1,
 
     /**
      * default pool size for each type of connections in a worker process
@@ -192,7 +193,7 @@ return [
      * But if you use `fly()` or `fly2()`, you can use connections more than one.
      *
      */
-    'poolsize'=> LARAVELFLY_COROUTINE ? 10 : 0,
+    'poolsize' => LARAVELFLY_COROUTINE ? 10 : 0,
 
     /**
      * The max number of connection the server could handle at the same time.
