@@ -61,17 +61,24 @@ Now, your project is flying and listening to port 9501. Enjoy yourself.
 
 [For Dev](doc/dev.md)
 
+## Recommended Packages
+
+- [swlib/saber](https://github.com/swlib/saber/blob/master/README-EN.md)  Coroutine HTTP client, based on `Swoole\Coroutine\Http\Client`.   
+Browser-like cookie managment, multiple requests concurrent, request/response interceptors and so on.  
+To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
+
+
 ## Features and Behaviors
 
 - Same codes can run on PHP-FPM or LaravelFly
 
 - To be absolutely safe, put your code under control. Coroutine is supported (code execution can jump from one request to another).
 
-- Moderate strategy: by default, each Third Party service provider is registered on server worker process (before the first request arrived at server) , booted in request.
+  - Moderate strategy: by default, each Third Party service provider is registered on server worker process (before the first request arrived at server) , booted in request.
 
-- The majority of Laravel official services or some other objects can be made before any requests. There are two types:
-  - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE**, **WORKER OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
-  - to be cloned in each request (one instance in one request).LaravelFly named it **CLONE SERVICE** or **CLONE OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s),  while used rarely by LaravelFly.
+  - The majority of Laravel official services or some other objects can be made before any requests. There are two types:
+      - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE**, **WORKER OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
+      - to be cloned in each request (one instance in one request).LaravelFly named it **CLONE SERVICE** or **CLONE OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s),  while used rarely by LaravelFly.
   
 - Extra speed improvements such as connection pool, middlewares cache, view path cache.
 
