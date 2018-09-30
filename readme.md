@@ -127,7 +127,7 @@ Route::get('/fly', function () {
 });
 ```
 
-- `exit()` or `die()` in an route action would not make server die or reload. If you would like that behavior, fork LaravalFly and catch `\Swoole\ExitException` in  `LaravelFly\Map\Kernel::handle`.
+- `exit()` or `die()` in an route action would output content to console or swoole log, and not make server die or reload. If you would like to change that behavior, fork LaravalFly and catch `\Swoole\ExitException` in  `LaravelFly\Map\Kernel::handle`.
 
 ## LaravelFly Usability 
 

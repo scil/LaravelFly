@@ -95,7 +95,7 @@ Trait Laravel
         } catch (\Throwable $e) {
             echo $e->getTraceAsString();
             $msg=$e->getMessage();
-            echo "\n[FLY ERROR] bootstrap: $msg\n";
+            echo "\n[LARAVEL BOOTSTRAP ERROR] $msg\n";
             $server && $server->shutdown();
         }
 
