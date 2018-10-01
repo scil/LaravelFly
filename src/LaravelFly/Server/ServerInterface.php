@@ -21,4 +21,5 @@ interface ServerInterface
 
     public function path($path = null);
 
+    public function echo($text, $status = 'INFO', $color = false);
 }

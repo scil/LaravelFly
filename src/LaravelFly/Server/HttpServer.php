@@ -7,9 +7,7 @@ class HttpServer extends Common implements ServerInterface
 
     function setListeners()
     {
-        $this->swoole->on('WorkerStart', array($this, 'onWorkerStart'));
-
-        $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
+        parent::setListeners();
 
         if ($this->getConfig('mode') === 'Backup') {
             $this->swoole->on('request', array($this, 'onBackupRequest'));

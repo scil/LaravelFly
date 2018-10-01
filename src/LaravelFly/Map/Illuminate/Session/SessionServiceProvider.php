@@ -3,9 +3,11 @@
 namespace LaravelFly\Map\Illuminate\Session;
 
 
+use LaravelFly\Fly;
+
 class SessionServiceProvider extends \Illuminate\Session\SessionServiceProvider
 {
-    static public function coroutineFriendlyServices():array
+    static public function coroutineFriendlyServices(): array
     {
         return [
             'session',
@@ -26,11 +28,22 @@ class SessionServiceProvider extends \Illuminate\Session\SessionServiceProvider
         });
 
     }
+
     protected function registerSessionManager()
     {
+
         $this->app->singleton('session', function ($app) {
             // hack
-            return new SessionManager($app);
+            $m = new SessionManager($app);
+
+            // hack
+            if (Fly::getServer()->getConfig('swoole_session_back')) {
+                $m->setDefaultDriver('swoole');
+                Fly::getServer()->echo('config session.driver=swoole');
+            }
+
+            return $m;
+
         });
     }
 }

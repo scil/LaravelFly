@@ -86,7 +86,7 @@ class CommonTest extends BaseTestCase
 
         unset($actual['pid_file']);
         $d = static::$default;
-        unset($actual['before_start_func'], $d['before_start_func']);
+        unset($actual['prestart_func'], $d['prestart_func']);
         self::assertEquals($d, $actual);
 
 

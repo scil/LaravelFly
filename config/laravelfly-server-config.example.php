@@ -281,19 +281,45 @@ return [
     'early_laravel' => false,
 
     /**
+     * If do not want to use swoole session driver, keep it empty
+     * If use swoole session driver, set it to 'only_swoole'
+     * If use swoole as the main driver, and redis as a back driver, set it to 'redis'. This feature has not implemented.
+     */
+    'swoole_session_back' => '',
+
+    /**
      * a function executes before laravelfly server starts
      *
      * It can be used to share memory, or add listeners to
      * LaravleFly events (https://github.com/scil/LaravelFly/wiki/events)
      */
-    'before_start_func' => function () {
+    'prestart_func' => function () {
 
-        // memory share
-        // $this is the instance of the 'server'
+        /**
+         * @var LaravelFly\Server\Common $this
+         */
+
+        // Demo1: memory share for Integer
         // $this->newIntegerMemory('hits', new swoole_atomic(0));
 
+        // Demo2: use swoole memory table to create a new session driver 'swoole'
+        // main class: LaravelFly\Map\Illuminate\Session\Swoole\SwooleSessionHandler
+        //
+        if ($this->getConfig('swoole_session_back')) {
+            $this->newTableMemory(
+                'swooleSession',
+                32768,  // 32768 means it store max 32768 sessions
+                [
+                    // 'user_id' => [ swoole_table::TYPE_INT,  4],
+                    'payload' => [swoole_table::TYPE_STRING, 1000], // 1000 bytes is appropriate for most cases
+                    'last_activity' => [swoole_table::TYPE_INT, 4], // 4 bytes
+                ],
+                \LaravelFly\Tools\SessionTable::class
+            );
 
-        // event
+        }
+
+        // Demo3: event
         // $this->getDispatcher()->addListener('worker.starting', function (GenericEvent $event) {
         //    echo "There files can not be hot reloaded, because they are included before worker starting\n";
         //    var_dump(get_included_files());

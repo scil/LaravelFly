@@ -30,7 +30,7 @@ try {
 }
 
 if ($options['echo_level'] ?? 0 >= 3)
-    echo "[INFO] conf: $config_file\n";
+    echo "[INFO] {$argv[1]} $config_file\n";
 
 if ($argv[1] == 'start') {
     goto start;
