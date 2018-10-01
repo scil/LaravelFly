@@ -9,9 +9,7 @@ class FpmHttpServer extends Common implements ServerInterface
 
     function setListeners()
     {
-        $this->swoole->on('WorkerStart', array($this, 'onWorkerStart'));
-
-        $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
+        parent::setListeners();
 
         $this->swoole->on('request', array($this, 'onRequest'));
     }

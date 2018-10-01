@@ -2,8 +2,11 @@
 
 namespace LaravelFly\Server;
 
+use LaravelFly\Tools\SessionTable;
+use LaravelFly\Tools\SessionTablePipe\PlainFilePipe;
 use swoole_atomic;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 // in testing, this is necessary because const mapFlyFiles use LARAVELFLY_SERVICES
 if (!defined('LARAVELFLY_SERVICES')) include __DIR__ . '/../../../config/laravelfly-server-config.example.php';
@@ -16,6 +19,7 @@ class Common
     use Traits\Worker;
     use Traits\Laravel;
     use Traits\ShareInteger;
+    use Traits\ShareTable;
 
     /**
      * where laravel app located
@@ -168,7 +172,7 @@ class Common
     {
         static::includeFlyFiles($options);
 
-        include_once __DIR__.'/../../MidKernel.php';
+        include_once __DIR__ . '/../../MidKernel.php';
 
         // as earlier as possible
         if ($options['pre_include'])
@@ -206,6 +210,8 @@ class Common
         $this->prepareTinker($options);
 
         $this->dispatchRequestByQuery($options);
+
+        $this->sessionTable();
     }
 
     static function includeFlyFiles(&$options)
@@ -252,6 +258,37 @@ class Common
 
     }
 
+    protected function sessionTable()
+    {
+        $back = $this->getConfig('swoole_session_back');
+
+        if (!$back) return;
+
+        $this->dispatcher->addListener('server.prestart', function (GenericEvent $event) use ($back) {
+
+            if (in_array($back, ['redis', 'apc', 'memcached'])) {
+                //todo
+                $this->swooleSessionTable->init(new PlainFilePipe(
+                    $this->swooleSessionTable,
+                    $this->root . '/storage/framework/swooleSessions.txt'
+                ));
+            } else {
+                $this->swooleSessionTable->init(new PlainFilePipe(
+                    $this->swooleSessionTable,
+                    $this->root . '/storage/framework/swooleSessions.txt'
+                ));
+            }
+
+            $this->getTableMemory('swooleSession')->restore();
+        });
+
+        $this->dispatcher->addListener('server.stopped', function (GenericEvent $event) {
+            $this->getTableMemory('swooleSession')->dump();
+        });
+
+
+    }
+
     public function createSwooleServer(): \swoole_http_server
     {
         $options = $this->options;
@@ -279,22 +316,37 @@ class Common
 
     public function setListeners()
     {
-        $this->swoole->on('WorkerStart', array($this, 'onWorkerStart'));
+        $this->swoole->on('WorkerStart', [$this, 'onWorkerStart']);
 
-        $this->swoole->on('WorkerStop', array($this, 'onWorkerStop'));
+        $this->swoole->on('WorkerStop', [$this, 'onWorkerStop']);
 
-        $this->swoole->on('Request', array($this, 'onRequest'));
+        $this->swoole->on('Shutdown', [$this, 'onShutdown']);
 
+        $this->swoole->on('Start', [$this, 'onStart']);
     }
 
-    function onRequest(\swoole_http_request $request, \swoole_http_response $response)
+    function onStart(\swoole_http_server $server)
     {
+        $this->echo("pid: " . $server->manager_pid.'; master pid: '.$server->master_pid);
+    }
+
+    function onShutdown(\swoole_http_server $server)
+    {
+        $this->echo("event server.stopped");
+
+        $this->dispatcher->dispatch('server.stopped',
+            new GenericEvent(null, ['server' => $this]));
+
     }
 
     public function start()
     {
-        if (is_callable($this->options['before_start_func'])) {
-            $this->options['before_start_func']->call($this);
+        if (is_callable($this->options['prestart_func'])) {
+
+            $this->echo("run prestart_func");
+
+            $this->options['prestart_func']->call($this);
+
         }
 
         if (!method_exists('\Co', 'getUid'))
@@ -305,6 +357,11 @@ class Common
 
             $this->newIntegerMemory('isDown', new swoole_atomic(0));
         }
+
+        $this->echo("event server.prestart");
+
+        $this->dispatcher->dispatch('server.prestart',
+            new GenericEvent(null, ['server' => $this]));
 
         try {
 

@@ -16,9 +16,9 @@ trait ShareInteger
      */
     var $integerMemory = [];
 
-    public function newIntegerMemory(string $name, swoole_atomic $atom)
+    public function newIntegerMemory(string $name, swoole_atomic $atom): swoole_atomic
     {
-        $this->integerMemory[$name] = $atom;
+        return $this->integerMemory[$name] = $atom;
     }
 
     /**
