@@ -122,6 +122,16 @@ const LARAVELFLY_SERVICES = [
      */
     'kernel' => false,
 
+    /**
+     * singleton request.
+     *
+     * no more worry about STALE REFERENCE to request when it's true
+     *
+     * when it's true
+     * 1. $_GET/$_POST/$_FILES/$_COOKIE/$_REQUEST is not supported
+     * 2. if a middleware tries to make a new instance of request, SingletonRequestException occurs!
+     */
+    'request' => true,
 ];
 
 /**

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+    use \LaravelFly\Map\CommonHack\Kernel;
 
     /**
      * The application implementation.
@@ -68,7 +69,8 @@ class Kernel extends HttpKernel
 
     protected function sendRequestThroughRouter($request)
     {
-        $this->app->instance('request', $request);
+        if (!(LARAVELFLY_SERVICES['request']))
+            $this->app->instance('request', $request);
 
         // moved to \LaravelFly\Map\Bootstrap\CleanOnWorker. After that, no need to clear in each request.
         // Facade::clearResolvedInstance('request');
@@ -120,8 +122,8 @@ class Kernel extends HttpKernel
     protected function terminateMiddleware($request, $response)
     {
         $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
-            // hack
-            // $this->gatherRouteMiddleware($request),
+        // hack
+        // $this->gatherRouteMiddleware($request),
             $this->app->gatherRouteTerminateMiddleware($request),
 
             // $this->middleware

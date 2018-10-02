@@ -40,7 +40,7 @@ class SessionTable extends Table
     {
         return round(time() / 60) - $lasttime > $this->minutes;
     }
-    function valid($lasttime)
+    function notExpired($lasttime)
     {
         return round(time() / 60) - $lasttime < $this->minutes;
     }
@@ -48,7 +48,7 @@ class SessionTable extends Table
     public function load(array $data)
     {
         foreach ($data as $key => $row) {
-            if ($this->valid($row['last_activity']))
+            if ($this->notExpired($row['last_activity']))
                 $this->set($key, $row);
         }
     }

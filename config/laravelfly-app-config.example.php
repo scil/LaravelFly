@@ -243,7 +243,6 @@ return [
         LaravelFly\Providers\RouteServiceProvider::class => [],
 
 
-
         /*
          * Application Service Providers...
          */
@@ -308,14 +307,17 @@ return [
 
     ],
 
-    'clean_Facade_on_work' => [
+    /**
+     * if a CLONE SERVICE alias maybe used in Facade style before any requests, put it here to clean.
+     *
+     */
+    'clean_Facade_on_work' => array_merge(
+        [
+            // 'url' has been made on work? when? \Illuminate\Routing\RoutingServiceProvider
+            'url',
 
-        // a facke request instance made on work
-        'request',
-        //'url' has been made on work? when? \Illuminate\Routing\RoutingServiceProvider
-        'url',
-
-    ],
+        ], LARAVELFLY_SERVICES['request'] ? [] : ['request']
+    ),
 
     /**
      * handle relations about cloned objects to avoid Stale Reference. For Mode Map

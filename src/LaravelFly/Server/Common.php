@@ -89,7 +89,12 @@ class Common
             'Http/Kernel.php' =>
                 '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php'
 
-        ]
+        ],
+        'request' => [
+            'symfony/Request.php' => '/vendor/symfony/http-foundation/Request.php',
+            'RequestConcerns/InteractsWithInput.php' => '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithInput.php',
+            'Request.php' => '/vendor/laravel/framework/src/Illuminate/Http/Request.php',
+        ],
     ];
 
 
@@ -224,7 +229,7 @@ class Common
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
-        static $mapLoaded = false, $logLoaded = false;
+        static $mapLoaded = false, $logLoaded = false, $requestLoaded = false;
 
         if ($options['mode'] === 'Map' && !$mapLoaded) {
 
@@ -241,19 +246,31 @@ class Common
 
         }
 
-        if ($logLoaded) return;
 
-        $logLoaded = true;
+        if ((LARAVELFLY_SERVICES['request']) && !$requestLoaded) {
 
-        if (is_int($options['log_cache']) && $options['log_cache'] > 1) {
+            $requestLoaded = true;
 
-            foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
+            foreach (static::$conditionFlyFiles['request'] as $f => $offical) {
                 require $flyBaseDir . $f;
             }
 
-        } else {
+        }
 
-            $options['log_cache'] = false;
+        if (!$logLoaded) {
+
+            $logLoaded = true;
+
+            if (is_int($options['log_cache']) && $options['log_cache'] > 1) {
+
+                foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
+                    require $flyBaseDir . $f;
+                }
+
+            } else {
+
+                $options['log_cache'] = false;
+            }
         }
 
     }
@@ -327,7 +344,7 @@ class Common
 
     function onStart(\swoole_http_server $server)
     {
-        $this->echo("pid: " . $server->manager_pid.'; master pid: '.$server->master_pid);
+        $this->echo("pid: " . $server->manager_pid . '; master pid: ' . $server->master_pid);
     }
 
     function onShutdown(\swoole_http_server $server)

@@ -12,6 +12,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+    use \LaravelFly\Map\CommonHack\Kernel;
 
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
@@ -42,7 +43,8 @@ class Kernel extends HttpKernel
      */
     protected function sendRequestThroughRouter($request)
     {
-        $this->app->instance('request', $request);
+        if (!(LARAVELFLY_SERVICES['request']))
+            $this->app->instance('request', $request);
 
         // moved to Application::restoreAfterRequest
         // Facade::clearResolvedInstance('request');

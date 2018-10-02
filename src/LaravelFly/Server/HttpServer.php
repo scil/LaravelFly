@@ -11,6 +11,8 @@ class HttpServer extends Common implements ServerInterface
 
         if ($this->getConfig('mode') === 'Backup') {
             $this->swoole->on('request', array($this, 'onBackupRequest'));
+        } elseif (LARAVELFLY_SERVICES['request']) {
+            $this->swoole->on('request', array($this, 'onRequestSingle'));
         } else {
             $this->swoole->on('request', array($this, 'onRequest'));
         }
@@ -79,9 +81,40 @@ class HttpServer extends Common implements ServerInterface
         });
     }
 
+    public function onRequestSingle(\swoole_http_request $request, \swoole_http_response $response)
+    {
+        go(function () use ($request, $response) {
+
+            //$t1 = microtime(true);
+
+            $cid = \Co::getUid();
+
+            $this->request->initForRequestCorontineWithSwoole($cid, $request);
+
+            $this->app->initForRequestCorontine($cid);
+
+
+            $laravel_response = $this->kernel->handle($this->request);
+
+            $this->swooleResponse($response, $laravel_response);
+
+
+            $this->kernel->terminate($this->request, $laravel_response);
+
+            $this->request->unsetForRequestCorontine($cid);
+
+            $this->app->unsetForRequestCorontine($cid);
+
+            // echo microtime(true) - $t1, "\n";
+        });
+
+    }
+
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
         go(function () use ($request, $response) {
+
+            // $t1 = microtime(true);
 
 //        static $i = 0; $TARGET = 200;$i++;if ($i == $TARGET) memprof_enable();
 
@@ -108,6 +141,7 @@ class HttpServer extends Common implements ServerInterface
 
 //        if ($i == $TARGET) {$dump = memprof_dump_array();ob_start();print_r($dump);$d=ob_get_clean();file_put_contents("/vagrant/callgrind.$i.out", $d);}
 
+            // echo microtime(true) - $t1, "\n";
         });
     }
 

@@ -21,6 +21,8 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     use \LaravelFly\Map\Util\Dict;
+    use \LaravelFly\Map\CommonHack\Kernel;
+
     protected static $normalAttriForObj = [];
     protected static $arrayAttriForObj = ['middleware'];
 
@@ -116,7 +118,8 @@ class Kernel extends HttpKernel
 
     protected function sendRequestThroughRouter($request)
     {
-        $this->app->instance('request', $request);
+        if (!(LARAVELFLY_SERVICES['request']))
+            $this->app->instance('request', $request);
 
         // moved to \LaravelFly\Map\Bootstrap\CleanOnWorker. After that, no need to clear in each request.
         // Facade::clearResolvedInstance('request');

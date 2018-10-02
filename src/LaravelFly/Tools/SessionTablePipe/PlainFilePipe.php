@@ -17,7 +17,6 @@ class PlainFilePipe extends Pipe
 
     function __construct($table, $file)
     {
-        var_dump($table, $file);
         $this->table = $table;
         $this->dumpFile = $file;
     }
@@ -51,7 +50,7 @@ class PlainFilePipe extends Pipe
         $data = [];
 
         foreach ($this->table as $key => $row) {
-            if ($this->table->valid($row['last_activity']))
+            if ($this->table->notExpired($row['last_activity']))
                 $data[$key] = $row;
         }
 
