@@ -150,12 +150,13 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly.   
 
-The main difference is that in laravel-swoole user's code will be processed by a new `app` cloned from SwooleTW\Http\Server\Application::$application and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container. In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is used only to create `url` by default. LaravelFly makes most of laravel objects keep safe on their own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). 
+The main difference is that in laravel-swoole user's code will be processed by a new `app` cloned from SwooleTW\Http\Server\Application::$application and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container.   
+In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is not used at all by default. LaravelFly makes most of laravel objects keep safe on their own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). 
 
  .  | technique | work to maintaining relations of cloned objects to avoid Stale Reference 
 ------------ |------------ | ------------ 
 laravel-swoole  | clone app contaniner and objects to make them safe | more work (as app,event...are cloned)
-LaravelFly Mode Map |  refactor most official objects to make them safe on their own | few work ( only url is cloned by default)
+LaravelFly Mode Map |  refactor most official objects to make them safe on their own | few work ( nothing is cloned by default)
 
 In LaravelFly, another benefit of non-cloned objects is allowing some improvements, such as event listeners cache, route middlewares cache.
 

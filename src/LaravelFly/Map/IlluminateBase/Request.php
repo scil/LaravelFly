@@ -32,11 +32,18 @@ class Request extends \Illuminate\Http\Request
 
         // laravel
         'json' => null,
+        'userResolver'=>null,
+        'routeResolver'=>null,
+        // ★★★ their are arrays, but treated as normal value
+        'convertedFiles'=>null,
     ];
 
     protected static $arrayAttriForObj = [
         // treat them as normalAttri, althout their values are arrays.
         // 'languages', 'charsets', 'encodings','acceptableContentTypes',
+
+        //laravel
+        // 'convertedFiles',
     ];
 
     protected static $instance;

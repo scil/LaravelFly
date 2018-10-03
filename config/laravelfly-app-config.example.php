@@ -130,7 +130,7 @@ return [
         // this is not in config('app.providers') but registered in Application:;registerBaseServiceProviders
         Illuminate\Routing\RoutingServiceProvider::class => [
             'router' => true,
-            'url' => 'clone',
+            'url' => LARAVELFLY_SERVICES['request'] ? true : 'clone',
             // todo
             'redirect' => false,
         ],
@@ -311,13 +311,11 @@ return [
      * if a CLONE SERVICE alias maybe used in Facade style before any requests, put it here to clean.
      *
      */
-    'clean_Facade_on_work' => array_merge(
+    'clean_Facade_on_work' =>
         [
             // 'url' has been made on work? when? \Illuminate\Routing\RoutingServiceProvider
-            'url',
-
-        ], LARAVELFLY_SERVICES['request'] ? [] : ['request']
-    ),
+            LARAVELFLY_SERVICES['request'] ? '' : ['request', 'url']
+        ],
 
     /**
      * handle relations about cloned objects to avoid Stale Reference. For Mode Map

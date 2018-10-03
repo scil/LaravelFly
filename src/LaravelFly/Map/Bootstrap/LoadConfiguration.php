@@ -121,12 +121,13 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 echo "\n";
             }
 
-            $cloneServices = array_diff($cloneServices, ['url']);
+            LARAVELFLY_SERVICES['request'] || $cloneServices[] = 'url(UrlGenerator)';
+            LARAVELFLY_SERVICES['routes'] || $cloneServices[] = 'routes';
+            LARAVELFLY_SERVICES['hash'] || $cloneServices[] = 'drivers in app("hash")';
 
-            $allClone = implode(", ", array_merge(
-                LARAVELFLY_SERVICES['routes'] ? ['url(UrlGenerator)'] : ['url(UrlGenerator)', 'routes'],
-                LARAVELFLY_SERVICES['hash'] ? [] : ['drivers in app("hash")'],
-                $cloneServices));
+            $cloneServices = array_unique($cloneServices);
+
+            $allClone = implode(", ", $cloneServices);
 
             \LaravelFly\Fly::getServer()->echo(
                 "CLONE SERVICES: [$allClone, ].",

@@ -180,9 +180,15 @@ class Application extends \Illuminate\Foundation\Application
          * @todo test
          */
         Facade::initForRequestCorontine($cid);
+
         $this->make('events')->initForRequestCorontine($cid);
-        // make an new url object which is independent from origin url object
-        $this->instance('url', clone $this->make('url'));
+
+        if(!LARAVELFLY_SERVICES['request']){
+
+            // make an new url object which is independent from origin url object
+            $this->instance('url', clone $this->make('url'));
+        }
+
         $this->make('router')->initForRequestCorontine($cid);
 
         $this->make('events')->dispatch('request.corinit', [$cid]);

@@ -94,6 +94,8 @@ class Common
             'symfony/Request.php' => '/vendor/symfony/http-foundation/Request.php',
             'RequestConcerns/InteractsWithInput.php' => '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithInput.php',
             'Request.php' => '/vendor/laravel/framework/src/Illuminate/Http/Request.php',
+            'UrlGenerator.php'=>'/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php',
+            'RouteUrlGenerator.php'=>'/vendor/laravel/framework/src/Illuminate/Routing/RouteUrlGenerator.php',
         ],
     ];
 

@@ -13,10 +13,8 @@ class CleanOnWorker
 
         $services = $app->make('config')->get('laravelfly.clean_Facade_on_work', []);
 
-        $services = array_unique(array_merge(['url', 'request'], $services));
-
-        foreach ($services as $service) {
-            Facade::clearResolvedInstance($service);
+        foreach (array_flatten($services) as $service) {
+            $service && Facade::clearResolvedInstance($service);
         }
 
     }
