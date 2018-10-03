@@ -8,11 +8,11 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 .   | fpm  | Fly
 ------------ | ------------ | ------------- 
-Requests per second   | 3    | 34
-Time taken ≈ | 325  | 30
-  50%  | 2538  | 126
-  80%  | 3213  | 187
-  99%  | 38584 | 3903
+Time taken ≈ | 172.76  | 18.6
+Requests per second   | 5.8    | 53.76
+  50%  | 2303 ms  | 167 ms
+  80%  | 2950 ms  | 221 ms
+  99%  | 3597 ms | 1495 ms
 
 <details>
 <summary>Test Env</summary>
@@ -21,10 +21,10 @@ Time taken ≈ | 325  | 30
 
 * A visit to http://zc.test relates to 5 Models and 5 db query.
 * env:   
-  - ubuntu 16.04 on virtualbox ( 2 CPU: i5-2450M 2.50GHz ; Memory: 1G  )  
-  - php7.1 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
+  - ubuntu 16.04 on VirtualBox ( 1 CPU: i7-7700HQ 2.80GHz ; Memory: 2G  )  
+  - php7.2 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
   - 'max_conn' => 1024
-* Test date : 2018/02
+* Test date : 2018/10
 
 </div>
 </details>
@@ -72,13 +72,11 @@ To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
 
 - Same codes can run on PHP-FPM or LaravelFly
 
-- To be absolutely safe, put your code under control. Coroutine is supported (code execution can jump from one request to another).
+- Moderate strategy: by default, each Third Party service provider is registered on server worker process (before the first request arrived at server) , booted in request.
 
-  - Moderate strategy: by default, each Third Party service provider is registered on server worker process (before the first request arrived at server) , booted in request.
-
-  - The majority of Laravel official services or some other objects can be made before any requests. There are two types:
-      - be configurable to serve in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE**, **WORKER OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
-      - to be cloned in each request (one instance in one request).LaravelFly named it **CLONE SERVICE** or **CLONE OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s),  while used rarely by LaravelFly.
+- By default, all Laravel official services are COROUTINE-FRIENDLY. You can make a service or object before any requests. There are two ways:
+  - let the service or object live in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE**, **WORKER OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
+  - cloned the service or object in each request (one instance in one request).LaravelFly named it **CLONE SERVICE** or **CLONE OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s),  while used rarely by LaravelFly.
   
 - Extra speed improvements such as connection pool, middlewares cache, view path cache.
 

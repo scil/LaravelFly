@@ -203,17 +203,21 @@ return [
     // like pm.start_servers in php-fpm, but there's no option like pm.max_children
     'worker_num' => 4,
 
-    // max number of coroutines handled by a worker in the same time
-    // you can change 20 to a larger number, such as 3000 which is the default value of swoole server
-    'max_coro_num' => LARAVELFLY_COROUTINE ? 20 : 1,
+    /**
+     * max number of coroutines handled by a worker in the same time
+     * you can change 20 to a larger number, such as 3000 which is the default value of swoole server
+     *
+     * These make coroutines: coroutine db, coroutine redis, `go()`, `fly()`, `fly2()` and every request
+     */
+    'max_coro_num' => LARAVELFLY_COROUTINE ? 30 : 1,
 
     /**
-     * default pool size for each type of connections in a worker process
+     * default pool size for each type of connections in each worker process
      *
      * you can overwrite this value in config/databases.php, e.g.
      *      'mysql' => [
      *          'driver' => 'mysql',
-     *          'poolsize' => 20,
+     *          'poolsize' => 50,
      *          ....
      *      ],
      *
@@ -234,7 +238,7 @@ return [
      * the default value of max_conn is ulimit -n
      */
     // large number needs large memory! Please test different numbers on your server.
-    'max_conn' => 128,
+    'max_conn' => 1024,
 
     // like pm.max_requests in php-fpm
     'max_request' => 500,
