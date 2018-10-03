@@ -130,6 +130,26 @@ const LARAVELFLY_SERVICES = [
      * when it's true
      * 1. $_GET/$_POST/$_FILES/$_COOKIE/$_REQUEST is not supported
      * 2. if a middleware tries to make a new instance of request, SingletonRequestException occurs!
+     *
+     * if set it to false, a WOKER SERVICE or WORKER OBJECT with references to app('request') and app('url')
+     * should be updated in config/laravelfly.php
+     *
+     * e.g. mcamara/laravel-localization
+            'update_on_request' => [
+
+                LARAVELFLY_SERVICES['request'] ? null : [
+
+                    'this' => 'laravellocalization',
+                    'closure' => function () {
+                        $this->url = app('url');
+                        app()->rebinding('request', function () {
+                            $this->request = app('request');
+                        });
+                    }
+                ],
+            ],
+     *
+     *
      */
     'request' => true,
 ];

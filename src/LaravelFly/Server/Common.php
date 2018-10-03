@@ -69,7 +69,7 @@ class Common
     /**
      * fly files included conditionally.
      * this array is only for
-     * test tests/Map/Feature/FlyFilesTest.php
+     * test tests/Map/Feature/FlyOfficialFilesTest.php
      *
      * @var array
      */
@@ -276,6 +276,18 @@ class Common
         }
 
     }
+
+    static function getFlyMap()
+    {
+        $r = static::mapFlyFiles;
+
+        foreach (static::$conditionFlyFiles as $map) {
+            $r = array_merge($r, $map);
+        }
+        return $r;
+    }
+
+
 
     protected function sessionTable()
     {

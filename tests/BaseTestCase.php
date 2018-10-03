@@ -71,6 +71,8 @@ abstract class BaseTestCase extends TestCase
 
     static $backOfficalDir;
 
+    static $workingRoot;
+
     /**
      * @var \Swoole\Channel
      */
@@ -89,8 +91,12 @@ abstract class BaseTestCase extends TestCase
             exit("[NOTE] FORCE setting \$laravelAppRoot= $r,please make sure laravelfly code or its soft link is in laravel_app_root/vendor/scil/\n");
         }
 
-        static::$flyDir = FLY_ROOT . '/src/fly/';
-        static::$backOfficalDir = FLY_ROOT . '/tests/offcial_files/';
+        static::$workingRoot = $r;
+
+        $files_package_root = FLY_ROOT . '/../laravel-fly-files/';
+
+        static::$flyDir = $files_package_root . '/src/';
+        static::$backOfficalDir = $files_package_root . '/offcial_files/';
 
         $d = static::processGetArray(function () {
             return include static::$laravelAppRoot . '/vendor/scil/laravel-fly/config/laravelfly-server-config.example.php';
@@ -351,11 +357,12 @@ abstract class BaseTestCase extends TestCase
     {
 
         $log = file(LARAVEL_APP_ROOT . '/storage/logs/laravel.log');
-        $line = $log[count($log)-2];
-        $line = substr($line, strpos($line,'INFO')+6);
+        $line = $log[count($log) - 2];
+        $line = substr($line, strpos($line, 'INFO') + 6);
         $line = trim($line);
 
         return $line;
     }
+
 }
 

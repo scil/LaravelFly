@@ -17,7 +17,8 @@
         </testsuite>
 
         <testsuite name="only_fly">
-            <file>./tests/Map/Feature/FlyFilesTest.php</file>
+            <file>./tests/Map/Feature/FlyOfficialFilesTest.php</file>
+            <file>./tests/Map/Feature/ExtendedFlyFilesTest.php</file>
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Process">
@@ -31,7 +32,7 @@
             <file>./tests/Map/Unit/ApplicationCorTest.php</file>
 
             <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
-            <file>./tests/Map/Feature/FlyFilesTest.php</file>
+            <file>./tests/Map/Feature/FlyOfficialFilesTest.php</file>
             <file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>
             <file>./tests/Map/Feature/SuperGlobalVarsTest.php</file>
 
