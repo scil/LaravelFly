@@ -16,7 +16,7 @@ Trait Tinker
             $options['daemonize'] = false;
             $this->echo(
                 "daemonize disabled to allow tinker run normally",
-                'WARNING',true
+                'WARN',true
             );
         }
 

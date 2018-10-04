@@ -8,11 +8,11 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 .   | fpm  | Fly
 ------------ | ------------ | ------------- 
-Time taken ≈ | 43.5 s  | 14.1 s
-Requests per second   | 23    | 70.7
+Time taken ≈ | 43.5 s  | 13.5 s
+Requests per second   | 23    | 74.3
   50%  | 303 ms  | 131 ms
-  80%  | 360 ms  | 172 ms
-  99%  | 1341 ms | 854 ms
+  80%  | 360 ms  | 171 ms
+  99%  | 1341 ms | 259 ms
 
 <details>
 <summary>Test Env</summary>

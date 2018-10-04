@@ -22,6 +22,7 @@ Trait Worker
         }
 
         $this->workerStartTail($server, $worker_id);
+
     }
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
@@ -41,7 +42,22 @@ Trait Worker
         $this->dispatcher->dispatch('worker.ready',
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
+        $this->disable_functions($worker_id);
+
         $this->echo("event worker.ready for id $worker_id");
+
+    }
+
+    function disable_functions($worker_id){
+
+        $disable_functions = "header, setcookie, setrawcookie, session_start, session_create_id, http_response_code, set_include_path, set_exception_handler, set_error_handler";
+
+        LARAVELFLY_COROUTINE && $disable_functions = 'ini_set, setlocale,  '.$disable_functions;
+
+        // what a pity disable_functions can only be used in php.ini
+        // ini_set('disable_functions', $disable_functions);
+
+        $worker_id == 0 && $this->echo('bad functions in requests: ' . $disable_functions);
 
     }
 

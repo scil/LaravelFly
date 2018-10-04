@@ -469,7 +469,7 @@ class Common
                 $out = "[41m"; //Red background
                 break;
             default:
-                throw new Exception("Invalid status: " . $status);
+                throw new \Exception("Invalid status: " . $status);
         }
         return chr(27) . "$out" . "$text" . chr(27) . "[0m";
     }

@@ -154,7 +154,7 @@ mores steps based on Solution 1
 
 ```
 
-2. If there are be references to app('laravellocalization') in any CLONE SERVICE or WORKER SERVICE, please update them if necessary.
+2. If there are be references to app('laravellocalization') in any CLONE SERVICE or WORKER SERVICE, please update them.
 
 
 # Solution 3: clone and loads routes/web.php on work
