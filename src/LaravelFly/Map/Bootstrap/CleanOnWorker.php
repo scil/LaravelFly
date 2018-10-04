@@ -11,10 +11,16 @@ class CleanOnWorker
     {
         $app->resetServiceProviders();
 
-        $services = $app->make('config')->get('laravelfly.clean_Facade_on_work', []);
+        $cloneServices = $app->cloneServices;
 
-        foreach (array_flatten($services) as $service) {
-            $service && Facade::clearResolvedInstance($service);
+
+        foreach (LARAVELFLY_SERVICES['request'] ? $cloneServices : array_merge($cloneServices, ['request', 'url'])
+                 as $service) {
+
+            // this is necessary for QUICK MAKE
+            $app->forgetInstance($service);
+
+            Facade::clearResolvedInstance($service);
         }
 
     }

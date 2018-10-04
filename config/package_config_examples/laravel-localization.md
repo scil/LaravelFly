@@ -4,7 +4,7 @@
 
 package | solutions| involved
  ---- | --- | -----
- [mcamara/laravel-localization](https://github.com/scil/LaravelFly/blob/master/config/package_config_examples/laravel-localization.md) <br> ([offical](https://github.com/mcamara/laravel-localization) ) | 1. across (no coroutine) <br> 2. clone (no cor) <br> 3. clone and include routes on worker (no cor) | - routes/web.php  <br> - app('request')  <br>- Facade
+ [mcamara/laravel-localization](https://github.com/scil/LaravelFly/blob/master/config/package_config_examples/laravel-localization.md) <br> ([offical](https://github.com/mcamara/laravel-localization) ) | 1. across (no coroutine) <br> 2. clone (no cor) <br> 3. clone and include routes on worker (no cor) | - routes/web.php  <br> - app('request')  <br>
 
 ## Prepearation
 
@@ -89,8 +89,6 @@ mores steps based on Solution 1
 
 [x] add `clone` to this singleton service
 
-[x] clean Facade for the singleton service
-
 [x] NO ref in other services
 
 [x] NO ref to this service in controllers
@@ -118,12 +116,6 @@ mores steps based on Solution 1
         
     ],
     
-    
-    'clean_Facade_on_work' => [
-        ....
-        
-        'laravellocalization',
-    ],
     
     
     'update_on_request' => [

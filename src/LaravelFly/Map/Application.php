@@ -53,7 +53,7 @@ class Application extends \Illuminate\Foundation\Application
     /**
      * @var string[]
      */
-    protected $cloneServices = [];
+    public $cloneServices = [];
 
     /**
      * @var array[]
