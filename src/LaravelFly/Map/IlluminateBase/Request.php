@@ -32,10 +32,15 @@ class Request extends \Illuminate\Http\Request
 
         // laravel
         'json' => null,
-        'userResolver'=>null,
-        'routeResolver'=>null,
+        'userResolver' => null,
+        'routeResolver' => null,
         // ★★★ their are arrays, but treated as normal value
-        'convertedFiles'=>null,
+        'convertedFiles' => null,
+
+        // cache vars prefix with fly
+        'flyRoot' => null, 'flyUrl' => null, 'flyFullUrl' => null, 'flyUrlWithQuery' => null, 'flyPath' => null, 'flySegments' => null, 'flyIp' => null, 'flyIps' => null, 'flyInputSource' => null,
+        'flyAll'=>null, 'flyChangedForAll' => true,
+
     ];
 
     protected static $arrayAttriForObj = [
@@ -50,7 +55,7 @@ class Request extends \Illuminate\Http\Request
 
     function __construct(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
     {
-       if (static::$instance) throw new SingletonRequestException();
+        if (static::$instance) throw new SingletonRequestException();
 
         static::$instance = $this;
 
@@ -141,7 +146,7 @@ class Request extends \Illuminate\Http\Request
 
     public function __isset($key)
     {
-        return ! is_null(parent::__get($key));
+        return !is_null(parent::__get($key));
     }
 
 }

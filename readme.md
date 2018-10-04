@@ -1,18 +1,18 @@
-LaravelFly speeds up our existing Laravel projects without data pollution and memory leak, and make Tinker to be used online (use tinker while Laravel is responding requests from browsers).
+LaravelFly is a safe solution to speeds up existing Laravel projects without data pollution and memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
 ## A simple ab test 
 
- `ab -k -n 1000 -c 10 http://zc.test
+`ab -k -n 1000 -c 10 http://zc.test`
 
 .   | fpm  | Fly
 ------------ | ------------ | ------------- 
-Time taken ≈ | 172.76  | 18.6
-Requests per second   | 5.8    | 53.76
-  50%  | 2303 ms  | 167 ms
-  80%  | 2950 ms  | 221 ms
-  99%  | 3597 ms | 1495 ms
+Time taken ≈ | 43.5 s  | 14.1 s
+Requests per second   | 23    | 70.7
+  50%  | 303 ms  | 131 ms
+  80%  | 360 ms  | 172 ms
+  99%  | 1341 ms | 854 ms
 
 <details>
 <summary>Test Env</summary>
@@ -23,7 +23,7 @@ Requests per second   | 5.8    | 53.76
 * env:   
   - ubuntu 16.04 on VirtualBox ( 1 CPU: i7-7700HQ 2.80GHz ; Memory: 2G  )  
   - php7.2 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
-  - 'max_conn' => 1024
+  - coroutine mysql
 * Test date : 2018/10
 
 </div>
@@ -74,7 +74,7 @@ To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
 
 - Moderate strategy: by default, each Third Party service provider is registered on server worker process (before the first request arrived at server) , booted in request.
 
-- By default, all Laravel official services are COROUTINE-FRIENDLY. You can make a service or object before any requests. There are two ways:
+- By default, all Laravel official services are COROUTINE-FRIENDLY, including mysql and redis. You can make a service or object before any requests. There are two ways:
   - let the service or object live in multiple requests (only one instance of the service). LaravelFly named it  **WORKER SERVICE**, **WORKER OBJECT** or **COROUTINE-FRIENDLY SERVICE/OBJECT**.
   - cloned the service or object in each request (one instance in one request).LaravelFly named it **CLONE SERVICE** or **CLONE OBJECT**. This way is simple, but often has the problem [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). This type is used widely by [laravel-swoole](https://github.com/swooletw/laravel-swoole) and [laravel-s](https://github.com/hhxsv5/laravel-s),  while used rarely by LaravelFly.
   

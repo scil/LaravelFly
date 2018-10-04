@@ -31,7 +31,11 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 
 ```
 
-# Solution 1: keep it a cross service and do not use coroutine
+# Solution 1: leave it a cross service and do not use coroutine
+
+<details>
+<summary>Details</summary>
+<div>
 
 ### Non-allowed functions
 
@@ -51,6 +55,9 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 
 [x] routes/web.php uses this package 
 
+</div>
+</details>
+
 ```
    // config/laravelfly.php
 
@@ -69,6 +76,10 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 # Solution 2: clone
 
 mores steps based on Solution 1
+
+<details>
+<summary>Details</summary>
+<div>
 
 [x] put service provides into 'providers_on_worker'
 
@@ -90,7 +101,10 @@ mores steps based on Solution 1
 
 [x] NO static props
 
+</div>
+</details>
 
+1. 
 ```
    // config/laravelfly.php
 
@@ -140,7 +154,8 @@ mores steps based on Solution 1
 
 ```
 
-2. There may be references to app('laravellocalization') in any CLONE SERVICE or WORKER SERVICE, please update them if necessary.
+2. If there are be references to app('laravellocalization') in any CLONE SERVICE or WORKER SERVICE, please update them if necessary.
+
 
 # Solution 3: clone and loads routes/web.php on work
 
@@ -202,7 +217,7 @@ foreach ($locales as $locale) {
 }
 ```
 
-Pay attension to the Closure middleware 
+Pay attention to the Closure middleware 
 ```
           function ($request, Closure $next) {LaravelLocalization::setLocale();return $next($request);},
 ```

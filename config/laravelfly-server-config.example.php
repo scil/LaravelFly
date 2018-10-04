@@ -241,7 +241,7 @@ return [
     'max_conn' => 1024,
 
     // like pm.max_requests in php-fpm
-    'max_request' => 500,
+    'max_request' => 1000,
 
     // set it to false when debug, otherwise true. 
     // But if you make use of systemd to manage laravelfly, keep it false always. see: https://github.com/scil/LaravelFly/wiki/systemd
