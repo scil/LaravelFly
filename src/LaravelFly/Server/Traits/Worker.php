@@ -13,6 +13,12 @@ Trait Worker
      */
     protected $notReady = true;
 
+    /**
+     * @var used in a worker process
+     */
+    public $currentWorkerID;
+
+
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
         $this->workerStartHead($server, $worker_id);
@@ -27,6 +33,8 @@ Trait Worker
 
     public function workerStartHead(\swoole_server $server, int $worker_id)
     {
+        $this->currentWorkerID = $worker_id;
+
         $this->echo("event worker.starting for id $worker_id in pid " . getmypid());
 
         $this->dispatcher->dispatch('worker.starting',

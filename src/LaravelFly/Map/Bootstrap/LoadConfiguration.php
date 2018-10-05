@@ -4,6 +4,7 @@ namespace LaravelFly\Map\Bootstrap;
 
 use Illuminate\Foundation\PackageManifest;
 use Illuminate\Contracts\Foundation\Application;
+use LaravelFly\Server\Common;
 
 class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfiguration
 {
@@ -21,8 +22,13 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         $configCacheAlways = $appConfig['laravelfly.config_cache_always'];
 
+        /**
+         * @var Common $server
+         */
+        $server = \LaravelFly\Fly::getServer();
+
         if ($configCacheAlways && file_exists($cacheFile = $app->bootstrapPath($this->service_cache_file))) {
-            \LaravelFly\Fly::getServer()->echo(
+            $server->echoOnce(
                 "include: $cacheFile
                 if any configs or composer.json changed, please re-run 'php artisan config:clear'",
                 'NOTE', true
@@ -116,9 +122,8 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
                 $left_count = count($left);
                 $left = implode(",  ", $left);
 
-                \LaravelFly\Fly::getServer()->echo("$left_count providers not listed in config('laravelfly') and treated as across providers:
-         $left", 'NOTE', true);
-                echo "\n";
+                $server->echoOnce("$left_count providers not listed in config('laravelfly') and treated as across providers:
+         $left \n", 'NOTE', true);
             }
 
             LARAVELFLY_SERVICES['request'] || $cloneServices[] = 'url(UrlGenerator)';
@@ -129,13 +134,12 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
             $allClone = implode(", ", $cloneServices);
 
-            \LaravelFly\Fly::getServer()->echo(
-                "CLONE SERVICES: [$allClone, ].",
+            $server->echoOnce(
+                "CLONE SERVICES: [$allClone, ]. \n",
                 'NOTE', true
             );
-            echo "\n";
 
-            if ($configCacheAlways) {
+            if ($configCacheAlways && ($server->currentWorkerID === 0)) {
 
                 file_put_contents($cacheFile, '<?php return ' .
                     var_export([

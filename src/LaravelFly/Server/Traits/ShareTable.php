@@ -9,6 +9,7 @@ namespace LaravelFly\Server\Traits;
 
 use LaravelFly\Tools\SessionTable;
 use swoole_atomic;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 trait ShareTable
 {
@@ -54,5 +55,7 @@ trait ShareTable
     {
 
     }
+
+
 
 }

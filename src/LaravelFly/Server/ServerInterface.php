@@ -22,4 +22,13 @@ interface ServerInterface
     public function path($path = null);
 
     public function echo($text, $status = 'INFO', $color = false);
+
+    /**
+     * only echo once, useful for multiple worker processes have been created
+     * @param $text
+     * @param string $status
+     * @param bool $color
+     * @return mixed
+     */
+    public function echoOnce($text, $status = 'INFO', $color = false);
 }

@@ -94,8 +94,8 @@ class Common
             'symfony/Request.php' => '/vendor/symfony/http-foundation/Request.php',
             'RequestConcerns/InteractsWithInput.php' => '/vendor/laravel/framework/src/Illuminate/Http/Concerns/InteractsWithInput.php',
             'Request.php' => '/vendor/laravel/framework/src/Illuminate/Http/Request.php',
-            'UrlGenerator.php'=>'/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php',
-            'RouteUrlGenerator.php'=>'/vendor/laravel/framework/src/Illuminate/Routing/RouteUrlGenerator.php',
+            'UrlGenerator.php' => '/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php',
+            'RouteUrlGenerator.php' => '/vendor/laravel/framework/src/Illuminate/Routing/RouteUrlGenerator.php',
         ],
     ];
 
@@ -122,6 +122,7 @@ class Common
 
 
     protected $colorize = true;
+
 
     /**
      * log message level
@@ -218,6 +219,7 @@ class Common
 
         $this->dispatchRequestByQuery($options);
 
+
         $this->sessionTable();
     }
 
@@ -286,7 +288,6 @@ class Common
         }
         return $r;
     }
-
 
 
     protected function sessionTable()
@@ -447,6 +448,13 @@ class Common
             echo $color ? $this->colorize($text, $status) : $text;
         }
 
+    }
+
+    function echoOnce($text, $status = 'INFO', $color = false)
+    {
+        if ($this->currentWorkerID === 0) {
+            $this->echo($text, $status, $color);
+        }
     }
 
     function colorize($text, $status)
