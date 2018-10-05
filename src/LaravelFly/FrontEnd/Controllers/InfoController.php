@@ -231,7 +231,7 @@ app('routes') alway ref to the same object,
         $cached['events with no listeners'] = $cachedEmpty;
         $cached = [
                 '(cached used times)' =>
-                    $statics['used'] . ' (only used when there\' s no handlers with wildcard registerd in a request )'
+                    $statics['used'] . '  ( cache to be cleared when a wildcard handler is registerd in a request )'
             ]
             + $cached;
 

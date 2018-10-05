@@ -94,7 +94,7 @@ const LARAVELFLY_SERVICES = [
     /**
      * set true if same view name refers to same view files in different requests.
      *
-     * some times, same view name refers to different file
+     * some times, same view name refers to different file when using `View::addLocation`
      * example 1:
      *      view 'home' may points to 'guest_location/home.blade.php' for a guest ,
      *      while to 'admin_location/home.blade.php' for an admin

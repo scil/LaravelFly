@@ -372,5 +372,22 @@ return [
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
     ],
+
+    /**
+     * by default, all models can be booted  on work.
+     *
+     * But if a model add a third-party trait, you should check if the trait can be booted on work.
+     * [Laravel Tip: Bootable Model Traits ](https://tighten.co/blog/laravel-tip-bootable-model-traits/)
+     *
+     * when a trait can boot on work?
+     * 1. if it has static prop, the prop should
+     *      always be same when coroutine used,
+     *      or does not harm the next request when coroutines not used.
+     * 2. if it has a reference prop, the prop should be a WORKER SERVICE or WORKER OBJECT
+     */
+    'models_booted_on_work' => [
+        'App\User',
+        // 'App\Article',
+    ],
 ];
 

@@ -64,6 +64,8 @@ class Common
         'FileViewFinder' . (LARAVELFLY_SERVICES['view.finder'] ? 'SameView' : '') . '.php' =>
             '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
 
+
+        'Model.php'=>'/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php',
     ];
 
     /**
