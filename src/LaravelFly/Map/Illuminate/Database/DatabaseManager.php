@@ -25,7 +25,13 @@ class DatabaseManager extends \Illuminate\Database\DatabaseManager
 
     }
 
-
+    /**
+     * Laravel officail API. only one conn for a $name
+     * The conn in current coroutine will go back to pool in method putBack
+     *
+     * @param null $name
+     * @return \Illuminate\Database\Connection
+     */
     public function connection($name = null)
     {
         $name = $name ?: $this->getDefaultConnection();

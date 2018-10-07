@@ -57,4 +57,8 @@ class Pool
             $this->pool->push($conn);
         });
     }
+
+    public function len(){
+        return $this->pool->length();
+    }
 }

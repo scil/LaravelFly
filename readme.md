@@ -4,22 +4,22 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 ## A simple ab test 
 
-`ab -k -n 1000 -c 10 http://zc.test`
+`ab -k -n 1000 -c 10 http://zc.test` (21 sql statements were executed)
 
 .   | fpm  | Fly
 ------------ | ------------ | ------------- 
-Time taken ≈ | 43.5 s  | 13.5 s
-Requests per second   | 23    | 74.3
-  50%  | 303 ms  | 131 ms
-  80%  | 360 ms  | 171 ms
-  99%  | 1341 ms | 259 ms
+Time taken ≈ | 43.5 s  | 12.8 s
+Requests per second   | 23    | 78
+  50%  | 303 ms  | 123 ms
+  80%  | 360 ms  | 162 ms
+  99%  | 1341 ms | 242 ms
 
 <details>
 <summary>Test Env</summary>
 <div>
 
 
-* A visit to http://zc.test relates to 5 Models and 5 db query.
+
 * env:   
   - ubuntu 16.04 on VirtualBox ( 1 CPU: i7-7700HQ 2.80GHz ; Memory: 2G  )  
   - php7.2 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)

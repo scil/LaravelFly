@@ -65,7 +65,12 @@ class Common
             '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
 
 
-        'Model.php'=>'/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php',
+
+        'Database/Eloquent/Concerns/HasRelationships.php'
+        => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/HasRelationships.php',
+
+        'Database/Eloquent/Model.php'
+        => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php',
     ];
 
     /**

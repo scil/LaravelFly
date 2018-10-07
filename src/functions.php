@@ -5,6 +5,16 @@
 
 const WORKER_COROUTINE_ID = -1;
 
+// todo
+/**
+ * use new ones? that's strict. grammar and  processor should be same with ones in connection
+ * use old?
+ *      maybe
+ *      the old ones hold some changed valus( mainly Grammar::$tablePrefix), while new ones not.
+ *
+ */
+const USE_NEWLY_CREATED_G_AND_P = false;
+
 if (!function_exists('tinker')) {
     /**
      * Command to return the eval-able code to startup PsySH.
