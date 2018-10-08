@@ -41,7 +41,9 @@ class Common
             '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
         'ServiceProvider.php' =>
             '/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php',
-        'Router.php' =>
+        'Routing/RouteDependencyResolverTrait.php' =>
+            '/vendor/laravel/framework/src/Illuminate/Routing/RouteDependencyResolverTrait.php',
+        'Routing/Router.php' =>
             '/vendor/laravel/framework/src/Illuminate/Routing/Router.php',
         'ViewConcerns/ManagesComponents.php' =>
             '/vendor/laravel/framework/src/Illuminate/View/Concerns/ManagesComponents.php',
