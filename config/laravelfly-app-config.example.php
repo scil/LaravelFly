@@ -364,6 +364,7 @@ return [
         //todo
 //        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ],
+
     // only helpful when LARAVELFLY_SERVICES['kernel']===true
     'singleton_middlewares' => [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,

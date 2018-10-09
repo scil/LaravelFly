@@ -3,7 +3,7 @@
 namespace LaravelFly\Server;
 
 use LaravelFly\Tools\SessionTable;
-use LaravelFly\Tools\SessionTablePipe\PlainFilePipe;
+use LaravelFly\Tools\TablePipe\PlainFilePipe;
 use swoole_atomic;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\GenericEvent;

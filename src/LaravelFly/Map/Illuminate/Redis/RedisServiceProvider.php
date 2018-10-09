@@ -1,4 +1,10 @@
 <?php
+/**
+ * Why refactor offical Redis
+ * 1. pool
+ *      all connections should implement EnsureConnected
+ * 2. swoole-redis
+ */
 namespace LaravelFly\Map\Illuminate\Redis;
 
 use Illuminate\Support\Arr;

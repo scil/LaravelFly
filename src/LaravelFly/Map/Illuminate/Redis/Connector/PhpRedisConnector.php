@@ -21,7 +21,7 @@ class PhpRedisConnector extends  \Illuminate\Redis\Connectors\PhpRedisConnector
         );
 
         // hack
-        // disable persistent, we have got connection pool
+        // disable persistent, as we have got connection pool
         $config['persistent'] = false;
 
 

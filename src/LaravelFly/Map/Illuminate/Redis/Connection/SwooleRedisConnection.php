@@ -7,6 +7,8 @@ use Illuminate\Redis\Connections\PhpRedisConnection;
 
 class SwooleRedisConnection extends PhpRedisConnection implements EnsureConnected
 {
+    use SwooleRedisNot;
+
     /**
      *
      * @var \Swoole\Coroutine\Redis

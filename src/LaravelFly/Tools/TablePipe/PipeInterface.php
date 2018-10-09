@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Tools\SessionTablePipe;
+namespace LaravelFly\Tools\TablePipe;
 
 interface PipeInterface
 {

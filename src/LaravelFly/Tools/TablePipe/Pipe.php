@@ -1,5 +1,5 @@
 <?php
-namespace LaravelFly\Tools\SessionTablePipe;
+namespace LaravelFly\Tools\TablePipe;
 
 
 use LaravelFly\Tools\SessionTable;

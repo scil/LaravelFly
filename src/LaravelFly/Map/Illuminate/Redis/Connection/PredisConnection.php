@@ -1,10 +1,4 @@
 <?php
-/**
- * User: scil
- * Date: 2018/9/29
- * Time: 11:25
- */
-
 
 namespace LaravelFly\Map\Illuminate\Redis\Connection;
 

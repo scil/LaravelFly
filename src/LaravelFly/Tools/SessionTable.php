@@ -3,16 +3,11 @@
 namespace LaravelFly\Tools;
 
 
-use LaravelFly\Tools\SessionTablePipe\PipeInterface;
+use LaravelFly\Tools\TablePipe\PipeInterface;
 use Swoole\Async;
 
 class SessionTable extends Table
 {
-    /**
-     * @var PipeInterface $pipe
-     */
-    protected $pipe;
-
     /**
      * The number of minutes the session should be valid.
      *
@@ -26,21 +21,11 @@ class SessionTable extends Table
         $this->minutes = $min;
     }
 
-    public function restore()
-    {
-        $this->pipe->restore();
-    }
-
-    public function dump()
-    {
-        $this->pipe->dump();
-    }
-
-    function expired($lasttime)
+    function notValid($lasttime)
     {
         return round(time() / 60) - $lasttime > $this->minutes;
     }
-    function notExpired($lasttime)
+    function valid($lasttime)
     {
         return round(time() / 60) - $lasttime < $this->minutes;
     }
@@ -48,7 +33,7 @@ class SessionTable extends Table
     public function load(array $data)
     {
         foreach ($data as $key => $row) {
-            if ($this->notExpired($row['last_activity']))
+            if ($this->valid($row['last_activity']))
                 $this->set($key, $row);
         }
     }

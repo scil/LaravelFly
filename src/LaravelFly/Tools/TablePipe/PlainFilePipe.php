@@ -5,7 +5,7 @@
  * Time: 18:28
  */
 
-namespace LaravelFly\Tools\SessionTablePipe;
+namespace LaravelFly\Tools\TablePipe;
 
 
 class PlainFilePipe extends Pipe
@@ -50,7 +50,7 @@ class PlainFilePipe extends Pipe
         $data = [];
 
         foreach ($this->table as $key => $row) {
-            if ($this->table->notExpired($row['last_activity']))
+            if ($this->table->valid($row['last_activity']))
                 $data[$key] = $row;
         }
 
