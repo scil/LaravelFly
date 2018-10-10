@@ -4,7 +4,7 @@ Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swo
 
 ## A simple ab test 
 
-`ab -k -n 1000 -c 10 http://zc.test` (21 sql statements were executed)
+`ab -k -n 1000 -c 10 http://zc.test` (21 sql statements were executed in single request)
 
 .   | fpm  | Fly
 ------------ | ------------ | ------------- 
@@ -182,7 +182,8 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] db connection pool and redis connection pool. In `fly()` or `fly2()`, connections to be used would be fetched from pool, not inherit the same connections from request coroutine. code: `$this->connections[$childId] = [];` in ConnectionsTrait.php
 - [x] swoole redis driver
 - [ ] swoole redis driver: how to use `errMsg` `errCode`
-- [ ] event: wildcardsCache? keep in memory，no clean?
+- [ ] Cache for HasRelationships. disable and experimental, not ready
+- [x] Cache for RouteDependencyResolverTrait 
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] safe: auth, remove some props?
 

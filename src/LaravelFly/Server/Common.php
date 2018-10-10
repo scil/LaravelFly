@@ -68,8 +68,9 @@ class Common
 
 
 
-        'Database/Eloquent/Concerns/HasRelationships.php'
-        => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/HasRelationships.php',
+        // experimental, no speed gained
+//        'Database/Eloquent/Concerns/HasRelationships.php'
+//        => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/HasRelationships.php',
 
         'Database/Eloquent/Model.php'
         => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php',

@@ -29,8 +29,9 @@ class DatabaseServiceProvider extends \Illuminate\Database\DatabaseServiceProvid
         Model::initStaticForCorontine(WORKER_COROUTINE_ID);
 
         foreach (config('laravelfly.models_booted_on_work') as $class) {
-            if (class_exists($class))
+            if (class_exists($class)){
                 new $class;
+            }
         }
     }
 
