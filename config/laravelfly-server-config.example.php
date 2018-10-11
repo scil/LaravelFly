@@ -250,19 +250,21 @@ return [
     'daemonize' => false,
 
     /**
-     *  watch files or dirs for server hot reload.
+     *  watch files or dirs for server hot reload
      *
      * When any of the files or dirs change,all of the workers would finish their work and quit,
      * then new workers are created. All of the files loaded in a worker would load again.
      *
-     * This featue is equivalent to `php vendor/scil/laravel-fly/bin/fly reload`, but requires:
-     *  1. absolute path.
-     *  2. run LaravelFly as root: `sudo php vendor/scil/laravel-fly/bin/fly start` and ensure the 'user' configed here is a member of root group
-     *  3. `pecl install inotify`
+     * This featue is equivalent to auto run `php vendor/scil/laravel-fly/bin/fly reload`, but requires:
+     *  1. [fswatch](https://github.com/emcrisostomo/fswatch) or `pecl install inotify`
+     *  2. absolute path. (fswatch only support directory)
+     *  3. run LaravelFly as root: `sudo php vendor/scil/laravel-fly/bin/fly start` and
+     *      ensure the 'user' in this conf is a member of root group if you set 'user'
      *
-     * note: inotify not support files mounted in virtualbox machines.
+     * note: inotify and fswatch may not support files mounted in virtualbox machines.
      * (see:https://github.com/moby/moby/issues/18246)
-     * A solution is to watch a file like `/home/vagrant/.watch`, and modify it when your codes change.
+     * A solution is [Vagrant file system notification forwarder plugin](https://github.com/mhallin/vagrant-notify-forwarder)
+     * Another solution is to watch a dir like `/home/vagrant/.watch`, and modify it when your codes change.
      */
     'watch' => [
 //        __DIR__.'/app',
@@ -275,7 +277,6 @@ return [
      * default is 1500ms
      */
     'watch_delay' => 1500,
-
 
     /**
      * Allow LaravelFly watch file storage/framework/down, no more checking file on each request

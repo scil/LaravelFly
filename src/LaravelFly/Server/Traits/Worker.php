@@ -7,6 +7,7 @@ use Storage;
 
 Trait Worker
 {
+
     /**
      * only for echo msg
      * @var bool
@@ -14,7 +15,7 @@ Trait Worker
     protected $notReady = true;
 
     /**
-     * @var used in a worker process
+     * @var int $currentWorkerID used in a worker process
      */
     public $currentWorkerID;
 
@@ -56,17 +57,17 @@ Trait Worker
 
     }
 
-    function disable_functions($worker_id){
+    function disable_functions($worker_id)
+    {
 
         $disable_functions = "header, setcookie, setrawcookie, session_start, session_create_id, http_response_code, set_include_path, set_exception_handler, set_error_handler";
 
-        LARAVELFLY_COROUTINE && $disable_functions = 'ini_set, setlocale,  '.$disable_functions;
+        LARAVELFLY_COROUTINE && ($disable_functions = 'ini_set, setlocale,  ' . $disable_functions);
 
         // what a pity disable_functions can only be used in php.ini
         // ini_set('disable_functions', $disable_functions);
 
         $worker_id == 0 && $this->echo('bad functions in requests: ' . $disable_functions);
-
     }
 
     /**
@@ -91,11 +92,68 @@ Trait Worker
 
     protected function watchForHotReload($swoole_server)
     {
+        if (function_exists('inotify_init')) {
+            $watchTool = 'inotify';
+        } else {
+            exec('fswatch -h', $rr, $r);
+            if ($r == 0)
+                $watchTool = 'fswatch';
+            else
+                return;
+        }
 
-        if (!function_exists('inotify_init')) return;
+        $fd = $watchTool == 'fswatch' ? $this->fdFswatch() : $this->fdInotify();
 
-        $this->echo("watch for hot reload.");
+        if (false === $fd) return;
 
+        $this->echo("watch for hot reload using $watchTool.");
+
+        $delay = $this->getConfig('watch_delay');
+
+        swoole_event_add($fd, function () use ($fd, $swoole_server, $delay, $watchTool) {
+
+            static $timer = null;
+
+            if ($watchTool == 'fswatch')
+                $read = fread($fd, 1024);
+            else
+                $read = inotify_read($fd);
+
+            if ($read) {
+
+                if ($timer !== null) $swoole_server->clearTimer($timer);
+
+                $timer = $swoole_server->after($delay, function () use ($swoole_server, $read) {
+                    $this->echo("hot reload as " . $read);
+                    sleep(1);
+                    $swoole_server->reload();
+                });
+
+            }
+        });
+
+
+    }
+
+    protected function fdFswatch()
+    {
+
+        $watchTarget = implode(' ', $this->getConfig('watch'));
+
+        // http://emcrisostomo.github.io/fswatch/doc/1.13.0/fswatch.html/Invoking-fswatch.html#Types-of-Filters-and-Order-of-Execution
+        // https://stackoverflow.com/questions/34713278/fswatch-to-watch-only-a-certain-file-extension
+        $filter = ' -e ".*" -i "\\\\.php$" --event  Updated';
+
+        $cmd = "fswatch --recursive $filter $watchTarget ";
+        // echo "cmd $cmd \n";
+
+        $fd = popen($cmd, 'r');
+
+        return $fd;
+    }
+
+    protected function fdInotify()
+    {
         $fd = inotify_init();
 
         $adapter = Storage::disk('local')->getAdapter();
@@ -122,23 +180,7 @@ Trait Worker
 
         $adapter->setPathPrefix($oldPathPrefix);
 
-        $delay = $this->getConfig('watch_delay');
-
-        swoole_event_add($fd, function () use ($fd, $swoole_server, $delay) {
-            static $timer = null;
-
-            if (inotify_read($fd)) {
-
-                if ($timer !== null) $swoole_server->clearTimer($timer);
-
-                $timer = $swoole_server->after($delay, function () use ($swoole_server) {
-                    $this->echo("hot reload");
-                    $swoole_server->reload();
-                });
-
-            }
-        });
-
+        return $fd;
 
     }
 
