@@ -46,7 +46,6 @@ const LARAVELFLY_SERVICES = [
      * set the corresponding service to be 'use' if you use it.
      */
     'redis' => !'use',
-    'filesystem.cloud' => !'use',
     'broadcast' => !'use',
     'translator' => 'use',
     'validator' => 'use',

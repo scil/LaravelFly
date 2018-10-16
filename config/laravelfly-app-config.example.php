@@ -198,9 +198,14 @@ return [
         ],
 
         Illuminate\Filesystem\FilesystemServiceProvider::class => [
+
             'files' => true,
+
             'filesystem.disk' => true,
-            'filesystem.cloud' => !!LARAVELFLY_SERVICES['filesystem.cloud'],
+
+            /* depends */
+            // set this service to be 'use' if you use it.
+            'filesystem.cloud' => false,
         ],
 
         /* This reg FormRequestServiceProvider, whose boot is related to request */
@@ -222,9 +227,12 @@ return [
 
         Illuminate\Queue\QueueServiceProvider::class => [],
 
-        Illuminate\Redis\RedisServiceProvider::class => [
-            'redis' => !!LARAVELFLY_SERVICES['redis'],
-        ],
+        Illuminate\Redis\RedisServiceProvider::class =>
+            !!LARAVELFLY_SERVICES['redis'] ? [
+                '_replaced_by' =>
+                    LARAVELFLY_COROUTINE ? LaravelFly\Map\Illuminate\Redis\RedisServiceProvider::class : false,
+                'redis' => true,
+            ] : 'ignore',
 
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => [],
 
