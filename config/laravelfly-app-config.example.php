@@ -164,7 +164,12 @@ return [
                 Illuminate\Contracts\Broadcasting\Broadcaster::class,
             ] : 'ignore',
 
-        Illuminate\Bus\BusServiceProvider::class => [],
+
+        /* depends */
+        // comment it if Queues not used
+        Illuminate\Bus\BusServiceProvider::class => [
+            \Illuminate\Bus\Dispatcher::class,
+        ],
 
         Illuminate\Cache\CacheServiceProvider::class => [
             'cache' => true,

@@ -67,7 +67,6 @@ class Common
             '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
 
 
-
         // experimental, no speed gained
 //        'Database/Eloquent/Concerns/HasRelationships.php'
 //        => '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/HasRelationships.php',
@@ -91,6 +90,11 @@ class Common
         'config' => [
             'Config/Repository.php' =>
                 '/vendor/laravel/framework/src/Illuminate/Config/Repository.php'
+
+        ],
+        'bus' => [
+            'Bus/Dispatcher.php' =>
+                '/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php'
 
         ],
         'kernel' => [
@@ -239,7 +243,6 @@ class Common
 
         $flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
 
-
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
@@ -253,6 +256,9 @@ class Common
                 $localFlyBaseDir = __DIR__ . '/../../fly/';
                 include_once $localFlyBaseDir . 'Kernel.php';
             }
+
+            if (empty(LARAVELFLY_SERVICES['bus']))
+                include_once $flyBaseDir . 'Bus/Dispatcher.php';
 
             foreach (static::mapFlyFiles as $f => $offical) {
                 require $flyBaseDir . $f;

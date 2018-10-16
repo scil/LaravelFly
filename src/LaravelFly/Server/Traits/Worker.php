@@ -147,6 +147,7 @@ Trait Worker
         $cmd = "fswatch --recursive $filter $watchTarget ";
         // echo "cmd $cmd \n";
 
+        // todo must be closed with pclose(). http://php.net/manual/en/function.popen.php
         $fd = popen($cmd, 'r');
 
         return $fd;

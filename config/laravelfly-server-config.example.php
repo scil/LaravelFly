@@ -81,6 +81,12 @@ const LARAVELFLY_SERVICES = [
     'auth' => false,
 
     /**
+     * you can set it to false if prop pipes is not same in requests.
+     * related API is \Illuminate\Bus\Dispatcher::pipeThrough
+     */
+    'bus' => true,
+
+    /**
      * set false if props of hash drivers not keep same in different requests.
      * BcryptHasher's prop: rounds
      * ArgonHasher's props: memory,time,threads
@@ -133,7 +139,6 @@ const LARAVELFLY_SERVICES = [
      *
      * if set it to false, a WOKER SERVICE or WORKER OBJECT with references to app('request') and app('url')
      * should be updated in config/laravelfly.php
-     *
      * e.g. mcamara/laravel-localization
             'update_on_request' => [
 
