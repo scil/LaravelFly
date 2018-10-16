@@ -22,6 +22,11 @@ Trait Worker
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
+        if ($server->taskworker) {
+            $this->onTaskWorkerStart($server,$worker_id);
+            return;
+        }
+
         $this->workerStartHead($server, $worker_id);
 
         if ($worker_id == 0) {

@@ -66,6 +66,24 @@ class Request extends \Illuminate\Http\Request
 
     }
 
+    /**
+     * right now, only for task worker process, proventing errors in
+     * booting request service providers which may call app('request'):
+     *      $app->bootInRequest()
+     */
+    function nullPropToObject(){
+        $dict = &static::$corDict[WORKER_COROUTINE_ID];
+
+        $dict['request'] = new ParameterBag([]);
+        $dict['query'] = new ParameterBag([]);
+        $dict['attributes'] = new ParameterBag([]);
+        $dict['cookies'] = new ParameterBag([]);
+        $dict['files'] = new FileBag([]);
+        $dict['server'] = new ServerBag([]);
+        $dict['headers'] = new HeaderBag([]);
+
+    }
+
     function initForRequestCorontineWithSwoole($cid, \swoole_http_request $swoole_request)
     {
         // no worry about STALE REFERENCE about seven objects, they are null in $corDict[WORKER_COROUTINE_ID]

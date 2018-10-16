@@ -26,12 +26,16 @@ class HttpServer extends Common implements ServerInterface
 
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
+        if ($server->taskworker) {
+            $this->onTaskWorkerStart($server,$worker_id);
+            return;
+        }
 
         $this->workerStartHead($server, $worker_id);
 
         if (!$this->getConfig('early_laravel')) $this->startLaravel($server, $worker_id);
 
-        if (0 == $worker_id) {
+        if ($worker_id == 0) {
             $this->workerZeroStartTail($server);
         }
 

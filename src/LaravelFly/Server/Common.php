@@ -196,6 +196,8 @@ class Common
 
     protected function parseOptions(array &$options)
     {
+        static::$flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
+
         static::includeFlyFiles($options);
 
         include_once __DIR__ . '/../../MidKernel.php';
@@ -245,7 +247,7 @@ class Common
     {
         if (LARAVELFLY_MODE === 'FpmLike') return;
 
-        $flyBaseDir  = static::$flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
+        $flyBaseDir  = static::$flyBaseDir;
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
@@ -453,6 +455,7 @@ class Common
 
     function echo($text, $status = 'INFO', $color = false)
     {
+
         switch ($status) {
             case 'INFO':
                 $level = 3;

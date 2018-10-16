@@ -195,7 +195,8 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] watch code changes and hot reload
 - [x] supply server info. default url is: /laravel-fly/info
 - [x] function fly()
-- [x] task
+- [x] job executed in task process
+- [ ] bootstrap all service providers in task process
 - [ ] try ocramius/generated-hydrator for laravel-fly/info when its version 3 is ready (it will require nikic/php-parser v4 which is needed by others)  // or Zend\Hydrator\Reflection?
 - [ ] add tests about auth SessionGuard: Illuminate/Auth/SessionGuard.php with uses Request::createFromGlobals
 - [ ] add tests about uploaded file, related symfony/http-foundation files: File/UploadedFile.php  and FileBag.php(fixPhpFilesArray)

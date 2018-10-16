@@ -67,38 +67,51 @@ Trait Laravel
 
     }
 
-    public function startLaravel(\swoole_http_server $server = null, $worker_id = null)
+    protected function _makeRequest()
     {
-        $app = $this->_makeLaravelApp();
 
         if (LARAVELFLY_SERVICES['request']) {
 
             $this->request = new \LaravelFly\Map\IlluminateBase\Request();
             $this->app->instance('request', $this->request);
-        } else {
-            /**
-             * instance a fake request then bootstrap
-             *
-             * new UrlGenerator need a request.
-             * In Mode Backup, no worry about it's fake, because
-             * app['url']->request will update when app['request'] changes, as rebinding is used
-             * <code>
-             * <?php
-             * $url = new UrlGenerator(
-             *  $routes, $app->rebinding(
-             *      'request', $this->requestRebinder()
-             *  )
-             * );
-             * ?>
-             *  "$app->rebinding( 'request',...)"
-             * </code>
-             * @see  \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
-             *
-             */
-            // $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
-            // as a fake request, createFromBase is useless
-            $this->app->instance('request', new \Illuminate\Http\Request());
+            return;
         }
+
+        /**
+         * instance a fake request then bootstrap
+         *
+         * new UrlGenerator need a request.
+         * In Mode Backup, no worry about it's fake, because
+         * app['url']->request will update when app['request'] changes, as rebinding is used
+         * <code>
+         * <?php
+         * $url = new UrlGenerator(
+         *  $routes, $app->rebinding(
+         *      'request', $this->requestRebinder()
+         *  )
+         * );
+         * ?>
+         *  "$app->rebinding( 'request',...)"
+         * </code>
+         * @see  \Illuminate\Routing\RoutingServiceProvider::registerUrlGenerator()
+         *
+         */
+        // $this->app->instance('request', \Illuminate\Http\Request::createFromBase(new \Symfony\Component\HttpFoundation\Request()));
+        // as a fake request, createFromBase is useless
+        $this->app->instance('request', new \Illuminate\Http\Request());
+
+        // todo
+        // the fake request is useless, but harmless too
+        // $this->app->forgetInstance('request');
+
+
+    }
+
+    public function startLaravel(\swoole_http_server $server = null, $worker_id = null)
+    {
+        $this->_makeLaravelApp();
+
+        $this->_makeRequest();
 
         try {
             $this->kernel->bootstrap();
@@ -113,10 +126,6 @@ Trait Laravel
             $server && $server->shutdown();
         }
 
-        // todo
-        // the fake request is useless, but harmless too
-        // $this->app->forgetInstance('request');
-
 
         if ($worker_id)
             $this->echo("event laravel.ready in id " . $worker_id);
@@ -124,7 +133,7 @@ Trait Laravel
             $this->echo("event laravel.ready in pid " . getmypid());
 
         // the 'request' here is different form FpmHttpServer
-        $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);
+        $event = new GenericEvent(null, ['server' => $this, 'app' => $this->app, 'request' => null]);
         $this->dispatcher->dispatch('laravel.ready', $event);
 
     }
