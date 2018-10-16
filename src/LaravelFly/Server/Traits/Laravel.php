@@ -67,16 +67,15 @@ Trait Laravel
 
     }
 
-    public function startLaravel(\swoole_http_server $server = null)
+    public function startLaravel(\swoole_http_server $server = null, $worker_id = null)
     {
         $app = $this->_makeLaravelApp();
 
-        if (LARAVELFLY_SERVICES['request']){
+        if (LARAVELFLY_SERVICES['request']) {
 
             $this->request = new \LaravelFly\Map\IlluminateBase\Request();
-            $this->app->instance('request',$this->request);
-        }
-        else {
+            $this->app->instance('request', $this->request);
+        } else {
             /**
              * instance a fake request then bootstrap
              *
@@ -119,7 +118,10 @@ Trait Laravel
         // $this->app->forgetInstance('request');
 
 
-        $this->echo("event laravel.ready with $this->appClass in pid " . getmypid());
+        if ($worker_id)
+            $this->echo("event laravel.ready in id " . $worker_id);
+        else
+            $this->echo("event laravel.ready in pid " . getmypid());
 
         // the 'request' here is different form FpmHttpServer
         $event = new GenericEvent(null, ['server' => $this, 'app' => $app, 'request' => null]);

@@ -2,7 +2,6 @@
 
 namespace LaravelFly\Server;
 
-use LaravelFly\Tools\SessionTable;
 use LaravelFly\Tools\TablePipe\PlainFilePipe;
 use swoole_atomic;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -20,6 +19,7 @@ class Common
     use Traits\Laravel;
     use Traits\ShareInteger;
     use Traits\ShareTable;
+    use Traits\Task;
 
     /**
      * where laravel app located
@@ -32,7 +32,7 @@ class Common
      */
     protected $options;
 
-    static $laravelMainVersion;
+    static $flyBaseDir ;
 
     const mapFlyFiles = [
         'Container.php' =>
@@ -96,6 +96,10 @@ class Common
             'Bus/Dispatcher.php' =>
                 '/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php'
 
+        ],
+        'task' => [
+            'Foundation/Bus/Dispatchable.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Bus/Dispatchable.php',
+            'Foundation/Bus/PendingDispatch.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Bus/PendingDispatch.php'
         ],
         'kernel' => [
             // '../Kernel.php' =>
@@ -241,12 +245,12 @@ class Common
     {
         if (LARAVELFLY_MODE === 'FpmLike') return;
 
-        $flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
+        $flyBaseDir  = static::$flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
-        static $mapLoaded = false, $logLoaded = false, $requestLoaded = false;
+        static $mapLoaded = false, $logLoaded = false;
 
         if ($options['mode'] === 'Map' && !$mapLoaded) {
 
@@ -258,7 +262,11 @@ class Common
             }
 
             if (empty(LARAVELFLY_SERVICES['bus']))
-                include_once $flyBaseDir . 'Bus/Dispatcher.php';
+                static::includeConditionFlyFiles( 'bus');
+
+
+            if ((LARAVELFLY_SERVICES['request']))
+                static::includeConditionFlyFiles( 'request');
 
             foreach (static::mapFlyFiles as $f => $offical) {
                 require $flyBaseDir . $f;
@@ -266,16 +274,6 @@ class Common
 
         }
 
-
-        if ((LARAVELFLY_SERVICES['request']) && !$requestLoaded) {
-
-            $requestLoaded = true;
-
-            foreach (static::$conditionFlyFiles['request'] as $f => $offical) {
-                require $flyBaseDir . $f;
-            }
-
-        }
 
         if (!$logLoaded) {
 
@@ -293,6 +291,14 @@ class Common
             }
         }
 
+    }
+
+    protected static function includeConditionFlyFiles( $key)
+    {
+
+        foreach (static::$conditionFlyFiles[$key] as $f => $offical) {
+            require static::$flyBaseDir . $f;
+        }
     }
 
     static function getFlyMap()
@@ -371,7 +377,11 @@ class Common
         $this->swoole->on('Shutdown', [$this, 'onShutdown']);
 
         $this->swoole->on('Start', [$this, 'onStart']);
+
+        $this->initForTask();
+
     }
+
 
     function onStart(\swoole_http_server $server)
     {

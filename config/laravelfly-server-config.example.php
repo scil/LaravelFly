@@ -208,6 +208,13 @@ return [
     'worker_num' => 4,
 
     /**
+     * A job can be delivered into a swoole task process by `$this->swoole = true;`
+     *
+     * According to the speed of sending task and handling task, set a reasonable value of task_worker_num.
+     */
+    // 'task_worker_num' => 10,
+
+    /**
      * max number of coroutines handled by a worker in the same time
      * you can change 20 to a larger number, such as 3000 which is the default value of swoole server
      *
