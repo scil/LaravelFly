@@ -404,5 +404,12 @@ return [
         \App\Http\Middleware\TrustProxies::class,
     ],
 
+    'swoole-job' => [
+        'delay' => 0,
+        'memory' => 128,
+        'timeout' => 60,
+        'tries' => 0,
+    ],
+
 ];
 

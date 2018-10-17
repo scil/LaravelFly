@@ -84,7 +84,7 @@ To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
 
 - No support for static files, so use it with other servers like nginx. [conf examples](https://github.com/scil/LaravelFly/#laravelfly-usability)
 
-- [A job can be delivered into a swoole task process and executed at once](https://github.com/scil/LaravelFly/wiki/Configuration#run-jobs-in-a-swoole-task), `artisan queue:work` needless. Useful for simple jobs, as attempts or timeout not supported jet.
+- [A job can be delivered into a swoole task process and executed at once](https://github.com/scil/LaravelFly/wiki/Configuration#run-jobs-in-a-swoole-task), `artisan queue:work` needless any more.
 
 - functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), plus Laravel services can be used in `fly()` and `fly2()` without closure.  The `fly2()` has the limited ability to change services in current request, e.g. registering a new event handler for current request. `fly2()` is not suggested. 
 
