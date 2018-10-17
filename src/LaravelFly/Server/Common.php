@@ -2,8 +2,11 @@
 
 namespace LaravelFly\Server;
 
+use Composer\IO\ConsoleIO;
 use LaravelFly\Tools\TablePipe\PlainFilePipe;
+use Psy\Input\ShellInput;
 use swoole_atomic;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -33,6 +36,25 @@ class Common
     protected $options;
 
     static $flyBaseDir ;
+
+    /**
+     * The input interface implementation.
+     *
+     * @var \Symfony\Component\Console\Input\InputInterface
+     */
+    protected $input;
+
+    /**
+     * The output interface implementation.
+     *
+     * @var \Illuminate\Console\OutputStyle
+     */
+    var $output;
+
+    /**
+     * @var \Composer\IO\IOInterface
+     */
+    protected $io;
 
     const mapFlyFiles = [
         'Container.php' =>
@@ -156,16 +178,37 @@ class Common
     {
         $this->dispatcher = $dispatcher ?: new EventDispatcher();
 
+        $this->console();
+
         $this->root = dirname(__DIR__, 6);
 
         if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
             die("This doc root is not for a Laravel app: {$this->root} \n");
         }
 
+        static::$flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
+
+    }
+
+    protected function console(){
+
+        // $this->input = new \Symfony\Component\Console\Input\ArgvInput(),
+        $input = $this->input = new \Psy\Input\ShellInput('');
+
+        $output = $this->output = new \Illuminate\Console\OutputStyle($input, new ConsoleOutput());
+
+        // vendor/composer/composer/src/Composer/Console/Application.php
+        $io = $this->io = new ConsoleIO($input, $output, (new \Symfony\Component\Console\Application())->getHelperSet());
+
+//        if ($this->input->isInteractive()) {
+//            $description = $io->ask('Are you sure to go on? ', 'n');
+//            $this->output->writeln($description);
+//        }
     }
 
     public function config(array $options)
     {
+
         if (empty($options['mode'])) $options['mode'] = LARAVELFLY_MODE;
 
         $this->options = array_merge($this->getDefaultConfig(), $options);
@@ -196,7 +239,6 @@ class Common
 
     protected function parseOptions(array &$options)
     {
-        static::$flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
 
         static::includeFlyFiles($options);
 
