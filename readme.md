@@ -32,7 +32,7 @@ Requests per second   | 23    | 81.5
 ## Version Compatibility
 
 - Laravel 5.5 or 5.6
-- Swoole >4.0
+- Swoole >4.2.3
 
 ## Quick Start
 
@@ -84,7 +84,7 @@ To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
 
 - No support for static files, so use it with other servers like nginx. [conf examples](https://github.com/scil/LaravelFly/#laravelfly-usability)
 
-- [A job can be delivered into a swoole task process and executed at once](https://github.com/scil/LaravelFly/wiki/Configuration#run-jobs-in-a-swoole-task), `artisan queue:work` needless any more.
+- [swoole-job](https://github.com/scil/LaravelFly/wiki/Configuration#run-jobs-in-a-swoole-task),A job can be delivered into a swoole task process and executed at once `artisan queue:work` needless any more.
 
 - functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), plus Laravel services can be used in `fly()` and `fly2()` without closure.  The `fly2()` has the limited ability to change services in current request, e.g. registering a new event handler for current request. `fly2()` is not suggested. 
 

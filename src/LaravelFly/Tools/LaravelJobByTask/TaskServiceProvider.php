@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelFly\Tools\Task;
+namespace LaravelFly\Tools\LaravelJobByTask;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
-use LaravelFly\Tools\Task\Connectors\SwooleTaskConnector;
+use LaravelFly\Tools\LaravelJobByTask\Connectors\SwooleTaskConnector;
 
 
 /**
@@ -56,7 +56,7 @@ class TaskServiceProvider extends ServiceProvider
 
         // from: Illuminate\Queue\QueueServiceProvider::registerWorker
         $this->app->singleton('queue.worker', function () {
-            return $this->taskWorker = new \LaravelFly\Tools\Task\Worker(
+            return $this->taskWorker = new \LaravelFly\Tools\LaravelJobByTask\Worker(
                 $this->app['queue'], $this->app['events'], $this->app[ExceptionHandler::class]
             );
         });

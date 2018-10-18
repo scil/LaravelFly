@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Tools\Task;
+namespace LaravelFly\Tools\LaravelJobByTask;
 
 use Exception;
 use Swoole\Timer;

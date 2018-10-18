@@ -5,7 +5,7 @@
  * Time: 16:13
  */
 
-namespace LaravelFly\Tools\Task;
+namespace LaravelFly\Tools\LaravelJobByTask;
 
 
 use Illuminate\Queue\FailingJob;

@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelFly\Tools\Task\Connectors;
+namespace LaravelFly\Tools\LaravelJobByTask\Connectors;
 
-use LaravelFly\Tools\Task\SwooleTaskQueue;
+use LaravelFly\Tools\LaravelJobByTask\SwooleTaskQueue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
 
 class SwooleTaskConnector implements ConnectorInterface

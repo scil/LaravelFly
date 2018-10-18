@@ -1,5 +1,5 @@
 <?php
-namespace LaravelFly\Tools\Task;
+namespace LaravelFly\Tools\LaravelJobByTask;
 
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Contracts\Container\Container;

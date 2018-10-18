@@ -7,14 +7,14 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Queue\Queue;
 use Illuminate\Queue\WorkerOptions;
-use LaravelFly\Tools\Task\SwooleTaskJob;
-use LaravelFly\Tools\Task\TaskServiceProvider;
+use LaravelFly\Tools\LaravelJobByTask\SwooleTaskJob;
+use LaravelFly\Tools\LaravelJobByTask\TaskServiceProvider;
 
 trait Task
 {
 
     /**
-     * @var \LaravelFly\Tools\Task\Worker
+     * @var \LaravelFly\Tools\LaravelJobByTask\Worker
      */
     protected $taskWorker;
 
@@ -37,52 +37,18 @@ trait Task
 
     function onTask($server, $task_id, $from_id, $data)
     {
+        switch ($data['type'] ?? 'job') {
+            case 'job':
 //        echo "#{$server->worker_id}\tonTask: [PID={$server->worker_pid}]: task_id=$task_id, data_len=" . "." . PHP_EOL;
 //        var_dump($data);
 
-        if (!method_exists($data, 'handle')) {
-            return;
+                $job = $data['value'] ?? $data;
+                if (!method_exists($job, 'handle')) return;
+                $this->runLaravelJob($job, $task_id, $from_id);
+                break;
         }
-
-        $this->runTask($data, $from_id, $data);
     }
-
-
-    /**
-     * @param Application $app
-     * @param \LaravelFly\Tools\Task\Worker $worker
-     * @param $data
-     * @param int $task_id
-     * @param int $from_id
-     *
-     * an example to test job class ProcessPodcast
-     *
-       Route::get('/dd', function () {
-           $pendingJob = ProcessPodcast::dispatch(2);
-           $rJob= new ReflectionProperty($pendingJob,'job');
-           $rJob->setAccessible(true);
-           $data = $rJob->getValue($pendingJob);
-           $app = app();
-
-           $taskServiceProvider = new TaskServiceProvider($app);
-           $taskServiceProvider->register(true);
-           (new \LaravelFly\Server\HttpServer())->runTaskForTest($app, $app->make('queue.worker'), $data);
-
-           $taskServiceProvider->restore();
-
-           return 3;
-       });
-     *
-     */
-    function runTaskForTest(Application $app, \LaravelFly\Tools\Task\Worker $worker, $data, $task_id = 0, $from_id = 0)
-    {
-        $this->app = $app;
-        $this->taskWorker = $worker;
-        $this->runTask($data, $task_id, $from_id);
-
-    }
-
-    protected function runTask($data, $task_id, $from_id)
+    protected function runLaravelJob($data, $task_id, $from_id)
     {
 
         $job = new SwooleTaskJob($this->app, $this->swoole, $data, $task_id, $from_id);
@@ -96,7 +62,7 @@ trait Task
         );
 
 
-        if ($delay = $this->getDelay($job, $config)) {
+        if ($delay = $this->getJobDelay($job, $config)) {
             swoole_timer_after($delay * 1000, function () use ($job, $options) {
 
                 $this->laravelQueue->pushJobObject($job);
@@ -115,7 +81,42 @@ trait Task
 
     }
 
-    protected function getDelay($job, $config)
+
+    /**
+     * @param Application $app
+     * @param \LaravelFly\Tools\LaravelJobByTask\Worker $worker
+     * @param $data
+     * @param int $task_id
+     * @param int $from_id
+     *
+     * an example to test job class ProcessPodcast
+     *
+     * Route::get('/dd', function () {
+     *      $pendingJob = ProcessPodcast::dispatch(2);
+     *      $rJob= new ReflectionProperty($pendingJob,'job');
+     *      $rJob->setAccessible(true);
+     *      $data = $rJob->getValue($pendingJob);
+     *      $app = app();
+     *
+     *      $taskServiceProvider = new TaskServiceProvider($app);
+     *      $taskServiceProvider->register(true);
+     *      (new \LaravelFly\Server\HttpServer())->runTaskForTest($app, $app->make('queue.worker'), $data);
+     *
+     *      $taskServiceProvider->restore();
+     *
+     *      return 3;
+     * });
+     *
+     */
+    function runTaskForTest(Application $app, \LaravelFly\Tools\LaravelJobByTask\Worker $worker, $data, $task_id = 0, $from_id = 0)
+    {
+        $this->app = $app;
+        $this->taskWorker = $worker;
+        $this->runLaravelJob($data, $task_id, $from_id);
+    }
+
+
+    protected function getJobDelay($job, $config)
     {
 
         $delay = $job->delay;
