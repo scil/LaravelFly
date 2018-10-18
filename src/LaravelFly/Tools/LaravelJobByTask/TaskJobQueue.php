@@ -7,7 +7,7 @@ use Swoole\Timer;
 use Illuminate\Queue\Queue;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 
-class SwooleTaskQueue extends Queue implements QueueContract
+class TaskJobQueue extends Queue implements QueueContract
 {
     /**
      * Swoole Connector

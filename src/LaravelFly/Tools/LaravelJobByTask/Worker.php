@@ -15,8 +15,8 @@ class Worker extends \Illuminate\Queue\Worker
 {
 
     /**
-     * @param SwooleTaskQueue $connection
-     * @param SwooleTaskJob $queue
+     * @param TaskJobQueue $connection
+     * @param TaskJob $queue
      * @return \Illuminate\Contracts\Queue\Job|null
      */
     protected function getNextJob($connection, $queue)

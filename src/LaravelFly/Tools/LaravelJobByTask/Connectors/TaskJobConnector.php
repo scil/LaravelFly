@@ -2,10 +2,10 @@
 
 namespace LaravelFly\Tools\LaravelJobByTask\Connectors;
 
-use LaravelFly\Tools\LaravelJobByTask\SwooleTaskQueue;
+use LaravelFly\Tools\LaravelJobByTask\TaskJobQueue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
 
-class SwooleTaskConnector implements ConnectorInterface
+class TaskJobConnector implements ConnectorInterface
 {
     /**
      * Swoole Server Instance
@@ -33,6 +33,6 @@ class SwooleTaskConnector implements ConnectorInterface
      */
     public function connect(array $config)
     {
-        return new SwooleTaskQueue($this->swoole);
+        return new TaskJobQueue($this->swoole);
     }
 }

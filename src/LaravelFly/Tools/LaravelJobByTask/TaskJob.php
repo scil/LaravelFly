@@ -1,11 +1,11 @@
 <?php
 namespace LaravelFly\Tools\LaravelJobByTask;
 
-use Illuminate\Queue\Jobs\Job;
+use Illuminate\Queue\Jobs\Job as Base;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
 
-class SwooleTaskJob extends Job implements JobContract
+class TaskJob extends Base implements JobContract
 {
     /**
      * The Swoole Server instance.
@@ -99,13 +99,8 @@ class SwooleTaskJob extends Job implements JobContract
         return $this->taskId;
     }
 
-    /**
-     * Get the service container instance.
-     *
-     * @return \Illuminate\Container\Container
-     */
-    public function getContainer()
+    public function resolveName()
     {
-        return $this->container;
+        return get_class($this->jobObject);
     }
 }

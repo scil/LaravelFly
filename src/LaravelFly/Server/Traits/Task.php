@@ -5,10 +5,14 @@ namespace LaravelFly\Server\Traits;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bus\PendingDispatch;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Queue;
 use Illuminate\Queue\WorkerOptions;
-use LaravelFly\Tools\LaravelJobByTask\SwooleTaskJob;
-use LaravelFly\Tools\LaravelJobByTask\TaskServiceProvider;
+use LaravelFly\Map\IlluminateBase\Dispatcher;
+use LaravelFly\Tools\LaravelJobByTask\TaskJob;
+use LaravelFly\Tools\LaravelJobByTask\TaskJobServiceProvider;
 
 trait Task
 {
@@ -22,6 +26,11 @@ trait Task
      * @var Queue
      */
     protected $laravelQueue;
+
+    /**
+     * @var Dispatcher
+     */
+    protected $laravelEvent;
 
     function initForTask()
     {
@@ -42,27 +51,29 @@ trait Task
 //        echo "#{$server->worker_id}\tonTask: [PID={$server->worker_pid}]: task_id=$task_id, data_len=" . "." . PHP_EOL;
 //        var_dump($data);
 
-                $job = $data['value'] ?? $data;
-                if (!method_exists($job, 'handle')) return;
-                $this->runLaravelJob($job, $task_id, $from_id);
+                $object = $data['value'] ?? $data;
+                if (!method_exists($object, 'handle')) return;
+                $this->runLaravelJob($object, $task_id, $from_id);
                 break;
         }
     }
-    protected function runLaravelJob($data, $task_id, $from_id)
-    {
 
-        $job = new SwooleTaskJob($this->app, $this->swoole, $data, $task_id, $from_id);
+    protected function runLaravelJob($object, $task_id, $from_id)
+    {
 
         $config = $this->app['config']["queue.connections.swoole-job"];
 
         $options = new WorkerOptions(
             null, $config['memory'],
             $config['timeout'], 0,
-            $data->tries ?? $config['tries'], $config['force']
+            $object->tries ?? $config['tries'], $config['force']
         );
 
+        $delay = $this->getJobDelay($object, $config);
 
-        if ($delay = $this->getJobDelay($job, $config)) {
+        $job = new TaskJob($this->app, $this->swoole, $object, $task_id, $from_id);
+
+        if ($delay) {
             swoole_timer_after($delay * 1000, function () use ($job, $options) {
 
                 $this->laravelQueue->pushJobObject($job);
@@ -98,7 +109,7 @@ trait Task
      *      $data = $rJob->getValue($pendingJob);
      *      $app = app();
      *
-     *      $taskServiceProvider = new TaskServiceProvider($app);
+     *      $taskServiceProvider = new TaskJobServiceProvider($app);
      *      $taskServiceProvider->register(true);
      *      (new \LaravelFly\Server\HttpServer())->runTaskForTest($app, $app->make('queue.worker'), $data);
      *
@@ -196,11 +207,63 @@ trait Task
 
         }
 
-        (new TaskServiceProvider($this->app))->register();
+        (new TaskJobServiceProvider($this->app))->register();
 
         $this->taskWorker = $this->app->make('queue.worker');
         $this->laravelQueue = $this->app->make('queue');
+        $this->laravelEvent = $this->app->make('events');
+        $this->listenForLaravelJobEvents();
 
 
     }
+
+    protected function listenForLaravelJobEvents()
+    {
+
+        $this->laravelEvent->listen(JobProcessing::class, function ($event) {
+            $this->writeOutput($event->job, 'starting');
+        });
+
+        $this->laravelEvent->listen(JobProcessed::class, function ($event) {
+            $this->writeOutput($event->job, 'success');
+        });
+
+        $this->laravelEvent->listen(JobFailed::class, function ($event) {
+            $this->writeOutput($event->job, 'failed');
+
+            // todo
+            // $this->logFailedJob($event);
+        });
+    }
+
+    protected function writeOutput(TaskJob $job, $status)
+    {
+        switch ($status) {
+            case 'starting':
+                return $this->writeStatus($job, 'Processing', 'comment');
+            case 'success':
+                return $this->writeStatus($job, 'Processed', 'info');
+            case 'failed':
+                return $this->writeStatus($job, 'Failed', 'error');
+        }
+    }
+
+    /**
+     * Format the status output for the queue worker.
+     *
+     * @param  \Illuminate\Contracts\Queue\Job $job
+     * @param  string $status
+     * @param  string $type
+     * @return void
+     */
+    protected function writeStatus(TaskJob $job, $status, $type)
+    {
+        $this->output->writeln(sprintf(
+            "<{$type}>[%s][%s] %s</{$type}> %s",
+            Carbon::now()->format('Y-m-d H:i:s'),
+            $job->getJobId(),
+            str_pad("{$status}:", 11), $job->resolveName()
+        ));
+    }
+
 }

@@ -4,13 +4,13 @@ namespace LaravelFly\Tools\LaravelJobByTask;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
-use LaravelFly\Tools\LaravelJobByTask\Connectors\SwooleTaskConnector;
+use LaravelFly\Tools\LaravelJobByTask\Connectors\TaskJobConnector;
 
 
 /**
  * @codeCoverageIgnore
  */
-class TaskServiceProvider extends ServiceProvider
+class TaskJobServiceProvider extends ServiceProvider
 {
 
     /**
@@ -34,7 +34,7 @@ class TaskServiceProvider extends ServiceProvider
         }
 
         $this->app['queue']->addConnector('swoole-task', function () {
-            return new SwooleTaskConnector(
+            return new TaskJobConnector(
             // null? allow debugging in fpm
                 method_exists($this->app, 'getSwoole') ? $this->app->getSwoole() : null
             );
