@@ -1,11 +1,14 @@
 <?php
 /**
- * add Dict, plus : Cache for event listeners $listenersCache
+ * 1. Dict,
+ * 2. Cache for event listeners $listenersCache
  *      It is across multple requests,
  *      Changes in any request would change this var
  *          static $listenersStalbe = [];
  *      This cache will not have performance effect when Wildcard listeners are added in requests, because :
  *          static::$wildStable
+ *
+ * 3. swoole event (delivered to swoole task, just as swoole job)
  *
  */
 
@@ -159,4 +162,48 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
         return $this;
     }
+
+
+    // following about swoole event
+
+    /**
+     * @var \swoole_http_server
+     */
+    static $swooleServer;
+
+    protected $__tmp_instance;
+
+    protected function createQueuedHandlerCallable($class, $method)
+    {
+        return function () use ($class, $method) {
+            $arguments = array_map(function ($a) {
+                return is_object($a) ? clone $a : $a;
+            }, func_get_args());
+
+            if ($this->handlerWantsToBeQueued($class, $arguments)) {
+
+                if (!property_exists($this->__tmp_instance,'swoole')) {
+                    $this->queueHandler($class, $method, $arguments);
+                    return;
+                }
+
+                static::$swooleServer->task([
+                    'type' => 'event',
+                    'object' => $this->__tmp_instance,
+                    'data'=>$arguments,
+                ]);
+            }
+        };
+    }
+
+    protected function handlerWantsToBeQueued($class, $arguments)
+    {
+        $this->__tmp_instance = $ins = $this->container->make($class);
+        if (method_exists($ins, 'shouldQueue')) {
+            return $ins->shouldQueue($arguments[0]);
+        }
+
+        return true;
+    }
+
 }

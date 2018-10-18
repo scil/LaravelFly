@@ -32,7 +32,7 @@ trait Task
      */
     protected $laravelEvent;
 
-    function initForTask()
+    protected function initForTask()
     {
         if (!isset($this->options['task_worker_num']) || $this->options['task_worker_num'] <= 0) return;
 
@@ -40,25 +40,27 @@ trait Task
         $this->swoole->on('Finish', [$this, 'onFinish']);
 
         static::includeConditionFlyFiles('task');
-        PendingDispatch::$swooleServer = $this->swoole;
+
+        Dispatcher::$swooleServer = PendingDispatch::$swooleServer = $this->swoole;
 
     }
 
-    function onTask($server, $task_id, $from_id, $data)
+    public function onTask($server, $task_id, $from_id, $data)
     {
         switch ($data['type'] ?? 'job') {
+            case 'event':
             case 'job':
 //        echo "#{$server->worker_id}\tonTask: [PID={$server->worker_pid}]: task_id=$task_id, data_len=" . "." . PHP_EOL;
 //        var_dump($data);
 
-                $object = $data['value'] ?? $data;
+                $object = $data['object'] ?? $data;
                 if (!method_exists($object, 'handle')) return;
-                $this->runLaravelJob($object, $task_id, $from_id);
+                $this->runLaravelJob($object, $data['data'] ?? [], $task_id, $from_id);
                 break;
         }
     }
 
-    protected function runLaravelJob($object, $task_id, $from_id)
+    protected function runLaravelJob($object, $data, $task_id, $from_id)
     {
 
         $config = $this->app['config']["queue.connections.swoole-job"];
@@ -71,7 +73,7 @@ trait Task
 
         $delay = $this->getJobDelay($object, $config);
 
-        $job = new TaskJob($this->app, $this->swoole, $object, $task_id, $from_id);
+        $job = new TaskJob($this->app, $this->swoole, $object, $data, $task_id, $from_id);
 
         if ($delay) {
             swoole_timer_after($delay * 1000, function () use ($job, $options) {
@@ -81,7 +83,6 @@ trait Task
                 $this->taskWorker->daemon('swoole-job', $job, $options);
             });
             return;
-
         }
 
 
@@ -119,16 +120,20 @@ trait Task
      * });
      *
      */
-    function runTaskForTest(Application $app, \LaravelFly\Tools\LaravelJobByTask\Worker $worker, $data, $task_id = 0, $from_id = 0)
+    public function runTaskForTest(Application $app, \LaravelFly\Tools\LaravelJobByTask\Worker $worker, $obj, $task_id = 0, $from_id = 0)
     {
         $this->app = $app;
         $this->taskWorker = $worker;
-        $this->runLaravelJob($data, $task_id, $from_id);
+        $this->runLaravelJob($obj, [], $task_id, $from_id);
     }
 
 
     protected function getJobDelay($job, $config)
     {
+        // mainly for event listener
+        if (!property_exists($job, 'delay')) {
+            return null;
+        }
 
         $delay = $job->delay;
         if (null === $delay) {
@@ -151,7 +156,7 @@ trait Task
     }
 
 
-    function onFinish($server, $task_id, $data)
+    public function onFinish($server, $task_id, $data)
     {
         echo "Task#$task_id finished, data_len=" . PHP_EOL;
         var_dump($data);

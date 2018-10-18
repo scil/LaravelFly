@@ -1,4 +1,5 @@
 <?php
+
 namespace LaravelFly\Tools\LaravelJobByTask;
 
 use Illuminate\Queue\Jobs\Job as Base;
@@ -23,6 +24,14 @@ class TaskJob extends Base implements JobContract
 
     protected $jobObject;
 
+
+    /**
+     * The data to be passed to the job object.
+     *
+     * @var array
+     */
+
+    public $data;
     /**
      * The Task id
      *
@@ -40,18 +49,19 @@ class TaskJob extends Base implements JobContract
     /**
      * Create a new job instance.
      *
-     * @param  \Illuminate\Container\Container  $container
-     * @param  \Swoole\Http\Server  $swoole
-     * @param  string  $job
-     * @param  int  $taskId
-     * @param  int  $srcWorkerId
+     * @param  \Illuminate\Container\Container $container
+     * @param  \Swoole\Http\Server $swoole
+     * @param  string $job
+     * @param  int $taskId
+     * @param  int $srcWorkerId
      * @return void
      */
-    public function __construct(Container $container, $swoole, $job, $taskId, $srcWrokerId)
+    public function __construct(Container $container, $swoole, $job, $data, $taskId, $srcWrokerId)
     {
         $this->container = $container;
         $this->swoole = $swoole;
         $this->jobObject = $job;
+        $this->data = $data;
         $this->taskId = $taskId;
         $this->srcWorkderId = $srcWrokerId;
     }
@@ -64,11 +74,20 @@ class TaskJob extends Base implements JobContract
     public function fire()
     {
 
+        if ($this->data) {
+
+            // vendor/laravel/framework/src/Illuminate/Events/CallQueuedListener::handle()
+            call_user_func_array(
+                [$this->jobObject, 'handle'], $this->data
+            );
+            return;
+        }
+
         $this->jobObject->handle();
 
         // todo
         return;
-            parent::fire();
+        parent::fire();
     }
 
     /**
