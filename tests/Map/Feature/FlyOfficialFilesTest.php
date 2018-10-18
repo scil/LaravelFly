@@ -13,31 +13,36 @@ class FlyOfficialFilesTest extends Base
 
     function testFlyFiles()
     {
-        static::$map = $map = $this->processGetArray(function (){
+        static::$map = $map = $this->processGetArray(function () {
             return Common::getFlyMap();
         });
 
-        $flyFilesNumber = 19;
+        $flyFilesNumber = 24;
 
         self::assertEquals($flyFilesNumber, count($map));
 
-        // -4: 5 files in a dir,
-        // -1: Kernel.php
         // +3: . an .. and FileViewFinderSameView.php
-        self::assertEquals($flyFilesNumber - 4 - 1 + 3, count(scandir(static::$flyDir, SCANDIR_SORT_NONE)));
+        // +1: 'Database/Eloquent/Concerns/HasRelationships.php'  not used, but available
+        // -4: 5 files in a dir    ViewConcerns
+        // -1: 2 files in a dir        Database
+        // -1: 2 files in a dir        Foundation
+        // -1: 2 files in a dir        Routing
+        // -1: Kernel.php
+        $topNumber = $flyFilesNumber + 3 + 1 - 4 - 1 - 1 - 1 -1;
+        self::assertEquals($topNumber, count(scandir(static::$flyDir, SCANDIR_SORT_NONE)));
 
         // +3: another kernel.php whoses class is App\Http\Kernel.php
         //     Http/
         //     extended/
         // -1: FileViewFinderSameView.php
-        self::assertEquals($flyFilesNumber - 4 - 1 + 3 + 3 - 1, count(scandir(static::$backOfficalDir, SCANDIR_SORT_NONE)));
+        self::assertEquals($topNumber + 3 - 1, count(scandir(static::$backOfficalDir, SCANDIR_SORT_NONE)));
 
         foreach ($map as $f => $originLocation) {
 
             self::assertEquals(true, is_file(static::$backOfficalDir . $f));
 
             if ($f !== 'Http/Kernel.php')
-	            self::assertEquals(true, is_file(static::$flyDir . $f), static::$flyDir . $f);
+                self::assertEquals(true, is_file(static::$flyDir . $f), static::$flyDir . $f);
 
             // var_dump(static::$workingRoot . $originLocation);
             self::assertEquals(true, is_file(static::$workingRoot . $originLocation));
@@ -60,7 +65,7 @@ class FlyOfficialFilesTest extends Base
 
         $map = [
             // Kernel with Dict version should go with Kernel without Dict
-            'Kernel.php'=> '/vendor/scil/laravel-fly/src/LaravelFly/Map/Kernel.php',
+            'Kernel.php' => '/vendor/scil/laravel-fly/src/LaravelFly/Map/Kernel.php',
 
         ];
         $this->compareFilesContent($map);

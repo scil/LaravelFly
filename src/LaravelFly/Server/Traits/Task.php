@@ -2,8 +2,10 @@
 
 namespace LaravelFly\Server\Traits;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bus\PendingDispatch;
+use Illuminate\Queue\Queue;
 use Illuminate\Queue\WorkerOptions;
 use LaravelFly\Tools\Task\SwooleTaskJob;
 use LaravelFly\Tools\Task\TaskServiceProvider;
@@ -12,11 +14,14 @@ trait Task
 {
 
     /**
-     * The exception handler instance.
-     *
      * @var \LaravelFly\Tools\Task\Worker
      */
     protected $taskWorker;
+
+    /**
+     * @var Queue
+     */
+    protected $laravelQueue;
 
     function initForTask()
     {
@@ -52,21 +57,21 @@ trait Task
      *
      * an example to test job class ProcessPodcast
      *
-    Route::get('/dd', function () {
-        $pendingJob = ProcessPodcast::dispatch(2);
-        $rJob= new ReflectionProperty($pendingJob,'job');
-        $rJob->setAccessible(true);
-        $data = $rJob->getValue($pendingJob);
-        $app = app();
+       Route::get('/dd', function () {
+           $pendingJob = ProcessPodcast::dispatch(2);
+           $rJob= new ReflectionProperty($pendingJob,'job');
+           $rJob->setAccessible(true);
+           $data = $rJob->getValue($pendingJob);
+           $app = app();
 
-        $taskServiceProvider = new TaskServiceProvider($app);
-        $taskServiceProvider->register(true);
-        (new \LaravelFly\Server\HttpServer())->runTaskForTest($app, $app->make('queue.worker'), $data);
+           $taskServiceProvider = new TaskServiceProvider($app);
+           $taskServiceProvider->register(true);
+           (new \LaravelFly\Server\HttpServer())->runTaskForTest($app, $app->make('queue.worker'), $data);
 
-        $taskServiceProvider->restore();
+           $taskServiceProvider->restore();
 
-        return 3;
-    });
+           return 3;
+       });
      *
      */
     function runTaskForTest(Application $app, \LaravelFly\Tools\Task\Worker $worker, $data, $task_id = 0, $from_id = 0)
@@ -85,18 +90,54 @@ trait Task
         $config = $this->app['config']["queue.connections.swoole-job"];
 
         $options = new WorkerOptions(
-            $data->delay ?? $config['delay'], $config['memory'],
+            null, $config['memory'],
             $config['timeout'], 0,
             $data->tries ?? $config['tries'], $config['force']
         );
 
-        $this->app->make('queue')->pushJobObject($job);
+
+        if ($delay = $this->getDelay($job, $config)) {
+            swoole_timer_after($delay * 1000, function () use ($job, $options) {
+
+                $this->laravelQueue->pushJobObject($job);
+
+                $this->taskWorker->daemon('swoole-job', $job, $options);
+            });
+            return;
+
+        }
+
+
+        $this->laravelQueue->pushJobObject($job);
 
         $this->taskWorker->daemon('swoole-job', $job, $options);
 //        $worker->runNextJob('swoole-job', $job, $options);
 
+    }
+
+    protected function getDelay($job, $config)
+    {
+
+        $delay = $job->delay;
+        if (null === $delay) {
+            $delay = $config['delay'];
+        } elseif ($delay instanceof Carbon) {
+            $delay = $delay->diffInSeconds();
+        }
+
+        if ($delay <= 0) {
+            $delay = null;
+        }
+        if ($delay >= 86400) {
+            // todo
+            // throw new \InvalidArgumentException('The max delay is 86400s');
+            $delay = 86400;
+        }
+
+        return $delay;
 
     }
+
 
     function onFinish($server, $task_id, $data)
     {
@@ -157,6 +198,7 @@ trait Task
         (new TaskServiceProvider($this->app))->register();
 
         $this->taskWorker = $this->app->make('queue.worker');
+        $this->laravelQueue = $this->app->make('queue');
 
 
     }

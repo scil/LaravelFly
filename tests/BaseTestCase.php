@@ -10,7 +10,7 @@
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_Process
  *
- * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_Other
+ * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_No_Process_Used
  *
  *
  ** Mode Backup

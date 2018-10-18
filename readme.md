@@ -148,7 +148,7 @@ Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or
 
 ### 1. [laravel-swoole](https://github.com/swooletw/laravel-swoole) 
 
-It is alse a safe sollution. It is light.It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly.   
+It is alse a safe sollution. It has supported Lumen and websocket. Its doc is great and also useful for LaravelFly.   
 
 The main difference is that in laravel-swoole user's code will be processed by a new `app` cloned from SwooleTW\Http\Server\Application::$application and laravel-swoole updates related container bindings to the new app. However in LaravelFly, the sandbox is not a new app, but an item in the $corDict of the unique application container.   
 In LaravelFly, most other objects such as `app`, `event`.... always keep one object in a worker process, `clone` is not used at all by default. LaravelFly makes most of laravel objects keep safe on their own. It's about high cohesion & low coupling and the granularity is at the level of app container or services/objects. For users of laravel-swoole, it's a big challenge to handle the relations of multiple packages and objects which to be booted before any requests. Read [Stale Reference](https://github.com/scil/LaravelFly/wiki/clone-and-Stale-Reference). 
