@@ -17,7 +17,7 @@ class FlyOfficialFilesTest extends Base
             return Common::getFlyMap();
         });
 
-        $flyFilesNumber = 24;
+        $flyFilesNumber = 25;
 
         self::assertEquals($flyFilesNumber, count($map));
 
@@ -25,10 +25,10 @@ class FlyOfficialFilesTest extends Base
         // +1: 'Database/Eloquent/Concerns/HasRelationships.php'  not used, but available
         // -4: 5 files in a dir    ViewConcerns
         // -1: 2 files in a dir        Database
-        // -1: 2 files in a dir        Foundation
+        // -2: 3 files in a dir        Foundation
         // -1: 2 files in a dir        Routing
         // -1: Kernel.php
-        $topNumber = $flyFilesNumber + 3 + 1 - 4 - 1 - 1 - 1 -1;
+        $topNumber = $flyFilesNumber + 3 + 1 - 4 - 1 - 2 - 1 -1;
         self::assertEquals($topNumber, count(scandir(static::$flyDir, SCANDIR_SORT_NONE)));
 
         // +3: another kernel.php whoses class is App\Http\Kernel.php

@@ -101,7 +101,8 @@ class Common
         ],
         'task' => [
             'Foundation/Bus/Dispatchable.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Bus/Dispatchable.php',
-            'Foundation/Bus/PendingDispatch.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Bus/PendingDispatch.php'
+            'Foundation/Bus/PendingDispatch.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Bus/PendingDispatch.php',
+            'Foundation/Support/Providers/EventServiceProvider.php' => 'vendor/laravel/framework/src/Illuminate/Foundation/Support\Providers\EventServiceProvider.php'
         ],
         'kernel' => [
             // '../Kernel.php' =>

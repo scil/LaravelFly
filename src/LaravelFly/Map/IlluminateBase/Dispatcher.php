@@ -171,39 +171,37 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
      */
     static $swooleServer;
 
-    protected $__tmp_instance;
+    static $swooleListeners = [];
 
-    protected function createQueuedHandlerCallable($class, $method)
+    protected function createClassCallable($listener)
+    {
+        list($class, $method) = $this->parseClassCallable($listener);
+
+
+        if (in_array($class, static::$swooleListeners)) {
+            return $this->createSwooleQueuedHandlerCallable($class, $method);
+        }
+
+        if ($this->handlerShouldBeQueued($class)) {
+            return $this->createQueuedHandlerCallable($class, $method);
+        }
+
+        return [$this->container->make($class), $method];
+    }
+
+    protected function createSwooleQueuedHandlerCallable($class, $method)
     {
         return function () use ($class, $method) {
             $arguments = array_map(function ($a) {
                 return is_object($a) ? clone $a : $a;
             }, func_get_args());
 
-            if ($this->handlerWantsToBeQueued($class, $arguments)) {
-
-                if (!property_exists($this->__tmp_instance,'swoole')) {
-                    $this->queueHandler($class, $method, $arguments);
-                    return;
-                }
-
-                static::$swooleServer->task([
-                    'type' => 'event',
-                    'object' => $this->__tmp_instance,
-                    'data'=>$arguments,
-                ]);
-            }
+            static::$swooleServer->task([
+                'type' => 'event',
+                'object' => $this->container->make($class),
+                'data' => $arguments,
+            ]);
         };
-    }
-
-    protected function handlerWantsToBeQueued($class, $arguments)
-    {
-        $this->__tmp_instance = $ins = $this->container->make($class);
-        if (method_exists($ins, 'shouldQueue')) {
-            return $ins->shouldQueue($arguments[0]);
-        }
-
-        return true;
     }
 
 }

@@ -89,7 +89,6 @@ trait Task
         $this->laravelQueue->pushJobObject($job);
 
         $this->taskWorker->daemon('swoole-job', $job, $options);
-//        $worker->runNextJob('swoole-job', $job, $options);
 
     }
 
