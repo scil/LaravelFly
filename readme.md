@@ -195,7 +195,8 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] watch code changes and hot reload
 - [x] supply server info. default url is: /laravel-fly/info
 - [x] function fly()
-- [x] job executed in task process
+- [x] job executed in task process. Related: vendor\scil\laravel-fly-files-local\src\Foundation\Bus\
+- [x] event listeners executed in task process. Related: LaravelFly\Map\IlluminateBase\Dispatcher and vendor\scil\laravel-fly-files\src\Foundation\Support\Providers\EventServiceProvider.php
 - [ ] use $this->output instead of echo() in Common.php
 - [ ] bootstrap all service providers in task process
 - [ ] try ocramius/generated-hydrator for laravel-fly/info when its version 3 is ready (it will require nikic/php-parser v4 which is needed by others)  // or Zend\Hydrator\Reflection?
