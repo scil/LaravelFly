@@ -1,0 +1,24 @@
+version: "2.2"
+
+services:
+  
+  swoole:
+    build: .
+    container_name: fly-swoole
+    hostname: swoole
+    volumes:
+      - ../../../..:/var/laravel_app
+    ports: ["9501:9501"]
+    environment:
+      #- TIMEZONE=Asia/Hong_Kong
+      - TIMEZONE=Europe/London
+      
+  nginx:
+    image: nginx
+    container_name: fly-nginx
+    volumes:
+      - ../../../../public:/usr/share/nginx/html
+      - ../config/nginx+swoole.conf:/etc/nginx/nginx.conf
+    ports:
+     - "8080:80"
+    command: [nginx-debug, '-g', 'daemon off;']

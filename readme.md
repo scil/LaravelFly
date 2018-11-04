@@ -32,7 +32,7 @@ Requests per second   | 23    | 81.5
 ## Version Compatibility
 
 - Laravel 5.5 or 5.6
-- Swoole >4.2.3
+- Swoole >4.2.4
 
 ## Quick Start
 
@@ -46,6 +46,16 @@ Suggest: `pecl install inotify`
 If you enable `eval(tinker())` and see an error about mkdir, you can start LaravelFly with sudo.
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
+
+## Docker
+
+```
+composer require "scil/laravel-fly":"dev-master"
+
+php artisan vendor:publish --tag=fly-server
+
+docker-compose -f vendor/scil/laravel-fly-local/docker/docker-compose.yml up
+```
 
 ## Doc
 
