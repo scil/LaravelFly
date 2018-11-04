@@ -237,7 +237,8 @@ Trait Worker
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
         clearstatcache();
-        opcache_reset();
+        //todo
+        //opcache_reset();
     }
 
 }
