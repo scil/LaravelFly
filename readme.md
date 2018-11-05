@@ -54,7 +54,8 @@ composer require "scil/laravel-fly":"dev-master"
 
 php artisan vendor:publish --tag=fly-server
 
-docker-compose -f vendor/scil/laravel-fly-local/docker/docker-compose.yml up
+# 127.0.0.1:8080
+docker-compose -f vendor/scil/laravel-fly-local/docker/docker-compose.yml up -d
 ```
 
 ## Doc
