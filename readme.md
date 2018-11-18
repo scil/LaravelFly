@@ -1,4 +1,4 @@
-LaravelFly is a safe solution to speeds up existing Laravel projects without data pollution and memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
+LaravelFly is a safe solution to speeds up new or old Laravel projects without data pollution and memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
@@ -32,7 +32,7 @@ Requests per second   | 23    | 81.5
 ## Version Compatibility
 
 - Laravel 5.5 or 5.6
-- Swoole >4.2.4
+- Swoole >4.2.7
 
 ## Quick Start
 

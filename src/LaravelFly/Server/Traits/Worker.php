@@ -237,8 +237,8 @@ Trait Worker
             new GenericEvent(null, ['server' => $this, 'workerid' => $worker_id, 'app' => $this->app]));
 
         clearstatcache();
-        //todo
-        //opcache_reset();
+        // php in docker container not contain opcache
+        function_exists('opcache_reset') && opcache_reset();
     }
 
 }
