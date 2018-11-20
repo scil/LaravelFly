@@ -11,6 +11,11 @@ class FlyOfficialFilesTest extends Base
 
     static $map;
 
+    function testVars()
+    {
+        self::assertDirectoryExists(static::$laravelVersionAppRoot, 'please set proper ENV var LARAVEL_VERSION_PROJECT_ROOT in phpunit.xml');
+    }
+
     function testFlyFiles()
     {
         static::$map = $map = $this->processGetArray(function () {
@@ -28,7 +33,7 @@ class FlyOfficialFilesTest extends Base
         // -2: 3 files in a dir        Foundation
         // -1: 2 files in a dir        Routing
         // -1: Kernel.php
-        $topNumber = $flyFilesNumber + 3 + 1 - 4 - 1 - 2 - 1 -1;
+        $topNumber = $flyFilesNumber + 3 + 1 - 4 - 1 - 2 - 1 - 1;
         self::assertEquals($topNumber, count(scandir(static::$flyDir, SCANDIR_SORT_NONE)));
 
         // +3: another kernel.php whoses class is App\Http\Kernel.php
@@ -44,8 +49,8 @@ class FlyOfficialFilesTest extends Base
             if ($f !== 'Http/Kernel.php')
                 self::assertEquals(true, is_file(static::$flyDir . $f), static::$flyDir . $f);
 
-            // var_dump(static::$workingRoot . $originLocation);
-            self::assertEquals(true, is_file(static::$workingRoot . $originLocation));
+            $ff = static::$workingRoot . $originLocation;
+            self::assertEquals(true, is_file($ff), "is file: $ff");
         }
     }
 
@@ -59,8 +64,15 @@ class FlyOfficialFilesTest extends Base
     function testCompareFilesContentLocal()
     {
 
+        $origin = [
+            static::$flyDir,
+            static::$backOfficalDir,
+            static::$laravelVersionAppRoot
+
+        ];
         static::$flyDir = FLY_ROOT . '/src/fly/';
         static::$backOfficalDir = FLY_ROOT . '/tests/offcial_files/';
+        static::$laravelVersionAppRoot = static::$laravelAppRoot;
 
 
         $map = [
@@ -70,6 +82,11 @@ class FlyOfficialFilesTest extends Base
         ];
         $this->compareFilesContent($map);
 
+        list(
+            static::$flyDir,
+            static::$backOfficalDir,
+            static::$laravelVersionAppRoot
+            ) = $origin;
 
     }
 

@@ -26,3 +26,28 @@ If the project is in a VirtualBox shared dir, it may failed to symlinking to <fl
 ## Bridge between Laravel and LaravelFly
 
 - overwrite artisan command 'config.cache' which could load laravelfly.php in config dir. code: LaravelFly\Providers\ConfigCacheCommand 
+
+## Update [laravel-fly-files](https://github.com/scil/LaravelFly-fly-files) for updated minor version of Laravel
+
+e.g. updating Laravel 5.5.*
+
+1. create a new project
+
+```
+composer create-project --prefer-dist laravel/laravel updating_fly_files "5.5.*"
+
+```
+
+2. edit `vendor/scil/laravel-fly/phpunit.xml.dist`
+```xml
+        <env name="LARAVEL_VERSION_PROJECT_ROOT" value="/<dir>/updating_fly_files"/>
+```
+
+3. run test
+```
+phpunit=vendor/bin/phpunit
+xml=vendor/scil/laravel-fly/phpunit.xml.dist
+
+$phpunit  --stop-on-failure -c $xml --testsuit only_fly
+
+```

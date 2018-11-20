@@ -12,8 +12,9 @@ if (isset($_ENV['LARAVEL_PROJECT_ROOT'])) {
     define('LARAVEL_APP_ROOT', $_ENV['LARAVEL_PROJECT_ROOT']);
 } else {
     define('LARAVEL_APP_ROOT', dirname(__DIR__, $AT_FLY_ROOT ? 4 : 1));
-    define('FLY_ROOT', dirname(__DIR__,1));
 }
+
+define('FLY_ROOT', dirname(__DIR__,1));
 
 const DEFAULT_SERVER_CONFIG_FILE = __DIR__ . '/../config/laravelfly-server-config.example.php';
 

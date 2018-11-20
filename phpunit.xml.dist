@@ -64,5 +64,7 @@
 
         <!--<env name="LARAVEL_PROJECT_ROOT" value="/vagrant/www/laravel5.5"/>-->
 
+        <!--<env name="LARAVEL_VERSION_PROJECT_ROOT" value="/vagrant/www/zc/vendor/scil/updating_fly_files"/>-->
+
     </php>
 </phpunit>

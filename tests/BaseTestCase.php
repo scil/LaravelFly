@@ -67,6 +67,11 @@ abstract class BaseTestCase extends TestCase
      */
     static protected $laravelAppRoot = LARAVEL_APP_ROOT;
 
+    /**
+     * @var string
+     */
+    static protected $laravelVersionAppRoot = '';
+
     static $flyDir;
 
     static $backOfficalDir;
@@ -93,11 +98,6 @@ abstract class BaseTestCase extends TestCase
 
         static::$workingRoot = $r;
 
-        $files_package_root = FLY_ROOT . '/../laravel-fly-files/';
-
-        static::$flyDir = $files_package_root . '/src/';
-        static::$backOfficalDir = $files_package_root . '/offcial_files/';
-
         $d = static::processGetArray(function () {
             return include static::$laravelAppRoot . '/vendor/scil/laravel-fly/config/laravelfly-server-config.example.php';
         });
@@ -106,6 +106,19 @@ abstract class BaseTestCase extends TestCase
             'mode' => 'Map',
             'conf' => null, // server config file
         ], $d);
+
+        static::initFlyfiles();
+    }
+
+    static function initFlyfiles()
+    {
+
+        $files_package_root = FLY_ROOT . '/../laravel-fly-files/';
+        static::$flyDir = $files_package_root . '/src/';
+        static::$backOfficalDir = $files_package_root . '/offcial_files/';
+
+        if (env('LARAVEL_VERSION_PROJECT_ROOT'))
+            static::$laravelVersionAppRoot = env('LARAVEL_VERSION_PROJECT_ROOT');
     }
 
     /**
@@ -169,10 +182,13 @@ abstract class BaseTestCase extends TestCase
         $same = true;
 
         foreach ($map as $back => $offcial) {
-            $back = static::$backOfficalDir . $back;
-            $offcial = static::$laravelAppRoot . $offcial;
+            $back = realpath(static::$backOfficalDir . $back);
+            $full_offcial = static::$laravelVersionAppRoot . $offcial;
 
-            $cmdArguments = "$diffOPtions $back $offcial ";
+            if(!is_file($full_offcial))
+                $full_offcial = static::$laravelAppRoot.$offcial;
+
+            $cmdArguments = "$diffOPtions $back $full_offcial ";
 
             unset($a);
             exec("diff --brief $cmdArguments > /dev/null", $a, $r);
