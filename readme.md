@@ -1,4 +1,4 @@
-LaravelFly is a safe solution to speeds up new or old Laravel projects without data pollution and memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
+LaravelFly is a safe solution to speeds up new or old Laravel 5.5+ projects, with preloading and coroutine, while without data pollution or memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
 
@@ -23,7 +23,7 @@ Requests per second   | 23    | 81.5
 * env:   
   - ubuntu 16.04 on VirtualBox ( 1 CPU: i7-7700HQ 2.80GHz ; Memory: 2G  )  
   - php7.2 + opcache + 5 workers for both fpm and laravelfly ( phpfpm : pm=static  pm.max_children=5)
-  - coroutine mysql
+  - connection pool and coroutine mysql
 * Test date : 2018/10
 
 </div>
@@ -47,7 +47,7 @@ If you enable `eval(tinker())` and see an error about mkdir, you can start Larav
 
 Now, your project is flying and listening to port 9501. Enjoy yourself.
 
-## Docker
+## Docker-compose
 
 ```
 composer require "scil/laravel-fly":"dev-master"
@@ -55,6 +55,7 @@ composer require "scil/laravel-fly":"dev-master"
 php artisan vendor:publish --tag=fly-server
 
 # 127.0.0.1:8080
+# you can edit this docker-compos file and use your own nginx conf
 docker-compose -f vendor/scil/laravel-fly-local/docker/docker-compose.yml up -d
 ```
 
@@ -154,6 +155,8 @@ It can be installed on your existing projects without affecting nginx/apache ser
 The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm.conf) allow you use LaravelFlyServer as the primary server, and the phpfpm as a backup server which will be passed requests when the LaravelFlyServer is unavailable. .
 
 Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects.
+
+Apache? There is a example [Cooperate with Apache](https://github.com/hhxsv5/laravel-s#cooperate-with-apache) from laravel-s.
 
 ## Similar projects that mix swoole and laravel
 

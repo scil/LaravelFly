@@ -23,7 +23,7 @@
     "ext-inotify": ">=2.0.0"
   },
   "require-dev": {
-    "eaglewu/swoole-ide-helper": "dev-master",
+    "shixinke/php-ide-helper": "dev-master",
     "nunomaduro/collision": "^2.0",
     "phpunit/phpunit": "^7.0",
     "mockery/mockery": "^1.0",

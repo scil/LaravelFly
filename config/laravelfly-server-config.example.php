@@ -205,7 +205,7 @@ return [
     'listen_port' => 9501,
 
     // like pm.start_servers in php-fpm, but there's no option like pm.max_children
-    'worker_num' => 4,
+    'worker_num' => swoole_cpu_num() * 2,
 
     /**
      * A job can be delivered into a swoole task process by `$this->swoole = true;`
@@ -252,7 +252,7 @@ return [
     'max_conn' => 1024,
 
     // like pm.max_requests in php-fpm
-    'max_request' => 2000,
+    'max_request' => 3000,
 
     // set it to false when debug, otherwise true. 
     // But if you make use of systemd to manage laravelfly, keep it false always. see: https://github.com/scil/LaravelFly/wiki/systemd
