@@ -202,6 +202,8 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] Cache for RouteDependencyResolverTrait 
 - [ ] Converting between swoole request/response and Laravel Request/Response
 - [ ] safe: auth, remove some props?
+- [ ] use: https://github.com/louislivi/smproxy
+- [ ] use: https://github.com/kcloze/swoole-jobs or https://github.com/osgochina/Donkey
 
 ## Other Todo
 
