@@ -127,6 +127,13 @@ const LARAVELFLY_SERVICES = [
      */
     'kernel' => false,
 
+    /**
+     * no Contextual Binding used for WORKER SERVICE
+     *
+     * A WORKER SERVICE is a singleton service booted on worker, available before any requests.
+     */
+    'no_contextual_binding_for_worker_services' => true,
+
 ];
 
 /**
