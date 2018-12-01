@@ -26,7 +26,7 @@ grep  -H -n -r -E "\bini_set\(|\bsetlocale\(|\bset_include_path\(|\bset_exceptio
 # vendor/mcamara/laravel-localization/src/Mcamara/LaravelLocalization/LaravelLocalization.php:184:            setlocale(LC_TIME, $regional . $suffix);
 # vendor/mcamara/laravel-localization/src/Mcamara/LaravelLocalization/LaravelLocalization.php:185:            setlocale(LC_MONETARY, $regional . $suffix);
 #so:
-# It's better not to use coroutine.
+# It's better not to use coroutine , or comment these tow lines.
 
 
 ```

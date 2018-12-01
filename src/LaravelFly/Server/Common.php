@@ -369,6 +369,8 @@ class Common
 
         $options['enable_coroutine'] = false;
 
+        $options['task_async'] = true;
+
         $swoole->set($options);
 
         $this->setListeners();
