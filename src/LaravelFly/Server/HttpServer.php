@@ -11,10 +11,10 @@ class HttpServer extends Common implements ServerInterface
 
         if ($this->getConfig('mode') === 'Backup') {
             $this->swoole->on('request', array($this, 'onBackupRequest'));
-        } elseif (LARAVELFLY_SERVICES['request']) {
-            $this->swoole->on('request', array($this, 'onRequestSingle'));
+//        } elseif (!LARAVELFLY_SERVICES['request']) {
+//            $this->swoole->on('request', array($this, 'onRequest'));
         } else {
-            $this->swoole->on('request', array($this, 'onRequest'));
+            $this->swoole->on('request', array($this, 'onRequestSingle'));
         }
     }
 

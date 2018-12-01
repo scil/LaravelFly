@@ -275,7 +275,7 @@ class Common
                 static::includeConditionFlyFiles( 'bus');
 
 
-            if ((LARAVELFLY_SERVICES['request']))
+            // if ((LARAVELFLY_SERVICES['request']))
                 static::includeConditionFlyFiles( 'request');
 
             foreach (static::mapFlyFiles as $f => $offical) {

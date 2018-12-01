@@ -43,8 +43,7 @@ class Kernel extends HttpKernel
      */
     protected function sendRequestThroughRouter($request)
     {
-        if (!(LARAVELFLY_SERVICES['request']))
-            $this->app->instance('request', $request);
+        // if (!(LARAVELFLY_SERVICES['request'])) $this->app->instance('request', $request);
 
         // moved to Application::restoreAfterRequest
         // Facade::clearResolvedInstance('request');

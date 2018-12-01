@@ -177,14 +177,14 @@ trait Task
 
             $this->_makeRequest();
 
-            if (LARAVELFLY_SERVICES['request']) {
+            // if (LARAVELFLY_SERVICES['request'])
                 /**
                  * otherwise error produced by something like this
                  *      app('request')->header('x-pjax', ''));
                  * because in __construct , LaravelFly\Map\IlluminateBase\Request give null to its props like 'header' 'query'.
                  */
                 $app->make('request')->nullPropToObject();
-            }
+
 
         }
 

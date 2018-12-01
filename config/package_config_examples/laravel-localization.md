@@ -93,10 +93,6 @@ mores steps based on Solution 1
 
 [x] NO ref to this service in controllers
 
-[x] if `LARAVELFLY_SERVICES['request'] == false` 
-  - [x] The service has a prop `request` needed to update.
-  - [x] has ref to other CLONE SERVICE 'url'
-
 [x] NO static props
 
 </div>
@@ -119,19 +115,6 @@ mores steps based on Solution 1
     
     
     'update_on_request' => [
-
-        LARAVELFLY_SERVICES['request'] ? null : [
-            'this' => 'laravellocalization',
-            'closure' => function () {
-            
-                $this->url = app('url');
-                
-                app()->rebinding('request', function () {
-                    $this->request = app('request');
-                });
-                
-            }
-        ],
     ],
 
     'singleton_route_middlewares' => [

@@ -8,8 +8,7 @@ trait Kernel
     {
         return function ($request) {
 
-            if (!(LARAVELFLY_SERVICES['request']))
-                $this->app->instance('request', $request);
+            // if (!(LARAVELFLY_SERVICES['request'])) $this->app->instance('request', $request);
 
             return $this->router->dispatch($request);
         };

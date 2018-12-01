@@ -126,7 +126,7 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
          $left \n", 'NOTE', true);
             }
 
-            LARAVELFLY_SERVICES['request'] || $cloneServices[] = 'url(UrlGenerator)';
+            // LARAVELFLY_SERVICES['request'] || $cloneServices[] = 'url(UrlGenerator)';
             LARAVELFLY_SERVICES['routes'] || $cloneServices[] = 'routes';
             LARAVELFLY_SERVICES['hash'] || $cloneServices[] = 'drivers in app("hash")';
 

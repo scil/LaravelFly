@@ -120,8 +120,7 @@ class Kernel extends HttpKernel
 
     protected function sendRequestThroughRouter($request)
     {
-        if (!(LARAVELFLY_SERVICES['request']))
-            $this->app->instance('request', $request);
+        // if (!(LARAVELFLY_SERVICES['request'])) $this->app->instance('request', $request);
 
         // moved to \LaravelFly\Map\Bootstrap\CleanOnWorker. After that, no need to clear in each request.
         // Facade::clearResolvedInstance('request');

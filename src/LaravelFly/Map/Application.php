@@ -183,11 +183,8 @@ class Application extends \Illuminate\Foundation\Application
 
         $this->make('events')->initForRequestCorontine($cid);
 
-        if(!LARAVELFLY_SERVICES['request']){
-
-            // make an new url object which is independent from origin url object
-            $this->instance('url', clone $this->make('url'));
-        }
+        // make an new url object which is independent from origin url object
+        // if(!LARAVELFLY_SERVICES['request']) $this->instance('url', clone $this->make('url'));
 
         $this->make('router')->initForRequestCorontine($cid);
 

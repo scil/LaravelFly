@@ -147,7 +147,7 @@ return [
         // this is not in config('app.providers') but registered in Application:;registerBaseServiceProviders
         Illuminate\Routing\RoutingServiceProvider::class => [
             'router' => true,
-            'url' => LARAVELFLY_SERVICES['request'] ? true : 'clone',
+            'url' => true,
             // todo
             'redirect' => false,
         ],

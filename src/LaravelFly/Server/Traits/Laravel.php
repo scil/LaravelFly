@@ -70,12 +70,12 @@ Trait Laravel
     protected function _makeRequest()
     {
 
-        if (LARAVELFLY_SERVICES['request']) {
+        // if (LARAVELFLY_SERVICES['request']) {
 
             $this->request = new \LaravelFly\Map\IlluminateBase\Request();
             $this->app->instance('request', $this->request);
             return;
-        }
+        // }
 
         /**
          * instance a fake request then bootstrap
