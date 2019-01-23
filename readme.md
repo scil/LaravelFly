@@ -1,6 +1,10 @@
+Would you like php 7.4 Preloading? Would you like php coroutine? Today you can use them  because of Swoole.
+
 LaravelFly is a safe solution to speeds up new or old Laravel 5.5+ projects, with preloading and coroutine, while without data pollution or memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
 
-Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh)
+Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh).
+
+If you'd like Python, [Vibora](https://github.com/vibora-io/vibora/) framework is a good choice.
 
 ## A simple ab test 
 
@@ -17,7 +21,6 @@ Requests per second   | 23    | 81.5
 <details>
 <summary>Test Env</summary>
 <div>
-
 
 
 * env:   
@@ -82,7 +85,7 @@ To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
 
 ## Features and Behaviors
 
-- Same codes can run on PHP-FPM or LaravelFly
+- Same codes can run on PHP-FPM or LaravelFly. LaravelFly can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run the same laravel project. The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm.conf) allow you use LaravelFlyServer as the primary server, and the phpfpm as a backup server which will be passed requests when the LaravelFlyServer is unavailable. Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects. Apache? There is a example [Cooperate with Apache](https://github.com/hhxsv5/laravel-s#cooperate-with-apache) from laravel-s.
 
 - Moderate strategy: by default, each Third Party service provider is registered on server worker process (before the first request arrived at server) , booted in request.
 
@@ -92,11 +95,13 @@ To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
   
 - Extra speed improvements such as connection pool, middlewares cache, view path cache.
 
-- Check server info at /laravel-fly/info. It's better to view json response in Firefox, instead of Chrome or IE. (This feture is under dev and more infomations will be available.)
+- Check server info at /laravel-fly/info. (This feture is under dev and more infomations will be available.)
 
-- No support for static files, so use it with other servers like nginx. [conf examples](https://github.com/scil/LaravelFly/#laravelfly-usability)
+- No support for static files any more, so use it with other servers. Conf examples: [nginx](https://github.com/scil/LaravelFly/#laravelfly-usability) or [Apache](https://github.com/hhxsv5/laravel-s#cooperate-with-apache)
 
-- [swoole-job](https://github.com/scil/LaravelFly/wiki/Configuration#run-jobs-or-listeners-in-swoole-tasks),A job or event listener can be delivered into a swoole task process and executed at once `artisan queue:work` needless any more.
+- [swoole-job](https://github.com/scil/LaravelFly/wiki/Configuration#run-jobs-or-listeners-in-swoole-tasks),A Laravel job or event listener can be delivered into a swoole task process and executed at once `artisan queue:work` needless any more.
+
+- `exit()` or `die()` in an route action would output content to console or swoole log, and not make server die or reload. If you would like to change that behavior, fork LaravalFly and catch `\Swoole\ExitException` in  `LaravelFly\Map\Kernel::handle`.
 
 - functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), plus Laravel services can be used in `fly()` and `fly2()` without closure.  The `fly2()` has the limited ability to change services in current request, e.g. registering a new event handler for current request. `fly2()` is not suggested. 
 
@@ -146,17 +151,6 @@ Route::get('/fly', function () {
 });
 ```
 
-- `exit()` or `die()` in an route action would output content to console or swoole log, and not make server die or reload. If you would like to change that behavior, fork LaravalFly and catch `\Swoole\ExitException` in  `LaravelFly\Map\Kernel::handle`.
-
-## LaravelFly Usability 
-
-It can be installed on your existing projects without affecting nginx/apache server, that's to say, you can run LaravelFly server and nginx/apache server simultaneously to run the same laravel project.
-
-The nginx conf [swoole_fallback_to_phpfpm.conf](config/swoole_fallback_to_phpfpm.conf) allow you use LaravelFlyServer as the primary server, and the phpfpm as a backup server which will be passed requests when the LaravelFlyServer is unavailable. .
-
-Another nginx conf [use_swoole_or_fpm_depending_on_clients](config/use_swoole_or_fpm_depending_on_clients.conf) allows us use query string `?useserver=<swoole|fpm|...` to select the server between swoole or fpm. That's wonderful for test, such as to use eval(tinker()) as a online debugger for your fpm-supported projects.
-
-Apache? There is a example [Cooperate with Apache](https://github.com/hhxsv5/laravel-s#cooperate-with-apache) from laravel-s.
 
 ## Similar projects that mix swoole and laravel
 
