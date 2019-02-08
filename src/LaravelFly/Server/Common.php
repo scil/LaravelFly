@@ -33,7 +33,7 @@ class Common
      */
     protected $options;
 
-    static $flyBaseDir ;
+    static $flyBaseDir;
 
 
     const mapFlyFiles = [
@@ -255,7 +255,7 @@ class Common
     {
         if (LARAVELFLY_MODE === 'FpmLike') return;
 
-        $flyBaseDir  = static::$flyBaseDir;
+        $flyBaseDir = static::$flyBaseDir;
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
@@ -272,11 +272,11 @@ class Common
             }
 
             if (empty(LARAVELFLY_SERVICES['bus']))
-                static::includeConditionFlyFiles( 'bus');
+                static::includeConditionFlyFiles('bus');
 
 
             // if ((LARAVELFLY_SERVICES['request']))
-                static::includeConditionFlyFiles( 'request');
+            static::includeConditionFlyFiles('request');
 
             foreach (static::mapFlyFiles as $f => $offical) {
                 require $flyBaseDir . $f;
@@ -303,7 +303,7 @@ class Common
 
     }
 
-    protected static function includeConditionFlyFiles( $key)
+    protected static function includeConditionFlyFiles($key)
     {
 
         foreach (static::$conditionFlyFiles[$key] as $f => $offical) {
@@ -369,7 +369,9 @@ class Common
 
         $options['enable_coroutine'] = false;
 
-        $options['task_async'] = true;
+        if (isset($options['task_worker_num']) && $options['task_worker_num'] > 0)
+            // required by `new \Swoole\Coroutine\Channel($size);` in LaravelFly/Map/Illuminate/Database/Pool.php
+            $options['task_enable_coroutine'] = true;
 
         $swoole->set($options);
 
@@ -461,7 +463,6 @@ class Common
     {
         return $path ? "{$this->root}/$path" : $this->root;
     }
-
 
 
 }
