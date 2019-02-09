@@ -27,7 +27,7 @@ class HttpServer extends Common implements ServerInterface
     public function onWorkerStart(\swoole_server $server, int $worker_id)
     {
         if ($server->taskworker) {
-            $this->onTaskWorkerStart($server,$worker_id);
+            $this->onTaskWorkerStart($server, $worker_id);
             return;
         }
 
@@ -53,100 +53,94 @@ class HttpServer extends Common implements ServerInterface
      */
     public function onBackupRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
-        go(function () use ($request, $response) {
 
-            /**
-             * @see \Symfony\Component\HttpFoundation\Request::createFromGlobals() use global vars, and
-             * this static method is alse used by {@link \Illuminate\Auth\SessionGuard }
-             */
-            $this->setGlobal($request);
+        /**
+         * @see \Symfony\Component\HttpFoundation\Request::createFromGlobals() use global vars, and
+         * this static method is alse used by {@link \Illuminate\Auth\SessionGuard }
+         */
+        $this->setGlobal($request);
 
-            /**
-             * @var \Illuminate\Http\Request
-             * @see \Illuminate\Http\Request::capture
-             */
-            $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
-
-
-            /**
-             * @var \Illuminate\Http\Response
-             * @see \Illuminate\Foundation\Http\Kernel::handle
-             */
-            $laravel_response = $this->kernel->handle($laravel_request);
+        /**
+         * @var \Illuminate\Http\Request
+         * @see \Illuminate\Http\Request::capture
+         */
+        $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
 
 
-            $this->swooleResponse($response, $laravel_response);
+        /**
+         * @var \Illuminate\Http\Response
+         * @see \Illuminate\Foundation\Http\Kernel::handle
+         */
+        $laravel_response = $this->kernel->handle($laravel_request);
 
 
-            $this->kernel->terminate($laravel_request, $laravel_response);
+        $this->swooleResponse($response, $laravel_response);
 
-            $this->app->restoreAfterRequest();
 
-        });
+        $this->kernel->terminate($laravel_request, $laravel_response);
+
+        $this->app->restoreAfterRequest();
+
     }
 
     public function onRequestSingle(\swoole_http_request $request, \swoole_http_response $response)
     {
-        go(function () use ($request, $response) {
 
-            //$t1 = microtime(true);
+        //$t1 = microtime(true);
 
-            $cid = \Co::getUid();
+        $cid = \Co::getUid();
 
-            $this->request->initForRequestCorontineWithSwoole($cid, $request);
+        $this->request->initForRequestCorontineWithSwoole($cid, $request);
 
-            $this->app->initForRequestCorontine($cid);
-
-
-            $laravel_response = $this->kernel->handle($this->request);
-
-            $this->swooleResponse($response, $laravel_response);
+        $this->app->initForRequestCorontine($cid);
 
 
-            $this->kernel->terminate($this->request, $laravel_response);
+        $laravel_response = $this->kernel->handle($this->request);
 
-            $this->request->unsetForRequestCorontine($cid);
+        $this->swooleResponse($response, $laravel_response);
 
-            $this->app->unsetForRequestCorontine($cid);
 
-            // echo microtime(true) - $t1, "\n";
-        });
+        $this->kernel->terminate($this->request, $laravel_response);
+
+        $this->request->unsetForRequestCorontine($cid);
+
+        $this->app->unsetForRequestCorontine($cid);
+
+        // echo microtime(true) - $t1, "\n";
 
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
-        go(function () use ($request, $response) {
 
-            // $t1 = microtime(true);
+        // $t1 = microtime(true);
 
 //        static $i = 0; $TARGET = 200;$i++;if ($i == $TARGET) memprof_enable();
 
-            $cid = \Co::getUid();
+        $cid = \Co::getUid();
 
-            $this->app->initForRequestCorontine($cid);
-
-
-            if (LARAVELFLY_COROUTINE)
-                $laravel_request = $this->createLaravelRequest($request);
-            else {
-                $this->setGlobal($request);
-                $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
-            }
-
-            $laravel_response = $this->kernel->handle($laravel_request);
-
-            $this->swooleResponse($response, $laravel_response);
-
-            $this->kernel->terminate($laravel_request, $laravel_response);
+        $this->app->initForRequestCorontine($cid);
 
 
-            $this->app->unsetForRequestCorontine($cid);
+        if (LARAVELFLY_COROUTINE)
+            $laravel_request = $this->createLaravelRequest($request);
+        else {
+            $this->setGlobal($request);
+            $laravel_request = \Illuminate\Http\Request::createFromBase(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
+        }
+
+        $laravel_response = $this->kernel->handle($laravel_request);
+
+        $this->swooleResponse($response, $laravel_response);
+
+        $this->kernel->terminate($laravel_request, $laravel_response);
+
+
+        $this->app->unsetForRequestCorontine($cid);
 
 //        if ($i == $TARGET) {$dump = memprof_dump_array();ob_start();print_r($dump);$d=ob_get_clean();file_put_contents("/vagrant/callgrind.$i.out", $d);}
 
-            // echo microtime(true) - $t1, "\n";
-        });
+        // echo microtime(true) - $t1, "\n";
     }
 
 

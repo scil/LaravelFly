@@ -32,9 +32,7 @@ class SwooleRedisConnector
          *
          */
         $client = new Redis($config);
-        go(function () use ($client, $config) {
-            $client->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
-        });
+        $client->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
         return $client;
     }
 

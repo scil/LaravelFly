@@ -3,7 +3,7 @@
  * GLOBAL functions and constances
  */
 
-const WORKER_COROUTINE_ID = -1;
+const WORKER_COROUTINE_ID = 1;
 
 // todo
 /**

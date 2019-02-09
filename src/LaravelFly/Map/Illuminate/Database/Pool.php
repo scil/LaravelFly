@@ -25,7 +25,7 @@ class Pool
     {
         $this->name = $name;
 
-        assert(method_exists($db,'makeOneConn'));
+        assert(method_exists($db, 'makeOneConn'));
 
         /**
          * @var DatabaseManager| RedisManager $db
@@ -52,13 +52,11 @@ class Pool
 
     public function put($conn)
     {
-        // pool->push must be in a coroutine
-        go(function () use ($conn) {
-            $this->pool->push($conn);
-        });
+        $this->pool->push($conn);
     }
 
-    public function len(){
+    public function len()
+    {
         return $this->pool->length();
     }
 }
