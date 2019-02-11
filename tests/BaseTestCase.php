@@ -4,8 +4,16 @@
 /**
  * One
  **first:
- **   cd laravel_project_root
- **   $xml = vendor/scil/laravel-fly/phpunit.xml.dist
+ *   composer create-project --prefer-dist laravel/laravel blog_for_test
+ *   cd blog_for_test
+ *   composer require scil/laravel-fly
+ *   add to composer.json
+ *         "autoload-dev": { "psr-4": { "LaravelFly\\Tests\\": "vendor/scil/laravel-fly/tests/" }  }
+ *   edit phpunit.xml
+ *          LARAVEL_PROJECT_ROOT
+ *   xml=vendor/scil/laravel-fly/phpunit.xml.dist
+ *
+ * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit only_fly
  *
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_Process
@@ -179,7 +187,7 @@ abstract class BaseTestCase extends TestCase
 
         $diffOPtions = '--ignore-all-space --ignore-blank-lines';
 
-        $same = true;
+        $difNum = 0;
 
         foreach ($map as $back => $offcial) {
             $back = realpath(static::$backOfficalDir . $back);
@@ -195,13 +203,13 @@ abstract class BaseTestCase extends TestCase
 //            echo "\n\n[CMD] diff $cmdArguments\n\n";
 //            print_r($a);
             if ($r !== 0) {
-                $same = false;
+                $difNum ++;
                 echo "\n\n[CMD] diff $cmdArguments\n\n";
                 system("diff  $cmdArguments");
             }
         }
 
-        self::assertEquals(true, $same);
+        self::assertEquals(0, $difNum);
 
     }
 

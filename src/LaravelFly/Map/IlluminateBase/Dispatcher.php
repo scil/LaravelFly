@@ -175,7 +175,7 @@ class Dispatcher extends \Illuminate\Events\Dispatcher
 
     protected function createClassCallable($listener)
     {
-        list($class, $method) = $this->parseClassCallable($listener);
+        [$class, $method] = $this->parseClassCallable($listener);
 
 
         if (in_array($class, static::$swooleListeners)) {

@@ -26,16 +26,16 @@ class CookieJar extends CookieJarSame
 
     protected function getPathAndDomain($path, $domain, $secure = null, $sameSite = null)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $dict = static::$corDict[\Swoole\Coroutine::getuid()];
 
-        return [$path ?: static::$corDict[$cid]['path'], $domain ?: static::$corDict[$cid]['domain'], is_bool($secure) ? $secure : static::$corDict[$cid]['secure'], $sameSite ?: static::$corDict[$cid]['sameSite']];
+        return [$path ?: $dict['path'], $domain ?: $dict['domain'], is_bool($secure) ? $secure : $dict['secure'], $sameSite ?: $dict['sameSite']];
     }
 
     public function setDefaultPathAndDomain($path, $domain, $secure = false, $sameSite = null)
     {
-        $cid=\Swoole\Coroutine::getuid();
+        $dict = &static::$corDict[\Swoole\Coroutine::getuid()];
 
-        list(static::$corDict[$cid]['path'], static::$corDict[$cid]['domain'], static::$corDict[$cid]['secure'], static::$corDict[$cid]['sameSite']) = [$path, $domain, $secure, $sameSite];
+        [$dict['path'], $dict['domain'], $dict['secure'], $dict['sameSite'] ] = [$path, $domain, $secure, $sameSite];
 
         return $this;
     }

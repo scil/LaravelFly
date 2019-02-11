@@ -5,11 +5,12 @@
  *      all connections should implement EnsureConnected
  * 2. swoole-redis
  */
+
 namespace LaravelFly\Map\Illuminate\Redis;
 
 use Illuminate\Support\Arr;
 
-class RedisServiceProvider extends  \Illuminate\Redis\RedisServiceProvider
+class RedisServiceProvider extends \Illuminate\Redis\RedisServiceProvider
 {
     public function register()
     {
@@ -17,7 +18,7 @@ class RedisServiceProvider extends  \Illuminate\Redis\RedisServiceProvider
             $config = $app->make('config')->get('database.redis');
 
             // hack
-            return new RedisManager(Arr::pull($config, 'client', 'predis'), $config);
+            return new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
         });
 
         $this->app->bind('redis.connection', function ($app) {

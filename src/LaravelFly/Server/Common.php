@@ -105,7 +105,7 @@ class Common
             'Foundation/Support/Providers/EventServiceProvider.php' => '/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/EventServiceProvider.php'
         ],
         'kernel' => [
-            // '../Kernel.php' =>
+            // this map is for src/fly/Kernel.php which extends official Http/Kernel.php
             // match the dir structure of tests/offcial_files
             'Http/Kernel.php' =>
                 '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php'

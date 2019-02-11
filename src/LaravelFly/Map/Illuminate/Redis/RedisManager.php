@@ -20,9 +20,9 @@ class RedisManager extends \Illuminate\Redis\RedisManager
     protected $connections = [];
 
 
-    public function __construct($driver, array $config)
+    public function __construct($app,$driver, array $config)
     {
-        parent::__construct($driver, $config);
+        parent::__construct($app,$driver, $config);
 
         $this->initConnections(app('config')['database.redis']);
 

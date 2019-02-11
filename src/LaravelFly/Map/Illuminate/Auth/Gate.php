@@ -70,7 +70,7 @@ class Gate extends \Illuminate\Auth\Access\Gate
 
         if (is_callable($callback)) {
             static::$corDict[$cid]['abilities'][$ability] = $callback;
-        } elseif (is_string($callback) && Str::contains($callback, '@')) {
+        } elseif (is_string($callback)) {
             static::$corDict[$cid]['abilities'][$ability] = $this->buildAbilityCallback($ability, $callback);
         } else {
             throw new InvalidArgumentException("Callback must be a callable or a 'Class@method' string.");
@@ -122,7 +122,7 @@ class Gate extends \Illuminate\Auth\Access\Gate
     /**
      * Resolve and call the appropriate authorization callback.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
      * @param  string $ability
      * @param  array $arguments
      * @return bool
@@ -137,7 +137,7 @@ class Gate extends \Illuminate\Auth\Access\Gate
     /**
      * Call all of the before callbacks and return if a result is given.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
      * @param  string $ability
      * @param  array $arguments
      * @return bool|null
@@ -147,6 +147,9 @@ class Gate extends \Illuminate\Auth\Access\Gate
         $arguments = array_merge([$user, $ability], [$arguments]);
 
         foreach (static::$corDict[\Swoole\Coroutine::getuid()]['beforeCallbacks'] as $before) {
+            if (! $this->canBeCalledWithUser($user, $before)) {
+                continue;
+            }
             if (!is_null($result = $before(...$arguments))) {
                 return $result;
             }
@@ -160,21 +163,28 @@ class Gate extends \Illuminate\Auth\Access\Gate
      * @param  string $ability
      * @param  array $arguments
      * @param  bool $result
-     * @return void
+     * @return bool|null
      */
     protected function callAfterCallbacks($user, $ability, array $arguments, $result)
     {
-        $arguments = array_merge([$user, $ability, $result], [$arguments]);
-
         foreach (static::$corDict[\Swoole\Coroutine::getuid()]['afterCallbacks'] as $after) {
-            $after(...$arguments);
+            if (! $this->canBeCalledWithUser($user, $after)) {
+                continue;
+            }
+
+            $afterResult = $after($user, $ability, $result, $arguments);
+
+            $result = $result ?? $afterResult;
         }
+
+        return $result;
+
     }
 
     /**
      * Resolve the callable for the given ability and arguments.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
      * @param  string $ability
      * @param  array $arguments
      * @return callable
@@ -187,14 +197,15 @@ class Gate extends \Illuminate\Auth\Access\Gate
             return $callback;
         }
 
-        $cid = \Swoole\Coroutine::getuid();
+        $b = static::$corDict[\Swoole\Coroutine::getuid()]['abilities'];
 
-        if (isset(static::$corDict[$cid]['abilities'][$ability])) {
-            return static::$corDict[$cid]['abilities'][$ability];
+        if (isset($b[$ability]) &&
+	        $this->canBeCalledWithUser($user, $b[$ability]) ) {
+            return $b[$ability];
         }
 
         return function () {
-            return false;
+            return null;
         };
     }
 
