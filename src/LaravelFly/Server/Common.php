@@ -161,13 +161,17 @@ class Common
 
         $this->console();
 
-        $this->root = dirname(__DIR__, 6);
+        // drop __DIR__　to avoid the situation that laravel-fly is at a symlink dir
+        // $this->root = dirname(__DIR__, 6);
+        $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
+        $this->root = dirname($reflection->getFileName(), 3);
 
-        if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php'))) {
+        if (!(is_dir($this->root) && is_file($this->root . '/bootstrap/app.php')))
             die("This doc root is not for a Laravel app: {$this->root} \n");
-        }
 
-        static::$flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
+
+        // static::$flyBaseDir = dirname(__DIR__, 4) . '/laravel-fly-files/src/';
+        static::$flyBaseDir = $this->root. '/vendor/scil/laravel-fly-files/src/';
 
     }
 

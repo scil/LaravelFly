@@ -29,10 +29,7 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Cookie/Factory.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Cookie/QueueingFactory.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Encryption/Encrypter.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Queue/QueueableEntity.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Routing/ResponseFactory.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Routing/UrlGenerator.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Routing/UrlRoutable.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Contracts/Validation/ValidatesWhenResolved.php',
 
 
@@ -63,7 +60,6 @@ return [
 
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Auth/ResetsPasswords.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Request.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Http/Middleware/FrameGuard.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/CheckForMaintenanceMode.php',
@@ -116,7 +112,6 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Session/SessionServiceProvider.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Routing/RouteDependencyResolverTrait.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Routing/Route.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Routing/RouteCollection.php',
     $basePath . '/vendor/symfony/routing/CompiledRoute.php',
@@ -124,7 +119,6 @@ return [
     $basePath . '/vendor/symfony/routing/RouteCompiler.php',
     $basePath . '/vendor/symfony/routing/Route.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Bus/BusServiceProvider.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php',
@@ -134,7 +128,6 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Routing/Matching/SchemeValidator.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Routing/Matching/UriValidator.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Events/Dispatcher.php',
-    $basePath . '/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php',
 
 //Fatal error: Cannot declare
@@ -151,7 +144,6 @@ return [
     $basePath . '/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Encryption/Encrypter.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Support/Facades/Log.php',
-    $basePath . '/vendor/psr/log/Psr/Log/LoggerInterface.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/Log/LogServiceProvider.php',
     $basePath . '/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php',
 

@@ -48,7 +48,8 @@ class Kernel extends HttpKernel
             $response = $this->sendRequestThroughRouter($request);
 
 //        } catch (\Swoole\ExitException $e) {
-//            var_dump($e);
+//            echo "\n[FLY EXIT] exit() or die() executes. \nExit status is:\n{$e->getStatus()}\nTrace string is:\n";
+//            echo $e->getTraceAsString();
         } catch (Exception $e) {
             $this->reportException($e);
 

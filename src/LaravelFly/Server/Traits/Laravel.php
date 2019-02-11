@@ -116,13 +116,18 @@ Trait Laravel
         try {
             $this->kernel->bootstrap();
         } catch (\Swoole\ExitException $e) {
-            var_dump($e->getTrace()[0]);
-            echo "\n[FLY EXIT] exit() or die() executes onWorker, server will die.\n";
+            echo <<<ABC
+[FLY EXIT] exit() or die() executes onWorker, server will die.
+Exit status is:
+  {$e->getStatus()}
+Trace string is:
+{$e->getTraceAsString()}
+ABC;
             $server && $server->shutdown();
         } catch (\Throwable $e) {
-            echo $e->getTraceAsString();
             $msg = $e->getMessage();
             echo "\n[LARAVEL BOOTSTRAP ERROR] $msg\n";
+            echo $e->getTraceAsString();
             $server && $server->shutdown();
         }
 

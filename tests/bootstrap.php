@@ -15,16 +15,22 @@ if (isset($_ENV['LARAVEL_PROJECT_ROOT'])) {
     $loader = __DIR__ . '/../../../../vendor/autoload.php';
 }
 
-define('FLY_ROOT', dirname(__DIR__,1));
+# drop __DIR__　to avoid the situation that laravel-fly is at a symlink dir
+# define('FLY_ROOT', dirname(__DIR__,1));
+define('FLY_ROOT', LARAVEL_APP_ROOT.'/vendor/scil/laravel-fly');
 
-define('DEFAULT_SERVER_CONFIG_FILE',  dirname(__DIR__) . '/config/laravelfly-server-config.example.php');
+define('DEFAULT_SERVER_CONFIG_FILE',  FLY_ROOT. '/config/laravelfly-server-config.example.php');
 
+assert(is_dir(LARAVEL_APP_ROOT));
 echo "laravel project is at " . LARAVEL_APP_ROOT . "\n";
-echo "default SERVER_CONFIG_FILE " . DEFAULT_SERVER_CONFIG_FILE. "\n";
-echo "loader is $loader\n\n";
 
+assert(is_file(DEFAULT_SERVER_CONFIG_FILE));
+echo "default SERVER_CONFIG_FILE " . DEFAULT_SERVER_CONFIG_FILE. "\n";
+
+assert(is_file($loader));
+echo "loader is from $loader\n\n";
 $loader = require $loader;
-$loader->addPsr4("Illuminate\\Tests\\", __DIR__ . "/../vendor/laravel/framework/tests/");
+$loader->addPsr4("Illuminate\\Tests\\", LARAVEL_APP_ROOT . "/vendor/laravel/framework/tests/");
 
 
 require_once __DIR__ . "/swoole_src_tests/include/swoole.inc";

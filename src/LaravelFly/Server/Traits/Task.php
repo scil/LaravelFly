@@ -198,8 +198,9 @@ trait Task
 
         } catch (\Swoole\ExitException $e) {
 
-            var_dump($e->getTrace()[0]);
-            echo "\n[FLY EXIT IN TASK] exit() or die() executes.\n";
+            echo "\n[FLY EXIT] exit() or die() executes onWorker, server will die. \nExit status is:\n{$e->getStatus()}\nTrace string is:\n";
+            // var_dump($e->getTrace()[0]);
+            echo $e->getTraceAsString();
             // $server && $server->shutdown();
 
         } catch (\Throwable $e) {

@@ -19,9 +19,20 @@ trait ConnectionsTrait
 
         $defaultPoolsize = \LaravelFly\Fly::getServer()->getConfig('poolsize');
 
+        $server = \LaravelFly\Fly::getServer();
+
         foreach ($configs as $name => $config) {
             if (is_array($config))
-                $this->pools[$name] = new Pool($name, $this, $config['poolsize'] ?? $defaultPoolsize);
+            {
+                try{
+                    $this->pools[$name] = new Pool($name, $this, $config['poolsize'] ?? $defaultPoolsize);
+                }catch (\Exception $e){
+                    $server->echoOnce(
+                        "something wrong when making connection pool for connection $name, \nplease check config/databas.php",
+                        'WARN', true
+                    );
+                }
+            }
         }
 
         $event = Container::getInstance()->make('events');
