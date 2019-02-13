@@ -241,7 +241,7 @@ class Common
             $kernelClass = \LaravelFly\Kernel::class;
             $this->echo(
                 "LaravelFly default kernel used: $kernelClass, 
-      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md",
+      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/wiki/Configuration#two-optional-steps-to-allow-you-use-same-code-for-laravelfly-and-php-fpm",
                 'WARN', true
             );
         }
@@ -260,6 +260,8 @@ class Common
         if (LARAVELFLY_MODE === 'FpmLike') return;
 
         $flyBaseDir = static::$flyBaseDir;
+
+        assert(is_dir($flyBaseDir));
 
         // all fly files are for Mode Map, except Config/BackupRepository.php for Mode Backup
         include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';

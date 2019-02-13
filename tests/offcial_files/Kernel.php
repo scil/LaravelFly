@@ -48,7 +48,8 @@ class Kernel extends HttpKernel
             $response = $this->sendRequestThroughRouter($request);
 
 //        } catch (\Swoole\ExitException $e) {
-//            var_dump($e);
+//            echo "\n[FLY EXIT] exit() or die() executes. \nExit status is:\n{$e->getStatus()}\nTrace string is:\n";
+//            echo $e->getTraceAsString();
         } catch (Exception $e) {
             $this->reportException($e);
 
@@ -72,6 +73,7 @@ class Kernel extends HttpKernel
         // if (!(LARAVELFLY_SERVICES['request'])) $this->app->instance('request', $request);
 
         // moved to \LaravelFly\Map\Bootstrap\CleanOnWorker. After that, no need to clear in each request.
+        // and most of all, now with LARAVELFLY_SERVICES['request'], not more need to clear
         // Facade::clearResolvedInstance('request');
 
         // replace $this->bootstrap();

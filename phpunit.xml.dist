@@ -25,7 +25,7 @@
             <file>./tests/Map/Unit/Illuminate/Translation/TranslatorTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
-            <!--<file>./tests/Map/Unit/Server/CommonTest.php</file>-->
+            <file>./tests/Map/Unit/Server/CommonTest.php</file>
             <file>./tests/Map/Unit/Server/HttpServerTest.php</file>
             <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
             <file>./tests/Map/Unit/FlyTest.php</file>
@@ -61,6 +61,7 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+        <env name="LOG_CHANNEL" value="single"/>
 
         <env name="LARAVEL_PROJECT_ROOT" value="/vagrant/www/zc/vendor/scil/blog_for_test"/>
 

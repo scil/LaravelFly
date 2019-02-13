@@ -31,7 +31,7 @@ if (!function_exists('tinker')) {
 
 
 if (!function_exists('fly')) {
-    if (LARAVELFLY_COROUTINE) {
+    if (defined('LARAVELFLY_COROUTINE') && LARAVELFLY_COROUTINE) {
 
         function fly($callback, $write = false)
         {
@@ -48,7 +48,7 @@ if (!function_exists('fly')) {
 
 }
 if (!function_exists('fly2')) {
-    if (LARAVELFLY_COROUTINE) {
+    if (defined('LARAVELFLY_COROUTINE') && LARAVELFLY_COROUTINE) {
         function fly2($callback)
         {
             \fly($callback, true);

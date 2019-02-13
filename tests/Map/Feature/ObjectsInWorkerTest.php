@@ -75,18 +75,26 @@ class ObjectsInWorkerTest extends Base
             'singletonMiddlewares',
             'verbs'],
         'files' => ['macros'],
-        'view' => ['parentPlaceholder'],
+        'view' => [
+            'macros',
+            // 'parentPlaceholder'
+        ],
         'url' => ['macros'],
         'translator' => ['macros'],
         'cache.store' => ['macros'],
         'blade.compiler' => ['mapFly'],
 
+        // LaravelFly\Map\IlluminateBase\Request
+        //
+        // for !LARAVELFLY_SERVICES['request'],
         // don't worry about 'request', every request has it's own 'request'.
         // The 'request' object in worker is a fake request.
         // see: \LaravelFly\Server\HttpServer::onWorkerStart
+        //
         'request' => [
             'formats',
             'httpMethodParameterOverride',
+            'instance',
             'macros',
             'requestFactory',
             'trustedHostPatterns',
@@ -94,8 +102,15 @@ class ObjectsInWorkerTest extends Base
             'trustedProxies',
         ],
 
+        // LaravelFly\Map\IlluminateBase\Dispatcher
         'events' => [
-            'listenersStalbe', 'wildStable'
+            'listenersStalbe',
+            'swooleListeners',
+            'swooleServer',
+            'wildStable'
+        ],
+        'cookie' => [
+            'macros',
         ],
     ];
 

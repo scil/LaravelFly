@@ -61,6 +61,7 @@ class PropsTest extends BaseTestCase
 
 
         'basePath',
+        'appPath',
         'databasePath',
         'storagePath',
         'environmentPath',
@@ -107,6 +108,7 @@ class PropsTest extends BaseTestCase
         'rootNamespace',
         'sessionResolver', 'keyResolver',
         'formatHostUsing', 'formatPathUsing',
+        'assetRoot',
 
         'macros',
 

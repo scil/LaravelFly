@@ -87,6 +87,7 @@ class SetBackupForBaseServices
                 // 'rootNamespace',
                 // 'sessionResolver','keyResolver',
                 // 'formatHostUsing','formatPathUsing',
+                // 'assetRoot',
 
                 /** not necessary to backup,
                  *

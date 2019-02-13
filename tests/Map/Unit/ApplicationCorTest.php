@@ -7,10 +7,10 @@ use LaravelFly\Tests\BaseTestCase;
 class ApplicationCorTest extends BaseTestCase
 {
 
-    private function testGo()
+    function testGo()
     {
 
-        $this->requestAndTestAfterRoute(
+        $this->assertResponsePassingRoutes(
             [
                 [
                     'get',
@@ -69,18 +69,16 @@ class ApplicationCorTest extends BaseTestCase
     }
 
 
-
-    function testFly()
+    function testFlyFunction()
     {
 
-        $this->requestAndTestAfterRoute(
+        $this->assertResponsePassingRoutes(
             [
                 [
                     'get',
                     static::testBaseUrl . 'test1',
                     function () {
                         $a = '';
-
 
                         fly(function () use (&$a) {
                             \Log::info(\Request::path());
@@ -104,14 +102,13 @@ class ApplicationCorTest extends BaseTestCase
         );
 
         $log = $this->getLastLog();
-
         self::assertEquals('laravelfly-test/test1', $log);
     }
 
     function testFlyComplicated()
     {
 
-        $this->requestAndTestAfterRoute(
+        $this->assertResponsePassingRoutes(
             [
                 [
                     'get',

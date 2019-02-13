@@ -226,6 +226,8 @@ abstract class BaseTestCase extends TestCase
 
 
     /**
+     * run $funcInNewProcess in a child process and return its result as string
+     *
      * @param $funcInNewProcess
      * @param int $waittime
      * @return string|int|boolean    it will json_encode array
@@ -299,6 +301,15 @@ abstract class BaseTestCase extends TestCase
     }
 
 
+    /**
+     * make(not start jet) a server in child process, request some urls in parent process and return responses
+     * @param $constances
+     * @param $options
+     * @param $urls
+     * @param null $serverFunc
+     * @param int $wait
+     * @return string
+     */
     static function request($constances, $options, $urls, $serverFunc = null, $wait = 0): string
     {
         return self::_process(function () use ($constances, $options, $serverFunc) {
@@ -326,7 +337,14 @@ abstract class BaseTestCase extends TestCase
 
     const testCurlBaseUrl = '127.0.0.1:' . (self::testPort) . self::testBaseUrl;
 
-    function requestAndTestAfterOnWorker($callback, $urls, $expect, $wait = 3)
+    /**
+     * based on static::request, not only making a server, but also starting it
+     * @param $workerreadyCallback
+     * @param $urls
+     * @param $expect
+     * @param int $wait
+     */
+    function assertResponse($workerreadyCallback, $urls, $expect, $wait = 3)
     {
 
         $constances = [
@@ -342,10 +360,10 @@ abstract class BaseTestCase extends TestCase
 
         $r = self::request($constances, $options, $urls,
 
-            function (HttpServer $server) use ($callback) {
+            function (HttpServer $server) use ($workerreadyCallback) {
 
-                $server->getDispatcher()->addListener('worker.ready', function () use ($callback) {
-                    $callback();
+                $server->getDispatcher()->addListener('worker.ready', function () use ($workerreadyCallback) {
+                    $workerreadyCallback();
                 });
 
                 $server->start();
@@ -355,7 +373,15 @@ abstract class BaseTestCase extends TestCase
         self::assertEquals(implode("\n", $expect), $r);
     }
 
-    function requestAndTestAfterRoute(array $routes, array $urls, array $expect, $funcOnWork = null, $wait = 3)
+    /**
+     * register routes when event 'worker.ready'
+     * @param array $routes
+     * @param array $urls
+     * @param array $expect
+     * @param null $funcOnWork
+     * @param int $wait
+     */
+    function assertResponsePassingRoutes(array $routes, array $urls, array $expect, $funcOnWork = null, $wait = 3)
     {
         assert(count($urls) === count($expect));
 
@@ -373,12 +399,13 @@ abstract class BaseTestCase extends TestCase
             if (is_callable($funcOnWork)) $funcOnWork();
         };
 
-        $this->requestAndTestAfterOnWorker($callback, $urls, $expect, $wait);
+        $this->assertResponse($callback, $urls, $expect, $wait);
 
     }
 
     function getLastLog()
     {
+        $this->assertEquals('single',env('LOG_CHANNEL'),'please ensure LOG_CHANNEL to single');
 
         $log = file(LARAVEL_APP_ROOT . '/storage/logs/laravel.log');
         $line = $log[count($log) - 2];

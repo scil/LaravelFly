@@ -25,7 +25,7 @@ class FlyTest extends BaseTestCase
             return $r;
         });
 
-        self::assertEquals([false, true, -1, true], json_decode($r));
+        self::assertEquals([false, true, 1, true], json_decode($r));
 
     }
 
@@ -45,7 +45,7 @@ class FlyTest extends BaseTestCase
             return $r;
         });
 
-        self::assertEquals([false, true, -1, true], json_decode($r));
+        self::assertEquals([false, true, 1, true], json_decode($r));
 
     }
 

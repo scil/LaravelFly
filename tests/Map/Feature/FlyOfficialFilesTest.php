@@ -13,7 +13,8 @@ class FlyOfficialFilesTest extends Base
 
     function testVars()
     {
-        self::assertDirectoryExists(static::$laravelVersionAppRoot, 'please set proper ENV var LARAVEL_VERSION_PROJECT_ROOT in phpunit.xml');
+        if (!static::$laravelAppRoot)
+            self::assertDirectoryExists(static::$laravelVersionAppRoot, 'please set proper ENV var LARAVEL_VERSION_PROJECT_ROOT in phpunit.xml');
     }
 
     function testFlyFiles()
@@ -61,7 +62,10 @@ class FlyOfficialFilesTest extends Base
     }
 
 
-    function testCompareFilesContentLocal()
+    /**
+     * compare files of LaravelFly,not of Laravel
+     */
+    function testCompareFilesContentLaravelFly()
     {
 
         $origin = [

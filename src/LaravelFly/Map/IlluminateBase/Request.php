@@ -3,6 +3,7 @@
 namespace LaravelFly\Map\IlluminateBase;
 
 
+use Illuminate\Container\Container;
 use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -60,6 +61,16 @@ class Request extends \Illuminate\Http\Request
         static::$instance = $this;
 
         $this->initOnWorker(false);
+
+        // support fly(), no support fly2()
+        $event = Container::getInstance()->make('events');
+        $event->listen('usercor.init', function ($parentId, $childId) {
+            $this->initUserCoroutine($parentId, $childId);
+        });
+        $event->listen('usercor.unset', function ($childId) {
+            $this->unsetUserCoroutine($childId);
+
+        });
 
         // moved to LaravelFly\Server\HttpServer::start
         // static::enableHttpMethodParameterOverride();

@@ -137,7 +137,7 @@ class CommonTest extends BaseTestCase
 
         $server->config(['pre_include' => false]);
         //self::assertEquals($flyKernel, $k->getValue($server));
-        self::assertEquals('App\Http\Kernel', $k->getValue($server));
+        self::assertTrue(in_array( $k->getValue($server),[ 'App\Http\Kernel',$flyKernel]));
 
     }
 

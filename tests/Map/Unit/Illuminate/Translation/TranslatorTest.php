@@ -13,7 +13,7 @@ class TranslatorTest extends BaseTestCase
     {
         $default_locale = 'zh-cn';
 
-        $this->requestAndTestAfterRoute(
+        $this->assertResponsePassingRoutes(
             [
                 [
                     'get',

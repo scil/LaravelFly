@@ -11,7 +11,7 @@ class HttpServerTest extends BaseTestCase
 
     function testonOnupRequestGet()
     {
-        $this->requestAndTestAfterRoute(
+        $this->assertResponsePassingRoutes(
             [
                 [
                     'get',
@@ -42,7 +42,7 @@ class HttpServerTest extends BaseTestCase
 
     function testonOnRequestPost()
     {
-        $this->requestAndTestAfterRoute(
+        $this->assertResponsePassingRoutes(
             [
                 [
                     'post',
@@ -84,7 +84,7 @@ class HttpServerTest extends BaseTestCase
 
     private function testHeader()
     {
-        $this->requestAndTestAfterRoute(
+        $this->assertResponsePassingRoutes(
             [
                 [
                     'get',

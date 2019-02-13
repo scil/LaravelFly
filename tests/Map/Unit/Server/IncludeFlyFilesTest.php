@@ -15,6 +15,8 @@ class IncludeFlyFilesTest extends Base
             $r[] = class_exists('Illuminate\Foundation\Application ', false);
 
             $options = ['mode' => 'Map', 'log_cache' => 2];
+
+            \LaravelFly\Server\Common::$flyBaseDir = LARAVEL_APP_ROOT. '/vendor/scil/laravel-fly-files/src/';
             \LaravelFly\Server\Common::includeFlyFiles($options);
 
 
@@ -22,7 +24,7 @@ class IncludeFlyFilesTest extends Base
             return $r;
         });
 
-        self::assertEquals([false,false,true], $r);
+        self::assertEquals([true,false,true], $r);
     }
 
 }
