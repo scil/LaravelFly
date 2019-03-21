@@ -29,22 +29,59 @@ If the project is in a VirtualBox shared dir, it may failed to symlinking to <fl
 
 ## Update [laravel-fly-files](https://github.com/scil/LaravelFly-fly-files) for updated minor version of Laravel
 
-e.g. updating Laravel 5.5.*
+e.g. updating Laravel 5.7.28
 
-1. create a new project
-
-```
-composer create-project --prefer-dist laravel/laravel updating_fly_files "5.5.*"
+1. create a new project 
 
 ```
+mkdir updating
+cd updating
+vi composer.json
 
-2. edit `vendor/scil/laravel-fly/phpunit.xml.dist`
+```
+
+edit 'updating/composer.json'
+```
+  "require": {
+    ...
+    "laravel/framework": "5.7.*",
+    "scil/laravel-fly": "dev-master"
+  },
+"autoload-dev": {
+    "psr-4": {
+        ...
+        "LaravelFly\\Tests\\": "vendor/scil/laravel-fly/tests/"
+    }
+},
+  "repositories": [
+    {
+      "type": "path",
+      "url": "vendor/scil/laravel-fly-files-local"
+    }
+  ]
+
+```
+
+then 
+```
+composer install
+cp -R vendor/scil/laravel-fly-files vendor/scil/laravel-fly-files-local
+```
+
+2. edit `vendor/scil/laravel-fly-files-local/composer.json`
+```
+    "laravel/framework": "5.7.28"
+```
+
+3. edit `vendor/scil/laravel-fly/phpunit.xml.dist`
 ```xml
-        <env name="LARAVEL_VERSION_PROJECT_ROOT" value="/<dir>/updating_fly_files"/>
+        <env name="LARAVEL_VERSION_PROJECT_ROOT" value="./../../../../updating"/>
 ```
 
-3. run test
+4. update then run test at laravel project root
 ```
+composer update
+
 phpunit=vendor/bin/phpunit
 xml=vendor/scil/laravel-fly/phpunit.xml.dist
 

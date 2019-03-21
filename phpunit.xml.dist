@@ -63,10 +63,11 @@
         <env name="QUEUE_DRIVER" value="sync"/>
         <env name="LOG_CHANNEL" value="single"/>
 
-        <env name="LARAVEL_PROJECT_ROOT" value="/vagrant/www/zc/vendor/scil/blog_for_test"/>
+        <!--<env name="LARAVEL_PROJECT_ROOT" value="/vagrant/www/zc/vendor/scil/blog_for_test"/>-->
+        <env name="LARAVEL_PROJECT_ROOT" value="/vagrant/www/zc"/>
 
         <!-- for Updating [laravel-fly-files](https://github.com/scil/LaravelFly-fly-files) to go with updated minor version of Laravel-->
-        <!--<env name="LARAVEL_VERSION_PROJECT_ROOT" value="/vagrant/www/zc"/>-->
+        <env name="LARAVEL_VERSION_PROJECT_ROOT" value="/vagrant/www/zc"/>
 
     </php>
 </phpunit>
