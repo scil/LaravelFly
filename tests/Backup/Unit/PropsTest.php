@@ -113,7 +113,7 @@ class PropsTest extends BaseTestCase
         'macros',
 
         'request',
-        'routeGenerator', 'cachedRoot', 'cachedSchema',
+        'routeGenerator', 'cachedRoot', 'cachedScheme',
         'routes'
     ];
 

@@ -23,10 +23,13 @@ class Gate extends \Illuminate\Auth\Access\Gate
         'policies',
         'beforeCallbacks',
         'afterCallbacks',
+        'stringCallbacks',
+        'guessPolicyNamesUsingCallback',
     ];
 
     public function __construct(Container $container, callable $userResolver, array $abilities = [],
-                                array $policies = [], array $beforeCallbacks = [], array $afterCallbacks = [])
+                                array $policies = [], array $beforeCallbacks = [], array $afterCallbacks = [],
+                                callable $guessPolicyNamesUsingCallback = null)
     {
 
         $this->container = $container;
@@ -38,6 +41,7 @@ class Gate extends \Illuminate\Auth\Access\Gate
         static::$corDict[WORKER_COROUTINE_ID]['abilities'] = $abilities;
         static::$corDict[WORKER_COROUTINE_ID]['afterCallbacks'] = $afterCallbacks;
         static::$corDict[WORKER_COROUTINE_ID]['beforeCallbacks'] = $beforeCallbacks;
+        static::$corDict[WORKER_COROUTINE_ID]['guessPolicyNamesUsingCallback'] = $guessPolicyNamesUsingCallback;
     }
 
     public function has($ability)
@@ -71,6 +75,7 @@ class Gate extends \Illuminate\Auth\Access\Gate
         if (is_callable($callback)) {
             static::$corDict[$cid]['abilities'][$ability] = $callback;
         } elseif (is_string($callback)) {
+	     static::$corDict[$cid]['stringCallbacks'][$ability] = $callback;
             static::$corDict[$cid]['abilities'][$ability] = $this->buildAbilityCallback($ability, $callback);
         } else {
             throw new InvalidArgumentException("Callback must be a callable or a 'Class@method' string.");
@@ -144,13 +149,12 @@ class Gate extends \Illuminate\Auth\Access\Gate
      */
     protected function callBeforeCallbacks($user, $ability, array $arguments)
     {
-        $arguments = array_merge([$user, $ability], [$arguments]);
 
         foreach (static::$corDict[\Swoole\Coroutine::getuid()]['beforeCallbacks'] as $before) {
             if (! $this->canBeCalledWithUser($user, $before)) {
                 continue;
             }
-            if (!is_null($result = $before(...$arguments))) {
+            if (! is_null($result = $before($user, $ability, $arguments))) {
                 return $result;
             }
         }
@@ -197,7 +201,17 @@ class Gate extends \Illuminate\Auth\Access\Gate
             return $callback;
         }
 
+	$s = static::$corDict[\Swoole\Coroutine::getuid()]['stringCallbacks'];
         $b = static::$corDict[\Swoole\Coroutine::getuid()]['abilities'];
+        
+        if (isset($s[$ability])) {
+            [$class, $method] = Str::parseCallback($s[$ability]);
+
+            if ($this->canBeCalledWithUser($user, $class, $method ?: '__invoke')) {
+                return $b[$ability];
+            }
+        }
+
 
         if (isset($b[$ability]) &&
 	        $this->canBeCalledWithUser($user, $b[$ability]) ) {
@@ -230,6 +244,12 @@ class Gate extends \Illuminate\Auth\Access\Gate
         if (isset(static::$corDict[$cid]['policies'][$class])) {
             return $this->resolvePolicy(static::$corDict[$cid]['policies'][$class]);
         }
+        
+        foreach ($this->guessPolicyName($class) as $guessedPolicy) {
+            if (class_exists($guessedPolicy)) {
+                return $this->resolvePolicy($guessedPolicy);
+            }
+        }
 
         foreach (static::$corDict[$cid]['policies'] as $expected => $policy) {
             if (is_subclass_of($class, $expected)) {
@@ -238,6 +258,36 @@ class Gate extends \Illuminate\Auth\Access\Gate
         }
     }
 
+    /**
+     * Guess the policy name for the given class.
+     *
+     * @param  string  $class
+     * @return array
+     */
+    protected function guessPolicyName($class)
+    {
+        if ( $g = static::$corDict[\Swoole\Coroutine::getuid()]['guessPolicyNamesUsingCallback'] ) {
+            return Arr::wrap(call_user_func($g, $class));
+        }
+
+        $classDirname = str_replace('/', '\\', dirname(str_replace('\\', '/', $class)));
+
+        return [$classDirname.'\\Policies\\'.class_basename($class).'Policy'];
+    }
+
+    /**
+     * Specify a callback to be used to guess policy names.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function guessPolicyNamesUsing(callable $callback)
+    {
+        static::$corDict[\Swoole\Coroutine::getuid()]['guessPolicyNamesUsingCallback']  = $callback;
+
+        return $this;
+    }
+    
     /**
      * Get a gate instance for the given user.
      *
@@ -254,7 +304,8 @@ class Gate extends \Illuminate\Auth\Access\Gate
 
         return new static(
             $this->container, $callback, static::$corDict[$cid]['abilities'],
-            static::$corDict[$cid]['policies'], static::$corDict[$cid]['beforeCallbacks'], static::$corDict[$cid]['afterCallbacks']
+            static::$corDict[$cid]['policies'], static::$corDict[$cid]['beforeCallbacks'], static::$corDict[$cid]['afterCallbacks'],
+            static::$corDict[$cid]['guessPolicyNamesUsingCallback']
         );
     }
 

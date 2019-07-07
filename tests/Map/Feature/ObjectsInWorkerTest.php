@@ -51,6 +51,7 @@ class ObjectsInWorkerTest extends Base
         'Illuminate\Session\Middleware\StartSession',
         'hash',
         'hash.driver',
+        'redis',
         'filesystem',
         'filesystem.disk',
         'encrypter',
@@ -117,7 +118,10 @@ class ObjectsInWorkerTest extends Base
     static function initConfig()
     {
 
-        (new Loader(''))->setEnvironmentVariable('APP_ENV', 'production');
+        // for laravel-app-config.example.php
+        $GLOBALS['IN_PRODUCTION'] = true;
+        echo "set \$GLOBALS['IN_PRODUCTION']\n";
+
         @unlink(static::$laravelAppRoot . '/bootstrap/cache/config.php');
         @unlink(static::$laravelAppRoot . '/bootstrap/cache/laravelfly_ps_map.php');
         @unlink(static::$laravelAppRoot . '/bootstrap/cache/laravelfly_ps_simple.php');
@@ -128,6 +132,12 @@ class ObjectsInWorkerTest extends Base
     {
         parent::setUpBeforeClass();
         static::initConfig();
+    }
+    static function tearDownAfterClass()
+    {
+        parent::tearDownAfterClass();
+        unset($GLOBALS['IN_PRODUCTION']);
+        echo "unset \$GLOBALS['IN_PRODUCTION']\n";
     }
 
     function test()
@@ -189,7 +199,7 @@ class ObjectsInWorkerTest extends Base
     function testInstances()
     {
         $instances = static::$chan->pop();
-        // var_dump($instances);
+//         var_dump($instances);
 
         self::assertEquals([], array_diff($this->instances, $instances));
 

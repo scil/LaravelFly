@@ -32,7 +32,7 @@ class StreamHandlerTest extends Base
                 $app = $event['app'];
                 $log = $app->make('log');
                 $logFile = $app->storagePath() . '/logs/laravel.log';
-                @unlink($logFile);
+                unlink($logFile);
 
                 $i = 1;
                 while ($i < 5) {

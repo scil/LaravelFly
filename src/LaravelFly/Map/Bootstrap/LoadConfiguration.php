@@ -164,6 +164,8 @@ class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfigurati
 
         $app->makeManifestForProvidersInRequest($psInRequest);
 
+        if ($app instanceof \LaravelFly\Backup\Application) return;
+
         $app->setProvidersToBootOnWorker($psOnWork);
 
         $app->setCFServices($CFServices);

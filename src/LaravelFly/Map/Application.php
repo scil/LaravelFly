@@ -190,6 +190,10 @@ class Application extends \Illuminate\Foundation\Application
 
         $this->make('events')->dispatch('request.corinit', [$cid]);
 
+//        $f = fopen('/vagrant/www/zc/tmp', 'a+');
+//        fwrite($f, "\nend: url ". \Request::fullUrl());
+//        fclose($f);
+
         foreach ($this->cloneServices as $service) {
             $this->instance($service, clone $this->make($service));
         }

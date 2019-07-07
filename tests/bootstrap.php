@@ -11,7 +11,8 @@ if (!class_exists('Swoole\Channel')) {
     $info = <<<ABC
     
 No class Swoole\Channel.
-Please install php ext swoole_async
+Please install php ext swoole_async https://github.com/swoole/ext-async
+or use older versions of swoole: pecl install swoole-4.2.13
 ABC;
     die($info);
 }
@@ -33,6 +34,11 @@ define('DEFAULT_SERVER_CONFIG_FILE', FLY_ROOT . '/config/laravelfly-server-confi
 
 assert(is_dir(LARAVEL_APP_ROOT));
 echo "laravel project is at " . LARAVEL_APP_ROOT . "\n";
+
+if ( is_file( $beforeapp= LARAVEL_APP_ROOT . '/bootstrap/app-before.php')){
+    echo "require $beforeapp\n";
+    require $beforeapp;
+}
 
 assert(is_file(DEFAULT_SERVER_CONFIG_FILE));
 echo "default SERVER_CONFIG_FILE " . DEFAULT_SERVER_CONFIG_FILE . "\n";

@@ -17,7 +17,6 @@
  *
  ** Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_Process
- *
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_No_Process_Used
  *
  *
@@ -25,7 +24,7 @@
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Backup
  *
  *
- * Two
+ * Two  use Laravel built-in tests
  **first:
  **   cd laravel_fly_root
  **   git clone -b 5.6 https://github.com/laravel/framework.git /vagrant/www/zc/vendor/scil/laravel-fly-local/vendor/laravel/framework
@@ -126,7 +125,7 @@ abstract class BaseTestCase extends TestCase
         static::$backOfficalDir = $files_package_root . '/offcial_files/';
 
         if (env('LARAVEL_VERSION_PROJECT_ROOT'))
-            static::$laravelVersionAppRoot = env('LARAVEL_VERSION_PROJECT_ROOT');
+            static::$laravelVersionAppRoot = env('use Astrotomic\Translatable\Translatable;');
     }
 
     /**

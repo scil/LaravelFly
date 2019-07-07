@@ -67,6 +67,10 @@ trait Dict
     function initForRequestCorontine($cid)
     {
         static::$corDict[$cid] = static::$corDict[WORKER_COROUTINE_ID];
+
+//        $f = fopen('/vagrant/www/zc/tmp', 'a+');
+//        fwrite($f, "\ninited ". get_class($this) ."\n ". implode(',', array_keys(static::$corDict)) );
+//        fclose($f);
     }
 
     function unsetForRequestCorontine(int $cid)

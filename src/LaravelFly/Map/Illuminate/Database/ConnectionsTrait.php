@@ -28,7 +28,7 @@ trait ConnectionsTrait
                     $this->pools[$name] = new Pool($name, $this, $config['poolsize'] ?? $defaultPoolsize);
                 }catch (\Exception $e){
                     $server->echoOnce(
-                        "something wrong when making connection pool for connection $name, \nplease check config/databas.php",
+                        "something wrong when making connection pool for connection '$name', \n  please check config/databas.php.\n  Maybe you need to comment out unused configs in 'connections'",
                         'WARN', true
                     );
                 }

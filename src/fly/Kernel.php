@@ -1,11 +1,12 @@
 <?php
 /**
+ * a copy of src/LaravelFly/Map/Kernel.php with this dif:
+ *  for LARAVELFLY_SERVICES['kernel'] === false
+ *
  * Dict
  * plus
  * gatherRouteTerminateMiddleware // search 'hack' in this file
  *
- * dif with src/LaravelFly/Map/Kernel.php：
- *  for LARAVELFLY_SERVICES['kernel'] === false
  */
 
 namespace LaravelFly\Map;

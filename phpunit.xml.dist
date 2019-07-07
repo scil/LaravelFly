@@ -22,19 +22,23 @@
         </testsuite>
 
         <testsuite name="LaravelFly_Map_Process">
-            <file>./tests/Map/Unit/Illuminate/Translation/TranslatorTest.php</file>
-            <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
-            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
-            <file>./tests/Map/Unit/Server/CommonTest.php</file>
-            <file>./tests/Map/Unit/Server/HttpServerTest.php</file>
-            <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
             <file>./tests/Map/Unit/FlyTest.php</file>
-            <file>./tests/Map/Unit/ApplicationCorTest.php</file>
-
-            <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
             <file>./tests/Map/Feature/FlyOfficialFilesTest.php</file>
             <file>./tests/Map/Feature/ObjectsInWorkerTest.php</file>
             <file>./tests/Map/Feature/SuperGlobalVarsTest.php</file>
+
+            <file>./tests/Map/Feature/Fly/StreamHandlerTest.php</file>
+             <!--this test file can not run indepentent.php. Cause has not jet found. -->
+            <file>./tests/Map/Unit/ApplicationCorTest.php</file>
+
+            <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
+            <file>./tests/Map/Unit/Server/CommonTest.php</file>
+            <file>./tests/Map/Unit/Server/HttpServerTest.php</file>
+            <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
+            <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>
+
+            <!-- this test file can not run indepentent.php. Cause has not jet found. -->
+            <file>./tests/Map/Unit/Illuminate/Translation/TranslatorTest.php</file>
 
         </testsuite>
 

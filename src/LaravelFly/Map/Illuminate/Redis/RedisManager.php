@@ -24,7 +24,11 @@ class RedisManager extends \Illuminate\Redis\RedisManager
     {
         parent::__construct($app,$driver, $config);
 
-        $this->initConnections(app('config')['database.redis']);
+        $redis_config = app('config')['database.redis'];
+
+        unset($redis_config['options']);
+
+        $this->initConnections($redis_config);
 
     }
 

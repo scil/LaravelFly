@@ -13,6 +13,8 @@ class FlyOfficialFilesTest extends Base
 
     function testVars()
     {
+        self::assertTrue(true);
+
         if (!static::$laravelAppRoot)
             self::assertDirectoryExists(static::$laravelVersionAppRoot, 'please set proper ENV var LARAVEL_VERSION_PROJECT_ROOT in phpunit.xml');
     }

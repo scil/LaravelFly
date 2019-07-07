@@ -285,6 +285,11 @@ class Common
             static::includeConditionFlyFiles('request');
 
             foreach (static::mapFlyFiles as $f => $offical) {
+
+                $ff = fopen('/vagrant/www/zc/tmp', 'a+');
+                fwrite($ff, "\nload $f " );
+                fclose($ff);
+
                 require $flyBaseDir . $f;
             }
 

@@ -37,6 +37,7 @@ class Translator extends \Illuminate\Translation\Translator
 
     public function getLocale()
     {
+//        \Log::info( 'translator cid is '. \Co::getUid() . implode("\n", array_keys(static::$corDict)));
         return static::$corDict[\Co::getUid()]['locale'];
     }
 
@@ -57,15 +58,10 @@ class Translator extends \Illuminate\Translation\Translator
                 break;
             }
         }
-
         // If the line doesn't exist, we will return back the key which was requested as
         // that will be quick to spot in the UI if language keys are wrong or missing
         // from the application's language files. Otherwise we can return the line.
-        if (isset($line)) {
-            return $line;
-        }
-
-        return $key;
+        return $line ?? $key;
     }
 
 

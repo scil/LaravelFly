@@ -2,7 +2,10 @@
 
 if (!defined('LARAVELFLY_MODE')) return [];
 
-$IN_PRODUCTION = env('APP_ENV') === 'production' || env('APP_ENV') === 'product';
+$IN_PRODUCTION = env('APP_ENV') === 'production'
+    || env('APP_ENV') === 'product'
+    // for test
+    || ($GLOBALS['IN_PRODUCTION'] ?? false);
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
@@ -244,11 +247,15 @@ return [
         ],
 
         Illuminate\Translation\TranslationServiceProvider::class =>
-            !!LARAVELFLY_SERVICES['translator'] || !!LARAVELFLY_SERVICES['validator'] ? [
+        // todo
+//            !!LARAVELFLY_SERVICES['translator'] || !!LARAVELFLY_SERVICES['validator'] ?
+            [
                 '_replaced_by' => LaravelFly\Map\Illuminate\Translation\TranslationServiceProvider::class,
                 'translation.loader' => true,
                 'translator' => true,
-            ] : 'ignore',
+            ]
+//                : 'ignore'
+        ,
 
         Illuminate\Validation\ValidationServiceProvider::class =>
             !!LARAVELFLY_SERVICES['validator'] ? [

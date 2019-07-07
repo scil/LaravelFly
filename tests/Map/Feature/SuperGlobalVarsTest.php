@@ -42,6 +42,7 @@ class SuperGlobalVarsTest extends Base
        -path ./vendor/scil/laravel-fly-local -prune -o   \
        -path ./vendor/scil/laravel-fly-files -prune -o   \
        -path ./vendor/scil/laravel-fly-files-local -prune -o   \
+       -path ./vendor/scil/blog_for_test -prune -o   \
        -path ./vendor/hhxsv5/laravel-s -prune -o   \
        -path ./vendor/sebastian/global-state -prune -o   \
        -path  ./vendor/symfony/http-foundation/Tests  -prune -o  \
@@ -144,6 +145,7 @@ F;
          -path  ./vendor/scil/laravel-fly-local -prune -o    \
          -path ./vendor/scil/laravel-fly-files -prune -o   \
          -path ./vendor/scil/laravel-fly-files-local -prune -o   \
+         -path ./vendor/scil/blog_for_test -prune -o   \
          -path  ./vendor/swooletw  -prune  -o   \
          -path  ./vendor/symfony/http-foundation/Tests  -prune  -o   \
          -path  ./vendor/nexmo/client  -prune  -o   \
@@ -158,7 +160,7 @@ F;
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:766:        return $this->request ?: Request::createFromGlobals();
+./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:786:        return $this->request ?: Request::createFromGlobals();
 ./vendor/laravel/framework/src/Illuminate/Http/Request.php:59:        return static::createFromBase(SymfonyRequest::createFromGlobals());
 ./vendor/symfony/http-foundation/Request.php:279:    public static function createFromGlobals()
 

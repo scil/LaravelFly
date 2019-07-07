@@ -24,7 +24,7 @@ class IncludeFlyFilesTest extends Base
             return $r;
         });
 
-        self::assertEquals([true,false,true], $r);
+        self::assertEquals([false,false,true], $r);
     }
 
 }

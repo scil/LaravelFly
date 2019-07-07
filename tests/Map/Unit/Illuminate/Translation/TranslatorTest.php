@@ -11,7 +11,7 @@ class TranslatorTest extends BaseTestCase
 
     function testLocale()
     {
-        $default_locale = 'zh-cn';
+        $default_locale = 'zh';
 
         $this->assertResponsePassingRoutes(
             [
@@ -19,6 +19,7 @@ class TranslatorTest extends BaseTestCase
                     'get',
                     static::testBaseUrl . 'test1',
                     function () {
+                        \Log::info( 'cid is '. \Co::getUid());
                         $configLocale = \App::getLocale();
                         $transLocale = app('translator')->getLocale();
                         $newLocale = 'en';

@@ -100,6 +100,7 @@ Trait Worker
         if (function_exists('inotify_init')) {
             $watchTool = 'inotify';
         } else {
+            echo "[INFO] check whether fswatch exists\n";
             exec('fswatch -h', $rr, $r);
             if ($r == 0)
                 $watchTool = 'fswatch';
