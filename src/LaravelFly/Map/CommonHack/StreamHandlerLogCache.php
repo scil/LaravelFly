@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * only for option 'log_cache'.
  */
@@ -22,7 +22,7 @@ trait StreamHandlerLogCache
 
     /**
      * @param resource|string $stream
-     * @param int $level The minimum logging level at which this handler will be triggered
+     * @param string|int $level The minimum logging level at which this handler will be triggered
      * @param bool            $bubble         Whether the messages that are handled can bubble up the stack or not
      * @param int|null         $filePermission Optional file permissions (default (0644) are only for owner read/write)
      * @param bool            $useLocking Try to lock log file before doing any writes
@@ -32,7 +32,7 @@ trait StreamHandlerLogCache
      *
      * @overwrite
      */
-    public function __construct($stream, $level = Logger::DEBUG, $bubble = true, $filePermission = null, $useLocking = false)
+    public function __construct($stream, $level = Logger::DEBUG, bool $bubble = true, ?int $filePermission = null, bool $useLocking = false)
     {
         parent::__construct($level, $bubble);
         if (is_resource($stream)) {
@@ -66,7 +66,7 @@ trait StreamHandlerLogCache
      *
      * @overwrite
      */
-    protected function write(array $record)
+     protected function write(array $record): void
     {
         if (!is_resource($this->stream)) {
             if (null === $this->url || '' === $this->url) {
@@ -74,7 +74,7 @@ trait StreamHandlerLogCache
             }
             $this->createDir();
             $this->errorMessage = null;
-            set_error_handler(array($this, 'customErrorHandler'));
+            set_error_handler([$this, 'customErrorHandler']);            
             $this->stream = fopen($this->url, 'a');
             if ($this->filePermission !== null) {
                 @chmod($this->url, $this->filePermission);

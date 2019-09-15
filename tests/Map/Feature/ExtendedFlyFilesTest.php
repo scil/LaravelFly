@@ -9,14 +9,10 @@ class ExtendedFlyFilesTest extends Base
 
     var $partFileMap = [
         'extended/partfile/CookieJar.php' => '/vendor/laravel/framework/src/Illuminate/Cookie/CookieJar.php',
+        // for: src/LaravelFly/Map/Illuminate/Cookie/CookieJarSame.php
         'extended/partfile/CookieJarSame.php' => '/vendor/laravel/framework/src/Illuminate/Cookie/CookieJar.php',
 
-        'extended/partfile/CookieSessionHandler.php' => '/vendor/laravel/framework/src/Illuminate/Session/CookieSessionHandler.php',
-        'extended/partfile/DatabaseSessionHandler.php' => '/vendor/laravel/framework/src/Illuminate/Session/DatabaseSessionHandler.php',
-
-
-        'extended/partfile/Compiler.php' => '/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php',
-
+        // for: src\LaravelFly\Map\Illuminate\Translation\Translator.php
         'extended/partfile/Translator.php' => '/vendor/laravel/framework/src/Illuminate/Translation/Translator.php',
         'extended/partfile/FileLoader.php' => '/vendor/laravel/framework/src/Illuminate/Translation/FileLoader.php',
 
@@ -56,7 +52,7 @@ class ExtendedFlyFilesTest extends Base
 
     function testPart()
     {
-        $this->assertEquals(7, count($this->partFileMap));
+        $this->assertEquals(4, count($this->partFileMap));
         foreach ($this->partFileMap as $partFile => $offcial) {
             $partFile = static::$backOfficalDir . $partFile;
             $full_offcial = static::$laravelVersionAppRoot . $offcial;

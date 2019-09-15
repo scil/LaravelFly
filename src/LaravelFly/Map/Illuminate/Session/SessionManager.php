@@ -16,18 +16,18 @@ class SessionManager extends \Illuminate\Session\SessionManager
     protected function createCookieDriver()
     {
         return $this->buildSession(new CookieSessionHandler(
-            $this->app['cookie'], $this->app['config']['session.lifetime']
+            $this->container->make('cookie'), $this->config->get('session.lifetime')
         ));
     }
 
     protected function createDatabaseDriver()
     {
-        $table = $this->app['config']['session.table'];
+        $table = $this->config->get('session.table');
 
-        $lifetime = $this->app['config']['session.lifetime'];
+        $lifetime = $this->config->get('session.lifetime');
 
         return $this->buildSession(new DatabaseSessionHandler(
-            $this->getDatabaseConnection(), $table, $lifetime, $this->app
+            $this->getDatabaseConnection(), $table, $lifetime, $this->container
         ));
     }
 
@@ -38,7 +38,7 @@ class SessionManager extends \Illuminate\Session\SessionManager
          */
         $server = \LaravelFly\Fly::getServer();
         return $this->buildSession(new SwooleSessionHandler(
-            $server->getTableMemory('swooleSession'), $this->app['config']['session.lifetime']
+            $server->getTableMemory('swooleSession'), $this->config->get('session.lifetime')
         ));
     }
 }

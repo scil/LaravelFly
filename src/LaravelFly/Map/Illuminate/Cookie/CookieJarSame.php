@@ -18,9 +18,16 @@ class CookieJarSame extends \Illuminate\Cookie\CookieJar
         $this->initOnWorker( true);
     }
 
-    public function queued($key, $default = null)
+    public function queued($key, $default = null, $path = null)
     {
-        return Arr::get(static::$corDict[\Co::getUid()]['queued'], $key, $default);
+        $queued =  Arr::get(static::$corDict[\Co::getUid()]['queued'], $key, $default);
+        
+        if ($path === null) {
+            return Arr::last($queued, null, $default);
+        }
+
+        return Arr::get($queued, $path, $default);
+
     }
 
     public function queue(...$parameters)
@@ -30,17 +37,36 @@ class CookieJarSame extends \Illuminate\Cookie\CookieJar
         } else {
             $cookie = call_user_func_array([$this, 'make'], $parameters);
         }
+        
+        $Q  = & static::$corDict[\Co::getUid()]['queued'];
+        if (! isset($Q[$cookie->getName()])) {
+            $Q[$cookie->getName()] = [];
+        }
 
-        static::$corDict[\Co::getUid()]['queued'][$cookie->getName()] = $cookie;
+        $Q[$cookie->getName()][$cookie->getPath()] = $cookie;
+
     }
 
-    public function unqueue($name)
+    public function unqueue($name, $path = null)
     {
-        unset(static::$corDict[\Co::getUid()]['queued'][$name]);
+        $Q  = & static::$corDict[\Co::getUid()]['queued'];
+        
+        if ($path === null) {
+            unset($Q[$name]);
+            return;
+        }
+        
+        unset($Q[$name][$path]);
+
+        if (empty($Q[$name])) {
+            unset($Q[$name]);
+        }
+
+        
     }
 
     public function getQueuedCookies()
     {
-        return static::$corDict[\Co::getUid()]['queued'];
+        return Arr::flatten(static::$corDict[\Co::getUid()]['queued']);
     }
 }
