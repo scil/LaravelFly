@@ -3,7 +3,8 @@
 
 /**
  * One
- **first:
+ *
+ ** prepare:
  *   composer create-project --prefer-dist laravel/laravel blog_for_test
  *   cd blog_for_test
  *   composer require scil/laravel-fly
@@ -24,8 +25,11 @@
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Backup
  *
  *
+ */
+
+ /**
  * Two  use Laravel built-in tests
- **first:
+ ** prepare:
  **   cd laravel_fly_root
  **   git clone -b 5.6 https://github.com/laravel/framework.git /vagrant/www/zc/vendor/scil/laravel-fly-local/vendor/laravel/framework
  **   composer update

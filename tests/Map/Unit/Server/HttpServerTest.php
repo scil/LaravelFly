@@ -82,7 +82,7 @@ class HttpServerTest extends BaseTestCase
 
     }
 
-    private function testHeader()
+    function testHeader()
     {
         $this->assertResponsePassingRoutes(
             [
@@ -90,7 +90,7 @@ class HttpServerTest extends BaseTestCase
                     'get',
                     static::testBaseUrl . 'test1',
                     function () {
-                        return \Request::header('REMOTE_ADDR') . \Request::header('SERVER_ADDR');
+                        return \Request::header('accept');
                     }
                 ],
             ],
@@ -102,7 +102,7 @@ class HttpServerTest extends BaseTestCase
                 ]
             ],
             [
-                'laravelfly-test/test1',
+                '*/*',
             ]
         );
 

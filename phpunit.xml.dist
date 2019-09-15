@@ -33,6 +33,7 @@
 
             <file>./tests/Map/Unit/Server/IncludeFlyFilesTest.php</file>
             <file>./tests/Map/Unit/Server/CommonTest.php</file>
+            <!--this test file can not run indepentent.php. Cause has not jet found. -->
             <file>./tests/Map/Unit/Server/HttpServerTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/DispatchRequestByQueryTest.php</file>
             <file>./tests/Map/Unit/Server/Traits/WorkerTest.php</file>

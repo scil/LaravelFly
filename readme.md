@@ -37,7 +37,7 @@ Requests per second   | 23    | 81.5
 
 ## Version Compatibility
 
-- Laravel 5.5, 5.6 or 5.7
+- Laravel 5.5 ~ 5.8
 - Swoole >4.2.13
 
 ## Quick Start

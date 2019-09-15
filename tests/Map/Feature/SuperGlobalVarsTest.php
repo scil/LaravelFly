@@ -108,30 +108,34 @@ F;
         // grep re explanation: starting  with [[:space:]] which not followed by / or * which are signs for comments
         $cmd =  'cd '. static::$laravelAppRoot .'/vendor/symfony/http-foundation  &&  grep -E "^[[:space:]]+[^/*[:space:]].*\b_(SERVER|GET|POST|FILES|COOKIE|SESSION|REQUEST)\b" -r --exclude=*.md  --exclude-dir=Tests -n  . ';
 
+        print('testSymfony to check global vars');
+        print($cmd);
         ob_start();
         passthru($cmd);
         $output = ob_get_clean();
 
         $respect = <<<'F'
 ./Request.php:281:        $request = self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
-./Request.php:529:        $_GET = $this->query->all();
-./Request.php:530:        $_POST = $this->request->all();
-./Request.php:531:        $_SERVER = $this->server->all();
-./Request.php:532:        $_COOKIE = $this->cookies->all();
-./Request.php:537:                $_SERVER[$key] = implode(', ', $value);
-./Request.php:539:                $_SERVER['HTTP_'.$key] = implode(', ', $value);
-./Request.php:543:        $request = ['g' => $_GET, 'p' => $_POST, 'c' => $_COOKIE];
-./Request.php:548:        $_REQUEST = [[]];
-./Request.php:551:            $_REQUEST[] = $request[$order];
-./Request.php:554:        $_REQUEST = array_merge(...$_REQUEST);
-./Session/Storage/NativeSessionStorage.php:240:        $session = $_SESSION;
-./Session/Storage/NativeSessionStorage.php:243:            if (empty($_SESSION[$key = $bag->getStorageKey()])) {
-./Session/Storage/NativeSessionStorage.php:244:                unset($_SESSION[$key]);
-./Session/Storage/NativeSessionStorage.php:247:        if ([$key = $this->metadataBag->getStorageKey()] === array_keys($_SESSION)) {
-./Session/Storage/NativeSessionStorage.php:248:            unset($_SESSION[$key]);
-./Session/Storage/NativeSessionStorage.php:265:            $_SESSION = $session;
-./Session/Storage/NativeSessionStorage.php:283:        $_SESSION = [];
-./Session/Storage/NativeSessionStorage.php:445:            $session = &$_SESSION;
+./Request.php:533:        $_GET = $this->query->all();
+./Request.php:534:        $_POST = $this->request->all();
+./Request.php:535:        $_SERVER = $this->server->all();
+./Request.php:536:        $_COOKIE = $this->cookies->all();
+./Request.php:541:                $_SERVER[$key] = implode(', ', $value);
+./Request.php:543:                $_SERVER['HTTP_'.$key] = implode(', ', $value);
+./Request.php:547:        $request = ['g' => $_GET, 'p' => $_POST, 'c' => $_COOKIE];
+./Request.php:552:        $_REQUEST = [[]];
+./Request.php:555:            $_REQUEST[] = $request[$order];
+./Request.php:558:        $_REQUEST = array_merge(...$_REQUEST);
+./Session/Storage/Handler/AbstractSessionHandler.php:135:            if (null === $cookie || isset($_COOKIE[$this->sessionName])) {
+./Session/Storage/NativeSessionStorage.php:245:        $session = $_SESSION;
+./Session/Storage/NativeSessionStorage.php:248:            if (empty($_SESSION[$key = $bag->getStorageKey()])) {
+./Session/Storage/NativeSessionStorage.php:249:                unset($_SESSION[$key]);
+./Session/Storage/NativeSessionStorage.php:252:        if ([$key = $this->metadataBag->getStorageKey()] === array_keys($_SESSION)) {
+./Session/Storage/NativeSessionStorage.php:253:            unset($_SESSION[$key]);
+./Session/Storage/NativeSessionStorage.php:272:            if ($_SESSION) {
+./Session/Storage/NativeSessionStorage.php:273:                $_SESSION = $session;
+./Session/Storage/NativeSessionStorage.php:292:        $_SESSION = [];
+./Session/Storage/NativeSessionStorage.php:454:            $session = &$_SESSION;
 
 F;
         self::assertEquals($respect, $output);

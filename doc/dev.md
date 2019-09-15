@@ -33,18 +33,18 @@ If the project is in a VirtualBox shared dir, it may failed to symlinking to <fl
 
 ( If env is ready-made, go to step 3 and 4.)
 
-e.g. updating Laravel 5.7.28
+e.g. updating_dir Laravel 5.7.28
 
 1. create a new project 
 
 ```
-mkdir updating
-cd updating
+mkdir updating_dir
+cd updating_dir
 vi composer.json
 
 ```
 
-edit 'updating/composer.json'
+edit 'updating_dir/composer.json'
 ```
   "require": {
     ...
@@ -79,7 +79,7 @@ cp -R vendor/scil/laravel-fly-files vendor/scil/laravel-fly-files-local
 
 3. edit `vendor/scil/laravel-fly/phpunit.xml.dist`
 ```xml
-        <env name="LARAVEL_VERSION_PROJECT_ROOT" value="./../../../../updating"/>
+        <env name="LARAVEL_VERSION_PROJECT_ROOT" value="./../../../../updating_dir"/>
 ```
 
 4. update then run test at laravel project root
