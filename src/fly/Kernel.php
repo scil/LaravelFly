@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Facade;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
 
-class Kernel extends HttpKernel
+class Kernel extends \Illuminate\Foundation\Http\Kernel
 {
     use \LaravelFly\Map\Util\Dict;
     use \LaravelFly\Map\CommonHack\Kernel;
@@ -115,7 +115,7 @@ class Kernel extends HttpKernel
         }
 
         $this->app['events']->dispatch(
-            new Events\RequestHandled($request, $response)
+            new \Illuminate\Foundation\Http\Events\RequestHandled($request, $response)
         );
 
         return $response;

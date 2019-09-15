@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Facade;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
 
-class Kernel extends HttpKernel
+class Kernel extends \Illuminate\Foundation\Http\Kernel
 {
     use \LaravelFly\Map\CommonHack\Kernel;
 

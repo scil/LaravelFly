@@ -21,7 +21,7 @@ class ObjectsInWorkerTest extends Base
         'path.resources',
         'path.bootstrap',
         'app',
-        'Illuminate\Foundation\Container',
+//        'Illuminate\Foundation\Container',
         'Illuminate\Foundation\PackageManifest',
         'events',
         'router',
@@ -63,10 +63,6 @@ class ObjectsInWorkerTest extends Base
 
     protected $allStaticProperties = [
         'app' => [
-            'instance',
-            'singletonMiddlewares'
-        ],
-        'Illuminate\Foundation\Container' => [
             'instance',
             'singletonMiddlewares'
         ],
@@ -112,6 +108,10 @@ class ObjectsInWorkerTest extends Base
         ],
         'cookie' => [
             'macros',
+        ],
+        'Illuminate\Container\Container' => [
+            'instance',
+            'singletonMiddlewares'
         ],
     ];
 

@@ -97,7 +97,7 @@ class SuperGlobalVarsTest extends Base
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./src/Monolog/Handler/PHPConsoleHandler.php:        'dataStorage' => null, // PhpConsole\Storage|null Fixes problem with custom $_SESSION handler(see http://goo.gl/Ne8juJ)
+./src/Monolog/Handler/PHPConsoleHandler.php:        'dataStorage' => null, // \PhpConsole\Storage|null Fixes problem with custom $_SESSION handler(see http://goo.gl/Ne8juJ)
 
 F;
         self::assertEquals($respect, $output);
@@ -164,7 +164,7 @@ F;
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:786:        return $this->request ?: Request::createFromGlobals();
+./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:812:        return $this->request ?: Request::createFromGlobals();
 ./vendor/laravel/framework/src/Illuminate/Http/Request.php:59:        return static::createFromBase(SymfonyRequest::createFromGlobals());
 ./vendor/symfony/http-foundation/Request.php:279:    public static function createFromGlobals()
 
