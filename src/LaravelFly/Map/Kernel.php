@@ -65,7 +65,7 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
         }
 
         $this->app['events']->dispatch(
-            new Events\RequestHandled($request, $response)
+            new \Illuminate\Foundation\Http\Events\RequestHandled($request, $response)
         );
 
         return $response;
