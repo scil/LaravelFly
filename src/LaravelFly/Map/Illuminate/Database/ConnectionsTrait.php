@@ -2,7 +2,13 @@
 
 namespace LaravelFly\Map\Illuminate\Database;
 
+use function Couchbase\defaultDecoder;
 use Illuminate\Container\Container;
+use LaravelFly\Map\Illuminate\Database\Connectors\SmfMySQLConnector;
+use LaravelFly\Map\Illuminate\Database\Connectors\SmfRedisConnector;
+use LaravelFly\Map\Illuminate\Database\Pool\SimplePool;
+use LaravelFly\Map\Illuminate\Database\Pool\Pool;
+use LaravelFly\Map\Illuminate\Database\Pool\SmfPool;
 
 trait ConnectionsTrait
 {
@@ -11,26 +17,63 @@ trait ConnectionsTrait
      */
     protected $pools = [];
 
+    function getPool($name,$driver, $config, $dispatcher)
+    {
+        $poolConfig = $config['pool'] ?? [];
+        $pool = null;
 
-    function initConnections($configs)
+        switch ($poolConfig['class'] ?? null) {
+
+            case  'LaravelFly\Map\Illuminate\Database\Pool\SmfPool':
+
+                switch ($config['driver']??$driver) {
+                    case 'mysql':
+                        $connector = new SmfMySQLConnector();
+                        break;
+                    case 'redis':
+                        $connector = new SmfRedisConnector();
+                        break;
+                }
+
+                $pool = new SmfPool($poolConfig, $connector, $config);
+                break;
+
+        }
+
+        if ($pool === null) {
+            $pool = new SimplePool($poolConfig, null, $config);
+            $server = \LaravelFly\Fly::getServer();
+            $server->echoOnce(
+                "database connection $name uses default connection pool.",
+                'WARN', true
+            );
+        }
+
+        $pool->initPool($name, $this, $dispatcher);
+
+        return $pool;
+
+    }
+
+    function initConnections($configs,$driver=null)
     {
 
         $this->connections[WORKER_COROUTINE_ID] = [];
 
-        $defaultPoolsize = \LaravelFly\Fly::getServer()->getConfig('poolsize');
-
-        $server = \LaravelFly\Fly::getServer();
+        $dispatcher = \LaravelFly\Fly::getServer()->getDispatcher();
 
         foreach ($configs as $name => $config) {
-            if (is_array($config))
-            {
-                try{
-                    $this->pools[$name] = new Pool($name, $this, $config['poolsize'] ?? $defaultPoolsize);
-                }catch (\Exception $e){
+            if (is_array($config)) {
+
+                try {
+                    $this->pools[$name] = $this->getPool($name,$config['driver']?? $driver, $config, $dispatcher);
+                } catch (\Exception $e) {
+                    $server = \LaravelFly\Fly::getServer();
                     $server->echoOnce(
                         "something wrong when making connection pool for connection '$name', \n  please check config/databas.php.\n  Maybe you need to comment out unused configs in 'connections'",
                         'WARN', true
                     );
+                    throw $e;
                 }
             }
         }
@@ -64,7 +107,7 @@ trait ConnectionsTrait
     {
         foreach ($this->connections[$cid] as $name => $conn) {
             // for Illuminate/Database  no worry about disconnected connections, because laravel will reconnect it when using it
-            $this->pools[$name]->put($conn);
+            $this->pools[$name]->return($conn);
         }
     }
 

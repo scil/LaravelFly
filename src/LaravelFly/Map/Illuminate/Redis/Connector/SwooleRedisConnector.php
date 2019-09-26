@@ -3,38 +3,26 @@
 namespace LaravelFly\Map\Illuminate\Redis\Connector;
 
 use Illuminate\Support\Arr;
+use LaravelFly\Map\Illuminate\Database\Connectors\RedisConnectorTrait;
 use LaravelFly\Map\Illuminate\Redis\Connection\SwooleRedisConnection;
 use Swoole\Coroutine\Redis;
 
 class SwooleRedisConnector
 {
+    use RedisConnectorTrait;
 
     public function connect(array $config, array $options)
     {
-        $config = array_merge(
-            $config, $options, Arr::pull($config, 'options', [])
+        $options = array_merge(
+             $options, Arr::pull($config, 'options', [])
         );
-        $client = $this->createClient($config);
+        $client =  $this->_connect($config,$options);
 
         $connection = new SwooleRedisConnection($client);
         $connection->saveConfig($config);
         return $connection;
     }
 
-    protected function createClient(array $config)
-    {
-        /**
-         * __construct:
-         *  // from: https://wiki.swoole.com/wiki/page/762.html
-         *  timeout
-         *  password // 等同于auth指令
-         *  database
-         *
-         */
-        $client = new Redis($config);
-        $client->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
-        return $client;
-    }
 
     // todo
     public function connectToCluster(array $config, array $clusterOptions, array $options)

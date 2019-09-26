@@ -381,7 +381,7 @@ class Common
         $options['enable_coroutine'] = true;
 
         if (isset($options['task_worker_num']) && $options['task_worker_num'] > 0)
-            // required by `new \Swoole\Coroutine\Channel($size);` in LaravelFly/Map/Illuminate/Database/Pool.php
+            // required by `new \Swoole\Coroutine\Channel($size);` in LaravelFly/Map/Illuminate/Database/SimplePool.php
             $options['task_enable_coroutine'] = true;
 
         $swoole->set($options);

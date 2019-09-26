@@ -106,6 +106,8 @@ To ensure safety, set `const LARAVELFLY_COROUTINE = true;` in fly.conf.php.
 
 - `exit()` or `die()` in an route action would output content to console or swoole log, and not make server die or reload. If you would like to change that behavior, fork LaravalFly and catch `\Swoole\ExitException` in  `LaravelFly\Map\Kernel::handle`.
 
+- Support connection pool. There's only one connection available in each request.But if you use `fly()` or `fly2()`, you can use connections more than one.
+
 - functions `fly()` and `fly2()` which are like `go()` provided by [golang](https://github.com/golang/go) or [swoole](https://github.com/swoole/swoole-src), plus Laravel services can be used in `fly()` and `fly2()` without closure.  The `fly2()` has the limited ability to change services in current request, e.g. registering a new event handler for current request. `fly2()` is not suggested. 
 
 A coroutine starting in a request, can still live when the request ends. What's the effect of following route?    
@@ -154,6 +156,10 @@ Route::get('/fly', function () {
 });
 ```
 
+## Notice
+
+Coroutine can be used during a request, but not before. That is, coroutine can not used in a service if it booted on WorkerStart.
+
 
 ## Similar projects that mix swoole and laravel
 
@@ -195,6 +201,7 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] db connection pool and redis connection pool. In `fly()` or `fly2()`, connections to be used would be fetched from pool, not inherit the same connections from request coroutine. code: `$this->connections[$childId] = [];` in ConnectionsTrait.php
 - [x] swoole redis driver
 - [ ] swoole redis driver: how to use `errMsg` `errCode`
+- [ ] use [swlib/swpdo](https://github.com/swlib/swpdo) to replace SwoolePDO?
 - [ ] Cache for HasRelationships. disable and experimental, not ready
 - [x] Cache for RouteDependencyResolverTrait 
 - [ ] Converting between swoole request/response and Laravel Request/Response

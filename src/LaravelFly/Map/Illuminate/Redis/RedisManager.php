@@ -26,9 +26,9 @@ class RedisManager extends \Illuminate\Redis\RedisManager
 
         $redis_config = app('config')['database.redis'];
 
-        unset($redis_config['options']);
+        unset($redis_config['options'], $redis_config['client']);
 
-        $this->initConnections($redis_config);
+        $this->initConnections($redis_config,'redis');
 
     }
 
@@ -46,7 +46,7 @@ class RedisManager extends \Illuminate\Redis\RedisManager
              * @var EnsureConnected $conn
              */
             $conn->ensureConnected();
-            $this->pools[$name]->put($conn);
+            $this->pools[$name]->return($conn);
         }
     }
 
@@ -58,14 +58,14 @@ class RedisManager extends \Illuminate\Redis\RedisManager
 
         if (!isset($this->connections[$cid][$name])) {
 
-            return $this->connections[$cid][$name] = $this->pools[$name]->get();
+            return $this->connections[$cid][$name] = $this->pools[$name]->borrow();
         }
 
         return $this->connections[$cid][$name];
 
     }
 
-    function makeOneConn($name)
+    function makeConnectionForPool($name)
     {
         return $this->resolve($name);
     }

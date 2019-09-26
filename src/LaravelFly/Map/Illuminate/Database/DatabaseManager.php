@@ -40,14 +40,25 @@ class DatabaseManager extends \Illuminate\Database\DatabaseManager
 
         if (!isset($this->connections[$cid][$name])) {
 
-            return $this->connections[$cid][$name] = $this->pools[$name]->get();
+            return $this->connections[$cid][$name] = $this->pools[$name]->borrow();
         }
 
         return $this->connections[$cid][$name];
 
     }
 
-    function makeOneConn($name)
+    /**
+     * play the role of parent::connection which contains:
+     *
+     *      [$database, $type] = $this->parseConnectionName($name);
+     *
+     *      $this->connections[$name] = $this->configure(
+     *          $this->makeConnection($database), $type
+     *      );
+     *
+     * @return mixed
+     */
+    function makeConnectionForPool($name)
     {
         list($database, $type) = $this->parseConnectionName($name);
 
@@ -69,7 +80,7 @@ class DatabaseManager extends \Illuminate\Database\DatabaseManager
 
             // hack, put back, not disconnect
             // $this->disconnect($name);
-            $this->pools[$name]->put($this->connections[$cid][$name]);
+            $this->pools[$name]->return($this->connections[$cid][$name]);
 
             unset($this->connections[$cid][$name]);
         }

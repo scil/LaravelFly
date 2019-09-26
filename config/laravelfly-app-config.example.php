@@ -85,7 +85,10 @@ return [
         Illuminate\Broadcasting\BroadcastManager::class,
         Illuminate\Contracts\Broadcasting\Broadcaster::class,
         App\Providers\BroadcastServiceProvider::class
-    ]
+    ], $IN_PRODUCTION ? [
+        'Barryvdh\\Debugbar\\ServiceProvider',
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+    ] : []
     ),
 
     /**

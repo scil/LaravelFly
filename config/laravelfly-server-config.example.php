@@ -202,24 +202,6 @@ return [
     'max_coro_num' => LARAVELFLY_COROUTINE ? 30 : 1,
 
     /**
-     * default pool size for each type of connections in each worker process
-     *
-     * you can overwrite this value in config/databases.php, e.g.
-     *      'mysql' => [
-     *          'driver' => 'mysql',
-     *          'poolsize' => 50,
-     *          ....
-     *      ],
-     *
-     * note: for each item in  config('database.connections') or config('database.redis'),
-     * mysql, sqlite, pgsql, redis, or something else,
-     * there's only one connection available in each request.
-     * But if you use `fly()` or `fly2()`, you can use connections more than one.
-     *
-     */
-    'poolsize' => LARAVELFLY_COROUTINE ? 10 : 0,
-
-    /**
      * The max number of connection the server could handle at the same time.
      *
      * should be less than ulimit -n

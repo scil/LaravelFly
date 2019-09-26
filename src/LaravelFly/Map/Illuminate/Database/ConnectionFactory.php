@@ -6,9 +6,8 @@
 
 namespace LaravelFly\Map\Illuminate\Database;
 
-use Hhxsv5\LaravelS\Illuminate\Database\SwooleMySQLConnection;
 use Illuminate\Database\Connection;
-use Hhxsv5\LaravelS\Illuminate\Database\Connectors\CoroutineMySQLConnector;
+use LaravelFly\Map\Illuminate\Database\Connectors\MySQLLaravelConnector;
 use Illuminate\Database\Connectors\ConnectionFactory as IlluminateConnectionFactory;
 
 class ConnectionFactory extends IlluminateConnectionFactory
@@ -27,7 +26,7 @@ class ConnectionFactory extends IlluminateConnectionFactory
             // hack
             case 'mysql':
                 if ($config['coroutine'] ?? false) {
-                    return new CoroutineMySQLConnector();
+                    return new MySQLLaravelConnector();
                 }
         }
         return parent::createConnector($config);
