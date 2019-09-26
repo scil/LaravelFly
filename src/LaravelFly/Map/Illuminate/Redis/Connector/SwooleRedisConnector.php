@@ -16,10 +16,8 @@ class SwooleRedisConnector
         $options = array_merge(
              $options, Arr::pull($config, 'options', [])
         );
-        $client =  $this->_connect($config,$options);
+        $connection =  $this->_connect($config,$options);
 
-        $connection = new SwooleRedisConnection($client);
-        $connection->saveConfig($config);
         return $connection;
     }
 

@@ -4,6 +4,7 @@ namespace LaravelFly\Map\Illuminate\Database\Connectors;
 
 use Illuminate\Support\Arr;
 use LaravelFly\Map\Illuminate\Database\PDO\SwoolePDO;
+use LaravelFly\Map\Illuminate\Redis\Connection\SwooleRedisConnection;
 use Swoole\Coroutine\Redis;
 
 trait RedisConnectorTrait
@@ -11,7 +12,7 @@ trait RedisConnectorTrait
 
     /**
      * @param array $config
-     * @return Redis
+     * @return SwooleRedisConnection
      */
     public function _connect(array $config, $options)
     {
@@ -23,10 +24,11 @@ trait RedisConnectorTrait
          *  database
          *
          */
-        $connection = new Redis($options);
-        $connection->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
+        $swooleConn = new Redis($options);
+        $swooleConn->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
 
-        return $connection;
+        $conn = new SwooleRedisConnection($swooleConn);
+        return $conn;
     }
 
 

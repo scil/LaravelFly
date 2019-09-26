@@ -9,6 +9,7 @@ namespace LaravelFly\Map\Illuminate\Database;
 use Illuminate\Database\Connection;
 use LaravelFly\Map\Illuminate\Database\Connectors\MySQLLaravelConnector;
 use Illuminate\Database\Connectors\ConnectionFactory as IlluminateConnectionFactory;
+use LaravelFly\Map\Illuminate\Database\Connection\SwooleMySQLConnection;
 
 class ConnectionFactory extends IlluminateConnectionFactory
 {

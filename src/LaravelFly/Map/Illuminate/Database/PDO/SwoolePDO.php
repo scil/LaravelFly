@@ -15,6 +15,10 @@ class SwoolePDO extends \PDO
         $this->sm = new SwooleMySQL();
     }
 
+    public function getSwooleConnection(){
+        return $this->sm;
+    }
+
     /**
      * @param array $serverInfo
      * @throws ConnectionException

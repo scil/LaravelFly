@@ -4,41 +4,31 @@ namespace LaravelFly\Map\Illuminate\Redis\Connection;
 
 
 use Illuminate\Redis\Connections\PhpRedisConnection;
+use LaravelFly\Map\Illuminate\Database\Connection\FakeSwooleConnTrait;
 
 class SwooleRedisConnection extends PhpRedisConnection implements EnsureConnected
 {
+    use FakeSwooleConnTrait;
     use SwooleRedisNot;
 
-    /**
-     *
-     * @var \Swoole\Coroutine\Redis
-     */
-    protected $client;
-
-    protected $config;
-
-
-    /**
-     * save config, only for reconnect
-     * @param $config
-     */
-    public function saveConfig(&$config)
+    public function __construct($client)
     {
-        $this->config = $config;
-        $this->connected = true;
+        parent::__construct($client);
+
+        $this->swooleConnection = $client;
     }
 
     public function disconnect()
     {
-        $this->client->close();
+        $this->swooleConnection->close();
     }
 
     public function ensureConnected()
     {
-        if (!$this->client->connected){
+        if (!$this->swooleConnection->connected){
             $config = $this->config;
 
-            $this->client->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
+            $this->swooleConnection->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
 
             //todo
             // assert($this->client->connected === true);
@@ -48,12 +38,12 @@ class SwooleRedisConnection extends PhpRedisConnection implements EnsureConnecte
 
     public function reconnect()
     {
-        if ($this->client->connected)
+        if ($this->swooleConnection->connected)
             $this->disconnect();
 
         $config = $this->config;
 
-        $this->client->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
+        $this->swooleConnection->connect($config['host'], $config['port'], $config['var_serialize'] ?? false);
 
 
     }

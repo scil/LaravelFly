@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFly\Map\Illuminate\Database;
+namespace LaravelFly\Map\Illuminate\Database\Connection;
 
 use Illuminate\Support\Str;
 use Illuminate\Database\QueryException;
@@ -9,6 +9,7 @@ use LaravelFly\Map\Illuminate\Database\PDO\SwoolePDO;
 
 class SwooleMySQLConnection extends MySqlConnection
 {
+    use FakeSwooleConnTrait;
     /**
      * The active swoole mysql connection.
      *
@@ -22,6 +23,14 @@ class SwooleMySQLConnection extends MySqlConnection
      * @var SwoolePDO |\Closure
      */
     protected $readPdo;
+
+
+    public function __construct($pdo, $database = '', $tablePrefix = '', array $config = [])
+    {
+        parent::__construct($pdo,$database,$tablePrefix,$config);
+
+        $this->swooleConnection = $this->getPdo()->getSwooleConnection();
+    }
 
     public function getDriverName()
     {
@@ -39,11 +48,8 @@ class SwooleMySQLConnection extends MySqlConnection
         throw $e;
     }
 
-    /**
-     * used by Smf.
-     * vendor/open-smf/connection-pool/src/Connectors/CoroutineMySQLConnector.php:21
-     */
-    public function close(){
-        $this->getPdo()->close();
+
+    public function getClient(){
+        return $this->getPdo();
     }
 }

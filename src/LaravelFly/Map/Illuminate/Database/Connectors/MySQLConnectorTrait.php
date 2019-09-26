@@ -38,6 +38,8 @@ trait MySQLConnectorTrait
                 $connection->query("set session sql_mode='ANSI_QUOTES'");
             }
         }
+        
+        
         return $connection;
     }
 

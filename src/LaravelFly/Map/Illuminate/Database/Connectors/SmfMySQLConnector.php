@@ -7,6 +7,8 @@
 
 namespace LaravelFly\Map\Illuminate\Database\Connectors;
 
+use LaravelFly\Map\Illuminate\Database\Connection\SwooleMySQLConnection;
+use LaravelFly\Map\Illuminate\Database\PDO\SwoolePDO;
 use Smf\ConnectionPool\Connectors\CoroutineMySQLConnector;
 
 class SmfMySQLConnector extends  CoroutineMySQLConnector
@@ -17,5 +19,9 @@ class SmfMySQLConnector extends  CoroutineMySQLConnector
     {
         return $this->connectSwoolePDO($config);
 
+    }
+    public function validate($connection): bool
+    {
+        return $connection instanceof SwooleMySQLConnection;
     }
 }

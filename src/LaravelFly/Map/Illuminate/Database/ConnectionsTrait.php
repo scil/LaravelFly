@@ -45,7 +45,7 @@ trait ConnectionsTrait
             $server = \LaravelFly\Fly::getServer();
             $server->echoOnce(
                 "database connection $name uses default connection pool.",
-                'WARN', true
+                'NOTE', true
             );
         }
 
@@ -66,14 +66,19 @@ trait ConnectionsTrait
             if (is_array($config)) {
 
                 try {
+
                     $this->pools[$name] = $this->getPool($name,$config['driver']?? $driver, $config, $dispatcher);
+
                 } catch (\Exception $e) {
+
                     $server = \LaravelFly\Fly::getServer();
+
                     $server->echoOnce(
                         "something wrong when making connection pool for connection '$name', \n  please check config/databas.php.\n  Maybe you need to comment out unused configs in 'connections'",
                         'WARN', true
                     );
-                    throw $e;
+
+                    // throw $e;
                 }
             }
         }
