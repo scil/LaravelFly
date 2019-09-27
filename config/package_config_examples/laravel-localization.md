@@ -2,9 +2,9 @@
 [mcamara/laravel-localization](https://github.com/mcamara/laravel-localization)
 
 
-package | solutions| involved
- ---- | --- | -----
- [mcamara/laravel-localization](https://github.com/scil/LaravelFly/blob/master/config/package_config_examples/laravel-localization.md) <br> ([offical](https://github.com/mcamara/laravel-localization) ) | 1. across (no coroutine) <br> 2. clone (no cor) <br> 3. clone and include routes on worker (no cor) | - routes/web.php  <br> - app('request')  <br>
+package | solutions| involved | note
+ ---- | --- | ----- | -----
+ [mcamara/laravel-localization](https://github.com/scil/LaravelFly/blob/master/config/package_config_examples/laravel-localization.md) <br> ([offical](https://github.com/mcamara/laravel-localization) ) | 1. across (no coroutine) <br> 2. clone (no cor) <br> 3. clone and include routes on worker (no cor) | - routes/web.php  <br> - app('request')  <br> | `setlocale` , so coroutine can not used, unless removing `setlocale`.
 
 ## Prepearation
 
