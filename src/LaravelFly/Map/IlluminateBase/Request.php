@@ -133,13 +133,17 @@ class Request extends \Illuminate\Http\Request
         $dict['server'] = new ServerBag($server);
         $dict['headers'] = new HeaderBag($dict['server']->getHeaders());
 
+        $dict['content'] = $swoole_request->rawContent() ?: null;
 
         /**
          * see: ::createFromBase();
+         * and,
+         * this line must placed below $dict['dontent'], as $this->getinputsource() need 'content'
          */
         $dict['request'] = $this->getinputsource();
 
-        $dict['content'] = $swoole_request->rawContent() ?: null;
+//        eval(tinker());
+
     }
 
     function unsetForRequestCorontine(int $cid)
