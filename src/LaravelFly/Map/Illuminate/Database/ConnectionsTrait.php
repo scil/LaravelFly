@@ -4,8 +4,8 @@ namespace LaravelFly\Map\Illuminate\Database;
 
 use function Couchbase\defaultDecoder;
 use Illuminate\Container\Container;
-use LaravelFly\Map\Illuminate\Database\Connectors\SmfMySQLConnector;
-use LaravelFly\Map\Illuminate\Database\Connectors\SmfRedisConnector;
+use LaravelFly\Map\Illuminate\Database\Connectors\MySQLSmfConnector;
+use LaravelFly\Map\Illuminate\Database\Connectors\RedisSmfConnector;
 use LaravelFly\Map\Illuminate\Database\Pool\SimplePool;
 use LaravelFly\Map\Illuminate\Database\Pool\Pool;
 use LaravelFly\Map\Illuminate\Database\Pool\SmfPool;
@@ -28,10 +28,10 @@ trait ConnectionsTrait
 
                 switch ($config['driver']??$driver) {
                     case 'mysql':
-                        $connector = new SmfMySQLConnector();
+                        $connector = new MySQLSmfConnector();
                         break;
                     case 'redis':
-                        $connector = new SmfRedisConnector();
+                        $connector = new RedisSmfConnector();
                         break;
                 }
 

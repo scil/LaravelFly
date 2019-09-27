@@ -11,7 +11,7 @@ use LaravelFly\Map\Illuminate\Database\Connection\SwooleMySQLConnection;
 use LaravelFly\Map\Illuminate\Database\PDO\SwoolePDO;
 use Smf\ConnectionPool\Connectors\CoroutineMySQLConnector;
 
-class SmfMySQLConnector extends  CoroutineMySQLConnector
+class MySQLSmfConnector extends  CoroutineMySQLConnector
 {
     use MySQLConnectorTrait;
 

@@ -10,7 +10,7 @@ namespace LaravelFly\Map\Illuminate\Database\Connectors;
 use LaravelFly\Map\Illuminate\Redis\Connection\SwooleRedisConnection;
 use Smf\ConnectionPool\Connectors\CoroutineRedisConnector;
 
-class SmfRedisConnector extends  CoroutineRedisConnector
+class RedisSmfConnector extends  CoroutineRedisConnector
 {
     use RedisConnectorTrait;
 

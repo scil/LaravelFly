@@ -14,7 +14,7 @@ class HttpServer extends Common implements ServerInterface
 //        } elseif (!LARAVELFLY_SERVICES['request']) {
 //            $this->swoole->on('request', array($this, 'onRequest'));
         } else {
-            $this->swoole->on('request', array($this, 'onRequestSingle'));
+            $this->swoole->on('request', array($this, 'onRequestSingleton'));
         }
     }
 
@@ -83,7 +83,12 @@ class HttpServer extends Common implements ServerInterface
 
     }
 
-    public function onRequestSingle(\swoole_http_request $request, \swoole_http_response $response)
+    /**
+     * only for singleton object 'request'
+     * @param \swoole_http_request $request
+     * @param \swoole_http_response $response
+     */
+    public function onRequestSingleton(\swoole_http_request $request, \swoole_http_response $response)
     {
 
         //$t1 = microtime(true);
@@ -93,7 +98,6 @@ class HttpServer extends Common implements ServerInterface
         $this->request->initForRequestCorontineWithSwoole($cid, $request);
 
         $this->app->initForRequestCorontine($cid);
-
 
         $laravel_response = $this->kernel->handle($this->request);
 
@@ -110,6 +114,13 @@ class HttpServer extends Common implements ServerInterface
 
     }
 
+    /**
+     * @deprecated
+     *
+     * @param \swoole_http_request $request
+     * @param \swoole_http_response $response
+     * @throws \LaravelFly\Map\IlluminateBase\SingletonRequestException
+     */
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 

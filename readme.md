@@ -7,8 +7,6 @@ LaravelFly is a safe solution to speeds up new or old Laravel 5.5+ projects, wit
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh).
 
-If you'd like Python, [Vibora](https://github.com/vibora-io/vibora/) framework is a good choice.
-
 ## A simple ab test 
 
 `ab -k -n 1000 -c 10 http://zc.test` (21 sql statements were executed in single request)

@@ -3,6 +3,7 @@
 namespace LaravelFly\Server\Traits;
 
 
+use LaravelFly\Map\IlluminateBase\Request;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 Trait Laravel
@@ -172,6 +173,8 @@ ABC;
     }
 
     /**
+     * @deprecated
+     *
      * @param \swoole_http_request $swoole_request
      * @return \Illuminate\Http\Request
      *
@@ -204,13 +207,15 @@ ABC;
         /*
          *
          * from: Illuminate\Http\Request\createFromBase
-         *      $request->request = $request->getInputSource();
+         *      $newRequest->request = $newRequest->getInputSource();
          */
         (function () {
+            /**
+             * @var $this Request
+             */
             $this->request = $this->getInputSource();
             // todo filterFiles
         })->call($request);
-
 
         return $request;
 

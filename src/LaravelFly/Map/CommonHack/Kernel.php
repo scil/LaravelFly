@@ -10,6 +10,9 @@ trait Kernel
 
             // if (!(LARAVELFLY_SERVICES['request'])) $this->app->instance('request', $request);
 
+            /**
+             * @var $this \LaravelFly\Map\Kernel
+             */
             return $this->router->dispatch($request);
         };
     }
