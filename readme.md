@@ -154,9 +154,6 @@ Route::get('/fly', function () {
 });
 ```
 
-## Notice
-
-Coroutine can be used during a request, but not before. That is, coroutine can not used in a service if it booted on WorkerStart.
 
 
 ## Similar projects that mix swoole and laravel

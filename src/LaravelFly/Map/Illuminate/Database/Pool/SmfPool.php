@@ -48,6 +48,7 @@ class SmfPool extends SmfOfficialPool
         $this->pool = new Channel($this->maxActive);
         $this->balancerTimerId = $this->startBalanceTimer($this->idleCheckInterval);
         // hack
+        // for LaravelFly, Coroutine can not be used before requests.
 //        go(function () {
             for ($i = 0; $i < $this->minActive; $i++) {
                 $connection = $this->createConnection();
