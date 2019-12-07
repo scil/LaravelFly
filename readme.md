@@ -1,7 +1,7 @@
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 
-Would you like php 7.4 Preloading? Would you like php coroutine? Today you can use them with Laravel  because of Swoole.
+Would you like php 7.4 Preloading? Would you like php coroutine? Today you can use them with Laravel  because of Swoole. With LaravalFly, Laravel will begin like Django 3.0  to be fully async-capable.
 
 LaravelFly is a safe solution to speeds up new or old Laravel 5.5+ projects, with preloading and coroutine, while without data pollution or memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
 
