@@ -19,7 +19,7 @@ class TestCase extends Base
         'Illuminate\View\Factory' => 'LaravelFly\Map\Illuminate\View\Factory',
     ];
 
-    static function setUpBeforeClass()
+    static function setUpBeforeClass():void
     {
         parent::setUpBeforeClass();
         static::$laravelTestsDir = realpath(  __DIR__ . '/../../../vendor/laravel/framework/tests');

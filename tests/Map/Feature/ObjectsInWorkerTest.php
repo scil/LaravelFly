@@ -128,12 +128,12 @@ class ObjectsInWorkerTest extends Base
 
     }
 
-    static function setUpBeforeClass()
+    static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         static::initConfig();
     }
-    static function tearDownAfterClass()
+    static function tearDownAfterClass():void
     {
         parent::tearDownAfterClass();
         unset($GLOBALS['IN_PRODUCTION']);

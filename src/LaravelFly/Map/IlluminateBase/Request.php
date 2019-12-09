@@ -20,7 +20,7 @@ class Request extends \Illuminate\Http\Request
 
         'requestUri' => null, 'baseUrl' => null, 'pathInfo' => null, 'basePath' => null, 'method' => null, 'format' => null,
 
-        'isHostValid' => null, 'isForwardedValid' => null,
+        'preferredFormat'=> null, 'isHostValid' => true, 'isForwardedValid' => true,
 
         // an object
         'session' => null,

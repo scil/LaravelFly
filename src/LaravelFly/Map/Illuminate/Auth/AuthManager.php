@@ -60,5 +60,6 @@ class AuthManager extends AuthManagerSame
 
         return $this;
     }
+
 }
 

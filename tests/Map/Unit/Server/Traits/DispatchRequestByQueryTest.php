@@ -70,7 +70,7 @@ class DispatchRequestByQueryTest extends Base
                 'worker_num' => $one['worker_num'],
                 'pre_include' => false,
                 'mode' => 'Backup',
-                'application' => \LaravelFly\Backup\Application::class,
+                'application' => \LaravelFly\Map\Application::class,
                 'listen_port' => 9991 + $step,
             ];
 

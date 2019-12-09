@@ -1,10 +1,7 @@
 <?php
 
-
 /**
- * One
- *
- ** prepare:
+ * Prepare:
  *   composer create-project --prefer-dist laravel/laravel blog_for_test
  *   cd blog_for_test
  *   composer require scil/laravel-fly
@@ -13,22 +10,29 @@
  *   edit phpunit.xml
  *          LARAVEL_PROJECT_ROOT
  *   xml=vendor/scil/laravel-fly/phpunit.xml.dist
+ */
+
+/**
+ * One
  *
+ * 1. scil/laravel-fly-files
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit only_fly
  *
- ** Mode Map
+ * 2. Mode Map
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_Process
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Map_No_Process_Used
  *
  *
- ** Mode Backup
+ *  3. Mode Backup
  * vendor/bin/phpunit  --stop-on-failure -c $xml --testsuit LaravelFly_Backup
  *
  *
  */
 
  /**
- * Two  use Laravel built-in tests
+ * Two
+  * use Laravel built-in tests
+  *
  ** prepare:
  **   cd laravel_fly_root
  **   git clone -b 5.6 https://github.com/laravel/framework.git /vagrant/www/zc/vendor/scil/laravel-fly-local/vendor/laravel/framework
@@ -97,7 +101,7 @@ abstract class BaseTestCase extends TestCase
     static protected $chan_fail_file = '/tmp/phpunit_zc_chan';
 
 
-    static function setUpBeforeClass()
+    static function setUpBeforeClass():void
     {
 
         $r = static::$laravelAppRoot;

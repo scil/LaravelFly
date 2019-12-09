@@ -66,5 +66,14 @@ class AuthManagerSame extends \Illuminate\Auth\AuthManager
 
         return $this;
     }
+        /**
+     * Determines if any guards have already been resolved.
+     *
+     * @return bool
+     */
+    public function hasResolvedGuards()
+    {
+        return count(static::$corDict[\Co::getUid()]['guards']) > 0;
+    }
 }
 

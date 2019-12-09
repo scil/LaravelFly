@@ -57,6 +57,8 @@ class SuperGlobalVarsTest extends Base
        -type f  \
        -exec grep -E "\b_(GET|POST|FILES|COOKIE|SESSION|REQUEST)\b"  \
            --exclude=*.md  \
+           --exclude=*.js  \
+           --exclude=*.json  \
            --exclude=_ide_helper.php   -l  {} \; ';
 
         ob_start();
@@ -115,27 +117,29 @@ F;
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./Request.php:281:        $request = self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
-./Request.php:533:        $_GET = $this->query->all();
-./Request.php:534:        $_POST = $this->request->all();
-./Request.php:535:        $_SERVER = $this->server->all();
-./Request.php:536:        $_COOKIE = $this->cookies->all();
-./Request.php:541:                $_SERVER[$key] = implode(', ', $value);
-./Request.php:543:                $_SERVER['HTTP_'.$key] = implode(', ', $value);
-./Request.php:547:        $request = ['g' => $_GET, 'p' => $_POST, 'c' => $_COOKIE];
-./Request.php:552:        $_REQUEST = [[]];
-./Request.php:555:            $_REQUEST[] = $request[$order];
-./Request.php:558:        $_REQUEST = array_merge(...$_REQUEST);
+./Request.php:285:        $request = self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
+./Request.php:537:        $_GET = $this->query->all();
+./Request.php:538:        $_POST = $this->request->all();
+./Request.php:539:        $_SERVER = $this->server->all();
+./Request.php:540:        $_COOKIE = $this->cookies->all();
+./Request.php:545:                $_SERVER[$key] = implode(', ', $value);
+./Request.php:547:                $_SERVER['HTTP_'.$key] = implode(', ', $value);
+./Request.php:551:        $request = ['g' => $_GET, 'p' => $_POST, 'c' => $_COOKIE];
+./Request.php:556:        $_REQUEST = [[]];
+./Request.php:559:            $_REQUEST[] = $request[$order];
+./Request.php:562:        $_REQUEST = array_merge(...$_REQUEST);
+./Request.php:580:            } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+./Request.php:581:                $proxies[] = $_SERVER['REMOTE_ADDR'];
 ./Session/Storage/Handler/AbstractSessionHandler.php:135:            if (null === $cookie || isset($_COOKIE[$this->sessionName])) {
-./Session/Storage/NativeSessionStorage.php:245:        $session = $_SESSION;
-./Session/Storage/NativeSessionStorage.php:248:            if (empty($_SESSION[$key = $bag->getStorageKey()])) {
-./Session/Storage/NativeSessionStorage.php:249:                unset($_SESSION[$key]);
-./Session/Storage/NativeSessionStorage.php:252:        if ([$key = $this->metadataBag->getStorageKey()] === array_keys($_SESSION)) {
-./Session/Storage/NativeSessionStorage.php:253:            unset($_SESSION[$key]);
-./Session/Storage/NativeSessionStorage.php:272:            if ($_SESSION) {
-./Session/Storage/NativeSessionStorage.php:273:                $_SESSION = $session;
-./Session/Storage/NativeSessionStorage.php:292:        $_SESSION = [];
-./Session/Storage/NativeSessionStorage.php:454:            $session = &$_SESSION;
+./Session/Storage/NativeSessionStorage.php:243:        $session = $_SESSION;
+./Session/Storage/NativeSessionStorage.php:246:            if (empty($_SESSION[$key = $bag->getStorageKey()])) {
+./Session/Storage/NativeSessionStorage.php:247:                unset($_SESSION[$key]);
+./Session/Storage/NativeSessionStorage.php:250:        if ([$key = $this->metadataBag->getStorageKey()] === array_keys($_SESSION)) {
+./Session/Storage/NativeSessionStorage.php:251:            unset($_SESSION[$key]);
+./Session/Storage/NativeSessionStorage.php:270:            if ($_SESSION) {
+./Session/Storage/NativeSessionStorage.php:271:                $_SESSION = $session;
+./Session/Storage/NativeSessionStorage.php:290:        $_SESSION = [];
+./Session/Storage/NativeSessionStorage.php:452:            $session = &$_SESSION;
 
 F;
         self::assertEquals($respect, $output);
@@ -164,9 +168,10 @@ F;
         $output = ob_get_clean();
 
         $respect = <<<'F'
-./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:812:        return $this->request ?: Request::createFromGlobals();
+./vendor/facade/flare-client-php/src/Context/RequestContext.php:18:        $this->request = $request ?? Request::createFromGlobals();
+./vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php:819:        return $this->request ?: Request::createFromGlobals();
 ./vendor/laravel/framework/src/Illuminate/Http/Request.php:59:        return static::createFromBase(SymfonyRequest::createFromGlobals());
-./vendor/symfony/http-foundation/Request.php:279:    public static function createFromGlobals()
+./vendor/symfony/http-foundation/Request.php:283:    public static function createFromGlobals()
 
 F;
 

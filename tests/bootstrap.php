@@ -33,18 +33,18 @@ define('FLY_ROOT', LARAVEL_APP_ROOT . '/vendor/scil/laravel-fly');
 define('DEFAULT_SERVER_CONFIG_FILE', FLY_ROOT . '/config/laravelfly-server-config.example.php');
 
 assert(is_dir(LARAVEL_APP_ROOT));
-echo "laravel project is at " . LARAVEL_APP_ROOT . "\n";
+echo " * laravel project is at " . LARAVEL_APP_ROOT . "\n";
 
 if ( is_file( $beforeapp= LARAVEL_APP_ROOT . '/bootstrap/app-before.php')){
-    echo "require $beforeapp\n";
+    echo " * require $beforeapp\n";
     require $beforeapp;
 }
 
 assert(is_file(DEFAULT_SERVER_CONFIG_FILE));
-echo "default SERVER_CONFIG_FILE " . DEFAULT_SERVER_CONFIG_FILE . "\n";
+echo " * default SERVER_CONFIG_FILE " . DEFAULT_SERVER_CONFIG_FILE . "\n";
 
 assert(is_file($loader));
-echo "loader is from $loader\n\n";
+echo " * loader is from $loader\n\n";
 $loader = require $loader;
 $loader->addPsr4("Illuminate\\Tests\\", LARAVEL_APP_ROOT . "/vendor/laravel/framework/tests/");
 
