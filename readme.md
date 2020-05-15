@@ -198,6 +198,7 @@ About data pollution? Same technique and problems as laravel-swoole. And neither
 - [x] db connection pool and redis connection pool. In `fly()` or `fly2()`, connections to be used would be fetched from pool, not inherit the same connections from request coroutine. code: `$this->connections[$childId] = [];` in ConnectionsTrait.php
 - [x] swoole redis driver
 - [ ] swoole redis driver: how to use `errMsg` `errCode`
+- [ ] use [hyperf/database](https://github.com/hyperf/database) to replace official version?
 - [ ] use [swlib/swpdo](https://github.com/swlib/swpdo) to replace SwoolePDO?
 - [ ] Cache for HasRelationships. disable and experimental, not ready
 - [x] Cache for RouteDependencyResolverTrait 
