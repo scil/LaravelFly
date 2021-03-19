@@ -4,7 +4,7 @@ LaravelFly is a safe solution to speeds up new or old Laravel 5.5+ projects, wit
 
 Thanks to [Laravel](http://laravel.com/), [Swoole](https://github.com/swoole/swoole-src) and [PsySh](https://github.com/bobthecow/psysh).
 
-**Notice**: Great News! Laravel is going to support Swoole offcially!
+**Notice**: Great News! [Laravel is going to support Swoole offcially!](https://twitter.com/doubaokun/status/1372258372100165639)
 
 ## A simple ab test 
 
