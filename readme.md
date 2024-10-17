@@ -1,3 +1,8 @@
+
+Please refer to [Swoole handles multiple requests simultaneously per-worker](https://github.com/nextcloud/server/issues/36290#issuecomment-1555965453)  and [Hola FrankenPHP! Laravel Octane Servers Comparison](https://medium.com/beyn-technology/hola-frankenphp-laravel-octane-servers-comparison-pushing-the-boundaries-of-performance-d3e7ad8e652c)  
+
+====
+
 Would you like php 7.4 Preloading? Would you like php coroutine? Today you can use them with Laravel  because of Swoole. With LaravalFly, Laravel will begin like Django 3.0  to be fully async-capable.
 
 LaravelFly is a safe solution to speeds up new or old Laravel 5.5+ projects, with preloading and coroutine, while without data pollution or memory leak. And it makes Tinker available online (use tinker while Laravel is responding requests from browsers).
